@@ -1,0 +1,33 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+class Recipe{
+    uint RecipeNumber
+    char MealType
+    string RecipeName
+    Ingredient[] ingredients
+    macros TotalMacros
+    string ImageStr
+}
+
+class Ingredient{
+    string Name
+    float kg
+    float calories
+    float fats
+    float carbohydrates
+    float protein
+    float multiplier
+}
+
+class Macros{
+    float TotalCalories
+    float Totalfats
+    float TotalCarbs
+    float TotalProtein
+}
+
+Ingredient --> Recipe
+Macros --> Recipe
+
+@enduml

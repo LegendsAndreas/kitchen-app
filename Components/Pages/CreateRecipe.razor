@@ -1,0 +1,71 @@
+@page "/CreateRecipe"
+
+@inject Recipe Recipe;
+@inject Ingredient Ingredient;
+
+<PageTitle>Create Recipe</PageTitle>
+<h1>Create a new recipe!</h1>
+
+<EditForm Model="@Recipe">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    
+    <div class="form-group">
+        <div>
+            <label>Meal Type:</label>
+            <InputText id="meal-type" @bind-Value="Recipe.MealType" />
+            <ValidationMessage For="@(() => Recipe.MealType)"/>
+        </div>
+
+        <div>
+            <label>Recipe Name:</label>
+            <InputText id="name" @bind-Value="Recipe.Name" />
+            <ValidationMessage For="@(() => Recipe.Name)"/>
+        </div>
+        
+        @* Ingredient *@
+        <div>
+            <label>Ingredient Name:</label>
+            <InputText id="name" @bind-Value="Ingredient.Name" />
+            <ValidationMessage For="@(() => Ingredient.Name)"/>
+        </div>
+
+        <div>
+            <label>Name:</label>
+            <InputNumber id="name" @bind-Value="Ingredient.Kg" />
+            <ValidationMessage For="@(() => Ingredient.Kg)"/>
+        </div>
+
+        <div>
+            <label>Name:</label>
+            <InputNumber id="name" @bind-Value="Ingredient.Calories" />
+            <ValidationMessage For="@(() => Ingredient.Calories)"/>
+        </div>
+
+        <div>
+            <label>Name:</label>
+            <InputText id="name" @bind-Value="Recipe.Name" />
+            <ValidationMessage For="@(() => Recipe.Name)"/>
+        </div>
+
+        <div>
+            <label>Name:</label>
+            <InputText id="name" @bind-Value="Recipe.Name" />
+            <ValidationMessage For="@(() => Recipe.Name)"/>
+        </div>
+
+        <div>
+            <label>Name:</label>
+            <InputText id="name" @bind-Value="Recipe.Name" />
+            <ValidationMessage For="@(() => Recipe.Name)"/>
+        </div>
+
+        <div>
+            <label>Name:</label>
+            <InputText id="name" @bind-Value="Recipe.Name" />
+            <ValidationMessage For="@(() => Recipe.Name)"/>
+        </div>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Create Recipe</button>
+</EditForm>

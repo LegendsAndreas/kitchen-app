@@ -1,0 +1,45 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\WebKitchen\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
+      "PackagePath": "staticwebassets\\WebKitchen.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\WebKitchen\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\WebKitchen\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\WebKitchen\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\WebKitchen\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\WebKitchen\\wwwroot\\pics\\TestImage.png",
+      "PackagePath": "staticwebassets\\pics\\TestImage.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WebKitchen.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.WebKitchen.props",
+      "PackagePath": "build\\WebKitchen.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.WebKitchen.props",
+      "PackagePath": "buildMultiTargeting\\WebKitchen.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.WebKitchen.props",
+      "PackagePath": "buildTransitive\\WebKitchen.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

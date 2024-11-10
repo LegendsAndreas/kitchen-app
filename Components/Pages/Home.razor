@@ -1,0 +1,65 @@
+﻿@page "/"
+
+@inject DBService DbService;
+
+@* a.k.a Recipes *@
+<PageTitle>Recipes</PageTitle>
+
+<div class="container">
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-3">
+        @foreach (Recipe recipe in recipes)
+        {
+            <div class="col">
+                <div class="card">
+                    <img src="@recipe.Image" alt="ops..."/>
+                    <div class="card-header">
+                        <h4>@recipe.Name</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">
+                            - Calories: @recipe.TotalMacros.TotalCalories <br>
+                            - Carbs: @recipe.TotalMacros.TotalCarbs <br>
+                            - Fats: @recipe.TotalMacros.TotalFats <br>
+                            - Protein: @recipe.TotalMacros.TotalProtein
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
+
+@code{
+
+    /*private List<Recipe> recipes = new List<Recipe>
+    {
+        new Recipe { Name = "Test Recipe", Image = "pics/TestImage.png", TotalMacros = new Macros { TotalCalories = 10, TotalCarbs = 2, TotalFats = 2, TotalProtein = 2 } },
+        new Recipe { Name = "Test Recipe", Image = "pics/TestImage.png", TotalMacros = new Macros { TotalCalories = 20, TotalCarbs = 4, TotalFats = 4, TotalProtein = 4 } }
+    };*/
+
+    private List<Recipe> recipes = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            using var connection = DbService.GetConnection();
+            if (connection.State == System.Data.ConnectionState.Open)
+            {
+                Console.WriteLine("Database connection successful");
+            }
+            else
+            {
+                Console.WriteLine("Failed to connect to database");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Error: {e.Message}");
+        }
+    }
+
+
+}
