@@ -1,6 +1,6 @@
 ﻿@page "/"
 
-@inject DBService DbService;
+@* @inject DBService DbService; *@
 
 @* a.k.a Recipes *@
 <PageTitle>Recipes</PageTitle>
@@ -33,13 +33,13 @@
 
 @code{
 
-    /*private List<Recipe> recipes = new List<Recipe>
+    private List<Recipe> recipes = new List<Recipe>
     {
         new Recipe { Name = "Test Recipe", Image = "pics/TestImage.png", TotalMacros = new Macros { TotalCalories = 10, TotalCarbs = 2, TotalFats = 2, TotalProtein = 2 } },
         new Recipe { Name = "Test Recipe", Image = "pics/TestImage.png", TotalMacros = new Macros { TotalCalories = 20, TotalCarbs = 4, TotalFats = 4, TotalProtein = 4 } }
-    };*/
+    };
 
-    private List<Recipe> recipes = new();
+    /*private List<Recipe> recipes = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,7 +59,7 @@
         {
             Console.WriteLine($"Error: {e.Message}");
         }
-    }
+    }*/
 
 
 }

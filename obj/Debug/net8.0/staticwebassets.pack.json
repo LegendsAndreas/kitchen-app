@@ -1,27 +1,27 @@
 {
   "Files": [
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\WebKitchen\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
       "PackagePath": "staticwebassets\\WebKitchen.bundle.scp.css"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\WebKitchen\\wwwroot\\app.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\app.css",
       "PackagePath": "staticwebassets\\app.css"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\WebKitchen\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\WebKitchen\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css.map",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\WebKitchen\\wwwroot\\favicon.png",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\favicon.png",
       "PackagePath": "staticwebassets\\favicon.png"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\WebKitchen\\wwwroot\\pics\\TestImage.png",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\pics\\TestImage.png",
       "PackagePath": "staticwebassets\\pics\\TestImage.png"
     },
     {
