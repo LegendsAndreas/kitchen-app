@@ -14,9 +14,25 @@ public class Ingredient
     public float Kg;
     public float Calories;
     public float Carbs;
-    public float Proteins;
+    public float Protein;
     public float Fats;
-    public float Multiplier;
+    private float _multiplier;
+    
+    public void ClearIngredient()
+    {
+        Name = string.Empty;
+        Kg = 0f;
+        Calories = 0f;
+        Carbs = 0f;
+        Protein = 0f;
+        Fats = 0f;
+        _multiplier = 0f;
+    }
+
+    public void SetMultiplier()
+    {
+        _multiplier = Kg / 100;
+    }
 }
 
 public class Recipe

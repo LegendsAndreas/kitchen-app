@@ -1,72 +1,130 @@
 @page "/CreateRecipe"
 @rendermode InteractiveServer
 
-@inject Recipe Recipe;
-@inject Ingredient Ingredient;
+@inject Recipe InRecipe;
+@inject Ingredient InIngredient;
 
 <PageTitle>Create Recipe</PageTitle>
 <h1>Create a new recipe!</h1>
 
-<EditForm Model="@Recipe">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
-    
+<EditForm Model="@InRecipe" OnValidSubmit="ValidRecipe">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
     <div class="form-group">
         <div>
             <label>Meal Type:</label>
-            <InputText id="meal-type" @bind-Value="Recipe.MealType" />
-            <ValidationMessage For="@(() => Recipe.MealType)"/>
+            <InputText id="meal-type" @bind-Value="InRecipe.MealType"/>
+            <ValidationMessage For="@(() => InRecipe.MealType)"/>
         </div>
 
         <div>
             <label>Recipe Name:</label>
-            <InputText id="name" @bind-Value="Recipe.Name" />
-            <ValidationMessage For="@(() => Recipe.Name)"/>
+            <InputText id="name" @bind-Value="InRecipe.Name"/>
+            <ValidationMessage For="@(() => InRecipe.Name)"/>
         </div>
-        
-        @* Ingredient *@
+
+        <div>
+            <label>Image:</label>
+            <InputText id="image" @bind-Value="InRecipe.Name"/>
+            <ValidationMessage For="@(() => InRecipe.Name)"/>
+        </div>
+
+
+    </div>
+</EditForm>
+
+<EditForm Model="@InIngredient" OnValidSubmit="ValidIngredient">
+    <div class="form-group">
         <div>
             <label>Ingredient Name:</label>
-            <InputText id="name" @bind-Value="Ingredient.Name" />
-            <ValidationMessage For="@(() => Ingredient.Name)"/>
+            <InputText id="ingredient-name" @bind-Value="InIngredient.Name"/>
+            <ValidationMessage For="@(() => InIngredient.Name)"/>
         </div>
 
         <div>
-            <label>Name:</label>
-            <InputNumber id="name" @bind-Value="Ingredient.Kg" />
-            <ValidationMessage For="@(() => Ingredient.Kg)"/>
+            <label>Kg:</label>
+            <InputNumber id="kg" @bind-Value="InIngredient.Kg"/>
+            <ValidationMessage For="@(() => InIngredient.Kg)"/>
         </div>
 
         <div>
-            <label>Name:</label>
-            <InputNumber id="name" @bind-Value="Ingredient.Calories" />
-            <ValidationMessage For="@(() => Ingredient.Calories)"/>
+            <label>Calories (pr. 100g):</label>
+            <InputNumber id="calories" @bind-Value="InIngredient.Calories"/>
+            <ValidationMessage For="@(() => InIngredient.Calories)"/>
         </div>
 
         <div>
-            <label>Name:</label>
-            <InputText id="name" @bind-Value="Recipe.Name" />
-            <ValidationMessage For="@(() => Recipe.Name)"/>
+            <label>Carbs (pr. 100g):</label>
+            <InputNumber id="carbs" @bind-Value="InIngredient.Carbs"/>
+            <ValidationMessage For="@(() => InIngredient.Carbs)"/>
         </div>
 
         <div>
-            <label>Name:</label>
-            <InputText id="name" @bind-Value="Recipe.Name" />
-            <ValidationMessage For="@(() => Recipe.Name)"/>
+            <label>Fats (pr. 100g):</label>
+            <InputNumber id="fats" @bind-Value="InIngredient.Fats"/>
+            <ValidationMessage For="@(() => InIngredient.Fats)"/>
         </div>
 
         <div>
-            <label>Name:</label>
-            <InputText id="name" @bind-Value="Recipe.Name" />
-            <ValidationMessage For="@(() => Recipe.Name)"/>
-        </div>
-
-        <div>
-            <label>Name:</label>
-            <InputText id="name" @bind-Value="Recipe.Name" />
-            <ValidationMessage For="@(() => Recipe.Name)"/>
+            <label>Protein (pr. 100g):</label>
+            <InputNumber id="protein" @bind-Value="InIngredient.Protein"/>
+            <ValidationMessage For="@(() => InIngredient.Protein)"/>
         </div>
     </div>
-    
-    <button type="submit" class="btn btn-primary">Create Recipe</button>
+    <button type="submit" class="btn btn-primary">Add Ingredient</button>
 </EditForm>
+
+@* The current ingredients *@
+<ul>
+    @foreach (Ingredient ingredient in _currentIngredients)
+    {
+        <li>@ingredient</li>
+    }
+</ul>
+
+<button type="submit" class="btn btn-primary" @onclick="ValidRecipe">Create Recipe</button>
+
+@code {
+
+    // private Ingredient _currentIngredient = new();
+    List<Ingredient> _currentIngredients = new();
+
+    private void ValidRecipe()
+    {
+        AddRecipeToDatabase();
+        ClearRecipe();
+
+        InIngredient.ClearIngredient();
+        _currentIngredients.Clear();
+    }
+
+    private void AddRecipeToDatabase()
+    {
+    }
+
+    private void ClearRecipe()
+    {
+        InRecipe = new();
+    }
+
+    public void ValidIngredient()
+    {
+        // We must create a new instance of Ingredient, where we then assign its values to be equal to the values at
+        // InIngredient. Otherwise, we will just be setting tempIngredient to point at InIngredient.
+        Ingredient tempIngredient = new()
+        {
+            Name = InIngredient.Name,
+            Kg = InIngredient.Kg,
+            Calories = InIngredient.Calories,
+            Carbs = InIngredient.Carbs,
+            Fats = InIngredient.Fats,
+            Protein = InIngredient.Protein
+        };
+        tempIngredient.SetMultiplier();
+        
+        _currentIngredients.Add(tempIngredient);
+        InIngredient.ClearIngredient();
+    }
+
+}
