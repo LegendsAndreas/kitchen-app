@@ -108,7 +108,7 @@
                 Added Ingredients
             </button>
         </h2>
-        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+        <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div class="accordion-body">
                 @if (_currentIngredients.Count == 0)
                 {
@@ -121,9 +121,11 @@
                             @ingredient.Name
                         </button>
                         <ul class="dropdown-menu">
-                            <li class="dropdown-item">Calories (pr. 100g): @ingredient.Calories</li>
-                            <li class="dropdown-item">Grams: @ingredient.Grams</li>
-                            <li class="dropdown-item">Ass hair:@ingredient.Protein</li>
+                            <li class="dropdown-item">Calories: @ingredient.Calories.ToString("0")</li>
+                            <li class="dropdown-item">Grams: @ingredient.Grams.ToString("0")</li>
+                            <li class="dropdown-item">Protein: @ingredient.Protein.ToString("0")</li>
+                            <li class="dropdown-item">Fat: @ingredient.Fats.ToString("0")</li>
+                            <li class="dropdown-item">Carbs: @ingredient.Carbs.ToString("0")</li>
                         </ul>
                         <button type="submit" class="btn btn-danger" @onclick="() => DeleteRecipe(_currentIngredients.IndexOf(ingredient))">
                             <strong>X</strong>

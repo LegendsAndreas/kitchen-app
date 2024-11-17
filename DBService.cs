@@ -33,7 +33,7 @@ public class DBService
         int recipeIdTracker = 1;
 
         await using (var cmd = new NpgsqlCommand(
-                         "SELECT id, name, image, meal_type FROM recipes",
+                         "SELECT id, name, image, meal_type, (macros).total_calories, (macros).total_fats, (macros).total_carbs, (macros).total_protein FROM recipes",
                          conn))
         await using (var reader = await cmd.ExecuteReaderAsync())
         {
@@ -43,10 +43,16 @@ public class DBService
                 {
                     Number = reader.GetInt32(0),
                     Name = reader.GetString(1),
-                    Image = $"pics/PlaceHolderPic.jpg",
+                    Image = $"pics/{reader.GetString(2)}",
+                    MealType = reader.GetString(3),
                     Ingredients = await GetIngredientsAsync(recipeIdTracker),
-                    TotalMacros =
-                        await GetMacrosAsync(recipeIdTracker)
+                    TotalMacros = new Macros
+                    {
+                        TotalCalories = reader.GetFloat(4),
+                        TotalFats = reader.GetFloat(5),
+                        TotalCarbs = reader.GetFloat(6),
+                        TotalProtein = reader.GetFloat(7)
+                    }
                 });
                 recipeIdTracker++;
             }

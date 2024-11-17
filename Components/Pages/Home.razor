@@ -3,19 +3,19 @@
 @inject DBService DbService;
 
 @* ToDo: When you click on the image of a recipe, you get sent to a page with more details and a guide *@
-@* ToDo: Give style to the temperary ingredients list area *@
 @* ToDo: Style the create recipe form *@
 @* ToDo: Finish plan meal page *@
 @* ToDo: Finish random meal *@
 @* ToDo: Finish sides page *@
 @* ToDo: Finish create side page *@
-@* ToDo: Get dark mode figured *@
+@* ToDo: Have a toast come up when you add a recipe *@
+@* ToDo: Toast come up to show that a recipe did not go through because it lacked an ingredient *@
 
 <PageTitle>Recipes</PageTitle>
 
 <div class="container">
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-1">
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-1">
         @foreach (var recipe in _recipes)
         {
             <div class="col">

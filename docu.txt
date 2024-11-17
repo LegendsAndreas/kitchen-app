@@ -13,3 +13,14 @@ SELECT setval('my_table_id_seq', (SELECT MAX(id) FROM my_table) + 1);
 
 - CSS.
 Background-color is for the background color and just color is for the color of the text.
+
+- Deleting row and sorting the ids.
+These three queries resets the id order correctly. Remember to delete the temporary table:
+CREATE TEMP TABLE temp_recipes AS
+SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id
+FROM recipes;
+UPDATE recipes
+SET id = temp_recipes.new_id
+FROM temp_recipes
+WHERE recipes.id = temp_recipes.id;
+SELECT setval('recipes_id_seq', (SELECT MAX(id) FROM recipes));

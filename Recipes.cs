@@ -76,7 +76,7 @@ public class Recipe
 
     public void PrintRecipe()
     {
-        Console.WriteLine("Recipe:");
+        Console.WriteLine("Reciping recipe...");
         Console.WriteLine("Recipe Number: " + Number);
         Console.WriteLine("MealType: " + MealType);
         Console.WriteLine("Name: " + Name);
@@ -194,11 +194,27 @@ public class Recipe
         }
     }
 
-    public Recipe GetRandomRecipe() 
+    public void GetRandomRecipe()
     {
         List<Recipe> recipes = GetDinnerRecipes();
-        Recipe randomRecipe = recipes[new Random().Next(0, recipes.Count)];
-        return randomRecipe;
+        Recipe randomRecipe = recipes[new Random().Next(0, recipes.Count-1)];
+        SetRecipe(randomRecipe);
+    }
+
+    private void SetRecipe(Recipe recipe)
+    {
+        Number = recipe.Number;
+        MealType = recipe.MealType;
+        Name = recipe.Name;
+        Image = recipe.Image;
+        if (recipe.Ingredients.Count > 0)
+        {
+            Ingredients = recipe.Ingredients;
+        }
+        if (recipe.TotalMacros.TotalCalories != 0)
+        {
+            TotalMacros = recipe.TotalMacros;
+        }
     }
 
     private List<Recipe> GetDinnerRecipes()
@@ -206,9 +222,9 @@ public class Recipe
         List<Recipe> recipes = new();
         using var conn = new NpgsqlConnection(
             "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
-        conn.OpenAsync();
+        conn.Open();
         
-        string query = "SELECT * FROM recipes WHERE meal_type = 'D'";
+        string query = "SELECT id, meal_type, name, image, (macros).total_protein, (macros).total_fats, (macros).total_carbs, (macros).total_calories FROM recipes WHERE meal_type = 'D';";
         
         using (var cmd = new NpgsqlCommand(query, conn))
         using (var reader = cmd.ExecuteReader())
@@ -220,7 +236,14 @@ public class Recipe
                     Number = reader.GetInt32(0),
                     MealType = reader.GetString(1),
                     Name = reader.GetString(2),
-                    Image = reader.GetString(3)
+                    Image = reader.GetString(3),
+                    TotalMacros = new Macros
+                    {
+                        TotalProtein = reader.GetFloat(4),
+                        TotalFats = reader.GetFloat(5),
+                        TotalCarbs = reader.GetFloat(6),
+                        TotalCalories = reader.GetFloat(7)
+                    }
                 };
                 recipes.Add(recipe);
             }
