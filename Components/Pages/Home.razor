@@ -1,14 +1,22 @@
 ﻿@page "/"
 
-@* @inject DBService DbService; *@
+@inject DBService DbService;
 
-@* a.k.a Recipes *@
+@* ToDo: When you click on the image of a recipe, you get sent to a page with more details and a guide *@
+@* ToDo: Give style to the temperary ingredients list area *@
+@* ToDo: Style the create recipe form *@
+@* ToDo: Finish plan meal page *@
+@* ToDo: Finish random meal *@
+@* ToDo: Finish sides page *@
+@* ToDo: Finish create side page *@
+@* ToDo: Get dark mode figured *@
+
 <PageTitle>Recipes</PageTitle>
 
 <div class="container">
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-3">
-        @foreach (Recipe recipe in recipes)
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-1">
+        @foreach (var recipe in _recipes)
         {
             <div class="col">
                 <div class="card">
@@ -16,12 +24,12 @@
                     <div class="card-header">
                         <h4>@recipe.Name</h4>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body border-primary">
                         <p class="card-text">
-                            - Calories: @recipe.TotalMacros.TotalCalories <br>
-                            - Carbs: @recipe.TotalMacros.TotalCarbs <br>
-                            - Fats: @recipe.TotalMacros.TotalFats <br>
-                            - Protein: @recipe.TotalMacros.TotalProtein
+                            - Calories: @recipe.TotalMacros.TotalCalories.ToString("0") <br>
+                            - Carbs: @recipe.TotalMacros.TotalCarbs.ToString("0") <br>
+                            - Fats: @recipe.TotalMacros.TotalFats.ToString("0") <br>
+                            - Protein: @recipe.TotalMacros.TotalProtein.ToString("0")
                         </p>
                     </div>
                 </div>
@@ -32,20 +40,13 @@
 </div>
 
 @code{
-
-    private List<Recipe> recipes = new List<Recipe>
-    {
-        new Recipe { Name = "Test Recipe", Image = "pics/TestImage.png", TotalMacros = new Macros { TotalCalories = 10, TotalCarbs = 2, TotalFats = 2, TotalProtein = 2 } },
-        new Recipe { Name = "Test Recipe", Image = "pics/TestImage.png", TotalMacros = new Macros { TotalCalories = 20, TotalCarbs = 4, TotalFats = 4, TotalProtein = 4 } }
-    };
-
-    /*private List<Recipe> recipes = new();
+    private List<Recipe> _recipes = new();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            using var connection = DbService.GetConnection();
+            await using var connection = DbService.GetConnection();
             if (connection.State == System.Data.ConnectionState.Open)
             {
                 Console.WriteLine("Database connection successful");
@@ -57,9 +58,19 @@
         }
         catch (Exception e)
         {
-            Console.WriteLine($"Error: {e.Message}");
+            Console.WriteLine($"Error connecting to recipes db: {e.Message}");
         }
-    }*/
+
+        try
+        {
+            _recipes = await DbService.GetRecipeAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting recipes" + ex);
+            throw;
+        }
+    }
 
 
 }

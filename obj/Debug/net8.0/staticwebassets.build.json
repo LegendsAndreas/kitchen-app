@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "+KjP/Yx5wPH079FjHCi2Sk+yTeIl2/E4D24bRc719Dg=",
+  "Hash": "cCGqss81/MGbV0RNwdHCEcbdvguZVlrqSQyz1uU87kA=",
   "Source": "WebKitchen",
   "BasePath": "_content/WebKitchen",
   "Mode": "Default",
@@ -131,12 +131,12 @@
       "OriginalItemSpec": "wwwroot\\favicon.png"
     },
     {
-      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\TestImage.png",
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BackgroundImage.webp",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
       "BasePath": "_content/WebKitchen",
-      "RelativePath": "pics/TestImage.png",
+      "RelativePath": "pics/BackgroundImage.webp",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -147,7 +147,26 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\pics\\TestImage.png"
+      "OriginalItemSpec": "wwwroot\\pics\\BackgroundImage.webp"
+    },
+    {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\PlaceHolderPic.jpg",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/PlaceHolderPic.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\PlaceHolderPic.jpg"
     }
   ]
 }

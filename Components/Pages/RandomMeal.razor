@@ -1,0 +1,55 @@
+@page "/random-meal"
+
+<PageTitle>Random Meal</PageTitle>
+
+<style>
+    .random-meal-h {
+        background-color: #313131;
+        color: #48d7ff;
+        border-radius: 5px;
+        font-family: "Calibri Light";
+        border: 2px solid;
+        width: fit-content; /* Automatically fits the block of its content to fit it. */
+        margin: 0 auto;
+    }
+</style>
+
+<h1 class="random-meal-h toast-header">
+    <strong>
+        <i>Cant decide? Let Lady Luck do it for you!</i>
+    </strong>
+</h1>
+
+<div class="container">
+    <div class="card" style="width: 75%; margin: 0 auto;">
+        @if (_randomRecipe != null)
+        {
+            <img src="pics/PlaceHolderPic.jpg" alt="Random Meal"/>
+            <div class="card-header">
+                <h3>Name</h3>
+            </div>
+            <div class="card-body border-primary">
+                <p class="card-text">
+                    - Calories: <br>
+                    - Carbs: <br>
+                    - Fats: <br>
+                    - Protein:
+                </p>
+            </div>
+        }
+        else
+        {
+            <button class="btn btn-success" @onclick="RandomRecipe"></button>
+        }
+    </div>
+</div>
+
+@code {
+
+    Recipe _randomRecipe;
+
+    private void RandomRecipe()
+    {
+        _randomRecipe.GetRandomRecipe();
+    }
+}

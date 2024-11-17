@@ -1,0 +1,15 @@
+- "GetIngredientsAsync"
+Fuck. What you want to do is "unwrap" the array. That way, you can access the elements of the array directly.
+This is to my knowledge the only way of getting the elements of an array, directly.
+
+- InsertMacros.
+When ever you squery into a database with custom types, use ROW and ::[TYPE].
+
+-- First, set the sequence to start from 1
+ALTER SEQUENCE my_table_id_seq RESTART WITH 1;
+
+-- Optionally set the sequence to the maximum current id + 1 to avoid conflicts in a populated table
+SELECT setval('my_table_id_seq', (SELECT MAX(id) FROM my_table) + 1);
+
+- CSS.
+Background-color is for the background color and just color is for the color of the text.

@@ -21,8 +21,12 @@
       "PackagePath": "staticwebassets\\favicon.png"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\TestImage.png",
-      "PackagePath": "staticwebassets\\pics\\TestImage.png"
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BackgroundImage.webp",
+      "PackagePath": "staticwebassets\\pics\\BackgroundImage.webp"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\PlaceHolderPic.jpg",
+      "PackagePath": "staticwebassets\\pics\\PlaceHolderPic.jpg"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WebKitchen.Microsoft.AspNetCore.StaticWebAssets.props",

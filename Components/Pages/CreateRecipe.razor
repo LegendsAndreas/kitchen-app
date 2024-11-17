@@ -1,130 +1,204 @@
-@page "/CreateRecipe"
+@page "/create-recipe"
 @rendermode InteractiveServer
 
-@inject Recipe InRecipe;
-@inject Ingredient InIngredient;
+@* @inject DBService DbService; *@
+@inject Recipe CurrentRecipe;
+@inject Ingredient CurrentIngredient;
 
 <PageTitle>Create Recipe</PageTitle>
-<h1>Create a new recipe!</h1>
 
-<EditForm Model="@InRecipe" OnValidSubmit="ValidRecipe">
-    <DataAnnotationsValidator/>
-    <ValidationSummary/>
-
-    <div class="form-group">
-        <div>
-            <label>Meal Type:</label>
-            <InputText id="meal-type" @bind-Value="InRecipe.MealType"/>
-            <ValidationMessage For="@(() => InRecipe.MealType)"/>
-        </div>
-
-        <div>
-            <label>Recipe Name:</label>
-            <InputText id="name" @bind-Value="InRecipe.Name"/>
-            <ValidationMessage For="@(() => InRecipe.Name)"/>
-        </div>
-
-        <div>
-            <label>Image:</label>
-            <InputText id="image" @bind-Value="InRecipe.Name"/>
-            <ValidationMessage For="@(() => InRecipe.Name)"/>
-        </div>
-
-
-    </div>
-</EditForm>
-
-<EditForm Model="@InIngredient" OnValidSubmit="ValidIngredient">
-    <div class="form-group">
-        <div>
-            <label>Ingredient Name:</label>
-            <InputText id="ingredient-name" @bind-Value="InIngredient.Name"/>
-            <ValidationMessage For="@(() => InIngredient.Name)"/>
-        </div>
-
-        <div>
-            <label>Kg:</label>
-            <InputNumber id="kg" @bind-Value="InIngredient.Kg"/>
-            <ValidationMessage For="@(() => InIngredient.Kg)"/>
-        </div>
-
-        <div>
-            <label>Calories (pr. 100g):</label>
-            <InputNumber id="calories" @bind-Value="InIngredient.Calories"/>
-            <ValidationMessage For="@(() => InIngredient.Calories)"/>
-        </div>
-
-        <div>
-            <label>Carbs (pr. 100g):</label>
-            <InputNumber id="carbs" @bind-Value="InIngredient.Carbs"/>
-            <ValidationMessage For="@(() => InIngredient.Carbs)"/>
-        </div>
-
-        <div>
-            <label>Fats (pr. 100g):</label>
-            <InputNumber id="fats" @bind-Value="InIngredient.Fats"/>
-            <ValidationMessage For="@(() => InIngredient.Fats)"/>
-        </div>
-
-        <div>
-            <label>Protein (pr. 100g):</label>
-            <InputNumber id="protein" @bind-Value="InIngredient.Protein"/>
-            <ValidationMessage For="@(() => InIngredient.Protein)"/>
-        </div>
-    </div>
-    <button type="submit" class="btn btn-primary">Add Ingredient</button>
-</EditForm>
-
-@* The current ingredients *@
-<ul>
-    @foreach (Ingredient ingredient in _currentIngredients)
-    {
-        <li>@ingredient</li>
+<style>
+    .create-recipe-h{
+        background-color: #313131;
+        color: #48d7ff;
+        border-radius: 5px;
+        font-family: "Calibri Light";
+        display: inline-block;
+        border: 2px solid;
+        border-color: #48d7ff;
     }
-</ul>
+</style>
 
-<button type="submit" class="btn btn-primary" @onclick="ValidRecipe">Create Recipe</button>
+<h1 class="create-recipe-h toast-header">
+    <strong>
+        <i>Create a new recipe!</i>
+    </strong>
+</h1>
+
+<div>
+    <EditForm Model="@CurrentRecipe" OnValidSubmit="ValidRecipe">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+
+        <div class="form-group">
+            <div>
+                <label class="form-label">Meal Type:</label>
+                <InputText id="meal-type" @bind-Value="CurrentRecipe.MealType"/>
+                <ValidationMessage For="@(() => CurrentRecipe.MealType)"/>
+            </div>
+
+            <div>
+                <label>Recipe Name:</label>
+                <InputText id="name" @bind-Value="CurrentRecipe.Name"/>
+                <ValidationMessage For="@(() => CurrentRecipe.Name)"/>
+            </div>
+
+            <div>
+                <label>Image:</label>
+                <InputText id="image" @bind-Value="CurrentRecipe.Image"/>
+                <ValidationMessage For="@(() => CurrentRecipe.Image)"/>
+            </div>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary">Create Recipe</button>
+    </EditForm>
+
+    <EditForm Model="@CurrentIngredient" OnValidSubmit="ValidIngredient">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+
+        <div class="form-group">
+            <div>
+                <label>Ingredient Name:</label>
+                <InputText id="ingredient-name" @bind-Value="CurrentIngredient.Name"/>
+                <ValidationMessage For="@(() => CurrentIngredient.Name)"/>
+            </div>
+
+            <div>
+                <label>Kg:</label>
+                <InputNumber id="kg" @bind-Value="CurrentIngredient.Grams"/>
+                <ValidationMessage For="@(() => CurrentIngredient.Grams)"/>
+            </div>
+
+            <div>
+                <label>Calories (pr. 100g):</label>
+                <InputNumber id="calories" @bind-Value="CurrentIngredient.Calories"/>
+                <ValidationMessage For="@(() => CurrentIngredient.Calories)"/>
+            </div>
+
+            <div>
+                <label>Carbs (pr. 100g):</label>
+                <InputNumber id="carbs" @bind-Value="CurrentIngredient.Carbs"/>
+                <ValidationMessage For="@(() => CurrentIngredient.Carbs)"/>
+            </div>
+
+            <div>
+                <label>Fats (pr. 100g):</label>
+                <InputNumber id="fats" @bind-Value="CurrentIngredient.Fats"/>
+                <ValidationMessage For="@(() => CurrentIngredient.Fats)"/>
+            </div>
+
+            <div>
+                <label>Protein (pr. 100g):</label>
+                <InputNumber id="protein" @bind-Value="CurrentIngredient.Protein"/>
+                <ValidationMessage For="@(() => CurrentIngredient.Protein)"/>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Ingredient</button>
+    </EditForm>
+
+    @* The current ingredients *@
+</div>
+
+<div class="accordion" data-bs-theme="dark" id="accordionExample">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                Added Ingredients
+            </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                @if (_currentIngredients.Count == 0)
+                {
+                    <p>&#60Ingredients goes here&#62</p>
+                }
+                @foreach (var ingredient in _currentIngredients)
+                {
+                    <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            @ingredient.Name
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item">Calories (pr. 100g): @ingredient.Calories</li>
+                            <li class="dropdown-item">Grams: @ingredient.Grams</li>
+                            <li class="dropdown-item">Ass hair:@ingredient.Protein</li>
+                        </ul>
+                        <button type="submit" class="btn btn-danger" @onclick="() => DeleteRecipe(_currentIngredients.IndexOf(ingredient))">
+                            <strong>X</strong>
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
-
-    // private Ingredient _currentIngredient = new();
     List<Ingredient> _currentIngredients = new();
 
-    private void ValidRecipe()
+    private async Task ValidRecipe()
     {
-        AddRecipeToDatabase();
-        ClearRecipe();
+        if (_currentIngredients.Count == 0)
+        {
+            Console.WriteLine("There are no ingredients.");
+            return;
+        }
 
-        InIngredient.ClearIngredient();
+        CurrentRecipe.Ingredients = _currentIngredients;
+        CurrentRecipe.SetTotalMacros();
+
+        Console.WriteLine("Print current recipe");
+        CurrentRecipe.PrintRecipe();
+
+        try
+        {
+            await CurrentRecipe.AddRecipeToDatabase();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error sending recipe to database: " + e.Message);
+            throw;
+        }
+
+        CurrentRecipe.Clear();
+        CurrentIngredient.Clear();
         _currentIngredients.Clear();
-    }
-
-    private void AddRecipeToDatabase()
-    {
-    }
-
-    private void ClearRecipe()
-    {
-        InRecipe = new();
     }
 
     public void ValidIngredient()
     {
-        // We must create a new instance of Ingredient, where we then assign its values to be equal to the values at
-        // InIngredient. Otherwise, we will just be setting tempIngredient to point at InIngredient.
-        Ingredient tempIngredient = new()
-        {
-            Name = InIngredient.Name,
-            Kg = InIngredient.Kg,
-            Calories = InIngredient.Calories,
-            Carbs = InIngredient.Carbs,
-            Fats = InIngredient.Fats,
-            Protein = InIngredient.Protein
-        };
-        tempIngredient.SetMultiplier();
-        
+        Ingredient tempIngredient = TransferIngredient(CurrentIngredient);
+        tempIngredient.PrintIngredient();
+
         _currentIngredients.Add(tempIngredient);
-        InIngredient.ClearIngredient();
+        CurrentIngredient.Clear();
+    }
+
+    private Ingredient TransferIngredient(Ingredient ing)
+    {
+        // We must create a new instance of Ingredient, where we then SPECIFICALLY assign its values to be equal TO THE VALUE
+        // of the variables of CurrentIngredient. Otherwise, we will just be setting tempIngredient to point at CurrentIngredient,
+        // which means that if CurrentIngredient changes, so does the ingredient that we insert into the list.
+        Ingredient transferIngredient = new()
+        {
+            Name = ing.Name,
+            Grams = ing.Grams,
+            Calories = ing.Calories,
+            Carbs = ing.Carbs,
+            Fats = ing.Fats,
+            Protein = ing.Protein
+        };
+        transferIngredient.SetMultiplier();
+
+        return transferIngredient;
+    }
+
+    private void DeleteRecipe(int index)
+    {
+        _currentIngredients.RemoveAt(index);
+        StateHasChanged();
     }
 
 }

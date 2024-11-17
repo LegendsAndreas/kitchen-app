@@ -89,3 +89,4 @@ C:\Users\A\Desktop\Coding\C#\kitchen-app\obj\Debug\net8.0\refint\WebKitchen.dll
 C:\Users\A\Desktop\Coding\C#\kitchen-app\obj\Debug\net8.0\WebKitchen.pdb
 C:\Users\A\Desktop\Coding\C#\kitchen-app\obj\Debug\net8.0\WebKitchen.genruntimeconfig.cache
 C:\Users\A\Desktop\Coding\C#\kitchen-app\obj\Debug\net8.0\ref\WebKitchen.dll
+C:\Users\A\Desktop\Coding\C#\kitchen-app\bin\Debug\net8.0\appsettings.json

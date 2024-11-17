@@ -7,10 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Include="wwwroot\pics\TestImage.png" />
-    </ItemGroup>
-
-    <ItemGroup>
       <PackageReference Include="Npgsql" Version="8.0.5" />
     </ItemGroup>
 

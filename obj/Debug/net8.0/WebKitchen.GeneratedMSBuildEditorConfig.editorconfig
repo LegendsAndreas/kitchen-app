@@ -22,8 +22,16 @@ build_property._RazorSourceGeneratorDebug =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/AdjustRecipe.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBZGp1c3RSZWNpcGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/CreateRecipe.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDcmVhdGVSZWNpcGUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/CreateSide.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDcmVhdGVTaWRlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/Error.razor]
@@ -32,6 +40,22 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/Home.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/PlanMeals.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQbGFuTWVhbHMucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/RandomMeal.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSYW5kb21NZWFsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/RecipeViewer.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZWNpcGVWaWV3ZXIucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/Sides.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTaWRlcy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Routes.razor]

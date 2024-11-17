@@ -15,6 +15,12 @@ public class Program
         builder.Services.AddSingleton<Recipe>();
         builder.Services.AddSingleton<Ingredient>();
 
+        builder.Services.AddSingleton(sp =>
+        {
+            // var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            return new DBService("Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
+        });
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
