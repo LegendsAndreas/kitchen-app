@@ -25,16 +25,16 @@
     <div class="card" style="width: 50%; margin: 0 auto;">
         @if (_randomRecipe.Name != string.Empty)
         {
-            <img src="pics/PlaceHolderPic.jpg" alt="Random Meal"/>
+            <img src="pics/PlaceHolderPic.jpg" alt="Random Meal" class="card-img"/>
             <div class="card-header">
                 <h3>@_randomRecipe.Name</h3>
             </div>
             <div class="card-body border-primary">
                 <p class="card-text">
-                    - Calories: @_randomRecipe.TotalMacros.TotalCalories <br>
-                    - Carbs: @_randomRecipe.TotalMacros.TotalCarbs<br>
-                    - Fats: @_randomRecipe.TotalMacros.TotalFats<br>
-                    - Protein: @_randomRecipe.TotalMacros.TotalProtein
+                    - Calories: @_randomRecipe.TotalMacros.TotalCalories.ToString("0") <br>
+                    - Carbs: @_randomRecipe.TotalMacros.TotalCarbs.ToString("0")<br>
+                    - Fats: @_randomRecipe.TotalMacros.TotalFats.ToString("0")<br>
+                    - Protein: @_randomRecipe.TotalMacros.TotalProtein.ToString("0")
                 </p>
             </div>
         }

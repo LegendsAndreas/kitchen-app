@@ -58,6 +58,14 @@ class recipe_macros {
     total_protein FLOAT
 }
 
+class otherIngredient{
+    name TEXT
+    calories float
+    fats
+    carbs
+    protein
+}
+
 Recipe::ingredient ||--|{ Ingredient
 Recipe::macros --|| recipe_macros
 @enduml
