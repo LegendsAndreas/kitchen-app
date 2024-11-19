@@ -1,3 +1,77 @@
 ﻿@page "/ingredients"
+@rendermode InteractiveServer
+
+@inject DBService DbService;
 
 <PageTitle>Ingredients</PageTitle>
+
+@* Ingredient form *@
+<EditForm Model="@CurrentIngredient" OnValidSubmit="ValidIngredient" class="form-group">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <div class="form-group">
+        <div>
+            <label class="form-label">Name:</label>
+            <InputText id="meal-type" @bind-Value="CurrentIngredient.Name"/>
+            <ValidationMessage For="@(() => CurrentIngredient.Name)"/>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Recipe</button>
+</EditForm>
+
+
+@* Ingredients list *@
+<div class="container">
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
+        @foreach (var ingredient in _ingredients)
+        {
+            <div class="col" style="padding: 10px">
+                <div class="card h-100">
+                    <img src="pics/@ingredient.Image" alt="ops..." class="card-img"/> @* card-img helps the look of the cards. *@
+                    <div class="card-header">
+                        <h4>@ingredient.Name</h4>
+                    </div>
+                    <div class="card-body border-primary">
+                        <p class="card-text">
+                            - Calories: @ingredient.Calories.ToString("0") <br>
+                            - Carbs: @ingredient.Carbs.ToString("0") <br>
+                            - Fats: @ingredient.Fats.ToString("0") <br>
+                            - Protein: @ingredient.Protein.ToString("0")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+
+</div>
+
+
+@code {
+
+    private List<Ingredient> _ingredients = new();
+    private Ingredient CurrentIngredient = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            _ingredients = await DbService.GetIngredientsFromTableAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting ingredients list:" + ex.Message);
+            throw;
+        }
+    }
+
+    private void ValidIngredient()
+    {
+        StateHasChanged();
+    }
+
+}

@@ -98,6 +98,36 @@ public class DBService
         return ingredients;
     }
 
+    public async Task<List<Ingredient>> GetIngredientsFromTableAsync()
+    {
+        List<Ingredient> ingredients = new();
+        
+        await using (var conn = new NpgsqlConnection(_connectionString))
+        {
+            await conn.OpenAsync();
+            await using (var cmd = new NpgsqlCommand(
+                             "SELECT name, cals, fats, carbs, protein, image FROM ingredients;", conn))
+
+            await using (var reader = await cmd.ExecuteReaderAsync())
+            {
+                while (await reader.ReadAsync())
+                {
+                    ingredients.Add(new Ingredient
+                    {
+                        Name = reader.GetString(0),
+                        Calories = reader.GetFloat(1),
+                        Carbs = reader.GetFloat(2),
+                        Protein = reader.GetFloat(3),
+                        Fats = reader.GetFloat(4),
+                        Image = reader.GetString(5)
+                    });
+                }
+            }
+        }
+        
+        return ingredients;
+    }
+
     private async Task<Macros> GetMacrosAsync(int id)
     {
         Macros macros = new();
@@ -125,7 +155,6 @@ public class DBService
                 }
             }
         }
-
 
         return macros;
     }

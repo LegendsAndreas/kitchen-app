@@ -30,6 +30,7 @@ public class Ingredient
     public float Protein { get; set; }
     public float Fats { get; set; }
     public float Multiplier { get; set; }
+    public string Image { get; set; } = string.Empty;
 
     public void Clear()
     {
@@ -57,11 +58,6 @@ public class Ingredient
         Console.WriteLine("Protein: " + Protein);
         Console.WriteLine("Fats: " + Fats);
         Console.WriteLine("Multiplier: " + Multiplier);
-    }
-
-    public Ingredient GetIngredient()
-    {
-        return this;
     }
 }
 

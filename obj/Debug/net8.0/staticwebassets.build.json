@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "K4xiPIEW4A8GA/sD2qhZuwZmj6tA/UW+hi+ijKxa+5Y=",
+  "Hash": "YGltlJad0Tm+qjsjEicpaU2IwRLTSxay4rBGTtyJ/9Q=",
   "Source": "WebKitchen",
   "BasePath": "_content/WebKitchen",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "WebKitchen\\wwwroot",
       "Source": "WebKitchen",
-      "ContentRoot": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
       "BasePath": "_content/WebKitchen",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\bundle\\WebKitchen.styles.css",
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\bundle\\WebKitchen.styles.css",
       "SourceId": "WebKitchen",
       "SourceType": "Computed",
-      "ContentRoot": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
       "BasePath": "_content/WebKitchen",
       "RelativePath": "WebKitchen.styles.css",
       "AssetKind": "All",
@@ -33,13 +33,13 @@
       "AssetTraitValue": "ApplicationBundle",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\bundle\\WebKitchen.styles.css"
+      "OriginalItemSpec": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\bundle\\WebKitchen.styles.css"
     },
     {
-      "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
       "SourceId": "WebKitchen",
       "SourceType": "Computed",
-      "ContentRoot": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\",
       "BasePath": "_content/WebKitchen",
       "RelativePath": "WebKitchen.bundle.scp.css",
       "AssetKind": "All",
@@ -52,13 +52,13 @@
       "AssetTraitValue": "ProjectBundle",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css"
+      "OriginalItemSpec": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css"
     },
     {
-      "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\app.css",
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\app.css",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
       "BasePath": "_content/WebKitchen",
       "RelativePath": "app.css",
       "AssetKind": "All",
@@ -74,10 +74,10 @@
       "OriginalItemSpec": "wwwroot\\app.css"
     },
     {
-      "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
       "BasePath": "_content/WebKitchen",
       "RelativePath": "bootstrap/bootstrap.min.css",
       "AssetKind": "All",
@@ -93,10 +93,10 @@
       "OriginalItemSpec": "wwwroot\\bootstrap\\bootstrap.min.css"
     },
     {
-      "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css.map",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
       "BasePath": "_content/WebKitchen",
       "RelativePath": "bootstrap/bootstrap.min.css.map",
       "AssetKind": "All",
@@ -112,10 +112,10 @@
       "OriginalItemSpec": "wwwroot\\bootstrap\\bootstrap.min.css.map"
     },
     {
-      "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
       "BasePath": "_content/WebKitchen",
       "RelativePath": "css/bootstrap/bootstrap.min.css",
       "AssetKind": "All",
@@ -131,10 +131,10 @@
       "OriginalItemSpec": "wwwroot\\css\\bootstrap\\bootstrap.min.css"
     },
     {
-      "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\favicon.png",
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\favicon.png",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
       "BasePath": "_content/WebKitchen",
       "RelativePath": "favicon.png",
       "AssetKind": "All",
@@ -150,10 +150,10 @@
       "OriginalItemSpec": "wwwroot\\favicon.png"
     },
     {
-      "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\js\\bootstrap\\bootstrap.bundle.min.js",
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\js\\bootstrap\\bootstrap.bundle.min.js",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
       "BasePath": "_content/WebKitchen",
       "RelativePath": "js/bootstrap/bootstrap.bundle.min.js",
       "AssetKind": "All",
@@ -169,10 +169,10 @@
       "OriginalItemSpec": "wwwroot\\js\\bootstrap\\bootstrap.bundle.min.js"
     },
     {
-      "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\pics\\BackgroundImage.webp",
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BackgroundImage.webp",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
       "BasePath": "_content/WebKitchen",
       "RelativePath": "pics/BackgroundImage.webp",
       "AssetKind": "All",
@@ -188,10 +188,48 @@
       "OriginalItemSpec": "wwwroot\\pics\\BackgroundImage.webp"
     },
     {
-      "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\pics\\PlaceHolderPic.jpg",
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\LetMælk.jpg",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/LetMælk.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\LetMælk.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\MosedeKartofler.jpg",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/MosedeKartofler.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\MosedeKartofler.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\PlaceHolderPic.jpg",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
       "BasePath": "_content/WebKitchen",
       "RelativePath": "pics/PlaceHolderPic.jpg",
       "AssetKind": "All",

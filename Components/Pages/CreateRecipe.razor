@@ -183,6 +183,8 @@
         // We must create a new instance of Ingredient, where we then SPECIFICALLY assign its values to be equal TO THE VALUE
         // of the variables of CurrentIngredient. Otherwise, we will just be setting tempIngredient to point at CurrentIngredient,
         // which means that if CurrentIngredient changes, so does the ingredient that we insert into the list.
+        
+        // Turn this into a method for Ingredient.
         Ingredient transferIngredient = new()
         {
             Name = ing.Name,
