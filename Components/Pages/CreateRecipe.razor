@@ -101,6 +101,30 @@
     @* The current ingredients *@
 </div>
 
+<button type="submit" class="btn btn-primary">Add Existing Ingredient</button>
+<EditForm Model="@CurrentIngredient">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+    
+    <div class="form-group">
+        <div>
+            <label>Name</label>
+        </div>
+        <InputText id="namer" @bind-Value="CurrentIngredient.Name" />
+        <ValidationMessage For="@(() => CurrentIngredient.Name)"/>
+    </div>
+
+
+    <div class="form-group">
+        <div>
+            <label>Grams</label>
+        </div>
+        <InputNumber id="gramser" @bind-Value="CurrentIngredient.Grams" />
+        <ValidationMessage For="@(() => CurrentIngredient.Grams)"/>
+    </div>
+
+</EditForm>
+
 <div class="accordion" data-bs-theme="dark" id="accordionExample">
     <div class="accordion-item">
         <h2 class="accordion-header">
@@ -112,7 +136,7 @@
             <div class="accordion-body">
                 @if (_currentIngredients.Count == 0)
                 {
-                    <p>&#60Ingredients goes here&#62</p>
+                    <p>No ingredients have been added yet</p>
                 }
                 @foreach (var ingredient in _currentIngredients)
                 {
@@ -136,6 +160,7 @@
         </div>
     </div>
 </div>
+
 
 @code {
     List<Ingredient> _currentIngredients = new();
@@ -171,32 +196,11 @@
 
     public void ValidIngredient()
     {
-        Ingredient tempIngredient = TransferIngredient(CurrentIngredient);
+        Ingredient tempIngredient = CurrentIngredient.TransferIngredient(CurrentIngredient);
         tempIngredient.PrintIngredient();
 
         _currentIngredients.Add(tempIngredient);
         CurrentIngredient.Clear();
-    }
-
-    private Ingredient TransferIngredient(Ingredient ing)
-    {
-        // We must create a new instance of Ingredient, where we then SPECIFICALLY assign its values to be equal TO THE VALUE
-        // of the variables of CurrentIngredient. Otherwise, we will just be setting tempIngredient to point at CurrentIngredient,
-        // which means that if CurrentIngredient changes, so does the ingredient that we insert into the list.
-        
-        // Turn this into a method for Ingredient.
-        Ingredient transferIngredient = new()
-        {
-            Name = ing.Name,
-            Grams = ing.Grams,
-            Calories = ing.Calories,
-            Carbs = ing.Carbs,
-            Fats = ing.Fats,
-            Protein = ing.Protein
-        };
-        transferIngredient.SetMultiplier();
-
-        return transferIngredient;
     }
 
     private void DeleteRecipe(int index)

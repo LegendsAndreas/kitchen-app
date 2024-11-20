@@ -23,7 +23,7 @@ public class Macros
 
 public class Ingredient
 {
-    public string Name { get; set; } = string.Empty;
+    [Required]public string Name { get; set; } = string.Empty;
     public float Grams { get; set; }
     public float Calories { get; set; }
     public float Carbs { get; set; }
@@ -41,6 +41,7 @@ public class Ingredient
         Protein = 0f;
         Fats = 0f;
         Multiplier = 0f;
+        Image = string.Empty;
     }
 
     public void SetMultiplier()
@@ -58,6 +59,65 @@ public class Ingredient
         Console.WriteLine("Protein: " + Protein);
         Console.WriteLine("Fats: " + Fats);
         Console.WriteLine("Multiplier: " + Multiplier);
+    }
+
+    public Ingredient TransferIngredient(Ingredient ing)
+    {
+        // We must create a new instance of Ingredient, where we then SPECIFICALLY assign its values to be equal TO THE VALUE
+        // of the variables of CurrentIngredient. Otherwise, we will just be setting tempIngredient to point at CurrentIngredient,
+        // which means that if CurrentIngredient changes, so does the ingredient that we insert into the list.
+        
+        Ingredient transferIngredient = new()
+        {
+            Name = ing.Name,
+            Grams = ing.Grams,
+            Calories = ing.Calories,
+            Carbs = ing.Carbs,
+            Fats = ing.Fats,
+            Protein = ing.Protein
+        };
+        transferIngredient.SetMultiplier();
+
+        return transferIngredient;
+    }
+
+    public async Task AddIngredientToDb()
+    {
+        try
+        {
+            await using var conn = new NpgsqlConnection(
+                "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
+            await conn.OpenAsync();
+
+            // Maybe just insert the ingredients one at a time, where you first insert the recipe variables, then macros
+            // and then just array_append to the ingredients.
+
+            string query =
+                "INSERT INTO ingredients (name, cals, fats, carbs, protein, image) VALUES(@name, @cals, @fats, @carbs, @protein, @image)";
+            await using NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+            cmd.Parameters.AddWithValue("@name", Name);
+            cmd.Parameters.AddWithValue("@cals", Calories);
+            cmd.Parameters.AddWithValue("@fats", Fats);
+            cmd.Parameters.AddWithValue("@carbs", Carbs);
+            cmd.Parameters.AddWithValue("@protein", Protein);
+            cmd.Parameters.AddWithValue("@image", Image);
+            await RunAsyncQuery(cmd);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error making CMD: " + e.Message);
+            throw;
+        }
+    }
+    
+    private async Task RunAsyncQuery(NpgsqlCommand query)
+    {
+        int result = await query.ExecuteNonQueryAsync();
+        if (result < 0)
+            Console.WriteLine("No records affected.");
+        else
+            Console.WriteLine("Records affected: " + result);
     }
 }
 

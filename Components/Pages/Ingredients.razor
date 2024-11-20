@@ -3,22 +3,91 @@
 
 @inject DBService DbService;
 
+<style>
+    .ingredient-form {
+        background-color: #272B2F;
+        padding: 25px;
+        border-radius: 10px;
+        border: 3px solid #48d7ff;
+        color: #48d7ff;
+        font-family: "Calibri Light";
+        font-style: italic;
+        font-weight: 600;
+    }
+</style>
+
 <PageTitle>Ingredients</PageTitle>
 
 @* Ingredient form *@
-<EditForm Model="@CurrentIngredient" OnValidSubmit="ValidIngredient" class="form-group">
+<EditForm Model="@_currentIngredient" OnValidSubmit="ValidIngredientAsync">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
 
-    <div class="form-group">
-        <div>
-            <label class="form-label">Name:</label>
-            <InputText id="meal-type" @bind-Value="CurrentIngredient.Name"/>
-            <ValidationMessage For="@(() => CurrentIngredient.Name)"/>
-        </div>
-    </div>
+    <div class="container ingredient-form">
+        <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-1">
+            <div class="col">
+                <div>
+                    <label class="form-label">
+                        Name
+                    </label>
+                    <InputText id="name" @bind-Value="_currentIngredient.Name"/>
+                    <ValidationMessage For="@(() => _currentIngredient.Name)"/>
+                </div>
+            </div>
 
-    <button type="submit" class="btn btn-primary">Create Recipe</button>
+            <div class="col">
+                <div>
+                    <label class="form-label">
+                        <strong>Calories</strong>
+                    </label>
+                    <InputNumber id="cals" @bind-Value="_currentIngredient.Calories"/>
+                    <ValidationMessage For="@(() => _currentIngredient.Calories)"/>
+                </div>
+            </div>
+
+            <div class="col">
+                <div>
+                    <label class="form-label">
+                        <strong>Fats</strong>
+                    </label>
+                    <InputNumber id="fats" @bind-Value="_currentIngredient.Fats"/>
+                    <ValidationMessage For="@(() => _currentIngredient.Fats)"/>
+                </div>
+            </div>
+
+            <div class="col">
+                <div>
+                    <label class="form-label">
+                        <strong>Carbs</strong>
+                    </label>
+                    <InputNumber id="carbs" @bind-Value="_currentIngredient.Carbs"/>
+                    <ValidationMessage For="@(() => _currentIngredient.Carbs)"/>
+                </div>
+            </div>
+
+            <div class="col">
+                <div>
+                    <label class="form-label">
+                        <strong>Protein</strong>
+                    </label>
+                    <InputNumber id="protein" @bind-Value="_currentIngredient.Protein"/>
+                    <ValidationMessage For="@(() => _currentIngredient.Protein)"/>
+                </div>
+            </div>
+
+            <div class="col">
+                <div>
+                    <label class="form-label">
+                        <strong>Image</strong>
+                    </label>
+                    <InputText id="image" @bind-Value="_currentIngredient.Image"/>
+                    <ValidationMessage For="@(() => _currentIngredient.Image)"/>
+                </div>
+            </div>
+
+        </div>
+        <button type="submit" class="btn btn-primary">Add Ingredient</button>
+    </div>
 </EditForm>
 
 
@@ -30,16 +99,17 @@
         {
             <div class="col" style="padding: 10px">
                 <div class="card h-100">
-                    <img src="pics/@ingredient.Image" alt="ops..." class="card-img"/> @* card-img helps the look of the cards. *@
+                    <img src="pics/@ingredient.Image" alt="ops..."
+                         class="card-img"/> @* card-img helps the look of the cards. *@
                     <div class="card-header">
                         <h4>@ingredient.Name</h4>
                     </div>
                     <div class="card-body border-primary">
                         <p class="card-text">
                             - Calories: @ingredient.Calories.ToString("0") <br>
-                            - Carbs: @ingredient.Carbs.ToString("0") <br>
-                            - Fats: @ingredient.Fats.ToString("0") <br>
-                            - Protein: @ingredient.Protein.ToString("0")
+                            - Carbs: @ingredient.Carbs.ToString("0.0") <br>
+                            - Fats: @ingredient.Fats.ToString("0.0") <br>
+                            - Protein: @ingredient.Protein.ToString("0.0")
                         </p>
                     </div>
                 </div>
@@ -54,7 +124,7 @@
 @code {
 
     private List<Ingredient> _ingredients = new();
-    private Ingredient CurrentIngredient = new();
+    private Ingredient _currentIngredient = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,8 +139,12 @@
         }
     }
 
-    private void ValidIngredient()
+    private async Task ValidIngredientAsync()
     {
+        Ingredient tempIngredient = _currentIngredient.TransferIngredient(_currentIngredient);
+        await tempIngredient.AddIngredientToDb();
+        _currentIngredient.Clear();
+        
         StateHasChanged();
     }
 

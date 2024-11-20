@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\WebKitchen.csproj": {}
+    "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\WebKitchen.csproj": {}
   },
   "projects": {
-    "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\WebKitchen.csproj": {
+    "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\WebKitchen.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\WebKitchen.csproj",
+        "projectUniqueName": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\WebKitchen.csproj",
         "projectName": "WebKitchen",
-        "projectPath": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\WebKitchen.csproj",
-        "packagesPath": "C:\\Users\\A\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\",
+        "projectPath": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\WebKitchen.csproj",
+        "packagesPath": "C:\\Users\\andre\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\A\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\andre\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
