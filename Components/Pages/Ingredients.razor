@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 
 @inject DBService DbService;
+@inject List<Ingredient> IngredientsSingleton;
 
 <style>
     .ingredient-form {
@@ -86,7 +87,7 @@
             </div>
 
         </div>
-        <button type="submit" class="btn btn-primary">Add Ingredient</button>
+        <button type="submit" class="btn btn-primary" style="margin: 5px">Add Ingredient</button>
     </div>
 </EditForm>
 
@@ -95,7 +96,7 @@
 <div class="container">
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @foreach (var ingredient in _ingredients)
+        @foreach (var ingredient in IngredientsSingleton)
         {
             <div class="col" style="padding: 10px">
                 <div class="card h-100">
@@ -122,15 +123,13 @@
 
 
 @code {
-
-    private List<Ingredient> _ingredients = new();
     private Ingredient _currentIngredient = new();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            _ingredients = await DbService.GetIngredientsFromTableAsync();
+            IngredientsSingleton = await DbService.GetIngredientsFromTableAsync();
         }
         catch (Exception ex)
         {

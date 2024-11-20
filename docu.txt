@@ -24,3 +24,8 @@ SET id = temp_recipes.new_id
 FROM temp_recipes
 WHERE recipes.id = temp_recipes.id;
 SELECT setval('recipes_id_seq', (SELECT MAX(id) FROM recipes));
+
+-- This piece of shit:
+Despite the fact that the compiler does not mention this, the fact that the @-symbol is on the Model
+and not the actual CurrentIngredient variable, will crash the program with an InvalidOperationException.
+<EditForm @Model="CurrentIngredient" OnValidSubmit="ValidIngredient">

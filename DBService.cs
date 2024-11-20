@@ -100,6 +100,7 @@ public class DBService
 
     public async Task<List<Ingredient>> GetIngredientsFromTableAsync()
     {
+        Console.WriteLine("Getting ingredients...");
         List<Ingredient> ingredients = new();
         
         await using (var conn = new NpgsqlConnection(_connectionString))

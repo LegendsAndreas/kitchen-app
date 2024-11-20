@@ -2,8 +2,11 @@
 @rendermode InteractiveServer
 
 @* @inject DBService DbService; *@
+@inject DBService DbService;
 @inject Recipe CurrentRecipe;
 @inject Ingredient CurrentIngredient;
+@inject List<Ingredient> DbIngredients;
+@inject IJSRuntime JsRuntime;
 
 <PageTitle>Create Recipe</PageTitle>
 
@@ -12,21 +15,20 @@
         background-color: #313131;
         color: #48d7ff;
         border-radius: 5px;
-        font-family: "Calibri Light";
+        font-family: "Calibri Light", serif;
         display: inline-block;
-        border: 2px solid;
-        border-color: #48d7ff;
+        border: 2px solid #48d7ff;
+        font-style: italic;
+        font-weight: bold;
     }
 </style>
 
 <h1 class="create-recipe-h toast-header">
-    <strong>
-        <i>Create a new recipe!</i>
-    </strong>
+    Create a new recipe!
 </h1>
 
 <div>
-    <EditForm Model="@CurrentRecipe" OnValidSubmit="ValidRecipe">
+    <EditForm Model="@CurrentRecipe" OnValidSubmit="OnValidRecipe">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
 
@@ -54,7 +56,7 @@
         <button type="submit" class="btn btn-primary">Create Recipe</button>
     </EditForm>
 
-    <EditForm Model="@CurrentIngredient" OnValidSubmit="ValidIngredient">
+    <EditForm Model="@CurrentIngredient" OnValidSubmit="OnValidIngredient">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
 
@@ -101,17 +103,17 @@
     @* The current ingredients *@
 </div>
 
-<button type="submit" class="btn btn-primary">Add Existing Ingredient</button>
-<EditForm Model="@CurrentIngredient">
+
+<EditForm Model="@_currentDbIngredient" OnValidSubmit="OnValidDbIngredient">
     <DataAnnotationsValidator/>
     <ValidationSummary/>
-    
+
     <div class="form-group">
         <div>
             <label>Name</label>
         </div>
-        <InputText id="namer" @bind-Value="CurrentIngredient.Name" />
-        <ValidationMessage For="@(() => CurrentIngredient.Name)"/>
+        <InputText id="namer" @bind-Value="_currentDbIngredient.Name"/>
+        <ValidationMessage For="@(() => _currentDbIngredient.Name)"/>
     </div>
 
 
@@ -119,10 +121,10 @@
         <div>
             <label>Grams</label>
         </div>
-        <InputNumber id="gramser" @bind-Value="CurrentIngredient.Grams" />
-        <ValidationMessage For="@(() => CurrentIngredient.Grams)"/>
+        <InputNumber id="gramser" @bind-Value="_currentDbIngredient.Grams"/>
+        <ValidationMessage For="@(() => _currentDbIngredient.Grams)"/>
     </div>
-
+    <button type="submit" class="btn btn-primary">Add Existing Ingredient</button>
 </EditForm>
 
 <div class="accordion" data-bs-theme="dark" id="accordionExample">
@@ -161,11 +163,41 @@
     </div>
 </div>
 
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="liveToast" class="toast create-recipe-h" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="toast-body">
+            Existing ingredient not found in database.
+        </div>
+    </div>
+</div>
+
+<script>
+    function showInvalidIngredientToast() {
+        const toastLiveExample = document.getElementById('liveToast');
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+        toastBootstrap.show();
+    }
+</script>
 
 @code {
-    List<Ingredient> _currentIngredients = new();
+    readonly List<Ingredient> _currentIngredients = new();
+    readonly Ingredient _currentDbIngredient = new();
 
-    private async Task ValidRecipe()
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            DbIngredients = await DbService.GetIngredientsFromTableAsync();
+            Console.WriteLine("Aquired ingredients.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting ingredients list: " + ex.Message);
+            throw;
+        }
+    }
+
+    private async Task OnValidRecipe()
     {
         if (_currentIngredients.Count == 0)
         {
@@ -194,7 +226,7 @@
         _currentIngredients.Clear();
     }
 
-    public void ValidIngredient()
+    public void OnValidIngredient()
     {
         Ingredient tempIngredient = CurrentIngredient.TransferIngredient(CurrentIngredient);
         tempIngredient.PrintIngredient();
@@ -202,6 +234,32 @@
         _currentIngredients.Add(tempIngredient);
         CurrentIngredient.Clear();
     }
+
+    public async Task OnValidDbIngredient()
+    {
+        foreach (var ingredient in DbIngredients)
+        {
+            if (_currentDbIngredient.Name == ingredient.Name)
+            {
+                CurrentIngredient.Name = _currentDbIngredient.Name;
+                CurrentIngredient.Grams = _currentDbIngredient.Grams;
+                CurrentIngredient.Calories = ingredient.Calories;
+                CurrentIngredient.Fats = ingredient.Fats;
+                CurrentIngredient.Carbs = ingredient.Carbs;
+                CurrentIngredient.Protein = ingredient.Protein;
+
+                OnValidIngredient();
+
+                _currentDbIngredient.Clear();
+
+                return;
+            }
+        }
+
+        Console.WriteLine("Not a valid ingredient");
+        await JsRuntime.InvokeVoidAsync("showInvalidIngredientToast");
+    }
+
 
     private void DeleteRecipe(int index)
     {

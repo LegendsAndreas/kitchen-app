@@ -14,6 +14,7 @@ public class Program
 
         builder.Services.AddSingleton<Recipe>();
         builder.Services.AddSingleton<Ingredient>();
+        builder.Services.AddSingleton<List<Ingredient>>();
 
         builder.Services.AddSingleton(sp =>
         {

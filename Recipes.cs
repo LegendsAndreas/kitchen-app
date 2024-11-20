@@ -24,7 +24,7 @@ public class Macros
 public class Ingredient
 {
     [Required]public string Name { get; set; } = string.Empty;
-    public float Grams { get; set; }
+    [Required]public float Grams { get; set; }
     public float Calories { get; set; }
     public float Carbs { get; set; }
     public float Protein { get; set; }
@@ -53,7 +53,7 @@ public class Ingredient
     {
         Console.WriteLine("Printing Ingredient___");
         Console.WriteLine("Ingredient: " + Name);
-        Console.WriteLine("Calories: " + Grams);
+        Console.WriteLine("Grams: " + Grams);
         Console.WriteLine("Calories: " + Calories);
         Console.WriteLine("Carbs: " + Carbs);
         Console.WriteLine("Protein: " + Protein);
@@ -74,7 +74,8 @@ public class Ingredient
             Calories = ing.Calories,
             Carbs = ing.Carbs,
             Fats = ing.Fats,
-            Protein = ing.Protein
+            Protein = ing.Protein,
+            Image = ing.Image
         };
         transferIngredient.SetMultiplier();
 
