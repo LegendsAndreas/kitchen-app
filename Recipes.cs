@@ -317,4 +317,22 @@ public class Recipe
         else
             Console.WriteLine("Records affected: " + result);
     }
+
+    public async Task CorrectRecipeAsync()
+    {
+        using var conn = new NpgsqlConnection(
+            "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
+        conn.Open();
+        
+        const string query = "INSERT INTO";
+        
+        using (var cmd = new NpgsqlCommand(query, conn))
+        using (var reader = cmd.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+            }
+        }
+
+    }
 }

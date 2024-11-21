@@ -1,5 +1,69 @@
 @page "/adjust-recipe"
+@rendermode InteractiveServer
 
-<link rel="stylesheet" href="C:\Users\A\Desktop\Coding\C#\kitchen-app\Components\Layout\tester.css" />
+@using WebKitchen.Components.Pages.EditForms;
 
-<h1 class="test">UNDER CONSTRUCTION!</h1>
+<PageTitle>Edit</PageTitle>
+
+<style>
+    .custom-layout{
+        background-color: #313131;
+        color: #48d7ff;
+        border-radius: 5px;
+        font-family: "Calibri Light", serif;
+        display: inline-block;
+        border: 2px solid #48d7ff;
+        font-style: italic;
+        font-weight: bold;
+    }
+    
+    .custom-layout:hover{
+        background-color: #313131;
+        color: #48d7ff;
+    }
+</style>
+
+<div class="dropdown">
+    <a class="btn btn-secondary custom-layout dropdown-toggle btn-lg" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Choose an option
+    </a>
+
+    <ul class="dropdown-menu">
+        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("mealType"))">Recipe Meal Type</button></li>
+        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("name"))">Recipe Name</button></li>
+        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("ingredient"))">Recipe Ingredient</button></li>
+        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("macros"))">Recipe Macros</button></li>
+        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("deleteRecipe"))">Delete Recipe</button></li>
+        <li><hr class="dropdown-divider"/></li>
+        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("deleteIngredient"))">Delete Ingredient</button></li>
+    </ul>
+</div>
+
+@switch (_option)
+{
+    case "mealType":
+        <EditMealTypeForm/>
+        break;
+    case "name":
+        <EditNameForm/>
+        break;
+    case "ingredient":
+        <EditIngredientForm/>
+        break;
+    case "macros":
+        <EditMacrosForm/>
+        break;
+}
+
+@code {
+
+    private string _option = string.Empty;
+    
+    private void HandleOptionChange(string option)
+    {
+        Console.WriteLine("Test");
+        _option = option;
+        StateHasChanged();
+    }
+
+}

@@ -1,0 +1,23 @@
+﻿@inject Recipe CurrentRecipe;
+
+<EditForm Model="@CurrentRecipe" OnValidSubmit="@HandleValidSubmit">
+    <div>
+        <label>Recipe Name</label>
+        <InputText id="name" @bind-Value="CurrentRecipe.Name"/>
+    </div>
+
+    <div>
+        <label>Recipe Meal Type</label>
+        <InputText id="type" @bind-Value="CurrentRecipe.MealType"/>
+    </div>
+</EditForm>
+
+@code{
+
+    private async Task HandleValidSubmit()
+    {
+        await CurrentRecipe.CorrectRecipeAsync();
+        CurrentRecipe.Clear();
+    }
+
+}
