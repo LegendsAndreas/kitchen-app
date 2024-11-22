@@ -3,7 +3,7 @@ using Npgsql;
 
 namespace WebKitchen;
 
-public class Macros
+public class Macros : SharedMethods
 {
     public float TotalCalories { get; set; }
     public float TotalFats { get; set; }
@@ -19,12 +19,14 @@ public class Macros
         Console.WriteLine("Total carbs: " + TotalCarbs);
         Console.WriteLine("Total protein: " + TotalProtein);
     }
+    
+
 }
 
 public class Ingredient
 {
-    [Required]public string Name { get; set; } = string.Empty;
-    [Required]public float Grams { get; set; }
+    [Required] public string Name { get; set; } = string.Empty;
+    [Required] public float Grams { get; set; }
     public float Calories { get; set; }
     public float Carbs { get; set; }
     public float Protein { get; set; }
@@ -66,7 +68,7 @@ public class Ingredient
         // We must create a new instance of Ingredient, where we then SPECIFICALLY assign its values to be equal TO THE VALUE
         // of the variables of CurrentIngredient. Otherwise, we will just be setting tempIngredient to point at CurrentIngredient,
         // which means that if CurrentIngredient changes, so does the ingredient that we insert into the list.
-        
+
         Ingredient transferIngredient = new()
         {
             Name = ing.Name,
@@ -111,7 +113,7 @@ public class Ingredient
             throw;
         }
     }
-    
+
     private async Task RunAsyncQuery(NpgsqlCommand query)
     {
         int result = await query.ExecuteNonQueryAsync();
@@ -122,7 +124,7 @@ public class Ingredient
     }
 }
 
-public class Recipe
+public class Recipe : SharedMethods
 {
     public int Number;
     [Required] public string MealType { get; set; } = string.Empty;
@@ -254,7 +256,7 @@ public class Recipe
     public void GetRandomRecipe()
     {
         List<Recipe> recipes = GetDinnerRecipes();
-        Recipe randomRecipe = recipes[new Random().Next(0, recipes.Count-1)];
+        Recipe randomRecipe = recipes[new Random().Next(0, recipes.Count - 1)];
         SetRecipe(randomRecipe);
     }
 
@@ -268,6 +270,7 @@ public class Recipe
         {
             Ingredients = recipe.Ingredients;
         }
+
         if (recipe.TotalMacros.TotalCalories != 0)
         {
             TotalMacros = recipe.TotalMacros;
@@ -280,9 +283,10 @@ public class Recipe
         using var conn = new NpgsqlConnection(
             "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
         conn.Open();
-        
-        const string query = "SELECT id, meal_type, name, image, (macros).total_protein, (macros).total_fats, (macros).total_carbs, (macros).total_calories FROM recipes WHERE meal_type = 'D';";
-        
+
+        const string query =
+            "SELECT id, meal_type, name, image, (macros).total_protein, (macros).total_fats, (macros).total_carbs, (macros).total_calories FROM recipes WHERE meal_type = 'D';";
+
         using (var cmd = new NpgsqlCommand(query, conn))
         using (var reader = cmd.ExecuteReader())
         {
@@ -309,30 +313,71 @@ public class Recipe
         return recipes;
     }
 
-    private async Task RunAsyncQuery(NpgsqlCommand query)
+
+
+    public async Task CorrectRecipeAsync(string type, string name)
+    {
+        await using var conn = new NpgsqlConnection(
+            "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
+        conn.Open();
+
+        const string query = "UPDATE recipes SET meal_type = @type WHERE name = @name";
+
+        await using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@type", type);
+        cmd.Parameters.AddWithValue("@name", name);
+
+        await RunAsyncQuery(cmd);
+    }
+    
+    public async Task CorrectRecipeNameAsync(string currentName, string updatedName)
+    {
+        await using var conn = new NpgsqlConnection(
+            "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
+        conn.Open();
+
+        const string query = "UPDATE recipes SET name = @currentName WHERE name = @updatedName";
+
+        await using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@currentName", currentName);
+        cmd.Parameters.AddWithValue("@updatedName", updatedName);
+
+        await RunAsyncQuery(cmd);
+    }
+    
+    public async Task CorrectRecipeImageAsync(string recipeName, string imageName)
+    {
+        await using var conn = new NpgsqlConnection(
+            "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
+        conn.Open();
+
+        string query = $"UPDATE recipes SET image = '{imageName}' WHERE name = '{recipeName}'";
+        await using var cmd = new NpgsqlCommand(query, conn);
+
+        await RunAsyncQuery(cmd);
+    }
+    
+    /*public async Task CorrectMacrosAsync(float macroValue, string recipeName, string macroType)
+    {
+        await using var conn = new NpgsqlConnection(
+            "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
+        conn.Open();
+
+        string query = $"UPDATE recipes SET (macros).total_{macroType} = {macroValue} WHERE name = {recipeName}";
+
+        await using var cmd = new NpgsqlCommand(query, conn);
+        await RunAsyncQuery(cmd);
+    }*/
+}
+
+public abstract class SharedMethods()
+{
+    public async Task RunAsyncQuery(NpgsqlCommand query)
     {
         int result = await query.ExecuteNonQueryAsync();
         if (result < 0)
             Console.WriteLine("No records affected.");
         else
             Console.WriteLine("Records affected: " + result);
-    }
-
-    public async Task CorrectRecipeAsync()
-    {
-        using var conn = new NpgsqlConnection(
-            "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
-        conn.Open();
-        
-        const string query = "INSERT INTO";
-        
-        using (var cmd = new NpgsqlCommand(query, conn))
-        using (var reader = cmd.ExecuteReader())
-        {
-            while (reader.Read())
-            {
-            }
-        }
-
     }
 }

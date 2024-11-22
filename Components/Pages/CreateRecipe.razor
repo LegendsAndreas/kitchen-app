@@ -1,4 +1,6 @@
 @page "/create-recipe"
+<PageTitle>Create Recipe</PageTitle>
+
 @rendermode InteractiveServer
 
 @* @inject DBService DbService; *@
@@ -8,129 +10,148 @@
 @inject List<Ingredient> DbIngredients;
 @inject IJSRuntime JsRuntime;
 
-<PageTitle>Create Recipe</PageTitle>
 
 <style>
-    .custom-layout{
+    .border-layout {
+        border-radius: 5px;
+        border: 2px solid #48d7ff;
+    }
+
+    .font-layout {
         background-color: #313131;
         color: #48d7ff;
-        border-radius: 5px;
         font-family: "Calibri Light", serif;
-        display: inline-block;
-        border: 2px solid #48d7ff;
         font-style: italic;
         font-weight: bold;
     }
+
+    .custom-header {
+        display: inline-block;
+        padding: 10px;
+    }
+
+    .forms-layout {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+    }
+    
+    .paddage{
+        padding: 25px;
+        margin: 10px;
+    }
+    
 </style>
 
-<h1 class="custom-layout toast-header">
+<h1 class="custom-header font-layout border-layout toast-header">
     Create a new recipe!
 </h1>
 
-<div>
+<div class="forms-layout font-layout border-layout">
     <EditForm Model="@CurrentRecipe" OnValidSubmit="OnValidRecipe">
         <DataAnnotationsValidator/>
-        <ValidationSummary/>
 
-        <div class="form-group">
-            <div>
-                <label class="form-label">Meal Type:</label>
-                <InputText id="meal-type" @bind-Value="CurrentRecipe.MealType"/>
-                <ValidationMessage For="@(() => CurrentRecipe.MealType)"/>
+        <div class="container text-center border-layout paddage">
+            <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
+                <div class="col">
+                    <label class="form-label">Meal Type:</label>
+                    <InputText id="meal-type" @bind-Value="CurrentRecipe.MealType"/>
+                    <ValidationMessage For="@(() => CurrentRecipe.MealType)"/>
+                </div>
+
+                <div class="col">
+                    <label>Recipe Name:</label>
+                    <InputText id="name" @bind-Value="CurrentRecipe.Name"/>
+                    <ValidationMessage For="@(() => CurrentRecipe.Name)"/>
+                </div>
+
+                <div class="col">
+                    <label>Image:</label>
+                    <InputText id="image" @bind-Value="CurrentRecipe.Image"/>
+                    <ValidationMessage For="@(() => CurrentRecipe.Image)"/>
+                </div>
+                <button type="submit" class="btn btn-primary col">Create Recipe</button>
             </div>
-
-            <div>
-                <label>Recipe Name:</label>
-                <InputText id="name" @bind-Value="CurrentRecipe.Name"/>
-                <ValidationMessage For="@(() => CurrentRecipe.Name)"/>
-            </div>
-
-            <div>
-                <label>Image:</label>
-                <InputText id="image" @bind-Value="CurrentRecipe.Image"/>
-                <ValidationMessage For="@(() => CurrentRecipe.Image)"/>
-            </div>
-
         </div>
 
-        <button type="submit" class="btn btn-primary">Create Recipe</button>
     </EditForm>
 
     <EditForm Model="@CurrentIngredient" OnValidSubmit="OnValidIngredient">
         <DataAnnotationsValidator/>
-        <ValidationSummary/>
 
-        <div class="form-group">
-            <div>
-                <label>Ingredient Name:</label>
-                <InputText id="ingredient-name" @bind-Value="CurrentIngredient.Name"/>
-                <ValidationMessage For="@(() => CurrentIngredient.Name)"/>
-            </div>
+        <div class="container text-center border-layout paddage">
+            <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
+                <div class="col">
+                    <label>Ingredient Name:</label>
+                    <InputText id="ingredient-name" @bind-Value="CurrentIngredient.Name"/>
+                    <ValidationMessage For="@(() => CurrentIngredient.Name)"/>
+                </div>
 
-            <div>
-                <label>Kg:</label>
-                <InputNumber id="kg" @bind-Value="CurrentIngredient.Grams"/>
-                <ValidationMessage For="@(() => CurrentIngredient.Grams)"/>
-            </div>
+                <div class="col">
+                    <label>Grams:</label>
+                    <InputNumber id="kg" @bind-Value="CurrentIngredient.Grams"/>
+                    <ValidationMessage For="@(() => CurrentIngredient.Grams)"/>
+                </div>
 
-            <div>
-                <label>Calories (pr. 100g):</label>
-                <InputNumber id="calories" @bind-Value="CurrentIngredient.Calories"/>
-                <ValidationMessage For="@(() => CurrentIngredient.Calories)"/>
-            </div>
+                <div class="col">
+                    <label>Calories (pr. 100g):</label>
+                    <InputNumber id="calories" @bind-Value="CurrentIngredient.Calories"/>
+                    <ValidationMessage For="@(() => CurrentIngredient.Calories)"/>
+                </div>
 
-            <div>
-                <label>Carbs (pr. 100g):</label>
-                <InputNumber id="carbs" @bind-Value="CurrentIngredient.Carbs"/>
-                <ValidationMessage For="@(() => CurrentIngredient.Carbs)"/>
-            </div>
+                <div class="col">
+                    <label>Carbs (pr. 100g):</label>
+                    <InputNumber id="carbs" @bind-Value="CurrentIngredient.Carbs"/>
+                    <ValidationMessage For="@(() => CurrentIngredient.Carbs)"/>
+                </div>
 
-            <div>
-                <label>Fats (pr. 100g):</label>
-                <InputNumber id="fats" @bind-Value="CurrentIngredient.Fats"/>
-                <ValidationMessage For="@(() => CurrentIngredient.Fats)"/>
-            </div>
+                <div class="col">
+                    <label>Fats (pr. 100g):</label>
+                    <InputNumber id="fats" @bind-Value="CurrentIngredient.Fats"/>
+                    <ValidationMessage For="@(() => CurrentIngredient.Fats)"/>
+                </div>
 
-            <div>
-                <label>Protein (pr. 100g):</label>
-                <InputNumber id="protein" @bind-Value="CurrentIngredient.Protein"/>
-                <ValidationMessage For="@(() => CurrentIngredient.Protein)"/>
+                <div class="col">
+                    <label>Protein (pr. 100g):</label>
+                    <InputNumber id="protein" @bind-Value="CurrentIngredient.Protein"/>
+                    <ValidationMessage For="@(() => CurrentIngredient.Protein)"/>
+                </div>
+            <button type="submit" class="btn btn-primary">Add Ingredient</button>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Add Ingredient</button>
     </EditForm>
 
-    @* The current ingredients *@
+
+    <EditForm Model="@_currentDbIngredient" OnValidSubmit="OnValidDbIngredient">
+        <DataAnnotationsValidator/>
+        <div class="container text-center border-layout paddage">
+            <div class="row row-cols-1 row-cols-sd-2 row-cols-md-2 row-cols-lg-2 g-3">
+
+                <div class="col">
+                    <label>Name</label>
+                    <InputText id="namer" @bind-Value="_currentDbIngredient.Name"/>
+                    <ValidationMessage For="@(() => _currentDbIngredient.Name)"/>
+                </div>
+
+
+                <div class="col">
+                    <label>Grams</label>
+                    <InputNumber id="gramser" @bind-Value="_currentDbIngredient.Grams"/>
+                    <ValidationMessage For="@(() => _currentDbIngredient.Grams)"/>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Existing Ingredient</button>
+            </div>
+        </div>
+    </EditForm>
 </div>
 
-
-<EditForm Model="@_currentDbIngredient" OnValidSubmit="OnValidDbIngredient">
-    <DataAnnotationsValidator/>
-    <ValidationSummary/>
-
-    <div class="form-group">
-        <div>
-            <label>Name</label>
-        </div>
-        <InputText id="namer" @bind-Value="_currentDbIngredient.Name"/>
-        <ValidationMessage For="@(() => _currentDbIngredient.Name)"/>
-    </div>
-
-
-    <div class="form-group">
-        <div>
-            <label>Grams</label>
-        </div>
-        <InputNumber id="gramser" @bind-Value="_currentDbIngredient.Grams"/>
-        <ValidationMessage For="@(() => _currentDbIngredient.Grams)"/>
-    </div>
-    <button type="submit" class="btn btn-primary">Add Existing Ingredient</button>
-</EditForm>
-
+@* The current ingredients *@
 <div class="accordion" data-bs-theme="dark" id="accordionExample">
     <div class="accordion-item">
         <h2 class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                    aria-expanded="true" aria-controls="collapseOne">
                 Added Ingredients
             </button>
         </h2>
@@ -138,33 +159,37 @@
             <div class="accordion-body">
                 @if (_currentIngredients.Count == 0)
                 {
-                    <p>No ingredients have been added yet</p>
+                <p>No ingredients added</p>
                 }
                 @foreach (var ingredient in _currentIngredients)
                 {
-                    <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            @ingredient.Name
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li class="dropdown-item">Calories: @ingredient.Calories.ToString("0")</li>
-                            <li class="dropdown-item">Grams: @ingredient.Grams.ToString("0")</li>
-                            <li class="dropdown-item">Protein: @ingredient.Protein.ToString("0")</li>
-                            <li class="dropdown-item">Fat: @ingredient.Fats.ToString("0")</li>
-                            <li class="dropdown-item">Carbs: @ingredient.Carbs.ToString("0")</li>
-                        </ul>
-                        <button type="submit" class="btn btn-danger" @onclick="() => DeleteRecipe(_currentIngredients.IndexOf(ingredient))">
-                            <strong>X</strong>
-                        </button>
-                    </div>
+                <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        @ingredient.Name
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li class="dropdown-item">Calories: @ingredient.Calories.ToString("0")</li>
+                        <li class="dropdown-item">Grams: @ingredient.Grams.ToString("0")</li>
+                        <li class="dropdown-item">Protein: @ingredient.Protein.ToString("0")</li>
+                        <li class="dropdown-item">Fat: @ingredient.Fats.ToString("0")</li>
+                        <li class="dropdown-item">Carbs: @ingredient.Carbs.ToString("0")</li>
+                    </ul>
+                    <button type="submit" class="btn btn-danger"
+                            @onclick="() => DeleteRecipe(_currentIngredients.IndexOf(ingredient))">
+                        <strong>X</strong>
+                    </button>
+                </div>
                 }
             </div>
         </div>
     </div>
 </div>
 
+@* toaster *@
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="liveToast" class="toast custom-layout" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+    <div id="liveToast" class="toast custom-header" role="alert" aria-live="assertive" aria-atomic="true"
+         data-bs-delay="5000">
         <div class="toast-body">
             Existing ingredient not found in database.
         </div>
@@ -180,91 +205,91 @@
 </script>
 
 @code {
-    readonly List<Ingredient> _currentIngredients = new();
-    readonly Ingredient _currentDbIngredient = new();
+readonly List<Ingredient> _currentIngredients = new();
+readonly Ingredient _currentDbIngredient = new();
 
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            DbIngredients = await DbService.GetIngredientsFromTableAsync();
-            Console.WriteLine("Aquired ingredients.");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error getting ingredients list: " + ex.Message);
-            throw;
-        }
-    }
+protected override async Task OnInitializedAsync()
+{
+try
+{
+DbIngredients = await DbService.GetIngredientsFromTableAsync();
+Console.WriteLine("Aquired ingredients.");
+}
+catch (Exception ex)
+{
+Console.WriteLine("Error getting ingredients list: " + ex.Message);
+throw;
+}
+}
 
-    private async Task OnValidRecipe()
-    {
-        if (_currentIngredients.Count == 0)
-        {
-            Console.WriteLine("There are no ingredients.");
-            return;
-        }
+private async Task OnValidRecipe()
+{
+if (_currentIngredients.Count == 0)
+{
+Console.WriteLine("There are no ingredients.");
+return;
+}
 
-        CurrentRecipe.Ingredients = _currentIngredients;
-        CurrentRecipe.SetTotalMacros();
+CurrentRecipe.Ingredients = _currentIngredients;
+CurrentRecipe.SetTotalMacros();
 
-        Console.WriteLine("Print current recipe");
-        CurrentRecipe.PrintRecipe();
+Console.WriteLine("Print current recipe");
+CurrentRecipe.PrintRecipe();
 
-        try
-        {
-            await CurrentRecipe.AddRecipeToDatabase();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Error sending recipe to database: " + e.Message);
-            throw;
-        }
+try
+{
+await CurrentRecipe.AddRecipeToDatabase();
+}
+catch (Exception e)
+{
+Console.WriteLine("Error sending recipe to database: " + e.Message);
+throw;
+}
 
-        CurrentRecipe.Clear();
-        CurrentIngredient.Clear();
-        _currentIngredients.Clear();
-    }
+CurrentRecipe.Clear();
+CurrentIngredient.Clear();
+_currentIngredients.Clear();
+}
 
-    public void OnValidIngredient()
-    {
-        Ingredient tempIngredient = CurrentIngredient.TransferIngredient(CurrentIngredient);
-        tempIngredient.PrintIngredient();
+public void OnValidIngredient()
+{
+Ingredient tempIngredient = CurrentIngredient.TransferIngredient(CurrentIngredient);
+tempIngredient.PrintIngredient();
 
-        _currentIngredients.Add(tempIngredient);
-        CurrentIngredient.Clear();
-    }
+_currentIngredients.Add(tempIngredient);
+CurrentIngredient.Clear();
+}
 
-    public async Task OnValidDbIngredient()
-    {
-        foreach (var ingredient in DbIngredients)
-        {
-            if (_currentDbIngredient.Name == ingredient.Name)
-            {
-                CurrentIngredient.Name = _currentDbIngredient.Name;
-                CurrentIngredient.Grams = _currentDbIngredient.Grams;
-                CurrentIngredient.Calories = ingredient.Calories;
-                CurrentIngredient.Fats = ingredient.Fats;
-                CurrentIngredient.Carbs = ingredient.Carbs;
-                CurrentIngredient.Protein = ingredient.Protein;
+public async Task OnValidDbIngredient()
+{
+foreach (var ingredient in DbIngredients)
+{
+if (_currentDbIngredient.Name == ingredient.Name)
+{
+CurrentIngredient.Name = _currentDbIngredient.Name;
+CurrentIngredient.Grams = _currentDbIngredient.Grams;
+CurrentIngredient.Calories = ingredient.Calories;
+CurrentIngredient.Fats = ingredient.Fats;
+CurrentIngredient.Carbs = ingredient.Carbs;
+CurrentIngredient.Protein = ingredient.Protein;
 
-                OnValidIngredient();
+OnValidIngredient();
 
-                _currentDbIngredient.Clear();
+_currentDbIngredient.Clear();
 
-                return;
-            }
-        }
+return;
+}
+}
 
-        Console.WriteLine("Not a valid ingredient");
-        await JsRuntime.InvokeVoidAsync("showInvalidIngredientToast");
-    }
+Console.WriteLine("Not a valid ingredient");
+await JsRuntime.InvokeVoidAsync("showInvalidIngredientToast");
+}
 
 
-    private void DeleteRecipe(int index)
-    {
-        _currentIngredients.RemoveAt(index);
-        StateHasChanged();
-    }
+private void DeleteRecipe(int index)
+{
+_currentIngredients.RemoveAt(index);
+StateHasChanged();
+}
 
 }

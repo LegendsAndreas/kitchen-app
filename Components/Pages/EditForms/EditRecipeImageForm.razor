@@ -1,0 +1,27 @@
+@inject Recipe CurrentRecipe;
+
+<EditForm Model="@CurrentRecipe" OnValidSubmit="@HandleValidSubmit">
+    <div>
+        <label>Recipe Name</label>
+        <InputText id="name" @bind-Value="_recipeName"/>
+    </div>
+
+    <div>
+        <label>Updated Image</label>
+        <InputText id="type" @bind-Value="_updatedImage"/>
+    </div>
+    <button class="btn btn-primary" type="submit">Update</button>
+</EditForm>
+
+@code{
+    string _recipeName = string.Empty;
+    string _updatedImage = string.Empty;
+
+    private async Task HandleValidSubmit()
+    {
+        await CurrentRecipe.CorrectRecipeImageAsync(_recipeName, _updatedImage);
+        // We never assign the CurrentRecipe, but I just want to be sure.
+        CurrentRecipe.Clear();
+    }
+
+}

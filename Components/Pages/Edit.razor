@@ -1,12 +1,12 @@
-@page "/adjust-recipe"
+@page "/edit"
+<PageTitle>Edit</PageTitle>
+
 @rendermode InteractiveServer
 
 @using WebKitchen.Components.Pages.EditForms;
 
-<PageTitle>Edit</PageTitle>
-
 <style>
-    .custom-layout{
+    .custom-header{
         background-color: #313131;
         color: #48d7ff;
         border-radius: 5px;
@@ -17,7 +17,7 @@
         font-weight: bold;
     }
     
-    .custom-layout:hover{
+    .custom-header:hover{
         background-color: #313131;
         color: #48d7ff;
     }
@@ -32,9 +32,10 @@
         <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("mealType"))">Recipe Meal Type</button></li>
         <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("name"))">Recipe Name</button></li>
         <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("ingredient"))">Recipe Ingredient</button></li>
-        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("macros"))">Recipe Macros</button></li>
+        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("image"))">Recipe Image</button></li>
         <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("deleteRecipe"))">Delete Recipe</button></li>
         <li><hr class="dropdown-divider"/></li>
+        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("ingredientDb"))">Ingredient in Database</button></li>
         <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("deleteIngredient"))">Delete Ingredient</button></li>
     </ul>
 </div>
@@ -50,8 +51,11 @@
     case "ingredient":
         <EditIngredientForm/>
         break;
-    case "macros":
-        <EditMacrosForm/>
+    case "image":
+        <EditRecipeImageForm/>
+        break;
+    default:
+        <p>Not an option</p>
         break;
 }
 
@@ -61,7 +65,6 @@
     
     private void HandleOptionChange(string option)
     {
-        Console.WriteLine("Test");
         _option = option;
         StateHasChanged();
     }

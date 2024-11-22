@@ -1,3 +1,61 @@
 @page "/categories"
+@rendermode InteractiveServer
+<PageTitle>Categories</PageTitle>
 
-<h1>UNDER CONSTRUCTION!</h1>
+@inject DBService DbService;
+
+<div class="dropdown">
+    <a class="btn btn-secondary custom-layout dropdown-toggle btn-lg" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Sort Ascending by...
+    </a>
+
+    <ul class="dropdown-menu">
+        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("id"))">Recipe Id</button></li>
+        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("meal_type"))">Recipe Meal Type</button></li>
+        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("name"))">Recipe Name</button></li>
+        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("(macros).total_calories"))">Total Calories</button></li>
+        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("(macros).total_carbs"))">Total Carbs</button></li>
+        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("(macros).total_fats"))">Total Fats</button></li>
+        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("(macros).total_protein"))">Total Protein</button></li>
+    </ul>
+</div>
+
+<div class="container">
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
+        @foreach (var recipe in _recipes)
+        {
+            <div class="col" style="padding: 10px">
+                <div class="card h-100"> 
+                    <img src="@recipe.Image" alt="ops..." class="card-img"/> @* card-img helps the look of the cards. *@
+                    <div class="card-header">
+                        <h4>@recipe.Name</h4>
+                    </div>
+                    <div class="card-body border-primary">
+                        <p class="card-text">
+                            - Calories: @recipe.TotalMacros.TotalCalories.ToString("0") <br>
+                            - Carbs: @recipe.TotalMacros.TotalCarbs.ToString("0") <br>
+                            - Fats: @recipe.TotalMacros.TotalFats.ToString("0") <br>
+                            - Protein: @recipe.TotalMacros.TotalProtein.ToString("0")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    
+
+</div>
+
+@code{
+
+    List<Recipe> _recipes = new();
+
+    private async Task SortRecipesByCategory(string catagory)
+    {
+        
+        _recipes = await DbService.GetRecipesByCategoryAsync(catagory);
+        StateHasChanged();
+    }
+
+}

@@ -1,4 +1,6 @@
 ﻿@page "/ingredients"
+<PageTitle>Ingredients</PageTitle>
+
 @rendermode InteractiveServer
 
 @inject DBService DbService;
@@ -11,9 +13,9 @@
         border-radius: 10px;
         border: 3px solid #48d7ff;
         color: #48d7ff;
-        font-family: "Calibri Light";
+        font-family: "Calibri Light", sans-serif;
         font-style: italic;
-        font-weight: 600;
+        font-weight: bold;
     }
 </style>
 
@@ -22,68 +24,55 @@
 @* Ingredient form *@
 <EditForm Model="@_currentIngredient" OnValidSubmit="ValidIngredientAsync">
     <DataAnnotationsValidator/>
-    <ValidationSummary/>
 
     <div class="container ingredient-form">
         <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-1">
             <div class="col">
-                <div>
-                    <label class="form-label">
-                        Name
-                    </label>
-                    <InputText id="name" @bind-Value="_currentIngredient.Name"/>
-                    <ValidationMessage For="@(() => _currentIngredient.Name)"/>
-                </div>
+                <label class="form-label">
+                    Name
+                </label>
+                <InputText id="name" @bind-Value="_currentIngredient.Name"/>
+                <ValidationMessage For="@(() => _currentIngredient.Name)"/>
             </div>
 
             <div class="col">
-                <div>
                     <label class="form-label">
                         <strong>Calories</strong>
                     </label>
                     <InputNumber id="cals" @bind-Value="_currentIngredient.Calories"/>
                     <ValidationMessage For="@(() => _currentIngredient.Calories)"/>
-                </div>
             </div>
 
             <div class="col">
-                <div>
                     <label class="form-label">
                         <strong>Fats</strong>
                     </label>
                     <InputNumber id="fats" @bind-Value="_currentIngredient.Fats"/>
                     <ValidationMessage For="@(() => _currentIngredient.Fats)"/>
-                </div>
             </div>
 
             <div class="col">
-                <div>
                     <label class="form-label">
                         <strong>Carbs</strong>
                     </label>
                     <InputNumber id="carbs" @bind-Value="_currentIngredient.Carbs"/>
                     <ValidationMessage For="@(() => _currentIngredient.Carbs)"/>
-                </div>
             </div>
 
             <div class="col">
-                <div>
                     <label class="form-label">
                         <strong>Protein</strong>
                     </label>
                     <InputNumber id="protein" @bind-Value="_currentIngredient.Protein"/>
                     <ValidationMessage For="@(() => _currentIngredient.Protein)"/>
-                </div>
             </div>
 
             <div class="col">
-                <div>
                     <label class="form-label">
                         <strong>Image</strong>
                     </label>
                     <InputText id="image" @bind-Value="_currentIngredient.Image"/>
                     <ValidationMessage For="@(() => _currentIngredient.Image)"/>
-                </div>
             </div>
 
         </div>
@@ -143,7 +132,7 @@
         Ingredient tempIngredient = _currentIngredient.TransferIngredient(_currentIngredient);
         await tempIngredient.AddIngredientToDb();
         _currentIngredient.Clear();
-        
+
         StateHasChanged();
     }
 

@@ -10,13 +10,14 @@
         <label>Recipe Meal Type</label>
         <InputText id="type" @bind-Value="CurrentRecipe.MealType"/>
     </div>
+    <button class="btn btn-primary" type="submit">Update</button>
 </EditForm>
 
 @code{
 
     private async Task HandleValidSubmit()
     {
-        await CurrentRecipe.CorrectRecipeAsync();
+        await CurrentRecipe.CorrectRecipeAsync(CurrentRecipe.MealType, CurrentRecipe.Name);
         CurrentRecipe.Clear();
     }
 

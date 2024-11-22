@@ -1,1 +1,25 @@
-﻿<div>Form Name</div>
+﻿@inject Recipe CurrentRecipe;
+
+<EditForm Model="@CurrentRecipe" OnValidSubmit="@HandleValidSubmit">
+    <div>
+        <label>Current Name</label>
+        <InputText id="name" @bind-Value="_currentName"/>
+    </div>
+
+    <div>
+        <label>Updated Name</label>
+        <InputText id="type" @bind-Value="CurrentRecipe.Name"/>
+    </div>
+    <button class="btn btn-primary" type="submit">Update</button>
+</EditForm>
+
+@code{
+    string _currentName = string.Empty;
+
+    private async Task HandleValidSubmit()
+    {
+        await CurrentRecipe.CorrectRecipeNameAsync(_currentName, CurrentRecipe.Name);
+        CurrentRecipe.Clear();
+    }
+
+}

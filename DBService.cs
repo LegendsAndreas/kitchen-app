@@ -61,40 +61,95 @@ public class DBService
         return recipes;
     }
 
-    private async Task<List<Ingredient>> GetIngredientsAsync(int id)
+    public async Task<List<Recipe>> GetRecipesByCategoryAsync(string category)
     {
-        List<Ingredient> ingredients = new();
-        await using (var conn = new NpgsqlConnection(_connectionString))
+        List<Recipe> recipes = new();
+        try
         {
+            await using var conn = new NpgsqlConnection(_connectionString);
             await conn.OpenAsync();
+
+            int recipeIdTracker = 1;
+
             await using (var cmd = new NpgsqlCommand(
-                             "SELECT ingredient.name," +
-                             "ingredient.grams," +
-                             "ingredient.calories_pr_hectogram," +
-                             "ingredient.carbs_pr_hectogram," +
-                             "ingredient.protein_pr_hectogram," +
-                             "ingredient.fats_pr_hectogram," +
-                             "ingredient.multiplier " +
-                             $"FROM recipes, unnest(ingredients) AS ingredient WHERE id = {id}",
+                             $"SELECT id, name, image, meal_type, (macros).total_calories, (macros).total_fats, (macros).total_carbs, (macros).total_protein FROM recipes ORDER BY {category}",
                              conn))
             await using (var reader = await cmd.ExecuteReaderAsync())
             {
                 while (await reader.ReadAsync())
                 {
-                    ingredients.Add(new Ingredient
+                    recipes.Add(new Recipe
                     {
-                        Name = reader.GetString(0),
-                        Grams = reader.GetFloat(1),
-                        Calories = reader.GetFloat(2),
-                        Carbs = reader.GetFloat(3),
-                        Protein = reader.GetFloat(4),
-                        Fats = reader.GetFloat(5),
-                        Multiplier = reader.GetFloat(6)
+                        Number = reader.GetInt32(0),
+                        Name = reader.GetString(1),
+                        Image = $"pics/{reader.GetString(2)}",
+                        MealType = reader.GetString(3),
+                        Ingredients = await GetIngredientsAsync(recipeIdTracker),
+                        TotalMacros = new Macros
+                        {
+                            TotalCalories = reader.GetFloat(4),
+                            TotalFats = reader.GetFloat(5),
+                            TotalCarbs = reader.GetFloat(6),
+                            TotalProtein = reader.GetFloat(7)
+                        }
                     });
+                    recipeIdTracker++;
                 }
             }
         }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error getting recipes by categories: " + e.Message);
+            throw;
+        }
 
+
+        return recipes;
+    }
+
+
+    private async Task<List<Ingredient>> GetIngredientsAsync(int id)
+    {
+        List<Ingredient> ingredients = new();
+        try
+        {
+            await using (var conn = new NpgsqlConnection(_connectionString))
+            {
+                await conn.OpenAsync();
+                await using (var cmd = new NpgsqlCommand(
+                                 "SELECT ingredient.name," +
+                                 "ingredient.grams," +
+                                 "ingredient.calories_pr_hectogram," +
+                                 "ingredient.carbs_pr_hectogram," +
+                                 "ingredient.protein_pr_hectogram," +
+                                 "ingredient.fats_pr_hectogram," +
+                                 "ingredient.multiplier " +
+                                 $"FROM recipes, unnest(ingredients) AS ingredient WHERE id = {id}",
+                                 conn))
+                await using (var reader = await cmd.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        ingredients.Add(new Ingredient
+                        {
+                            Name = reader.GetString(0),
+                            Grams = reader.GetFloat(1),
+                            Calories = reader.GetFloat(2),
+                            Carbs = reader.GetFloat(3),
+                            Protein = reader.GetFloat(4),
+                            Fats = reader.GetFloat(5),
+                            Multiplier = reader.GetFloat(6)
+                        });
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting ingredients async: " + ex.Message);
+            throw;
+        }
+        
         return ingredients;
     }
 
@@ -102,7 +157,7 @@ public class DBService
     {
         Console.WriteLine("Getting ingredients...");
         List<Ingredient> ingredients = new();
-        
+
         await using (var conn = new NpgsqlConnection(_connectionString))
         {
             await conn.OpenAsync();
@@ -125,7 +180,7 @@ public class DBService
                 }
             }
         }
-        
+
         return ingredients;
     }
 
