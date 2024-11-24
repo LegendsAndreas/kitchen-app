@@ -58,23 +58,20 @@ class recipe_macros {
     total_protein FLOAT
 }
 
-class otherIngredient{
-    name TEXT
-    calories float
-    fats
-    carbs
-    protein
-}
-
 Recipe::ingredient ||--|{ Ingredient
 Recipe::macros --|| recipe_macros
 @enduml
 
 @startuml
-card GetMacros
-card GetIngredients
-card GetRecipeVars
+
+if (counter) equals (7) then
+:Print the weekly macros;
+else
+:;
+
 @enduml
+
+
 
 @startuml
 skinparameters

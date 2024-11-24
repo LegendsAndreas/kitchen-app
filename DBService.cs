@@ -23,7 +23,7 @@ public class DBService
         return connection;
     }
 
-    public async Task<List<Recipe>> GetRecipeAsync()
+    public async Task<List<Recipe>> GetRecipesAsync()
     {
         List<Recipe> recipes = new();
 

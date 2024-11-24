@@ -1,4 +1,129 @@
 @page "/plan-meals"
+@rendermode InteractiveServer
 <PageTitle>Plan Meals</PageTitle>
 
-<h1>UNDER CONSTRUCTION!</h1>
+@inject DBService DbService;
+
+<style>
+    .ingredient-form {
+        background-color: #272B2F;
+        padding: 25px;
+        border-radius: 10px;
+        border: 3px solid #48d7ff;
+        color: #48d7ff;
+        font-family: "Calibri Light", sans-serif;
+        font-style: italic;
+        font-weight: bold;
+    }
+    
+    .alignment{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+
+<div class="container ingredient-form">
+    <div class="row g-1">
+        <div class="col alignment">
+            <EditForm Model="@_currentRecipeName" OnValidSubmit="@ValidRecipe">
+                <label>
+                    Recipe Name
+                </label>
+                <InputText id="name" @bind-Value="@_currentRecipeName" />
+                <button type="submit" class="btn btn-primary">Add Recipe</button>
+            </EditForm>
+        </div>
+
+        <div class="col alignment">
+            <button type="submit" class="btn btn-primary" @onclick="IncrementDay">Next Day</button>
+        </div>
+
+        <div class="col alignment">
+            <p>Current day is: @_currentDay</p>
+        </div>
+    </div>
+</div>
+
+
+<div class="container">
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
+        @foreach (var recipe in _planedRecipes)
+        {
+            <div class="col" style="padding: 10px">
+                <div class="card h-100">
+                    <img src="@recipe.Image" alt="ops..." class="card-img"/> @* card-img helps the look of the cards. *@
+                    <div class="card-header">
+                        <h4>@recipe.Name</h4>
+                    </div>
+                    <div class="card-body border-primary">
+                        <p class="card-text">
+                            - Calories: @recipe.TotalMacros.TotalCalories.ToString("0") <br>
+                            - Carbs: @recipe.TotalMacros.TotalCarbs.ToString("0") <br>
+                            - Fats: @recipe.TotalMacros.TotalFats.ToString("0") <br>
+                            - Protein: @recipe.TotalMacros.TotalProtein.ToString("0")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    
+</div>
+
+@*
+Button to add a recipe by name.
+Button to go to the next day.
+Area that shows macros by: Weekly total and daily total.
+Area that shows added recipes like the Home page.
+*@
+
+@code{
+
+    List<Recipe> _planedRecipes = new();
+    List<Recipe> _recipes = new();
+
+    string _currentRecipeName = string.Empty;
+    int _currentDay = 0;
+
+    Macros _dayOneMacros = new();
+    Macros _dayTwoMacros = new();
+    Macros _dayThreeMacros = new();
+    Macros _dayFourMacros = new();
+    Macros _dayFiveMacros = new();
+    Macros _daySixMacros = new();
+    Macros _daySevenMacros = new();
+    List<Macros> _weeklyMacros = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _recipes = await DbService.GetRecipesAsync();
+    }
+
+    private void ValidRecipe()
+    {
+        int index = _recipes.FindIndex(recipe => recipe.Name == _currentRecipeName);
+
+        if (index != -1)
+        {
+            Console.WriteLine($"Found {_currentRecipeName} index!");
+            _planedRecipes.Add(_recipes[index]);
+        }
+        else
+        {
+            Console.WriteLine($"Did not find {_currentRecipeName}");
+        }
+        
+        _currentRecipeName = string.Empty;
+        StateHasChanged();
+    }
+
+    private void IncrementDay()
+    {
+        _currentDay++;
+        StateHasChanged();
+    }
+
+}

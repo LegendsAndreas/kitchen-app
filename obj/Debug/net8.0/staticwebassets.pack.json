@@ -81,6 +81,10 @@
       "PackagePath": "staticwebassets\\pics\\ProteinBrød.webp"
     },
     {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\RugbrødMedFiskefilet.webp",
+      "PackagePath": "staticwebassets\\pics\\RugbrødMedFiskefilet.webp"
+    },
+    {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\SalamiSpegePølse.webp",
       "PackagePath": "staticwebassets\\pics\\SalamiSpegePølse.webp"
     },
