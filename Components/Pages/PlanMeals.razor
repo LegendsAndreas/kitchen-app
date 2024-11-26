@@ -48,7 +48,14 @@
         </div>
 
         <div class="col alignment">
-            <button type="submit" class="btn btn-primary" @onclick="IncrementDay">Next Day</button>
+            @if (_currentDay < 6)
+            {
+                <button type="submit" class="btn btn-primary" @onclick="IncrementCurrentDay">Next Day</button>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary" @onclick="DisplayWeek">Finish Week</button>
+            }
         </div>
 
         <div class="col alignment">
@@ -57,15 +64,15 @@
     </div>
 
     <div class="border-style" style="margin-top: 25px">
-        <button onclick="@PreviousDay">-></button>
-        <button onclick="@NextDay">-></button>
+        <button onclick="@PreviousDay" class="btn btn-primary"><strong>&lt;</strong></button>
+        <button onclick="@NextDay" class="btn btn-primary"><strong>></strong></button>
 
         <div class="row g-1">
             <div class="col alignment">Day @(_currentTotalMacrosDay + 1)</div>
-            <div class="col alignment">Total Calories: @_weeklyMacros[_currentTotalMacrosDay].TotalCalories</div>
-            <div class="col alignment">Total Fat: @_weeklyMacros[_currentTotalMacrosDay].TotalFats</div>
-            <div class="col alignment">Total Carbs: @_weeklyMacros[_currentTotalMacrosDay].TotalCarbs</div>
-            <div class="col alignment">Total Protein: @_weeklyMacros[_currentTotalMacrosDay].TotalProtein</div>
+            <div class="col alignment">Total Calories: @_weeklyMacros[_currentTotalMacrosDay].TotalCalories.ToString("0")</div>
+            <div class="col alignment">Total Fat: @_weeklyMacros[_currentTotalMacrosDay].TotalFats.ToString("0")</div>
+            <div class="col alignment">Total Carbs: @_weeklyMacros[_currentTotalMacrosDay].TotalCarbs.ToString("0")</div>
+            <div class="col alignment">Total Protein: @_weeklyMacros[_currentTotalMacrosDay].TotalProtein.ToString("0")</div>
         </div>
     </div>
 
@@ -181,6 +188,7 @@ Area that shows added recipes like the Home page.
         if (index != -1)
         {
             Console.WriteLine($"Found {_currentRecipeName} index!");
+            AddMacrosToDay(index);
             _planedRecipes.Add(_recipes[index]);
         }
         else
@@ -189,12 +197,6 @@ Area that shows added recipes like the Home page.
         }
 
         _currentRecipeName = string.Empty;
-        StateHasChanged();
-    }
-
-    private void IncrementDay()
-    {
-        _currentDay++;
         StateHasChanged();
     }
 
@@ -224,6 +226,25 @@ Area that shows added recipes like the Home page.
             JsRuntime.InvokeVoidAsync("showInvalidPreviousDayToast");
         }
 
+        StateHasChanged();
+    }
+
+    private void AddMacrosToDay(int index)
+    {
+        _weeklyMacros[_currentDay].TotalCalories += _recipes[index].TotalMacros.TotalCalories;
+        _weeklyMacros[_currentDay].TotalFats += _recipes[index].TotalMacros.TotalFats;
+        _weeklyMacros[_currentDay].TotalCarbs += _recipes[index].TotalMacros.TotalCarbs;
+        _weeklyMacros[_currentDay].TotalProtein += _recipes[index].TotalMacros.TotalProtein;
+    }
+
+    private void IncrementCurrentDay()
+    {
+        _currentDay++;
+        StateHasChanged();
+    }
+
+    private void DisplayWeek()
+    {
         StateHasChanged();
     }
 }

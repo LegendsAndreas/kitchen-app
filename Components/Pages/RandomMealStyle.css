@@ -1,1 +1,9 @@
-﻿
+﻿.random-meal-h {
+    background-color: #313131;
+    color: #48d7ff;
+    border-radius: 5px;
+    font-family: "Calibri Light", serif;
+    border: 2px solid;
+    width: fit-content; /* Automatically fits the block of its content to fit it. */
+    margin: 0 auto;
+}
