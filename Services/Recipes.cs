@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Npgsql;
 
-namespace WebKitchen;
+namespace WebKitchen.Services;
 
 public class Macros : SharedMethods
 {

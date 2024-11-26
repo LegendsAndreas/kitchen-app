@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 <PageTitle>Plan Meals</PageTitle>
 
+@using WebKitchen.Services;
 @inject DBService DbService;
 @inject IJSRuntime JsRuntime;
 
@@ -69,10 +70,10 @@
 
         <div class="row g-1">
             <div class="col alignment">Day @(_currentTotalMacrosDay + 1)</div>
-            <div class="col alignment">Total Calories: @_weeklyMacros[_currentTotalMacrosDay].TotalCalories.ToString("0")</div>
-            <div class="col alignment">Total Fat: @_weeklyMacros[_currentTotalMacrosDay].TotalFats.ToString("0")</div>
-            <div class="col alignment">Total Carbs: @_weeklyMacros[_currentTotalMacrosDay].TotalCarbs.ToString("0")</div>
-            <div class="col alignment">Total Protein: @_weeklyMacros[_currentTotalMacrosDay].TotalProtein.ToString("0")</div>
+            <div class="col alignment">Total Calories: @_weeklyMacrosAndRecipes[_currentTotalMacrosDay].TotalCalories.ToString("0")</div>
+            <div class="col alignment">Total Fat: @_weeklyMacrosAndRecipes[_currentTotalMacrosDay].TotalFats.ToString("0")</div>
+            <div class="col alignment">Total Carbs: @_weeklyMacrosAndRecipes[_currentTotalMacrosDay].TotalCarbs.ToString("0")</div>
+            <div class="col alignment">Total Protein: @_weeklyMacrosAndRecipes[_currentTotalMacrosDay].TotalProtein.ToString("0")</div>
         </div>
     </div>
 
@@ -154,16 +155,24 @@ Area that shows added recipes like the Home page.
     string _currentRecipeName = string.Empty;
     int _currentDay = 0;
 
-    Macros _dayOneMacros = new();
-    Macros _dayTwoMacros = new();
-    Macros _dayThreeMacros = new();
-    Macros _dayFourMacros = new();
-    Macros _dayFiveMacros = new();
-    Macros _daySixMacros = new();
-    Macros _daySevenMacros = new();
-    List<Macros> _weeklyMacros = new();
+    MealPlan _mealPlanMacrosAndRecipes = new();
+    
+    List<Recipe> _dayOneMacros = new();
+    List<Recipe> _dayTwoMacros = new();
+    List<Recipe> _dayThreeMacros = new();
+    List<Recipe> _dayFourMacros = new();
+    List<Recipe> _dayFiveMacros = new();
+    List<Recipe> _daySixMacros = new();
+    List<Recipe> _daySevenMacros = new();
+    List<List<Recipe>> _weeklyMacrosAndRecipes = new();
 
     int _currentTotalMacrosDay = 0;
+    
+    public class WeeklyMacros
+    {
+        List<Recipe> Recipes = new ();
+        Macros 
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -172,13 +181,13 @@ Area that shows added recipes like the Home page.
 
     protected override void OnInitialized()
     {
-        _weeklyMacros.Add(_dayOneMacros);
-        _weeklyMacros.Add(_dayTwoMacros);
-        _weeklyMacros.Add(_dayThreeMacros);
-        _weeklyMacros.Add(_dayFourMacros);
-        _weeklyMacros.Add(_dayFiveMacros);
-        _weeklyMacros.Add(_daySixMacros);
-        _weeklyMacros.Add(_daySevenMacros);
+        _weeklyMacrosAndRecipes.Add(_dayOneMacros);
+        _weeklyMacrosAndRecipes.Add(_dayTwoMacros);
+        _weeklyMacrosAndRecipes.Add(_dayThreeMacros);
+        _weeklyMacrosAndRecipes.Add(_dayFourMacros);
+        _weeklyMacrosAndRecipes.Add(_dayFiveMacros);
+        _weeklyMacrosAndRecipes.Add(_daySixMacros);
+        _weeklyMacrosAndRecipes.Add(_daySevenMacros);
     }
 
     private void ValidRecipe()
@@ -188,7 +197,7 @@ Area that shows added recipes like the Home page.
         if (index != -1)
         {
             Console.WriteLine($"Found {_currentRecipeName} index!");
-            AddMacrosToDay(index);
+            _mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay();
             _planedRecipes.Add(_recipes[index]);
         }
         else
@@ -227,14 +236,6 @@ Area that shows added recipes like the Home page.
         }
 
         StateHasChanged();
-    }
-
-    private void AddMacrosToDay(int index)
-    {
-        _weeklyMacros[_currentDay].TotalCalories += _recipes[index].TotalMacros.TotalCalories;
-        _weeklyMacros[_currentDay].TotalFats += _recipes[index].TotalMacros.TotalFats;
-        _weeklyMacros[_currentDay].TotalCarbs += _recipes[index].TotalMacros.TotalCarbs;
-        _weeklyMacros[_currentDay].TotalProtein += _recipes[index].TotalMacros.TotalProtein;
     }
 
     private void IncrementCurrentDay()

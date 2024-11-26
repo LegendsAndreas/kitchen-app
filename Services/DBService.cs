@@ -3,7 +3,7 @@ using Npgsql;
 
 // jdbc:postgresql://[HOST]/[DATABASE_NAME]?password=[PASSWORD]&sslmode=require&user=[USERNAME]
 
-namespace WebKitchen;
+namespace WebKitchen.Services;
 
 public class DBService
 {

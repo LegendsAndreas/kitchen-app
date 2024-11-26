@@ -1,4 +1,5 @@
-﻿@inject Recipe CurrentRecipe;
+﻿@using WebKitchen.Services;
+@inject Recipe CurrentRecipe;
 
 <EditForm Model="@CurrentRecipe" OnValidSubmit="@HandleValidSubmit">
     <div>
