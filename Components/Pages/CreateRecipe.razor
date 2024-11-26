@@ -117,7 +117,7 @@
                     <InputNumber id="protein" @bind-Value="CurrentIngredient.Protein"/>
                     <ValidationMessage For="@(() => CurrentIngredient.Protein)"/>
                 </div>
-            <button type="submit" class="btn btn-primary">Add Ingredient</button>
+                <button type="submit" class="btn btn-primary">Add Ingredient</button>
             </div>
         </div>
     </EditForm>
@@ -159,27 +159,27 @@
             <div class="accordion-body">
                 @if (_currentIngredients.Count == 0)
                 {
-                <p>No ingredients added</p>
+                    <p>No ingredients added</p>
                 }
                 @foreach (var ingredient in _currentIngredients)
                 {
-                <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                        @ingredient.Name
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li class="dropdown-item">Calories: @ingredient.Calories.ToString("0")</li>
-                        <li class="dropdown-item">Grams: @ingredient.Grams.ToString("0")</li>
-                        <li class="dropdown-item">Protein: @ingredient.Protein.ToString("0")</li>
-                        <li class="dropdown-item">Fat: @ingredient.Fats.ToString("0")</li>
-                        <li class="dropdown-item">Carbs: @ingredient.Carbs.ToString("0")</li>
-                    </ul>
-                    <button type="submit" class="btn btn-danger"
-                            @onclick="() => DeleteRecipe(_currentIngredients.IndexOf(ingredient))">
-                        <strong>X</strong>
-                    </button>
-                </div>
+                    <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            @ingredient.Name
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item">Calories: @ingredient.Calories.ToString("0")</li>
+                            <li class="dropdown-item">Grams: @ingredient.Grams.ToString("0")</li>
+                            <li class="dropdown-item">Protein: @ingredient.Protein.ToString("0")</li>
+                            <li class="dropdown-item">Fat: @ingredient.Fats.ToString("0")</li>
+                            <li class="dropdown-item">Carbs: @ingredient.Carbs.ToString("0")</li>
+                        </ul>
+                        <button type="submit" class="btn btn-danger"
+                                @onclick="() => DeleteRecipe(_currentIngredients.IndexOf(ingredient))">
+                            <strong>X</strong>
+                        </button>
+                    </div>
                 }
             </div>
         </div>
@@ -205,91 +205,91 @@
 </script>
 
 @code {
-readonly List<Ingredient> _currentIngredients = new();
-readonly Ingredient _currentDbIngredient = new();
+    readonly List<Ingredient> _currentIngredients = new();
+    readonly Ingredient _currentDbIngredient = new();
 
-protected override async Task OnInitializedAsync()
-{
-try
-{
-DbIngredients = await DbService.GetIngredientsFromTableAsync();
-Console.WriteLine("Aquired ingredients.");
-}
-catch (Exception ex)
-{
-Console.WriteLine("Error getting ingredients list: " + ex.Message);
-throw;
-}
-}
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            DbIngredients = await DbService.GetIngredientsFromTableAsync();
+            Console.WriteLine("Aquired ingredients.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting ingredients list: " + ex.Message);
+            throw;
+        }
+    }
 
-private async Task OnValidRecipe()
-{
-if (_currentIngredients.Count == 0)
-{
-Console.WriteLine("There are no ingredients.");
-return;
-}
+    private async Task OnValidRecipe()
+    {
+        if (_currentIngredients.Count == 0)
+        {
+            Console.WriteLine("There are no ingredients.");
+            return;
+        }
 
-CurrentRecipe.Ingredients = _currentIngredients;
-CurrentRecipe.SetTotalMacros();
+        CurrentRecipe.Ingredients = _currentIngredients;
+        CurrentRecipe.SetTotalMacros();
 
-Console.WriteLine("Print current recipe");
-CurrentRecipe.PrintRecipe();
+        Console.WriteLine("Print current recipe");
+        CurrentRecipe.PrintRecipe();
 
-try
-{
-await CurrentRecipe.AddRecipeToDatabase();
-}
-catch (Exception e)
-{
-Console.WriteLine("Error sending recipe to database: " + e.Message);
-throw;
-}
+        try
+        {
+            await CurrentRecipe.AddRecipeToDatabase();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error sending recipe to database: " + e.Message);
+            throw;
+        }
 
-CurrentRecipe.Clear();
-CurrentIngredient.Clear();
-_currentIngredients.Clear();
-}
+        CurrentRecipe.Clear();
+        CurrentIngredient.Clear();
+        _currentIngredients.Clear();
+    }
 
-public void OnValidIngredient()
-{
-Ingredient tempIngredient = CurrentIngredient.TransferIngredient(CurrentIngredient);
-tempIngredient.PrintIngredient();
+    public void OnValidIngredient()
+    {
+        Ingredient tempIngredient = CurrentIngredient.TransferIngredient(CurrentIngredient);
+        tempIngredient.PrintIngredient();
 
-_currentIngredients.Add(tempIngredient);
-CurrentIngredient.Clear();
-}
+        _currentIngredients.Add(tempIngredient);
+        CurrentIngredient.Clear();
+    }
 
-public async Task OnValidDbIngredient()
-{
-foreach (var ingredient in DbIngredients)
-{
-if (_currentDbIngredient.Name == ingredient.Name)
-{
-CurrentIngredient.Name = _currentDbIngredient.Name;
-CurrentIngredient.Grams = _currentDbIngredient.Grams;
-CurrentIngredient.Calories = ingredient.Calories;
-CurrentIngredient.Fats = ingredient.Fats;
-CurrentIngredient.Carbs = ingredient.Carbs;
-CurrentIngredient.Protein = ingredient.Protein;
+    public async Task OnValidDbIngredient()
+    {
+        foreach (var ingredient in DbIngredients)
+        {
+            if (_currentDbIngredient.Name == ingredient.Name)
+            {
+                CurrentIngredient.Name = _currentDbIngredient.Name;
+                CurrentIngredient.Grams = _currentDbIngredient.Grams;
+                CurrentIngredient.Calories = ingredient.Calories;
+                CurrentIngredient.Fats = ingredient.Fats;
+                CurrentIngredient.Carbs = ingredient.Carbs;
+                CurrentIngredient.Protein = ingredient.Protein;
 
-OnValidIngredient();
+                OnValidIngredient();
 
-_currentDbIngredient.Clear();
+                _currentDbIngredient.Clear();
 
-return;
-}
-}
+                return;
+            }
+        }
 
-Console.WriteLine("Not a valid ingredient");
-await JsRuntime.InvokeVoidAsync("showInvalidIngredientToast");
-}
+        Console.WriteLine("Not a valid ingredient");
+        await JsRuntime.InvokeVoidAsync("showInvalidIngredientToast");
+    }
 
 
-private void DeleteRecipe(int index)
-{
-_currentIngredients.RemoveAt(index);
-StateHasChanged();
-}
+    private void DeleteRecipe(int index)
+    {
+        _currentIngredients.RemoveAt(index);
+        StateHasChanged();
+    }
 
 }

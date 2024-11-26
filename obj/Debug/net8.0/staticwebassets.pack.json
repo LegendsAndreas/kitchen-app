@@ -1,100 +1,48 @@
 {
   "Files": [
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
       "PackagePath": "staticwebassets\\WebKitchen.bundle.scp.css"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\app.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\app.css",
       "PackagePath": "staticwebassets\\app.css"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css.map",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\favicon.png",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\favicon.png",
       "PackagePath": "staticwebassets\\favicon.png"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\js\\bootstrap\\bootstrap.bundle.min.js",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\js\\bootstrap\\bootstrap.bundle.min.js",
       "PackagePath": "staticwebassets\\js\\bootstrap\\bootstrap.bundle.min.js"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BackgroundImage.webp",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\pics\\BackgroundImage.webp",
       "PackagePath": "staticwebassets\\pics\\BackgroundImage.webp"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisHerregårdsRødkål.jpg",
-      "PackagePath": "staticwebassets\\pics\\BeauvaisHerregårdsRødkål.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\CheasyOst.webp",
-      "PackagePath": "staticwebassets\\pics\\CheasyOst.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\FiskeFilet.webp",
-      "PackagePath": "staticwebassets\\pics\\FiskeFilet.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Havregryn.jpg",
-      "PackagePath": "staticwebassets\\pics\\Havregryn.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\JasminRis.webp",
-      "PackagePath": "staticwebassets\\pics\\JasminRis.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\KikRemolade.webp",
-      "PackagePath": "staticwebassets\\pics\\KikRemolade.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\LetMælk.jpg",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\pics\\LetMælk.jpg",
       "PackagePath": "staticwebassets\\pics\\LetMælk.jpg"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\MosedeKartofler.jpg",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\pics\\MosedeKartofler.jpg",
       "PackagePath": "staticwebassets\\pics\\MosedeKartofler.jpg"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\PassataDiPomodoro.webp",
-      "PackagePath": "staticwebassets\\pics\\PassataDiPomodoro.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Piskefløde.jpg",
-      "PackagePath": "staticwebassets\\pics\\Piskefløde.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\PlaceHolderPic.jpg",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\github\\kitchen-app\\wwwroot\\pics\\PlaceHolderPic.jpg",
       "PackagePath": "staticwebassets\\pics\\PlaceHolderPic.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\ProteinBrød.webp",
-      "PackagePath": "staticwebassets\\pics\\ProteinBrød.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\RugbrødMedFiskefilet.webp",
-      "PackagePath": "staticwebassets\\pics\\RugbrødMedFiskefilet.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\SalamiSpegePølse.webp",
-      "PackagePath": "staticwebassets\\pics\\SalamiSpegePølse.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Smør.jpg",
-      "PackagePath": "staticwebassets\\pics\\Smør.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Sukker.jpg",
-      "PackagePath": "staticwebassets\\pics\\Sukker.jpg"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WebKitchen.Microsoft.AspNetCore.StaticWebAssets.props",

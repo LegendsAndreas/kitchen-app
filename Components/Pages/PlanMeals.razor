@@ -3,6 +3,9 @@
 <PageTitle>Plan Meals</PageTitle>
 
 @inject DBService DbService;
+@inject IJSRuntime JsRuntime;
+
+<link rel="stylesheet" href="app.css"/>
 
 <style>
     .ingredient-form {
@@ -16,14 +19,22 @@
         font-weight: bold;
     }
     
+    .border-style{
+        background-color: #272B2F;
+        padding: 25px;
+        border-radius: 10px;
+        border: 3px solid #48d7ff;
+    }
+
     .alignment{
         display: flex;
         align-items: center;
         justify-content: center;
     }
+    
 </style>
 
-
+@* Total macros for a day *@
 <div class="container ingredient-form">
     <div class="row g-1">
         <div class="col alignment">
@@ -31,7 +42,7 @@
                 <label>
                     Recipe Name
                 </label>
-                <InputText id="name" @bind-Value="@_currentRecipeName" />
+                <InputText id="name" @bind-Value="@_currentRecipeName"/>
                 <button type="submit" class="btn btn-primary">Add Recipe</button>
             </EditForm>
         </div>
@@ -41,12 +52,26 @@
         </div>
 
         <div class="col alignment">
-            <p>Current day is: @_currentDay</p>
+            <p>Current day is: @(_currentDay + 1)</p>
         </div>
     </div>
+
+    <div class="border-style" style="margin-top: 25px">
+        <button onclick="@PreviousDay">-></button>
+        <button onclick="@NextDay">-></button>
+
+        <div class="row g-1">
+            <div class="col alignment">Day @(_currentTotalMacrosDay + 1)</div>
+            <div class="col alignment">Total Calories: @_weeklyMacros[_currentTotalMacrosDay].TotalCalories</div>
+            <div class="col alignment">Total Fat: @_weeklyMacros[_currentTotalMacrosDay].TotalFats</div>
+            <div class="col alignment">Total Carbs: @_weeklyMacros[_currentTotalMacrosDay].TotalCarbs</div>
+            <div class="col alignment">Total Protein: @_weeklyMacros[_currentTotalMacrosDay].TotalProtein</div>
+        </div>
+    </div>
+
 </div>
 
-
+@* Added recipes *@
 <div class="container">
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
@@ -70,7 +95,7 @@
             </div>
         }
     </div>
-    
+
 </div>
 
 @*
@@ -79,6 +104,40 @@ Button to go to the next day.
 Area that shows macros by: Weekly total and daily total.
 Area that shows added recipes like the Home page.
 *@
+
+@* Cant go less than 1 toaster *@
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="lower-toast" class="toast custom-header" role="alert" aria-live="assertive" aria-atomic="true"
+         data-bs-delay="5000">
+        <div class="toast-body">
+            Cant go lower than day 1.
+        </div>
+    </div>
+</div>
+
+@* Cant go higher than 7 toaster *@
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="higher-toast" class="toast custom-header" role="alert" aria-live="assertive" aria-atomic="true"
+         data-bs-delay="5000">
+        <div class="toast-body">
+            Cant go higher than day 7.
+        </div>
+    </div>
+</div>
+
+<script>
+    function showInvalidPreviousDayToast() {
+        const toastLiveExample = document.getElementById('lower-toast');
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+        toastBootstrap.show();
+    }
+
+    function showInvalidNextDayToast() {
+        const toastLiveExample = document.getElementById('higher-toast');
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+        toastBootstrap.show();
+    }
+</script>
 
 @code{
 
@@ -97,9 +156,22 @@ Area that shows added recipes like the Home page.
     Macros _daySevenMacros = new();
     List<Macros> _weeklyMacros = new();
 
+    int _currentTotalMacrosDay = 0;
+
     protected override async Task OnInitializedAsync()
     {
         _recipes = await DbService.GetRecipesAsync();
+    }
+
+    protected override void OnInitialized()
+    {
+        _weeklyMacros.Add(_dayOneMacros);
+        _weeklyMacros.Add(_dayTwoMacros);
+        _weeklyMacros.Add(_dayThreeMacros);
+        _weeklyMacros.Add(_dayFourMacros);
+        _weeklyMacros.Add(_dayFiveMacros);
+        _weeklyMacros.Add(_daySixMacros);
+        _weeklyMacros.Add(_daySevenMacros);
     }
 
     private void ValidRecipe()
@@ -115,7 +187,7 @@ Area that shows added recipes like the Home page.
         {
             Console.WriteLine($"Did not find {_currentRecipeName}");
         }
-        
+
         _currentRecipeName = string.Empty;
         StateHasChanged();
     }
@@ -126,4 +198,32 @@ Area that shows added recipes like the Home page.
         StateHasChanged();
     }
 
+    private void NextDay()
+    {
+        if (_currentTotalMacrosDay < 6)
+        {
+            _currentTotalMacrosDay++;
+        }
+        else
+        {
+            JsRuntime.InvokeVoidAsync("showInvalidNextDayToast");
+            // Toast that says you cant go higher than 7.
+        }
+
+        StateHasChanged();
+    }
+
+    private void PreviousDay()
+    {
+        if (_currentTotalMacrosDay > 0)
+        {
+            _currentTotalMacrosDay--;
+        }
+        else
+        {
+            JsRuntime.InvokeVoidAsync("showInvalidPreviousDayToast");
+        }
+
+        StateHasChanged();
+    }
 }
