@@ -76,3 +76,18 @@ else
 @startuml
 skinparameters
 @enduml
+
+'PlanMeals
+@startuml
+class DailyMeal{
+    List<Recipes>
+    TotalDailyMacros
+}
+
+class WeeklyMeals{
+    List<DailyMeal> [7]
+    TotalWeeklyMacros
+}
+
+DailyMeal --> WeeklyMeals
+@enduml

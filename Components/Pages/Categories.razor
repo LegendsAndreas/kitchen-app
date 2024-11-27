@@ -54,7 +54,6 @@
 
     private async Task SortRecipesByCategory(string catagory)
     {
-        
         _recipes = await DbService.GetRecipesByCategoryAsync(catagory);
         StateHasChanged();
     }

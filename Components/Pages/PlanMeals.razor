@@ -64,43 +64,51 @@
         </div>
     </div>
 
+    @* Current day total macros *@
     <div class="border-style" style="margin-top: 25px">
-        <button onclick="@PreviousDay" class="btn btn-primary"><strong>&lt;</strong></button>
-        <button onclick="@NextDay" class="btn btn-primary"><strong>></strong></button>
+        <button onclick="@PreviousDay" class="btn btn-primary">
+            <strong>&lt;</strong>
+        </button>
+        <button onclick="@NextDay" class="btn btn-primary">
+            <strong>></strong>
+        </button>
 
         <div class="row g-1">
             <div class="col alignment">Day @(_currentTotalMacrosDay + 1)</div>
-            <div class="col alignment">Total Calories: @_weeklyMacrosAndRecipes[_currentTotalMacrosDay].TotalCalories.ToString("0")</div>
-            <div class="col alignment">Total Fat: @_weeklyMacrosAndRecipes[_currentTotalMacrosDay].TotalFats.ToString("0")</div>
-            <div class="col alignment">Total Carbs: @_weeklyMacrosAndRecipes[_currentTotalMacrosDay].TotalCarbs.ToString("0")</div>
-            <div class="col alignment">Total Protein: @_weeklyMacrosAndRecipes[_currentTotalMacrosDay].TotalProtein.ToString("0")</div>
+            <div class="col alignment">Total Calories: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.TotalCalories.ToString("0")</div>
+            <div class="col alignment">Total Fat: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.TotalFats.ToString("0")</div>
+            <div class="col alignment">Total Carbs: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.TotalCarbs.ToString("0")</div>
+            <div class="col alignment">Total Protein: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.TotalProtein.ToString("0")</div>
         </div>
     </div>
 
 </div>
 
-@* Added recipes *@
+@* All added recipes *@
 <div class="container">
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @foreach (var recipe in _planedRecipes)
+        @foreach (var dailyMeals in _mealPlanMacrosAndRecipes.DailyMealsList)
         {
-            <div class="col" style="padding: 10px">
-                <div class="card h-100">
-                    <img src="@recipe.Image" alt="ops..." class="card-img"/> @* card-img helps the look of the cards. *@
-                    <div class="card-header">
-                        <h4>@recipe.Name</h4>
-                    </div>
-                    <div class="card-body border-primary">
-                        <p class="card-text">
-                            - Calories: @recipe.TotalMacros.TotalCalories.ToString("0") <br>
-                            - Carbs: @recipe.TotalMacros.TotalCarbs.ToString("0") <br>
-                            - Fats: @recipe.TotalMacros.TotalFats.ToString("0") <br>
-                            - Protein: @recipe.TotalMacros.TotalProtein.ToString("0")
-                        </p>
+            @foreach (var recipe in dailyMeals.DailyMeals)
+            {
+                <div class="col" style="padding: 10px">
+                    <div class="card h-100">
+                        <img src="@recipe.Image" alt="ops..." class="card-img"/> @* card-img helps the look of the cards. *@
+                        <div class="card-header">
+                            <h4>@recipe.Name</h4>
+                        </div>
+                        <div class="card-body border-primary">
+                            <p class="card-text">
+                                - Calories: @recipe.TotalMacros.TotalCalories.ToString("0") <br>
+                                - Carbs: @recipe.TotalMacros.TotalCarbs.ToString("0") <br>
+                                - Fats: @recipe.TotalMacros.TotalFats.ToString("0") <br>
+                                - Protein: @recipe.TotalMacros.TotalProtein.ToString("0")
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         }
     </div>
 
@@ -149,45 +157,18 @@ Area that shows added recipes like the Home page.
 
 @code{
 
-    List<Recipe> _planedRecipes = new();
     List<Recipe> _recipes = new();
 
     string _currentRecipeName = string.Empty;
-    int _currentDay = 0;
+    int _currentDay;
 
     MealPlan _mealPlanMacrosAndRecipes = new();
-    
-    List<Recipe> _dayOneMacros = new();
-    List<Recipe> _dayTwoMacros = new();
-    List<Recipe> _dayThreeMacros = new();
-    List<Recipe> _dayFourMacros = new();
-    List<Recipe> _dayFiveMacros = new();
-    List<Recipe> _daySixMacros = new();
-    List<Recipe> _daySevenMacros = new();
-    List<List<Recipe>> _weeklyMacrosAndRecipes = new();
 
-    int _currentTotalMacrosDay = 0;
-    
-    public class WeeklyMacros
-    {
-        List<Recipe> Recipes = new ();
-        Macros 
-    }
+    int _currentTotalMacrosDay;
 
     protected override async Task OnInitializedAsync()
     {
         _recipes = await DbService.GetRecipesAsync();
-    }
-
-    protected override void OnInitialized()
-    {
-        _weeklyMacrosAndRecipes.Add(_dayOneMacros);
-        _weeklyMacrosAndRecipes.Add(_dayTwoMacros);
-        _weeklyMacrosAndRecipes.Add(_dayThreeMacros);
-        _weeklyMacrosAndRecipes.Add(_dayFourMacros);
-        _weeklyMacrosAndRecipes.Add(_dayFiveMacros);
-        _weeklyMacrosAndRecipes.Add(_daySixMacros);
-        _weeklyMacrosAndRecipes.Add(_daySevenMacros);
     }
 
     private void ValidRecipe()
@@ -196,9 +177,8 @@ Area that shows added recipes like the Home page.
 
         if (index != -1)
         {
-            Console.WriteLine($"Found {_currentRecipeName} index!");
-            _mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay();
-            _planedRecipes.Add(_recipes[index]);
+            Console.WriteLine($"Found {_currentRecipeName} at {index}");
+            _mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay(_recipes[index], _currentDay);
         }
         else
         {
@@ -212,14 +192,10 @@ Area that shows added recipes like the Home page.
     private void NextDay()
     {
         if (_currentTotalMacrosDay < 6)
-        {
             _currentTotalMacrosDay++;
-        }
         else
-        {
             JsRuntime.InvokeVoidAsync("showInvalidNextDayToast");
-            // Toast that says you cant go higher than 7.
-        }
+        // Toast that says you cant go higher than 7.
 
         StateHasChanged();
     }
@@ -227,13 +203,9 @@ Area that shows added recipes like the Home page.
     private void PreviousDay()
     {
         if (_currentTotalMacrosDay > 0)
-        {
             _currentTotalMacrosDay--;
-        }
         else
-        {
             JsRuntime.InvokeVoidAsync("showInvalidPreviousDayToast");
-        }
 
         StateHasChanged();
     }
@@ -248,4 +220,5 @@ Area that shows added recipes like the Home page.
     {
         StateHasChanged();
     }
+
 }
