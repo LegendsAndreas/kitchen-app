@@ -88,38 +88,28 @@
 <div class="container">
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @foreach (var dailyMeals in _mealPlanMacrosAndRecipes.DailyMealsList)
+        @foreach (var recipe in _mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].DailyMeals)
         {
-            @foreach (var recipe in dailyMeals.DailyMeals)
-            {
-                <div class="col" style="padding: 10px">
-                    <div class="card h-100">
-                        <img src="@recipe.Image" alt="ops..." class="card-img"/> @* card-img helps the look of the cards. *@
-                        <div class="card-header">
-                            <h4>@recipe.Name</h4>
-                        </div>
-                        <div class="card-body border-primary">
-                            <p class="card-text">
-                                - Calories: @recipe.TotalMacros.TotalCalories.ToString("0") <br>
-                                - Carbs: @recipe.TotalMacros.TotalCarbs.ToString("0") <br>
-                                - Fats: @recipe.TotalMacros.TotalFats.ToString("0") <br>
-                                - Protein: @recipe.TotalMacros.TotalProtein.ToString("0")
-                            </p>
-                        </div>
-                    </div>
+        <div class="col" style="padding: 10px">
+            <div class="card h-100">
+                <img src="@recipe.Image" alt="ops..." class="card-img"/> @* card-img helps the look of the cards. *@
+                <div class="card-header">
+                    <h4>@recipe.Name</h4>
                 </div>
-            }
+                <div class="card-body border-primary">
+                    <p class="card-text">
+                        - Calories: @recipe.TotalMacros.TotalCalories.ToString("0") <br>
+                        - Carbs: @recipe.TotalMacros.TotalCarbs.ToString("0") <br>
+                        - Fats: @recipe.TotalMacros.TotalFats.ToString("0") <br>
+                        - Protein: @recipe.TotalMacros.TotalProtein.ToString("0")
+                    </p>
+                </div>
+            </div>
+        </div>
         }
     </div>
 
 </div>
-
-@*
-Button to add a recipe by name.
-Button to go to the next day.
-Area that shows macros by: Weekly total and daily total.
-Area that shows added recipes like the Home page.
-*@
 
 @* Cant go less than 1 toaster *@
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
