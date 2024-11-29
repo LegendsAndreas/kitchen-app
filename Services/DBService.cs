@@ -172,9 +172,9 @@ public class DBService
                     {
                         Name = reader.GetString(0),
                         Calories = reader.GetFloat(1),
-                        Carbs = reader.GetFloat(2),
-                        Protein = reader.GetFloat(3),
-                        Fats = reader.GetFloat(4),
+                        Fats = reader.GetFloat(2),
+                        Carbs = reader.GetFloat(3),
+                        Protein = reader.GetFloat(4),
                         Image = reader.GetString(5)
                     });
                 }
@@ -184,34 +184,52 @@ public class DBService
         return ingredients;
     }
 
-    private async Task<Macros> GetMacrosAsync(int id)
+    public async Task<string> DeleteIngredientAsync(string name)
     {
-        Macros macros = new();
+        string statusMessage = $"Ingredient {name} has been deleted.";
 
-        await using (var conn = new NpgsqlConnection(_connectionString))
-        {
-            await conn.OpenAsync();
-            await using (var cmd = new NpgsqlCommand(
-                             "SELECT" +
-                             "(macros).total_calories," +
-                             "(macros).total_carbs," +
-                             "(macros).total_fats," +
-                             "(macros).total_protein " +
-                             "FROM recipes " +
-                             $"WHERE id ={id};",
-                             conn))
-            await using (var reader = await cmd.ExecuteReaderAsync())
-            {
-                while (await reader.ReadAsync())
-                {
-                    macros.TotalCalories = reader.GetFloat(0);
-                    macros.TotalCarbs = reader.GetFloat(1);
-                    macros.TotalFats = reader.GetFloat(2);
-                    macros.TotalProtein = reader.GetFloat(3);
-                }
-            }
-        }
+        await using var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+        
+        string query = $"DELETE FROM ingredients WHERE name = '{name}';";
+        await using var cmd = new NpgsqlCommand(query, conn);
 
-        return macros;
+        int result = await RunAsyncQuery(cmd);
+        if (result < 1)
+            statusMessage = $"Ingredient {name} was not found.";
+        else
+            await UpdateTableIdsAsync("ingredients");
+        
+        return statusMessage;
+    }
+
+    private async Task UpdateTableIdsAsync(string tableName)
+    {
+        await using var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+        
+        string query = $"CREATE TEMP TABLE temp_{tableName} AS" +
+                       "SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id" +
+                       $"FROM {tableName};" +
+                       $"UPDATE {tableName}" +
+                       $"SET id = temp_{tableName}.new_id" +
+                       $"FROM temp_{tableName}" +
+                       $"WHERE {tableName}.id = temp_{tableName}.id;" +
+                       $"SELECT setval('{tableName}_id_seq', (SELECT MAX(id) FROM {tableName}));" +
+                       $"DROP TABLE temp_{tableName};";
+        await using var cmd = new NpgsqlCommand(query, conn);
+        
+        await RunAsyncQuery(cmd);
+    }
+    
+    public async Task<int> RunAsyncQuery(NpgsqlCommand query)
+    {
+        int result = await query.ExecuteNonQueryAsync();
+        if (result <= 0)
+            Console.WriteLine("No records affected.");
+        else
+            Console.WriteLine("Records affected: " + result);
+
+        return result;
     }
 }

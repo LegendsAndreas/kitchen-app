@@ -29,14 +29,30 @@
     </a>
 
     <ul class="dropdown-menu">
-        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("mealType"))">Recipe Meal Type</button></li>
-        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("name"))">Recipe Name</button></li>
-        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("ingredient"))">Recipe Ingredient</button></li>
-        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("image"))">Recipe Image</button></li>
-        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("deleteRecipe"))">Delete Recipe</button></li>
-        <li><hr class="dropdown-divider"/></li>
-        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("ingredientDb"))">Ingredient in Database</button></li>
-        <li><button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("deleteIngredient"))">Delete Ingredient</button></li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("mealType"))">Recipe Meal Type</button>
+        </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("name"))">Recipe Name</button>
+        </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("ingredient"))">Recipe Ingredient</button>
+        </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("image"))">Recipe Image</button>
+        </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("deleteRecipe"))">Delete Recipe</button>
+        </li>
+        <li>
+            <hr class="dropdown-divider"/>
+        </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("ingredientDb"))">Ingredient in Database</button>
+        </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("deleteIngredient"))">Delete Ingredient</button>
+        </li>
     </ul>
 </div>
 
@@ -54,6 +70,9 @@
     case "image":
         <EditRecipeImageForm/>
         break;
+    case "deleteIngredient":
+        <DeleteIngredientForm/>
+        break;
     default:
         <p>Not an option</p>
         break;
@@ -62,7 +81,7 @@
 @code {
 
     private string _option = string.Empty;
-    
+
     private void HandleOptionChange(string option)
     {
         _option = option;
@@ -70,3 +89,4 @@
     }
 
 }
+

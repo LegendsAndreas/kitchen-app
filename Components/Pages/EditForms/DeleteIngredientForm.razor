@@ -1,0 +1,44 @@
+@using WebKitchen.Services;
+@inject IJSRuntime JsRuntime;
+@inject DBService DbService;
+
+<EditForm Model="@_ingredientName" OnValidSubmit="@HandleValidSubmit">
+    <div>
+        <label>Ingredient Name</label>
+        <InputText id="name" @bind-Value="_ingredientName"/>
+    </div>
+    
+    <button type="submit">Delete Ingredient</button>
+</EditForm>
+
+@* Status message toaster *@
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="status-message" class="toast custom-header" role="alert" aria-live="assertive" aria-atomic="true"
+         data-bs-delay="5000">
+        <div class="toast-body">
+            @_statusMessage
+        </div>
+    </div>
+</div>
+
+<script>
+    function showStatusMessage() {
+        const toastLiveExample = document.getElementById('status-message');
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+        toastBootstrap.show();
+    }
+</script>
+
+@code{
+    string _statusMessage = string.Empty;
+    string _ingredientName = string.Empty;
+
+    private async Task HandleValidSubmit()
+    {
+        _statusMessage = await DbService.DeleteIngredientAsync(_ingredientName);
+        _ingredientName = string.Empty;
+        await JsRuntime.InvokeVoidAsync("showStatusMessage");
+        StateHasChanged();
+    }
+
+}

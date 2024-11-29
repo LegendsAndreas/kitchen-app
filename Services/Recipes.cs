@@ -3,7 +3,7 @@ using Npgsql;
 
 namespace WebKitchen.Services;
 
-public class Macros : SharedMethods
+public class Macros
 {
     public float TotalCalories { get; set; }
     public float TotalFats { get; set; }
