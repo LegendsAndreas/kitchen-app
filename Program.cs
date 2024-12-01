@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.Features;
 using WebKitchen.Components;
 using WebKitchen.Services;
 
@@ -12,6 +13,12 @@ public class Program
         // Add services to the container.
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
+        
+        /*builder.Services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+        builder.Services.Configure<FormOptions>(options =>
+        {
+            options.MultipartBodyLengthLimit = 52428800; // Set to a larger size in bytes, e.g., 50 MB
+        });*/
 
         builder.Services.AddSingleton<Recipe>();
         builder.Services.AddSingleton<Ingredient>();

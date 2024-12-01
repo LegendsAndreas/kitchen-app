@@ -1,0 +1,86 @@
+@page "/images"
+<PageTitle>Images</PageTitle>
+@rendermode InteractiveServer
+@using System.IO
+@using Services
+@inject DBService DbService;
+
+<h1>Upload Image To Database</h1>
+
+<InputFile OnChange="LoadFiles">Upload Image</InputFile>
+
+@if (isLoading)
+{
+    <p>Uploading...</p>
+}
+else
+{
+    <ul>
+        @foreach (var file in loadedFiles)
+        {
+            <li>
+                <EditForm Model="@currentImageName" OnValidSubmit="@HandleImageToDb">
+                    <DataAnnotationsValidator/>
+                    <label>
+                        Image Name
+                    </label>
+                    <InputText id="name" @bind-Value="@currentImageName"/>
+                    <button type="submit" class="btn btn-primary">Upload Image To Database</button>
+                </EditForm>
+                <ul>
+                    <li>Size (bytes): @file.Size</li>
+                    <li>Content type: @file.ContentType</li>
+                    <li>
+                        <img src="data:image/png;base64,@_base64Str" alt="fuck" style="max-width: 50%"/>
+                    </li>
+                </ul>
+            </li>
+        }
+    </ul>
+}
+
+
+@code {
+    private string _base64Str = "";
+    private List<IBrowserFile> loadedFiles = new();
+    private long maxFileSize = 1024 * 5000; // 5 MB
+    private bool isLoading;
+    private string currentImageName = "";
+
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        isLoading = true;
+        loadedFiles.Clear();
+
+        var file = e.File;
+        try
+        {
+            await using FileStream fs = new("garbage", FileMode.Create);
+            await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
+
+            loadedFiles.Add(file);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error : " + ex);
+        }
+
+        _base64Str = Convert.ToBase64String(await File.ReadAllBytesAsync("garbage"));
+
+
+        isLoading = false;
+        StateHasChanged();
+    }
+
+    private async Task HandleImageToDb()
+    {
+        await DbService.UploadImageBase64Async(currentImageName,_base64Str);
+        
+        loadedFiles.Clear();
+        _base64Str = "";
+        currentImageName = "";
+        
+        StateHasChanged();
+    }
+
+}

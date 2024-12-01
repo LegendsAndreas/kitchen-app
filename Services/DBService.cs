@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Data;
 using Npgsql;
 
@@ -25,10 +26,15 @@ public class DBService
 
     public async Task<List<Recipe>> GetRecipesAsync()
     {
+        var img = File.ReadAllBytes("wwwroot/pics/PlaceHolderPic.jpg");
+        var placeHolder = Convert.ToBase64String(img);
+        
         List<Recipe> recipes = new();
 
         await using var conn = new NpgsqlConnection(_connectionString);
         await conn.OpenAsync();
+
+        Hashtable base64Images = await GetRecipeImagesAsync();
 
         int recipeIdTracker = 1;
 
@@ -43,7 +49,7 @@ public class DBService
                 {
                     Number = reader.GetInt32(0),
                     Name = reader.GetString(1),
-                    Image = $"pics/{reader.GetString(2)}",
+                    Image = base64Images.ContainsKey(reader.GetString(1)) ? Convert.ToString(base64Images[reader.GetString(1)]) : placeHolder,
                     MealType = reader.GetString(3),
                     Ingredients = await GetIngredientsAsync(recipeIdTracker),
                     TotalMacros = new Macros
@@ -59,6 +65,26 @@ public class DBService
         }
 
         return recipes;
+    }
+
+    private async Task<Hashtable> GetRecipeImagesAsync()
+    {
+        Hashtable recipeImages = new();
+
+        await using var conn = new NpgsqlConnection(_connectionString);
+        await conn.OpenAsync();
+
+        string query = "SELECT image_name, image_base64 FROM images;";
+        await using (var cmd = new NpgsqlCommand(query, conn))
+        await using (var reader = await cmd.ExecuteReaderAsync())
+        {
+            while (await reader.ReadAsync())
+            {
+                recipeImages.Add(reader.GetString(0), reader.GetString(1));
+            }
+        }
+
+        return recipeImages;
     }
 
     public async Task<List<Recipe>> GetRecipesByCategoryAsync(string category)
@@ -149,7 +175,7 @@ public class DBService
             Console.WriteLine("Error getting ingredients async: " + ex.Message);
             throw;
         }
-        
+
         return ingredients;
     }
 
@@ -190,7 +216,7 @@ public class DBService
 
         await using var conn = new NpgsqlConnection(_connectionString);
         conn.Open();
-        
+
         string query = $"DELETE FROM ingredients WHERE name = '{name}';";
         await using var cmd = new NpgsqlCommand(query, conn);
 
@@ -199,7 +225,7 @@ public class DBService
             statusMessage = $"Ingredient {name} was not found.";
         else
             await UpdateTableIdsAsync("ingredients");
-        
+
         return statusMessage;
     }
 
@@ -207,7 +233,7 @@ public class DBService
     {
         await using var conn = new NpgsqlConnection(_connectionString);
         conn.Open();
-        
+
         string query = $"CREATE TEMP TABLE temp_{tableName} AS" +
                        "SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id" +
                        $"FROM {tableName};" +
@@ -218,10 +244,27 @@ public class DBService
                        $"SELECT setval('{tableName}_id_seq', (SELECT MAX(id) FROM {tableName}));" +
                        $"DROP TABLE temp_{tableName};";
         await using var cmd = new NpgsqlCommand(query, conn);
-        
+
         await RunAsyncQuery(cmd);
     }
-    
+
+    public async Task UploadImageBase64Async(string imageName, string base64Image)
+    {
+        try
+        {
+            await using var conn = new NpgsqlConnection(_connectionString);
+            conn.Open();
+
+            string query = $"INSERT INTO images (image_name, image_base64) VALUES ('{imageName}', '{base64Image}');";
+            await using var cmd = new NpgsqlCommand(query, conn);
+            await RunAsyncQuery(cmd);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error uploading image: " + ex.Message);
+        }
+    }
+
     public async Task<int> RunAsyncQuery(NpgsqlCommand query)
     {
         int result = await query.ExecuteNonQueryAsync();
