@@ -56,7 +56,7 @@
     </ul>
 </div>
 
-@switch (_option)
+@switch (selectedOption)
 {
     case "mealType":
         <EditMealTypeForm/>
@@ -80,11 +80,11 @@
 
 @code {
 
-    private string _option = string.Empty;
+    private string selectedOption = string.Empty;
 
     private void HandleOptionChange(string option)
     {
-        _option = option;
+        selectedOption = option;
         StateHasChanged();
     }
 

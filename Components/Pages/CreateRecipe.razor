@@ -123,22 +123,22 @@
     </EditForm>
 
 
-    <EditForm Model="@_currentDbIngredient" OnValidSubmit="OnValidDbIngredient">
+    <EditForm Model="@currentDbIngredient" OnValidSubmit="OnValidDbIngredient">
         <DataAnnotationsValidator/>
         <div class="container text-center border-layout paddage">
             <div class="row row-cols-1 row-cols-sd-2 row-cols-md-2 row-cols-lg-2 g-3">
 
                 <div class="col">
                     <label>Name</label>
-                    <InputText id="namer" @bind-Value="_currentDbIngredient.Name"/>
-                    <ValidationMessage For="@(() => _currentDbIngredient.Name)"/>
+                    <InputText id="namer" @bind-Value="currentDbIngredient.Name"/>
+                    <ValidationMessage For="@(() => currentDbIngredient.Name)"/>
                 </div>
 
 
                 <div class="col">
                     <label>Grams</label>
-                    <InputNumber id="gramser" @bind-Value="_currentDbIngredient.Grams"/>
-                    <ValidationMessage For="@(() => _currentDbIngredient.Grams)"/>
+                    <InputNumber id="gramser" @bind-Value="currentDbIngredient.Grams"/>
+                    <ValidationMessage For="@(() => currentDbIngredient.Grams)"/>
                 </div>
                 <button type="submit" class="btn btn-primary">Add Existing Ingredient</button>
             </div>
@@ -157,11 +157,11 @@
         </h2>
         <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
             <div class="accordion-body">
-                @if (_currentIngredients.Count == 0)
+                @if (currentIngredients.Count == 0)
                 {
                     <p>No ingredients added</p>
                 }
-                @foreach (var ingredient in _currentIngredients)
+                @foreach (var ingredient in currentIngredients)
                 {
                     <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
@@ -176,7 +176,7 @@
                             <li class="dropdown-item">Carbs: @ingredient.Carbs.ToString("0")</li>
                         </ul>
                         <button type="submit" class="btn btn-danger"
-                                @onclick="() => DeleteRecipe(_currentIngredients.IndexOf(ingredient))">
+                                @onclick="() => DeleteRecipe(currentIngredients.IndexOf(ingredient))">
                             <strong>X</strong>
                         </button>
                     </div>
@@ -205,15 +205,15 @@
 </script>
 
 @code {
-    readonly List<Ingredient> _currentIngredients = new();
-    readonly Ingredient _currentDbIngredient = new();
+    readonly List<Ingredient> currentIngredients = new();
+    readonly Ingredient currentDbIngredient = new();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             DbIngredients = await DbService.GetIngredientsFromTableAsync();
-            Console.WriteLine("Aquired ingredients.");
+            Console.WriteLine("Acquired ingredients.");
         }
         catch (Exception ex)
         {
@@ -224,13 +224,13 @@
 
     private async Task OnValidRecipe()
     {
-        if (_currentIngredients.Count == 0)
+        if (currentIngredients.Count == 0)
         {
             Console.WriteLine("There are no ingredients.");
             return;
         }
 
-        CurrentRecipe.Ingredients = _currentIngredients;
+        CurrentRecipe.Ingredients = currentIngredients;
         CurrentRecipe.SetTotalMacros();
 
         Console.WriteLine("Print current recipe");
@@ -238,7 +238,7 @@
 
         try
         {
-            await CurrentRecipe.AddRecipeToDatabase();
+            await DbService.AddRecipeToDatabase(CurrentRecipe);
         }
         catch (Exception e)
         {
@@ -248,7 +248,7 @@
 
         CurrentRecipe.Clear();
         CurrentIngredient.Clear();
-        _currentIngredients.Clear();
+        currentIngredients.Clear();
     }
 
     public void OnValidIngredient()
@@ -256,7 +256,7 @@
         Ingredient tempIngredient = CurrentIngredient.TransferIngredient(CurrentIngredient);
         tempIngredient.PrintIngredient();
 
-        _currentIngredients.Add(tempIngredient);
+        currentIngredients.Add(tempIngredient);
         CurrentIngredient.Clear();
     }
 
@@ -264,10 +264,10 @@
     {
         foreach (var ingredient in DbIngredients)
         {
-            if (_currentDbIngredient.Name == ingredient.Name)
+            if (currentDbIngredient.Name == ingredient.Name)
             {
-                CurrentIngredient.Name = _currentDbIngredient.Name;
-                CurrentIngredient.Grams = _currentDbIngredient.Grams;
+                CurrentIngredient.Name = currentDbIngredient.Name;
+                CurrentIngredient.Grams = currentDbIngredient.Grams;
                 CurrentIngredient.Calories = ingredient.Calories;
                 CurrentIngredient.Fats = ingredient.Fats;
                 CurrentIngredient.Carbs = ingredient.Carbs;
@@ -275,7 +275,7 @@
 
                 OnValidIngredient();
 
-                _currentDbIngredient.Clear();
+                currentDbIngredient.Clear();
 
                 return;
             }
@@ -288,7 +288,7 @@
 
     private void DeleteRecipe(int index)
     {
-        _currentIngredients.RemoveAt(index);
+        currentIngredients.RemoveAt(index);
         StateHasChanged();
     }
 

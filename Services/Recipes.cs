@@ -5,22 +5,20 @@ namespace WebKitchen.Services;
 
 public class Macros
 {
-    public float TotalCalories { get; set; }
-    public float TotalFats { get; set; }
-    public float TotalCarbs { get; set; }
-    public float TotalProtein { get; set; }
+    public float Calories { get; set; }
+    public float Fat { get; set; }
+    public float Carbs { get; set; }
+    public float Protein { get; set; }
 
     public void PrintMacros()
     {
         Console.WriteLine("Printing Macros:");
         Console.WriteLine("--------------------------------------------------------");
-        Console.WriteLine("Total calories: " + TotalCalories);
-        Console.WriteLine("Total fats: " + TotalFats);
-        Console.WriteLine("Total carbs: " + TotalCarbs);
-        Console.WriteLine("Total protein: " + TotalProtein);
+        Console.WriteLine("Total calories: " + Calories);
+        Console.WriteLine("Total fats: " + Fat);
+        Console.WriteLine("Total carbs: " + Carbs);
+        Console.WriteLine("Total protein: " + Protein);
     }
-    
-
 }
 
 public class Ingredient
@@ -83,48 +81,9 @@ public class Ingredient
 
         return transferIngredient;
     }
-
-    public async Task AddIngredientToDb()
-    {
-        try
-        {
-            await using var conn = new NpgsqlConnection(
-                "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
-            await conn.OpenAsync();
-
-            // Maybe just insert the ingredients one at a time, where you first insert the recipe variables, then macros
-            // and then just array_append to the ingredients.
-
-            string query =
-                "INSERT INTO ingredients (name, cals, fats, carbs, protein, image) VALUES(@name, @cals, @fats, @carbs, @protein, @image)";
-            await using NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-
-            cmd.Parameters.AddWithValue("@name", Name);
-            cmd.Parameters.AddWithValue("@cals", Calories);
-            cmd.Parameters.AddWithValue("@fats", Fats);
-            cmd.Parameters.AddWithValue("@carbs", Carbs);
-            cmd.Parameters.AddWithValue("@protein", Protein);
-            cmd.Parameters.AddWithValue("@image", Image);
-            await RunAsyncQuery(cmd);
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Error making CMD: " + e.Message);
-            throw;
-        }
-    }
-
-    private async Task RunAsyncQuery(NpgsqlCommand query)
-    {
-        int result = await query.ExecuteNonQueryAsync();
-        if (result < 0)
-            Console.WriteLine("No records affected.");
-        else
-            Console.WriteLine("Records affected: " + result);
-    }
 }
 
-public class Recipe : SharedMethods
+public class Recipe
 {
     public int Number;
     [Required] public string MealType { get; set; } = string.Empty;
@@ -168,10 +127,10 @@ public class Recipe : SharedMethods
             {
                 Console.WriteLine("Printing ingredient at Macrows");
                 ingredient.PrintIngredient();
-                TotalMacros.TotalCalories += (ingredient.Calories * ingredient.Multiplier);
-                TotalMacros.TotalFats += (ingredient.Fats * ingredient.Multiplier);
-                TotalMacros.TotalCarbs += (ingredient.Carbs * ingredient.Multiplier);
-                TotalMacros.TotalProtein += (ingredient.Protein * ingredient.Multiplier);
+                TotalMacros.Calories += ingredient.Calories * ingredient.Multiplier;
+                TotalMacros.Fat += ingredient.Fats * ingredient.Multiplier;
+                TotalMacros.Carbs += ingredient.Carbs * ingredient.Multiplier;
+                TotalMacros.Protein += ingredient.Protein * ingredient.Multiplier;
             }
         }
 
@@ -187,197 +146,5 @@ public class Recipe : SharedMethods
         Image = String.Empty;
         Ingredients = new();
         TotalMacros = new();
-    }
-
-    public async Task AddRecipeToDatabase()
-    {
-        PrintRecipe();
-        try
-        {
-            await using var conn = new NpgsqlConnection(
-                "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
-            await conn.OpenAsync();
-
-            // Maybe just insert the ingredients one at a time, where you first insert the recipe variables, then macros
-            // and then just array_append to the ingredients.
-
-            string query =
-                "INSERT INTO recipes (meal_type, name, image, macros) VALUES (@type, @name, @image, ROW(@calories, @fats, @carbs,@protein)::recipe_macros)";
-            await using NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-
-            cmd.Parameters.AddWithValue("@type", MealType);
-            cmd.Parameters.AddWithValue("@name", Name);
-            cmd.Parameters.AddWithValue("@image", Image);
-            cmd.Parameters.AddWithValue("@calories", TotalMacros.TotalCalories);
-            cmd.Parameters.AddWithValue("@fats", TotalMacros.TotalFats);
-            cmd.Parameters.AddWithValue("@carbs", TotalMacros.TotalCarbs);
-            cmd.Parameters.AddWithValue("@protein", TotalMacros.TotalProtein);
-            await RunAsyncQuery(cmd);
-            await AddIngredientsToRow();
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Error making CMD: " + e.Message);
-            throw;
-        }
-    }
-
-    private async Task AddIngredientsToRow()
-    {
-        await using var conn = new NpgsqlConnection(
-            "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
-        await conn.OpenAsync();
-        foreach (var ingredient in Ingredients)
-        {
-            string query =
-                "UPDATE recipes SET ingredients = array_append(ingredients, ROW(@name, @grams, @cals, @fats, @carbs, @protein, @multiplier)::ingredient) WHERE id IN (SELECT COUNT(*) FROM recipes)";
-            NpgsqlCommand cmd = new(query, conn);
-
-            string name = ingredient.Name;
-            float grams = ingredient.Grams;
-            float cals = ingredient.Calories;
-            float fats = ingredient.Fats;
-            float carbs = ingredient.Carbs;
-            float protein = ingredient.Protein;
-            float multiplier = ingredient.Multiplier;
-
-            cmd.Parameters.AddWithValue("@name", name);
-            cmd.Parameters.AddWithValue("@grams", grams);
-            cmd.Parameters.AddWithValue("@cals", cals);
-            cmd.Parameters.AddWithValue("@fats", fats);
-            cmd.Parameters.AddWithValue("@carbs", carbs);
-            cmd.Parameters.AddWithValue("@protein", protein);
-            cmd.Parameters.AddWithValue("@multiplier", multiplier);
-
-            await RunAsyncQuery(cmd);
-        }
-    }
-
-    public void GetRandomRecipe()
-    {
-        List<Recipe> recipes = GetDinnerRecipes();
-        Recipe randomRecipe = recipes[new Random().Next(0, recipes.Count - 1)];
-        SetRecipe(randomRecipe);
-    }
-
-    private void SetRecipe(Recipe recipe)
-    {
-        Number = recipe.Number;
-        MealType = recipe.MealType;
-        Name = recipe.Name;
-        Image = recipe.Image;
-        if (recipe.Ingredients.Count > 0)
-        {
-            Ingredients = recipe.Ingredients;
-        }
-
-        if (recipe.TotalMacros.TotalCalories != 0)
-        {
-            TotalMacros = recipe.TotalMacros;
-        }
-    }
-
-    private List<Recipe> GetDinnerRecipes()
-    {
-        List<Recipe> recipes = new();
-        using var conn = new NpgsqlConnection(
-            "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
-        conn.Open();
-
-        const string query =
-            "SELECT id, meal_type, name, image, (macros).total_protein, (macros).total_fats, (macros).total_carbs, (macros).total_calories FROM recipes WHERE meal_type = 'D';";
-
-        using (var cmd = new NpgsqlCommand(query, conn))
-        using (var reader = cmd.ExecuteReader())
-        {
-            while (reader.Read())
-            {
-                Recipe recipe = new Recipe
-                {
-                    Number = reader.GetInt32(0),
-                    MealType = reader.GetString(1),
-                    Name = reader.GetString(2),
-                    Image = reader.GetString(3),
-                    TotalMacros = new Macros
-                    {
-                        TotalProtein = reader.GetFloat(4),
-                        TotalFats = reader.GetFloat(5),
-                        TotalCarbs = reader.GetFloat(6),
-                        TotalCalories = reader.GetFloat(7)
-                    }
-                };
-                recipes.Add(recipe);
-            }
-        }
-
-        return recipes;
-    }
-
-
-
-    public async Task CorrectRecipeAsync(string type, string name)
-    {
-        await using var conn = new NpgsqlConnection(
-            "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
-        conn.Open();
-
-        const string query = "UPDATE recipes SET meal_type = @type WHERE name = @name";
-
-        await using var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("@type", type);
-        cmd.Parameters.AddWithValue("@name", name);
-
-        await RunAsyncQuery(cmd);
-    }
-    
-    public async Task CorrectRecipeNameAsync(string currentName, string updatedName)
-    {
-        await using var conn = new NpgsqlConnection(
-            "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
-        conn.Open();
-
-        const string query = "UPDATE recipes SET name = @currentName WHERE name = @updatedName";
-
-        await using var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("@currentName", currentName);
-        cmd.Parameters.AddWithValue("@updatedName", updatedName);
-
-        await RunAsyncQuery(cmd);
-    }
-    
-    public async Task CorrectRecipeImageAsync(string recipeName, string imageName)
-    {
-        await using var conn = new NpgsqlConnection(
-            "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
-        conn.Open();
-
-        string query = $"UPDATE recipes SET image = '{imageName}' WHERE name = '{recipeName}'";
-        await using var cmd = new NpgsqlCommand(query, conn);
-
-        await RunAsyncQuery(cmd);
-    }
-    
-    /*public async Task CorrectMacrosAsync(float macroValue, string recipeName, string macroType)
-    {
-        await using var conn = new NpgsqlConnection(
-            "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
-        conn.Open();
-
-        string query = $"UPDATE recipes SET (macros).total_{macroType} = {macroValue} WHERE name = {recipeName}";
-
-        await using var cmd = new NpgsqlCommand(query, conn);
-        await RunAsyncQuery(cmd);
-    }*/
-}
-
-public abstract class SharedMethods()
-{
-    public async Task RunAsyncQuery(NpgsqlCommand query)
-    {
-        int result = await query.ExecuteNonQueryAsync();
-        if (result < 0)
-            Console.WriteLine("No records affected.");
-        else
-            Console.WriteLine("Records affected: " + result);
     }
 }

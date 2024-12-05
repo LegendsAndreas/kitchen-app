@@ -23,10 +23,10 @@
                     </div>
                     <div class="card-body border-primary">
                         <p class="card-text">
-                            - Calories: @recipe.TotalMacros.TotalCalories.ToString("0") <br>
-                            - Carbs: @recipe.TotalMacros.TotalCarbs.ToString("0") <br>
-                            - Fats: @recipe.TotalMacros.TotalFats.ToString("0") <br>
-                            - Protein: @recipe.TotalMacros.TotalProtein.ToString("0")
+                            - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
+                            - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
+                            - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
+                            - Protein: @recipe.TotalMacros.Protein.ToString("0")
                         </p>
                     </div>
                 </div>
@@ -44,15 +44,11 @@
     {
         try
         {
-            await using var connection = DbService.GetConnection();
+            await using var connection = await DbService.GetConnection();
             if (connection.State == System.Data.ConnectionState.Open)
-            {
                 Console.WriteLine("Database connection successful");
-            }
             else
-            {
                 Console.WriteLine("Failed to connect to database");
-            }
         }
         catch (Exception e)
         {

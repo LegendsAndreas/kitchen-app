@@ -24,7 +24,7 @@
 <div class="container">
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @foreach (var recipe in _recipes)
+        @foreach (var recipe in recipes)
         {
             <div class="col" style="padding: 10px">
                 <div class="card h-100"> 
@@ -34,10 +34,10 @@
                     </div>
                     <div class="card-body border-primary">
                         <p class="card-text">
-                            - Calories: @recipe.TotalMacros.TotalCalories.ToString("0") <br>
-                            - Carbs: @recipe.TotalMacros.TotalCarbs.ToString("0") <br>
-                            - Fats: @recipe.TotalMacros.TotalFats.ToString("0") <br>
-                            - Protein: @recipe.TotalMacros.TotalProtein.ToString("0")
+                            - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
+                            - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
+                            - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
+                            - Protein: @recipe.TotalMacros.Protein.ToString("0")
                         </p>
                     </div>
                 </div>
@@ -50,11 +50,11 @@
 
 @code{
 
-    List<Recipe> _recipes = new();
+    List<Recipe> recipes = new();
 
-    private async Task SortRecipesByCategory(string catagory)
+    private async Task SortRecipesByCategory(string category)
     {
-        _recipes = await DbService.GetRecipesByCategoryAsync(catagory);
+        recipes = await DbService.GetRecipesByCategoryAsync(category);
         StateHasChanged();
     }
 

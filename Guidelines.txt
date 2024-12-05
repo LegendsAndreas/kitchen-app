@@ -1,0 +1,14 @@
+__For instances general purposes__
+Just use a lowercase version of them.
+Macros = macros.
+List<Macros> = macrosList
+
+Ingredient = ingredient.
+List<Ingredient> = ingredients
+
+Recipe = recipe.
+List<Recipe> = recipes.
+
+__For instances special cases__
+You case you want to use Macros for a collective of multiple values, use "TotalMacros".
+For cases where you want to use an instance of class temporarily, just add "temp" af the start of the name.

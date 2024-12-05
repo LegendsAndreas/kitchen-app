@@ -8,18 +8,18 @@ public class DailyMeal
 
     public void AddMacrosToTotalMacros(Macros total)
     {
-        TotalDailyMacros.TotalCalories += total.TotalCalories;
-        TotalDailyMacros.TotalFats += total.TotalFats;
-        TotalDailyMacros.TotalCarbs += total.TotalCarbs;
-        TotalDailyMacros.TotalProtein += total.TotalProtein;
+        TotalDailyMacros.Calories += total.Calories;
+        TotalDailyMacros.Fat += total.Fat;
+        TotalDailyMacros.Carbs += total.Carbs;
+        TotalDailyMacros.Protein += total.Protein;
     }
 
     public void RemoveMacrosFromTotalMacros(Macros total)
     {
-        TotalDailyMacros.TotalCalories -= total.TotalCalories;
-        TotalDailyMacros.TotalFats -= total.TotalFats;
-        TotalDailyMacros.TotalCarbs -= total.TotalCarbs;
-        TotalDailyMacros.TotalProtein -= total.TotalProtein;
+        TotalDailyMacros.Calories -= total.Calories;
+        TotalDailyMacros.Fat -= total.Fat;
+        TotalDailyMacros.Carbs -= total.Carbs;
+        TotalDailyMacros.Protein -= total.Protein;
     }
 }
 
@@ -49,14 +49,14 @@ public class MealPlan
     
     public void AddMacrosAndRecipeToDay(Recipe recipe, int day)
     {
-        Console.WriteLine($"Adding macros and recipe to Day: {recipe.TotalMacros.TotalCalories} {recipe.TotalMacros.TotalCarbs} {recipe.TotalMacros.TotalFats} {recipe.TotalMacros.TotalProtein}");
+        Console.WriteLine($"Adding macros and recipe to Day: {recipe.TotalMacros.Calories} {recipe.TotalMacros.Carbs} {recipe.TotalMacros.Fat} {recipe.TotalMacros.Protein}");
         
         DailyMealsList[day].DailyMeals.Add(recipe);
         
-        TotalWeeklyMacros.TotalCalories += recipe.TotalMacros.TotalCalories;
-        TotalWeeklyMacros.TotalFats += recipe.TotalMacros.TotalFats;
-        TotalWeeklyMacros.TotalCarbs += recipe.TotalMacros.TotalCarbs;
-        TotalWeeklyMacros.TotalProtein += recipe.TotalMacros.TotalProtein;
+        TotalWeeklyMacros.Calories += recipe.TotalMacros.Calories;
+        TotalWeeklyMacros.Fat += recipe.TotalMacros.Fat;
+        TotalWeeklyMacros.Carbs += recipe.TotalMacros.Carbs;
+        TotalWeeklyMacros.Protein += recipe.TotalMacros.Protein;
         
         DailyMealsList[day].AddMacrosToTotalMacros(recipe.TotalMacros);
     }
@@ -65,10 +65,10 @@ public class MealPlan
     {
         DailyMealsList[day].DailyMeals.Remove(recipe);
         
-        TotalWeeklyMacros.TotalCalories -= recipe.TotalMacros.TotalCalories;
-        TotalWeeklyMacros.TotalFats -= recipe.TotalMacros.TotalFats;
-        TotalWeeklyMacros.TotalCarbs -= recipe.TotalMacros.TotalCarbs;
-        TotalWeeklyMacros.TotalProtein -= recipe.TotalMacros.TotalProtein;
+        TotalWeeklyMacros.Calories -= recipe.TotalMacros.Calories;
+        TotalWeeklyMacros.Fat -= recipe.TotalMacros.Fat;
+        TotalWeeklyMacros.Carbs -= recipe.TotalMacros.Carbs;
+        TotalWeeklyMacros.Protein -= recipe.TotalMacros.Protein;
         
         DailyMealsList[day].RemoveMacrosFromTotalMacros(recipe.TotalMacros);
     }

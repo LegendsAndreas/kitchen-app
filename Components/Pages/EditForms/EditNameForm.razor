@@ -1,10 +1,11 @@
 ﻿@using WebKitchen.Services;
 @inject Recipe CurrentRecipe;
+@inject DBService DbService;
 
 <EditForm Model="@CurrentRecipe" OnValidSubmit="@HandleValidSubmit">
     <div>
         <label>Current Name</label>
-        <InputText id="name" @bind-Value="_currentName"/>
+        <InputText id="name" @bind-Value="currentName"/>
     </div>
 
     <div>
@@ -15,11 +16,11 @@
 </EditForm>
 
 @code{
-    string _currentName = string.Empty;
+    string currentName = string.Empty;
 
     private async Task HandleValidSubmit()
     {
-        await CurrentRecipe.CorrectRecipeNameAsync(_currentName, CurrentRecipe.Name);
+        await DbService.CorrectRecipeNameAsync(currentName, CurrentRecipe.Name);
         CurrentRecipe.Clear();
     }
 

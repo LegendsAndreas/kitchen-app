@@ -39,17 +39,17 @@
 <div class="container ingredient-form">
     <div class="row g-1">
         <div class="col alignment">
-            <EditForm Model="@_currentRecipeName" OnValidSubmit="@ValidRecipe">
+            <EditForm Model="@currentRecipeName" OnValidSubmit="@ValidRecipe">
                 <label>
                     Recipe Name
                 </label>
-                <InputText id="name" @bind-Value="@_currentRecipeName"/>
+                <InputText id="name" @bind-Value="@currentRecipeName"/>
                 <button type="submit" class="btn btn-primary">Add Recipe</button>
             </EditForm>
         </div>
 
         <div class="col alignment">
-            @if (_currentDay < 6)
+            @if (currentDay < 6)
             {
                 <button type="submit" class="btn btn-primary" @onclick="IncrementCurrentDay">Next Day</button>
             }
@@ -60,7 +60,7 @@
         </div>
 
         <div class="col alignment">
-            <p>Current day is: @(_currentDay + 1)</p>
+            <p>Current day is: @(currentDay + 1)</p>
         </div>
     </div>
 
@@ -74,11 +74,11 @@
         </button>
 
         <div class="row g-1">
-            <div class="col alignment">Day @(_currentTotalMacrosDay + 1)</div>
-            <div class="col alignment">Total Calories: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.TotalCalories.ToString("0")</div>
-            <div class="col alignment">Total Fat: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.TotalFats.ToString("0")</div>
-            <div class="col alignment">Total Carbs: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.TotalCarbs.ToString("0")</div>
-            <div class="col alignment">Total Protein: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.TotalProtein.ToString("0")</div>
+            <div class="col alignment">Day @(currentTotalMacrosDay + 1)</div>
+            <div class="col alignment">Total Calories: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Calories.ToString("0")</div>
+            <div class="col alignment">Total Fat: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Fat.ToString("0")</div>
+            <div class="col alignment">Total Carbs: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Carbs.ToString("0")</div>
+            <div class="col alignment">Total Protein: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Protein.ToString("0")</div>
         </div>
     </div>
 
@@ -88,7 +88,7 @@
 <div class="container">
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @foreach (var recipe in _mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].DailyMeals)
+        @foreach (var recipe in mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].DailyMeals)
         {
         <div class="col" style="padding: 10px">
             <div class="card h-100">
@@ -98,10 +98,10 @@
                 </div>
                 <div class="card-body border-primary">
                     <p class="card-text">
-                        - Calories: @recipe.TotalMacros.TotalCalories.ToString("0") <br>
-                        - Carbs: @recipe.TotalMacros.TotalCarbs.ToString("0") <br>
-                        - Fats: @recipe.TotalMacros.TotalFats.ToString("0") <br>
-                        - Protein: @recipe.TotalMacros.TotalProtein.ToString("0")
+                        - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
+                        - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
+                        - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
+                        - Protein: @recipe.TotalMacros.Protein.ToString("0")
                     </p>
                 </div>
             </div>
@@ -147,42 +147,42 @@
 
 @code{
 
-    List<Recipe> _recipes = new();
+    List<Recipe> recipes = new();
 
-    string _currentRecipeName = string.Empty;
-    int _currentDay;
+    string currentRecipeName = string.Empty;
+    int currentDay;
 
-    MealPlan _mealPlanMacrosAndRecipes = new();
+    MealPlan mealPlanMacrosAndRecipes = new();
 
-    int _currentTotalMacrosDay;
+    int currentTotalMacrosDay;
 
     protected override async Task OnInitializedAsync()
     {
-        _recipes = await DbService.GetRecipesAsync();
+        recipes = await DbService.GetRecipesAsync();
     }
 
     private void ValidRecipe()
     {
-        int index = _recipes.FindIndex(recipe => recipe.Name == _currentRecipeName);
+        int index = recipes.FindIndex(recipe => recipe.Name == currentRecipeName);
 
         if (index != -1)
         {
-            Console.WriteLine($"Found {_currentRecipeName} at {index}");
-            _mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay(_recipes[index], _currentDay);
+            Console.WriteLine($"Found {currentRecipeName} at {index}");
+            mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay(recipes[index], currentDay);
         }
         else
         {
-            Console.WriteLine($"Did not find {_currentRecipeName}");
+            Console.WriteLine($"Did not find {currentRecipeName}");
         }
 
-        _currentRecipeName = string.Empty;
+        currentRecipeName = string.Empty;
         StateHasChanged();
     }
 
     private void NextDay()
     {
-        if (_currentTotalMacrosDay < 6)
-            _currentTotalMacrosDay++;
+        if (currentTotalMacrosDay < 6)
+            currentTotalMacrosDay++;
         else
             JsRuntime.InvokeVoidAsync("showInvalidNextDayToast");
         // Toast that says you cant go higher than 7.
@@ -192,8 +192,8 @@
 
     private void PreviousDay()
     {
-        if (_currentTotalMacrosDay > 0)
-            _currentTotalMacrosDay--;
+        if (currentTotalMacrosDay > 0)
+            currentTotalMacrosDay--;
         else
             JsRuntime.InvokeVoidAsync("showInvalidPreviousDayToast");
 
@@ -202,7 +202,7 @@
 
     private void IncrementCurrentDay()
     {
-        _currentDay++;
+        currentDay++;
         StateHasChanged();
     }
 

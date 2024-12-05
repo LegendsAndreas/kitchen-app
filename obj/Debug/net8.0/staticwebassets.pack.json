@@ -93,6 +93,14 @@
       "PackagePath": "staticwebassets\\pics\\Sukker.jpg"
     },
     {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\blueberryblondies.webp",
+      "PackagePath": "staticwebassets\\pics\\blueberryblondies.webp"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\spaghettibolognese.webp",
+      "PackagePath": "staticwebassets\\pics\\spaghettibolognese.webp"
+    },
+    {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WebKitchen.Microsoft.AspNetCore.StaticWebAssets.props",
       "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
     },

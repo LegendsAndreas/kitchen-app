@@ -1,26 +1,27 @@
 @using WebKitchen.Services;
 @inject Recipe CurrentRecipe;
+@inject DBService DbService;
 
 <EditForm Model="@CurrentRecipe" OnValidSubmit="@HandleValidSubmit">
     <div>
         <label>Recipe Name</label>
-        <InputText id="name" @bind-Value="_recipeName"/>
+        <InputText id="name" @bind-Value="recipeName"/>
     </div>
 
     <div>
         <label>Updated Image</label>
-        <InputText id="type" @bind-Value="_updatedImage"/>
+        <InputText id="type" @bind-Value="updatedImage"/>
     </div>
     <button class="btn btn-primary" type="submit">Update</button>
 </EditForm>
 
 @code{
-    string _recipeName = string.Empty;
-    string _updatedImage = string.Empty;
+    string recipeName = string.Empty;
+    string updatedImage = string.Empty;
 
     private async Task HandleValidSubmit()
     {
-        await CurrentRecipe.CorrectRecipeImageAsync(_recipeName, _updatedImage);
+        await DbService.CorrectRecipeImageAsync(recipeName, updatedImage);
         // We never assign the CurrentRecipe, but I just want to be sure.
         CurrentRecipe.Clear();
     }

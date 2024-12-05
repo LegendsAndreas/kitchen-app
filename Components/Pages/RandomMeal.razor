@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 
 @using WebKitchen.Services;
+@inject DBService DbService;
 
 <PageTitle>Random Meal</PageTitle>
 
@@ -25,18 +26,18 @@
 
 <div class="container">
     <div class="card" style="width: 50%; margin: 0 auto;">
-        @if (_randomRecipe.Name != string.Empty)
+        @if (randomRecipe.Name != string.Empty)
         {
             <img src="pics/PlaceHolderPic.jpg" alt="Random Meal" class="card-img"/>
             <div class="card-header">
-                <h3>@_randomRecipe.Name</h3>
+                <h3>@randomRecipe.Name</h3>
             </div>
             <div class="card-body border-primary">
                 <p class="card-text">
-                    - Calories: @_randomRecipe.TotalMacros.TotalCalories.ToString("0") <br>
-                    - Carbs: @_randomRecipe.TotalMacros.TotalCarbs.ToString("0")<br>
-                    - Fats: @_randomRecipe.TotalMacros.TotalFats.ToString("0")<br>
-                    - Protein: @_randomRecipe.TotalMacros.TotalProtein.ToString("0")
+                    - Calories: @randomRecipe.TotalMacros.Calories.ToString("0") <br>
+                    - Carbs: @randomRecipe.TotalMacros.Carbs.ToString("0")<br>
+                    - Fats: @randomRecipe.TotalMacros.Fat.ToString("0")<br>
+                    - Protein: @randomRecipe.TotalMacros.Protein.ToString("0")
                 </p>
             </div>
         }
@@ -49,20 +50,20 @@
 
 @code {
 
-    readonly Recipe _randomRecipe = new();
+    Recipe randomRecipe = new();
 
     private void RandomRecipe()
     {
         try
         {
             Console.WriteLine("Getting random recipe...");
-            _randomRecipe.GetRandomRecipe();
-            _randomRecipe.PrintRecipe();
+            randomRecipe = DbService.GetRandomRecipe();
+            randomRecipe.PrintRecipe();
 
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error at RandonRecipe: "+e.Message);
+            Console.WriteLine("Error at Random Recipe: "+e.Message);
             throw;
         }
         StateHasChanged();

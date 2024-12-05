@@ -7,7 +7,7 @@
 
 <h1>Upload Image To Database</h1>
 
-<InputFile OnChange="LoadFiles">Upload Image</InputFile>
+<InputFile OnChange="LoadImages">Upload Image</InputFile>
 
 @if (isLoading)
 {
@@ -31,7 +31,7 @@ else
                     <li>Size (bytes): @file.Size</li>
                     <li>Content type: @file.ContentType</li>
                     <li>
-                        <img src="data:image/png;base64,@_base64Str" alt="fuck" style="max-width: 50%"/>
+                        <img src="data:image/png;base64,@base64Image" alt="fuck" style="max-width: 50%"/>
                     </li>
                 </ul>
             </li>
@@ -41,43 +41,44 @@ else
 
 
 @code {
-    private string _base64Str = "";
+    private string base64Image = "";
     private List<IBrowserFile> loadedFiles = new();
-    private long maxFileSize = 1024 * 5000; // 5 MB
+    // private long maxFileSize = 1024 * 5000; // 5 MB
     private bool isLoading;
     private string currentImageName = "";
 
-    private async Task LoadFiles(InputFileChangeEventArgs e)
+    private async Task LoadImages(InputFileChangeEventArgs images)
     {
         isLoading = true;
         loadedFiles.Clear();
-
-        var file = e.File;
-        try
+        
+        foreach (var image in images.GetMultipleFiles())
         {
-            await using FileStream fs = new("garbage", FileMode.Create);
-            await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
-
-            loadedFiles.Add(file);
+            if (!image.ContentType.Contains("image"))
+            {
+                Console.WriteLine($"\"{image.ContentType}\" is not allowed");
+                return;
+            }
+            
+            using var memoryStream = new MemoryStream();
+            await image.OpenReadStream().CopyToAsync(memoryStream);
+            var imageBytes = memoryStream.ToArray();
+            var tempBase64Image = Convert.ToBase64String(imageBytes);
+            base64Image = tempBase64Image;
+            
+            loadedFiles.Add(image);
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error : " + ex);
-        }
-
-        _base64Str = Convert.ToBase64String(await File.ReadAllBytesAsync("garbage"));
-
-
+        
         isLoading = false;
         StateHasChanged();
     }
 
     private async Task HandleImageToDb()
     {
-        await DbService.UploadImageBase64Async(currentImageName,_base64Str);
+        await DbService.UploadImageBase64Async(currentImageName,base64Image);
         
         loadedFiles.Clear();
-        _base64Str = "";
+        base64Image = "";
         currentImageName = "";
         
         StateHasChanged();

@@ -1,5 +1,6 @@
 ﻿@using WebKitchen.Services;
 @inject Recipe CurrentRecipe;
+@inject DBService DbService;
 
 <EditForm Model="@CurrentRecipe" OnValidSubmit="@HandleValidSubmit">
     <div>
@@ -18,7 +19,7 @@
 
     private async Task HandleValidSubmit()
     {
-        await CurrentRecipe.CorrectRecipeAsync(CurrentRecipe.MealType, CurrentRecipe.Name);
+        await DbService.CorrectRecipeAsync(CurrentRecipe.MealType, CurrentRecipe.Name);
         CurrentRecipe.Clear();
     }
 

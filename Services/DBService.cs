@@ -17,11 +17,178 @@ public class DBService
     }
 
     // We then made a NpgsqlConnection, open it and then returns it.
-    public NpgsqlConnection GetConnection()
+    public async Task<NpgsqlConnection> GetConnection()
     {
         NpgsqlConnection connection = new(_connectionString);
-        connection.Open();
+        await connection.OpenAsync();
         return connection;
+    }
+    
+    public async Task AddRecipeToDatabase(Recipe recipe)
+    {
+        recipe.PrintRecipe();
+        try
+        {
+            var conn = await GetConnection();
+
+            // Maybe just insert the ingredients one at a time, where you first insert the recipe variables, then macros
+            // and then just array_append to the ingredients.
+
+            string query =
+                "INSERT INTO recipes (meal_type, name, image, macros) VALUES (@type, @name, @image, ROW(@calories, @fats, @carbs,@protein)::recipe_macros)";
+            await using NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+            cmd.Parameters.AddWithValue("@type", recipe.MealType);
+            cmd.Parameters.AddWithValue("@name", recipe.Name);
+            cmd.Parameters.AddWithValue("@image", recipe.Image);
+            cmd.Parameters.AddWithValue("@calories", recipe.TotalMacros.Calories);
+            cmd.Parameters.AddWithValue("@fats", recipe.TotalMacros.Fat);
+            cmd.Parameters.AddWithValue("@carbs", recipe.TotalMacros.Carbs);
+            cmd.Parameters.AddWithValue("@protein", recipe.TotalMacros.Protein);
+            await RunAsyncQuery(cmd);
+            await AddIngredientsToRow(recipe.Ingredients);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error making CMD: " + e.Message);
+            throw;
+        }
+    }
+    
+    private async Task AddIngredientsToRow(List<Ingredient> ingredients)
+    {
+        var conn = await GetConnection();
+        foreach (var ingredient in ingredients)
+        {
+            string query =
+                "UPDATE recipes SET ingredients = array_append(ingredients, ROW(@name, @grams, @cals, @fats, @carbs, @protein, @multiplier)::ingredient) WHERE id IN (SELECT COUNT(*) FROM recipes)";
+            NpgsqlCommand cmd = new(query, conn);
+
+            string name = ingredient.Name;
+            float grams = ingredient.Grams;
+            float cals = ingredient.Calories;
+            float fats = ingredient.Fats;
+            float carbs = ingredient.Carbs;
+            float protein = ingredient.Protein;
+            float multiplier = ingredient.Multiplier;
+
+            cmd.Parameters.AddWithValue("@name", name);
+            cmd.Parameters.AddWithValue("@grams", grams);
+            cmd.Parameters.AddWithValue("@cals", cals);
+            cmd.Parameters.AddWithValue("@fats", fats);
+            cmd.Parameters.AddWithValue("@carbs", carbs);
+            cmd.Parameters.AddWithValue("@protein", protein);
+            cmd.Parameters.AddWithValue("@multiplier", multiplier);
+
+            await RunAsyncQuery(cmd);
+        }
+    }
+    
+    public async Task AddIngredientToDb(Ingredient ingredient)
+    {
+        try
+        {
+            var conn = await GetConnection();
+
+            // Maybe just insert the ingredients one at a time, where you first insert the recipe variables, then macros
+            // and then just array_append to the ingredients.
+
+            string query =
+                "INSERT INTO ingredients (name, cals, fats, carbs, protein, image) VALUES(@name, @cals, @fats, @carbs, @protein, @image)";
+            await using NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+
+            cmd.Parameters.AddWithValue("@name", ingredient.Name);
+            cmd.Parameters.AddWithValue("@cals", ingredient.Calories);
+            cmd.Parameters.AddWithValue("@fats", ingredient.Fats);
+            cmd.Parameters.AddWithValue("@carbs", ingredient.Carbs);
+            cmd.Parameters.AddWithValue("@protein", ingredient.Protein);
+            cmd.Parameters.AddWithValue("@image", ingredient.Image);
+            await RunAsyncQuery(cmd);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error making CMD: " + e.Message);
+            throw;
+        }
+    }
+    
+    public async Task CorrectRecipeAsync(string type, string name)
+    {
+        var conn = await GetConnection();
+
+        const string query = "UPDATE recipes SET meal_type = @type WHERE name = @name";
+
+        await using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@type", type);
+        cmd.Parameters.AddWithValue("@name", name);
+
+        await RunAsyncQuery(cmd);
+    }
+    
+    private List<Recipe> GetDinnerRecipes()
+    {
+        List<Recipe> recipes = new();
+        using var conn = new NpgsqlConnection(
+            "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
+        conn.Open();
+
+        const string query =
+            "SELECT id, meal_type, name, image, (macros).total_protein, (macros).total_fats, (macros).total_carbs, (macros).total_calories FROM recipes WHERE meal_type = 'D';";
+
+        using (var cmd = new NpgsqlCommand(query, conn))
+        using (var reader = cmd.ExecuteReader())
+        {
+            while (reader.Read())
+            {
+                Recipe recipe = new Recipe
+                {
+                    Number = reader.GetInt32(0),
+                    MealType = reader.GetString(1),
+                    Name = reader.GetString(2),
+                    Image = reader.GetString(3),
+                    TotalMacros = new Macros
+                    {
+                        Protein = reader.GetFloat(4),
+                        Fat = reader.GetFloat(5),
+                        Carbs = reader.GetFloat(6),
+                        Calories = reader.GetFloat(7)
+                    }
+                };
+                recipes.Add(recipe);
+            }
+        }
+
+        return recipes;
+    }
+    
+    public Recipe GetRandomRecipe()
+    {
+        List<Recipe> recipes = GetDinnerRecipes();
+        Recipe randomRecipe = recipes[new Random().Next(0, recipes.Count - 1)];
+        return randomRecipe;
+    }
+    
+    public async Task CorrectRecipeImageAsync(string recipeName, string imageName)
+    {
+        var conn = await GetConnection();
+
+        string query = $"UPDATE recipes SET image = '{imageName}' WHERE name = '{recipeName}'";
+        await using var cmd = new NpgsqlCommand(query, conn);
+
+        await RunAsyncQuery(cmd);
+    }
+    
+    public async Task CorrectRecipeNameAsync(string currentName, string updatedName)
+    {
+        var conn = await GetConnection();
+
+        const string query = "UPDATE recipes SET name = @currentName WHERE name = @updatedName";
+
+        await using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@currentName", currentName);
+        cmd.Parameters.AddWithValue("@updatedName", updatedName);
+
+        await RunAsyncQuery(cmd);
     }
 
     public async Task<List<Recipe>> GetRecipesAsync()
@@ -54,10 +221,10 @@ public class DBService
                     Ingredients = await GetIngredientsAsync(recipeIdTracker),
                     TotalMacros = new Macros
                     {
-                        TotalCalories = reader.GetFloat(4),
-                        TotalFats = reader.GetFloat(5),
-                        TotalCarbs = reader.GetFloat(6),
-                        TotalProtein = reader.GetFloat(7)
+                        Calories = reader.GetFloat(4),
+                        Fat = reader.GetFloat(5),
+                        Carbs = reader.GetFloat(6),
+                        Protein = reader.GetFloat(7)
                     }
                 });
                 recipeIdTracker++;
@@ -113,10 +280,10 @@ public class DBService
                         Ingredients = await GetIngredientsAsync(recipeIdTracker),
                         TotalMacros = new Macros
                         {
-                            TotalCalories = reader.GetFloat(4),
-                            TotalFats = reader.GetFloat(5),
-                            TotalCarbs = reader.GetFloat(6),
-                            TotalProtein = reader.GetFloat(7)
+                            Calories = reader.GetFloat(4),
+                            Fat = reader.GetFloat(5),
+                            Carbs = reader.GetFloat(6),
+                            Protein = reader.GetFloat(7)
                         }
                     });
                     recipeIdTracker++;
