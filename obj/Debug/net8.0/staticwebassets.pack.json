@@ -25,6 +25,10 @@
       "PackagePath": "staticwebassets\\js\\bootstrap\\bootstrap.bundle.min.js"
     },
     {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Amatriciana.jpg",
+      "PackagePath": "staticwebassets\\pics\\Amatriciana.jpg"
+    },
+    {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BackgroundImage.webp",
       "PackagePath": "staticwebassets\\pics\\BackgroundImage.webp"
     },
@@ -51,10 +55,6 @@
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\KikRemolade.webp",
       "PackagePath": "staticwebassets\\pics\\KikRemolade.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\LetMælk.jpg",
-      "PackagePath": "staticwebassets\\pics\\LetMælk.jpg"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\MosedeKartofler.jpg",

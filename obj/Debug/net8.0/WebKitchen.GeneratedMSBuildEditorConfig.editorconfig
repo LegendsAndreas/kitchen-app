@@ -42,6 +42,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFZGl0Rm9ybXNcRWRpdEluZ3JlZGllbnRGb3JtLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/EditForms/EditIngredientImageForm.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFZGl0Rm9ybXNcRWRpdEluZ3JlZGllbnRJbWFnZUZvcm0ucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/EditForms/EditMealTypeForm.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFZGl0Rm9ybXNcRWRpdE1lYWxUeXBlRm9ybS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 

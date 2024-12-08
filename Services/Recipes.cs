@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Components.Forms;
 using Npgsql;
 
 namespace WebKitchen.Services;
@@ -31,6 +32,24 @@ public class Ingredient
     public float Fats { get; set; }
     public float Multiplier { get; set; }
     public string Image { get; set; } = string.Empty;
+    
+    public async Task SetImageAsync(IBrowserFile image, long allowedFileSize = 10)
+    {
+        var maxFileSize = allowedFileSize * 1024 * 1024;
+        
+        if (image.Size > maxFileSize)
+        {
+            Console.WriteLine("Image too large.");
+            return;
+        }
+        
+        using var memoryStream = new MemoryStream();
+        await image.OpenReadStream(maxFileSize).CopyToAsync(memoryStream);
+        
+        var imageBytes = memoryStream.ToArray();
+        var base64Image = Convert.ToBase64String(imageBytes);
+        Image = base64Image;
+    }
 
     public void Clear()
     {
@@ -113,6 +132,24 @@ public class Recipe
         }
 
         TotalMacros.PrintMacros();
+    }
+
+    public async Task SetImageAsync(IBrowserFile image, long allowedFileSize = 10)
+    {
+        var maxFileSize = allowedFileSize * 1024 * 1024;
+        
+        if (image.Size > maxFileSize)
+        {
+            Console.WriteLine("Image too large.");
+            return;
+        }
+        
+        using var memoryStream = new MemoryStream();
+        await image.OpenReadStream(maxFileSize).CopyToAsync(memoryStream);
+        
+        var imageBytes = memoryStream.ToArray();
+        var base64Image = Convert.ToBase64String(imageBytes);
+        Image = base64Image;
     }
 
     public void SetTotalMacros()

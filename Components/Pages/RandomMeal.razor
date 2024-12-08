@@ -28,7 +28,7 @@
     <div class="card" style="width: 50%; margin: 0 auto;">
         @if (randomRecipe.Name != string.Empty)
         {
-            <img src="pics/PlaceHolderPic.jpg" alt="Random Meal" class="card-img"/>
+            <img src="data:image/png;base64,@randomRecipe.Image" alt="Random Meal" class="card-img"/>
             <div class="card-header">
                 <h3>@randomRecipe.Name</h3>
             </div>

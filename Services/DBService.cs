@@ -168,11 +168,11 @@ public class DBService
         return randomRecipe;
     }
     
-    public async Task CorrectRecipeImageAsync(string recipeName, string imageName)
+    public async Task CorrectRecipeImageAsync(string recipeName, string base64Image)
     {
         var conn = await GetConnection();
 
-        string query = $"UPDATE recipes SET image = '{imageName}' WHERE name = '{recipeName}'";
+        string query = $"UPDATE recipes SET image = '{base64Image}' WHERE name = '{recipeName}'";
         await using var cmd = new NpgsqlCommand(query, conn);
 
         await RunAsyncQuery(cmd);
@@ -194,14 +194,12 @@ public class DBService
     public async Task<List<Recipe>> GetRecipesAsync()
     {
         var img = File.ReadAllBytes("wwwroot/pics/PlaceHolderPic.jpg");
-        var placeHolder = Convert.ToBase64String(img);
+        var base64PlaceHolderPic = Convert.ToBase64String(img);
         
         List<Recipe> recipes = new();
 
         await using var conn = new NpgsqlConnection(_connectionString);
         await conn.OpenAsync();
-
-        Hashtable base64Images = await GetRecipeImagesAsync();
 
         int recipeIdTracker = 1;
 
@@ -216,9 +214,9 @@ public class DBService
                 {
                     Number = reader.GetInt32(0),
                     Name = reader.GetString(1),
-                    Image = base64Images.ContainsKey(reader.GetString(1)) ? Convert.ToString(base64Images[reader.GetString(1)]) : placeHolder,
+                    Image = reader.GetString(2) != "PlaceHolderPic.jpg" ? reader.GetString(2) : base64PlaceHolderPic,
                     MealType = reader.GetString(3),
-                    Ingredients = await GetIngredientsAsync(recipeIdTracker),
+                    Ingredients = await GetIngredientByIdAsync(recipeIdTracker),
                     TotalMacros = new Macros
                     {
                         Calories = reader.GetFloat(4),
@@ -234,7 +232,7 @@ public class DBService
         return recipes;
     }
 
-    private async Task<Hashtable> GetRecipeImagesAsync()
+    /*private async Task<Hashtable> GetRecipeImagesAsync()
     {
         Hashtable recipeImages = new();
 
@@ -252,7 +250,7 @@ public class DBService
         }
 
         return recipeImages;
-    }
+    }*/
 
     public async Task<List<Recipe>> GetRecipesByCategoryAsync(string category)
     {
@@ -277,7 +275,7 @@ public class DBService
                         Name = reader.GetString(1),
                         Image = $"pics/{reader.GetString(2)}",
                         MealType = reader.GetString(3),
-                        Ingredients = await GetIngredientsAsync(recipeIdTracker),
+                        Ingredients = await GetIngredientByIdAsync(recipeIdTracker),
                         TotalMacros = new Macros
                         {
                             Calories = reader.GetFloat(4),
@@ -299,9 +297,8 @@ public class DBService
 
         return recipes;
     }
-
-
-    private async Task<List<Ingredient>> GetIngredientsAsync(int id)
+    
+    private async Task<List<Ingredient>> GetIngredientByIdAsync(int id)
     {
         List<Ingredient> ingredients = new();
         try
@@ -348,6 +345,9 @@ public class DBService
 
     public async Task<List<Ingredient>> GetIngredientsFromTableAsync()
     {
+        var img = await File.ReadAllBytesAsync("wwwroot/pics/PlaceHolderPic.jpg");
+        var base64PlaceHolderPic = Convert.ToBase64String(img);
+        
         Console.WriteLine("Getting ingredients...");
         List<Ingredient> ingredients = new();
 
@@ -368,13 +368,23 @@ public class DBService
                         Fats = reader.GetFloat(2),
                         Carbs = reader.GetFloat(3),
                         Protein = reader.GetFloat(4),
-                        Image = reader.GetString(5)
+                        Image = reader.GetString(5) != "PlaceHolderPic.jpg" ? reader.GetString(5) : base64PlaceHolderPic
                     });
                 }
             }
         }
 
         return ingredients;
+    }
+
+    public async Task CorrectIngredientImageAsync(string ingredientName,string base64Image)
+    {
+        var conn = await GetConnection();
+        
+        string query = $"UPDATE ingredients SET image = '{base64Image}' WHERE name = '{ingredientName}'";
+        await using var cmd = new NpgsqlCommand(query, conn);
+        
+        await RunAsyncQuery(cmd);
     }
 
     public async Task<string> DeleteIngredientAsync(string name)

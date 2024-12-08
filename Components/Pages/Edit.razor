@@ -53,6 +53,9 @@
         <li>
             <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("deleteIngredient"))">Delete Ingredient</button>
         </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("ingredientImage"))">Ingredient Image</button>
+        </li>
     </ul>
 </div>
 
@@ -72,6 +75,9 @@
         break;
     case "deleteIngredient":
         <DeleteIngredientForm/>
+        break;
+    case "ingredientImage":
+        <EditIngredientImageForm/>
         break;
     default:
         <p>Not an option</p>

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "g+Sr8DxPu42WvS8HUtRt+0GnmwtvNrb49XwuQn4KeYg=",
+  "Hash": "Mf2gTYy1KxIR1LgQEddbOdLFVl63NpzNqysYz/8POIA=",
   "Source": "WebKitchen",
   "BasePath": "_content/WebKitchen",
   "Mode": "Default",
@@ -148,6 +148,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\js\\bootstrap\\bootstrap.bundle.min.js"
+    },
+    {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Amatriciana.jpg",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/Amatriciana.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\Amatriciana.jpg"
     },
     {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BackgroundImage.webp",
@@ -300,25 +319,6 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\pics\\KikRemolade.webp"
-    },
-    {
-      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\LetMælk.jpg",
-      "SourceId": "WebKitchen",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
-      "BasePath": "_content/WebKitchen",
-      "RelativePath": "pics/LetMælk.jpg",
-      "AssetKind": "All",
-      "AssetMode": "All",
-      "AssetRole": "Primary",
-      "AssetMergeBehavior": "PreferTarget",
-      "AssetMergeSource": "",
-      "RelatedAsset": "",
-      "AssetTraitName": "",
-      "AssetTraitValue": "",
-      "CopyToOutputDirectory": "Never",
-      "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\pics\\LetMælk.jpg"
     },
     {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\MosedeKartofler.jpg",
