@@ -162,7 +162,7 @@ public class Recipe
         {
             foreach (var ingredient in Ingredients)
             {
-                Console.WriteLine("Printing ingredient at Macrows");
+                Console.WriteLine("Printing ingredient at Macros");
                 ingredient.PrintIngredient();
                 TotalMacros.Calories += ingredient.Calories * ingredient.Multiplier;
                 TotalMacros.Fat += ingredient.Fats * ingredient.Multiplier;
@@ -171,7 +171,6 @@ public class Recipe
             }
         }
 
-        Console.WriteLine("At SetTotalMacros()");
         TotalMacros.PrintMacros();
     }
 

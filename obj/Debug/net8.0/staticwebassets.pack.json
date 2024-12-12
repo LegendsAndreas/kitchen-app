@@ -9,20 +9,16 @@
       "PackagePath": "staticwebassets\\app.css"
     },
     {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.bundle.min.js",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.bundle.min.js"
+    },
+    {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css.map",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
-      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\js\\bootstrap\\bootstrap.bundle.min.js",
-      "PackagePath": "staticwebassets\\js\\bootstrap\\bootstrap.bundle.min.js"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Amatriciana.jpg",
@@ -39,6 +35,10 @@
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\CheasyOst.webp",
       "PackagePath": "staticwebassets\\pics\\CheasyOst.webp"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\FaviconPurpleScroll.png",
+      "PackagePath": "staticwebassets\\pics\\FaviconPurpleScroll.png"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\FiskeFilet.webp",
@@ -97,8 +97,60 @@
       "PackagePath": "staticwebassets\\pics\\blueberryblondies.webp"
     },
     {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\blåbær.jpg",
+      "PackagePath": "staticwebassets\\pics\\blåbær.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\casein.jpg",
+      "PackagePath": "staticwebassets\\pics\\casein.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\engelsk.jpg",
+      "PackagePath": "staticwebassets\\pics\\engelsk.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\havremel.jpg",
+      "PackagePath": "staticwebassets\\pics\\havremel.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\let.jpg",
+      "PackagePath": "staticwebassets\\pics\\let.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\oile.jpg",
+      "PackagePath": "staticwebassets\\pics\\oile.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\penut.jpg",
+      "PackagePath": "staticwebassets\\pics\\penut.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\skum.jpg",
+      "PackagePath": "staticwebassets\\pics\\skum.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\skyneutral.jpg",
+      "PackagePath": "staticwebassets\\pics\\skyneutral.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\spag.jpg",
+      "PackagePath": "staticwebassets\\pics\\spag.jpg"
+    },
+    {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\spaghettibolognese.webp",
       "PackagePath": "staticwebassets\\pics\\spaghettibolognese.webp"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\sød.jpg",
+      "PackagePath": "staticwebassets\\pics\\sød.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\æg.jpg",
+      "PackagePath": "staticwebassets\\pics\\æg.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",
+      "PackagePath": "staticwebassets\\styles.css"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WebKitchen.Microsoft.AspNetCore.StaticWebAssets.props",

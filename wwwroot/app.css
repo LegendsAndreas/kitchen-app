@@ -1,3 +1,7 @@
+.test-class {
+    color: red;
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -48,12 +52,4 @@ h1:focus {
 
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
-}
-
-.ud-background {
-    background-image: url('pics/pexels-photo-7130472.webp');
-    background-color: gray;
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
 }

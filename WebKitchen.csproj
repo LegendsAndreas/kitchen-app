@@ -10,14 +10,4 @@
       <PackageReference Include="Npgsql" Version="8.0.5" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Update="Components\Pages\RandomMealStyle.css">
-        <DependentUpon>RandomMeal.razor</DependentUpon>
-      </None>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="wwwroot\garbage\" />
-    </ItemGroup>
-
 </Project>

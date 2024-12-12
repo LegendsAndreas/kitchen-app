@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http.Features;
 using WebKitchen.Components;
 using WebKitchen.Services;
 
@@ -13,12 +12,6 @@ public class Program
         // Add services to the container.
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
-        
-        /*builder.Services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
-        builder.Services.Configure<FormOptions>(options =>
-        {
-            options.MultipartBodyLengthLimit = 52428800; // Set to a larger size in bytes, e.g., 50 MB
-        });*/
 
         builder.Services.AddSingleton<Recipe>();
         builder.Services.AddSingleton<Ingredient>();
@@ -26,8 +19,14 @@ public class Program
 
         builder.Services.AddSingleton(sp =>
         {
-            // var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-            return new DBService("Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+            if (connectionString == null)
+            {
+                Console.WriteLine("No connection string found.");
+                return null;
+            }
+
+            return new DBService(connectionString);
         });
 
         var app = builder.Build();
