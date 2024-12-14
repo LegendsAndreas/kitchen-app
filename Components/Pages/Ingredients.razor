@@ -1,11 +1,8 @@
 ﻿@page "/ingredients"
-<PageTitle>Ingredients</PageTitle>
-
 @rendermode InteractiveServer
-
-@using WebKitchen.Services;
 @inject DBService DbService;
 @inject List<Ingredient> IngredientsSingleton;
+<PageTitle>Ingredients</PageTitle>
 
 <style>
     .ingredient-form {

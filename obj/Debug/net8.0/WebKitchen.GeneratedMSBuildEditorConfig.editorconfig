@@ -97,3 +97,7 @@ build_metadata.AdditionalFiles.CssScope = b-yu5zy0riwu
 [C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Layout/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmF2TWVudS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-twkjl3yewd
+
+[C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/RecipeDetails.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZWNpcGVEZXRhaWxzLnJhem9y
+build_metadata.AdditionalFiles.CssScope = b-v9zpp2rsdb

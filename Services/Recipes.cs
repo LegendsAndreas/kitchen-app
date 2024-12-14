@@ -32,20 +32,20 @@ public class Ingredient
     public float Fats { get; set; }
     public float Multiplier { get; set; }
     public string Image { get; set; } = string.Empty;
-    
+
     public async Task SetImageAsync(IBrowserFile image, long allowedFileSize = 10)
     {
         var maxFileSize = allowedFileSize * 1024 * 1024;
-        
+
         if (image.Size > maxFileSize)
         {
             Console.WriteLine("Image too large.");
             return;
         }
-        
+
         using var memoryStream = new MemoryStream();
         await image.OpenReadStream(maxFileSize).CopyToAsync(memoryStream);
-        
+
         var imageBytes = memoryStream.ToArray();
         var base64Image = Convert.ToBase64String(imageBytes);
         Image = base64Image;
@@ -113,40 +113,49 @@ public class Recipe
 
     public void PrintRecipe()
     {
-        Console.WriteLine("Reciping recipe...");
-        Console.WriteLine("Recipe Number: " + Number);
-        Console.WriteLine("MealType: " + MealType);
-        Console.WriteLine("Name: " + Name);
-        Console.WriteLine("Image: " + Image);
-
-        if (Ingredients.Count != 0)
+        try
         {
-            foreach (var ingredient in Ingredients)
+            Console.WriteLine("Reciping recipe...");
+            Console.WriteLine("Recipe Number: " + Number);
+            Console.WriteLine("MealType: " + MealType);
+            Console.WriteLine("Name: " + Name);
+            Console.WriteLine("Image: " + Image);
+
+            if (Ingredients.Count != 0)
             {
-                ingredient.PrintIngredient();
+                foreach (var ingredient in Ingredients)
+                {
+                    ingredient.PrintIngredient();
+                }
             }
-        }
-        else
-        {
-            Console.WriteLine("No ingredients available.");
-        }
+            else
+            {
+                Console.WriteLine("No ingredients available.");
+            }
 
-        TotalMacros.PrintMacros();
+            TotalMacros.PrintMacros();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error print recipe: "+ex.Message);
+            Console.WriteLine("StackTrace: "+ex.StackTrace);
+            throw;
+        }
     }
 
     public async Task SetImageAsync(IBrowserFile image, long allowedFileSize = 10)
     {
         var maxFileSize = allowedFileSize * 1024 * 1024;
-        
+
         if (image.Size > maxFileSize)
         {
             Console.WriteLine("Image too large.");
             return;
         }
-        
+
         using var memoryStream = new MemoryStream();
         await image.OpenReadStream(maxFileSize).CopyToAsync(memoryStream);
-        
+
         var imageBytes = memoryStream.ToArray();
         var base64Image = Convert.ToBase64String(imageBytes);
         Image = base64Image;
@@ -183,4 +192,11 @@ public class Recipe
         Ingredients = new();
         TotalMacros = new();
     }
+}
+
+public class RecipeStateService
+{
+    public Recipe SelectedRecipe { get; set; }
+
+    public void SetSelectedRecipe(Recipe recipe) => SelectedRecipe = recipe;
 }

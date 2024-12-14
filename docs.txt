@@ -29,3 +29,54 @@ SELECT setval('recipes_id_seq', (SELECT MAX(id) FROM recipes));
 Despite the fact that the compiler does not mention this, the fact that the @-symbol is on the Model
 and not the actual CurrentIngredient variable, will crash the program with an InvalidOperationException.
 <EditForm @Model="CurrentIngredient" OnValidSubmit="ValidIngredient">
+
+-- Wha?
+I dont fucking understand the below code. The if-statement (statesRecipe != null), throws the warning that it is always 
+true and that i might as well just remove it altogether. But when i do, and run the program, it gives me a null reference exception.
+And here's the thing, when i run the program with the if statement, with the same paramters and all, it runs just fine and
+can access the statesRecipe.Image!
+@page "/recipe-details"
+@rendermode InteractiveServer
+@inject RecipeStateService recipeStatesService
+<PageTitle>Recipe Details</PageTitle>
+
+@if (statesRecipe != null)
+{
+    <div class="container" style="background: #212529">
+        @* Col one *@
+        <div id="recipe-image">
+            <img src="data:image/png;base64,@statesRecipe.Image" alt="Recipe Image is gone..."/>
+        </div>
+
+        <div id="recipe-ingredients">
+
+        </div>
+
+        <div id="recipe-macros">
+
+        </div>
+
+        @* Col two *@
+        <div id="recipe-name">
+
+        </div>
+
+        <div id="recipe-instructions">
+
+        </div>
+
+        <div id="recipe-notes">
+
+        </div>
+    </div>
+}
+
+@code {
+    Recipe statesRecipe = new();
+
+    protected override void OnInitialized()
+    {
+        statesRecipe = recipeStatesService.SelectedRecipe;
+    }
+
+}

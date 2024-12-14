@@ -91,3 +91,4 @@ C:\Users\A\Desktop\Coding\C#\kitchen-app\obj\Debug\net8.0\WebKitchen.genruntimec
 C:\Users\A\Desktop\Coding\C#\kitchen-app\obj\Debug\net8.0\ref\WebKitchen.dll
 C:\Users\A\Desktop\Coding\C#\kitchen-app\bin\Debug\net8.0\appsettings.json
 C:\Users\A\Desktop\Coding\C#\kitchen-app\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\A\Desktop\Coding\C#\kitchen-app\obj\Debug\net8.0\scopedcss\Components\Pages\RecipeDetails.razor.rz.scp.css

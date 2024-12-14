@@ -1,9 +1,8 @@
 @page "/images"
-<PageTitle>Images</PageTitle>
 @rendermode InteractiveServer
 @using System.IO
-@using Services
 @inject DBService DbService;
+<PageTitle>Images</PageTitle>
 
 <h1>Upload Image To Database</h1>
 
@@ -42,7 +41,9 @@ else
 
 @code {
     private string base64Image = "";
+
     private List<IBrowserFile> loadedFiles = new();
+
     // private long maxFileSize = 1024 * 5000; // 5 MB
     private bool isLoading;
     private string currentImageName = "";
@@ -51,7 +52,7 @@ else
     {
         isLoading = true;
         loadedFiles.Clear();
-        
+
         foreach (var image in images.GetMultipleFiles())
         {
             if (!image.ContentType.Contains("image"))
@@ -59,28 +60,28 @@ else
                 Console.WriteLine($"\"{image.ContentType}\" is not allowed");
                 return;
             }
-            
+
             using var memoryStream = new MemoryStream();
             await image.OpenReadStream().CopyToAsync(memoryStream);
             var imageBytes = memoryStream.ToArray();
             var tempBase64Image = Convert.ToBase64String(imageBytes);
             base64Image = tempBase64Image;
-            
+
             loadedFiles.Add(image);
         }
-        
+
         isLoading = false;
         StateHasChanged();
     }
 
     private async Task HandleImageToDb()
     {
-        await DbService.UploadImageBase64Async(currentImageName,base64Image);
-        
+        await DbService.UploadImageBase64Async(currentImageName, base64Image);
+
         loadedFiles.Clear();
         base64Image = "";
         currentImageName = "";
-        
+
         StateHasChanged();
     }
 

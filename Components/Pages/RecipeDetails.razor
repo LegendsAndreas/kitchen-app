@@ -1,0 +1,104 @@
+@page "/recipe-details"
+@rendermode InteractiveServer
+@inject RecipeStateService recipeStatesService
+<PageTitle>Recipe Details</PageTitle>
+
+@if (statesRecipe != null)
+{
+    <div class="container" id="recipe-details">
+        @* Col one *@
+        <div class="content" style="display: inline-flex; justify-content: flex-start; align-items: flex-start;">
+            <div id="column-1">
+                <div id="recipe-image">
+                    <img src="data:image/png;base64,@statesRecipe.Image" alt="Recipe Image is gone..."
+                         id="recipe-image-style"/>
+                </div>
+
+                <div id="recipe-ingredients">
+                    <ul>
+                        <li class="list-group-item">Pasta 50g</li>
+                        <li class="list-group-item">Pasta 50g</li>
+                        <li class="list-group-item">Pasta 50g</li>
+                        <li class="list-group-item">Pasta 50g</li>
+                        <li class="list-group-item">Pasta 50g</li>
+                    </ul>
+                    @*@foreach (var ingredient in statesRecipe.Ingredients)
+            {
+                <p>
+                    @ingredient.Name> @ingredient.Grams
+                </p>
+            }*@
+                </div>
+
+                <div id="recipe-macros">
+                    <h5>Macros</h5>
+                    <ul>
+                        <li>Protein @statesRecipe.TotalMacros.Protein</li>
+                        <li>Fat @statesRecipe.TotalMacros.Fat</li>
+                        <li>Carbs @statesRecipe.TotalMacros.Carbs</li>
+                        <li>Calories @statesRecipe.TotalMacros.Calories</li>
+                    </ul>
+                </div>
+            </div>
+
+            @* Col two *@
+            <div id="column-2">
+                <div id="recipe-name">
+                    <h1>@statesRecipe.Name</h1>
+                </div>
+
+                <div id="recipe-instructions">
+                    <ol>
+                        @foreach (var instruction in instructions)
+                        {
+                            <li>@instruction</li>
+                        }
+                    </ol>
+
+                </div>
+
+                <div id="recipe-notes">
+                    <h5>Notes</h5>
+                    <ul>
+                        @foreach (var note in notes)
+                        {
+                            <li>@note</li>
+                        }
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    Recipe statesRecipe = new();
+    List<string> instructions = new();
+    List<string> notes = new();
+
+    protected override void OnInitialized()
+    {
+        statesRecipe = recipeStatesService.SelectedRecipe;
+        GetInstructions();
+        GetNotes();
+    }
+
+    private void GetInstructions()
+    {
+        instructions.Add("Firstly...");
+        instructions.Add("Secondly...");
+        instructions.Add("Thirdly...");
+        instructions.Add("Fourthly...");
+        instructions.Add("Fifthly...");
+        instructions.Add("Sixthly...");
+    }
+
+    private void GetNotes()
+    {
+        notes.Add("By the way...");
+        notes.Add("Also...");
+        notes.Add("Remember to...");
+    }
+
+}

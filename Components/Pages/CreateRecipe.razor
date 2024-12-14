@@ -1,14 +1,11 @@
 @page "/create-recipe"
-<PageTitle>Create Recipe</PageTitle>
-
 @rendermode InteractiveServer
-
-@using WebKitchen.Services;
 @inject DBService DbService;
 @inject Recipe CurrentRecipe;
 @inject Ingredient CurrentIngredient;
 @inject List<Ingredient> DbIngredients;
 @inject IJSRuntime JsRuntime;
+<PageTitle>Create Recipe</PageTitle>
 
 
 <style>
@@ -57,19 +54,16 @@
                 <div class="col">
                     <label class="form-label">Meal Type:</label>
                     <InputText id="meal-type" @bind-Value="CurrentRecipe.MealType"/>
-                    <ValidationMessage For="@(() => CurrentRecipe.MealType)"/>
                 </div>
 
                 <div class="col">
                     <label>Recipe Name:</label>
                     <InputText id="name" @bind-Value="CurrentRecipe.Name"/>
-                    <ValidationMessage For="@(() => CurrentRecipe.Name)"/>
                 </div>
 
                 <div class="col">
                     <label>Image:</label>
                     <InputText id="image" @bind-Value="CurrentRecipe.Image"/>
-                    <ValidationMessage For="@(() => CurrentRecipe.Image)"/>
                 </div>
                 <button type="submit" class="btn btn-primary col">Create Recipe</button>
             </div>
@@ -85,37 +79,31 @@
                 <div class="col">
                     <label>Ingredient Name:</label>
                     <InputText id="ingredient-name" @bind-Value="CurrentIngredient.Name"/>
-                    <ValidationMessage For="@(() => CurrentIngredient.Name)"/>
                 </div>
 
                 <div class="col">
                     <label>Grams:</label>
                     <InputNumber id="kg" @bind-Value="CurrentIngredient.Grams"/>
-                    <ValidationMessage For="@(() => CurrentIngredient.Grams)"/>
                 </div>
 
                 <div class="col">
                     <label>Calories (pr. 100g):</label>
                     <InputNumber id="calories" @bind-Value="CurrentIngredient.Calories"/>
-                    <ValidationMessage For="@(() => CurrentIngredient.Calories)"/>
                 </div>
 
                 <div class="col">
                     <label>Carbs (pr. 100g):</label>
                     <InputNumber id="carbs" @bind-Value="CurrentIngredient.Carbs"/>
-                    <ValidationMessage For="@(() => CurrentIngredient.Carbs)"/>
                 </div>
 
                 <div class="col">
                     <label>Fats (pr. 100g):</label>
                     <InputNumber id="fats" @bind-Value="CurrentIngredient.Fats"/>
-                    <ValidationMessage For="@(() => CurrentIngredient.Fats)"/>
                 </div>
 
                 <div class="col">
                     <label>Protein (pr. 100g):</label>
                     <InputNumber id="protein" @bind-Value="CurrentIngredient.Protein"/>
-                    <ValidationMessage For="@(() => CurrentIngredient.Protein)"/>
                 </div>
                 <button type="submit" class="btn btn-primary">Add Ingredient</button>
             </div>
@@ -131,14 +119,12 @@
                 <div class="col">
                     <label>Name</label>
                     <InputText id="namer" @bind-Value="currentDbIngredient.Name"/>
-                    <ValidationMessage For="@(() => currentDbIngredient.Name)"/>
                 </div>
 
 
                 <div class="col">
                     <label>Grams</label>
                     <InputNumber id="gramser" @bind-Value="currentDbIngredient.Grams"/>
-                    <ValidationMessage For="@(() => currentDbIngredient.Grams)"/>
                 </div>
                 <button type="submit" class="btn btn-primary">Add Existing Ingredient</button>
             </div>
@@ -210,7 +196,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        try
+        /*try
         {
             DbIngredients = await DbService.GetIngredientsFromTableAsync();
             Console.WriteLine("Acquired ingredients.");
@@ -219,7 +205,7 @@
         {
             Console.WriteLine("Error getting ingredients list: " + ex.Message);
             throw;
-        }
+        }*/
     }
 
     private async Task OnValidRecipe()
