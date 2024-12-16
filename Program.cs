@@ -16,8 +16,8 @@ public class Program
         builder.Services.AddSingleton<Recipe>();
         builder.Services.AddSingleton<Ingredient>();
         builder.Services.AddSingleton<List<Ingredient>>();
-        // builder.Services.AddScoped<List<Recipe>>();
         builder.Services.AddScoped<RecipeStateService>();
+        builder.Services.AddScoped(provider => new List<Recipe>());
 
         builder.Services.AddSingleton(sp =>
         {

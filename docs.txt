@@ -80,3 +80,8 @@ can access the statesRecipe.Image!
     }
 
 }
+
+-- What the fuck man?
+I added a scoped List<Recipe> in my Program.cs file, where an uninitialized element would be inserted into it upon creation.
+Fucking, heresy, of the highest order.
+Anyway, the solution was apparently to modify the build scope line to this: builder.Services.AddScoped(provider => new List<Recipe>());.

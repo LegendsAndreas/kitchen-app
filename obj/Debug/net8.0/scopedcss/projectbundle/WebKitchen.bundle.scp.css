@@ -205,9 +205,3 @@ main[b-yu5zy0riwu] {
 .li[b-v9zpp2rsdb]{
     padding: 5px;
 }
-
-.content[b-v9zpp2rsdb] {
-    display: flex; /* or inline-flex */
-    justify-content: flex-start;
-    align-items: flex-start; /* Optional: aligns cross-axis */
-}

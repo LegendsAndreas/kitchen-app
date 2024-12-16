@@ -3,7 +3,7 @@
 @inject NavigationManager navigationManager;
 @inject DBService DbService;
 @inject RecipeStateService statesRecipe
-@* @inject List<Recipe> recipes *@
+@inject List<Recipe> recipes
 <PageTitle>Recipes</PageTitle>
 
 @* ToDo: When you click on the image of a recipe, you get sent to a page with more details and a guide *@
@@ -14,9 +14,9 @@
 <div class="container">
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @if (_recipes.Count != 0)
+        @if (recipes.Count != 0)
         {
-            @foreach (var recipe in _recipes)
+            @foreach (var recipe in recipes)
             {
                 <div class="col" style="padding: 10px">
                     <div class="card h-100">
@@ -31,7 +31,9 @@
                                 - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
                                 - Protein: @recipe.TotalMacros.Protein.ToString("0")
                             </p>
-                            <button type="submit" class="btn btn-primary" @onclick="() => NavigateToDetails(recipe)">View Details</button>
+                            <button type="submit" class="btn btn-primary" @onclick="() => NavigateToDetails(recipe)">
+                                View Details
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -43,130 +45,135 @@
 
 
 @code{
-    private List<Recipe> _recipes = new();
+    // private List<Recipe> _recipes = new();
 
     private void NavigateToDetails(Recipe recipe)
     {
         statesRecipe.SetSelectedRecipe(recipe);
         navigationManager.NavigateTo("/recipe-details");
     }
+
     protected override void OnInitialized()
     {
-        var img = File.ReadAllBytes("wwwroot/pics/PlaceHolderPic.jpg");
-        var base64PlaceHolderPic = Convert.ToBase64String(img);
+        Console.WriteLine(recipes.Count);
+        if (recipes.Count == 0)
+        {
+            var img = File.ReadAllBytes("wwwroot/pics/PlaceHolderPic.jpg");
+            var base64PlaceHolderPic = Convert.ToBase64String(img);
 
-        _recipes.Add(new Recipe
-        {
-            Number = 1,
-            MealType = "D",
-            Name = "Recipe 1",
-            Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
+            recipes.Add(new Recipe
             {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-        _recipes.Add(new Recipe
-        {
-            Number = 2,
-            MealType = "D",
-            Name = "Recipe 2",
-            Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
+                Number = 1,
+                MealType = "D",
+                Name = "Recipe 1",
+                Image = base64PlaceHolderPic,
+                TotalMacros = new Macros
+                {
+                    Protein = 29,
+                    Fat = 66,
+                    Carbs = 39,
+                    Calories = 657
+                }
+            });
+            recipes.Add(new Recipe
             {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-        _recipes.Add(new Recipe
-        {
-            Number = 3,
-            MealType = "D",
-            Name = "Recipe 3",
-            Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
+                Number = 2,
+                MealType = "D",
+                Name = "Recipe 2",
+                Image = base64PlaceHolderPic,
+                TotalMacros = new Macros
+                {
+                    Protein = 29,
+                    Fat = 66,
+                    Carbs = 39,
+                    Calories = 657
+                }
+            });
+            recipes.Add(new Recipe
             {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-        _recipes.Add(new Recipe
-        {
-            Number = 4,
-            MealType = "D",
-            Name = "Recipe 4",
-            Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
+                Number = 3,
+                MealType = "D",
+                Name = "Recipe 3",
+                Image = base64PlaceHolderPic,
+                TotalMacros = new Macros
+                {
+                    Protein = 29,
+                    Fat = 66,
+                    Carbs = 39,
+                    Calories = 657
+                }
+            });
+            recipes.Add(new Recipe
             {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-        _recipes.Add(new Recipe
-        {
-            Number = 5,
-            MealType = "D",
-            Name = "Recipe 5",
-            Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
+                Number = 4,
+                MealType = "D",
+                Name = "Recipe 4",
+                Image = base64PlaceHolderPic,
+                TotalMacros = new Macros
+                {
+                    Protein = 29,
+                    Fat = 66,
+                    Carbs = 39,
+                    Calories = 657
+                }
+            });
+            recipes.Add(new Recipe
             {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-        _recipes.Add(new Recipe
-        {
-            Number = 6,
-            MealType = "D",
-            Name = "Recipe 6",
-            Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
+                Number = 5,
+                MealType = "D",
+                Name = "Recipe 5",
+                Image = base64PlaceHolderPic,
+                TotalMacros = new Macros
+                {
+                    Protein = 29,
+                    Fat = 66,
+                    Carbs = 39,
+                    Calories = 657
+                }
+            });
+            recipes.Add(new Recipe
             {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-        _recipes.Add(new Recipe
-        {
-            Number = 7,
-            MealType = "D",
-            Name = "Recipe 7",
-            Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
+                Number = 6,
+                MealType = "D",
+                Name = "Recipe 6",
+                Image = base64PlaceHolderPic,
+                TotalMacros = new Macros
+                {
+                    Protein = 29,
+                    Fat = 66,
+                    Carbs = 39,
+                    Calories = 657
+                }
+            });
+            recipes.Add(new Recipe
             {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-        _recipes.Add(new Recipe
-        {
-            Number = 8,
-            MealType = "D",
-            Name = "Recipe 8",
-            Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
+                Number = 7,
+                MealType = "D",
+                Name = "Recipe 7",
+                Image = base64PlaceHolderPic,
+                TotalMacros = new Macros
+                {
+                    Protein = 29,
+                    Fat = 66,
+                    Carbs = 39,
+                    Calories = 657
+                }
+            });
+            recipes.Add(new Recipe
             {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
+                Number = 8,
+                MealType = "D",
+                Name = "Recipe 8",
+                Image = base64PlaceHolderPic,
+                TotalMacros = new Macros
+                {
+                    Protein = 29,
+                    Fat = 66,
+                    Carbs = 39,
+                    Calories = 657
+                }
+            });
+        }
     }
 
     /*protected override async Task OnInitializedAsync()
