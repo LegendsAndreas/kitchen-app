@@ -78,7 +78,7 @@
         }
         
         await DbService.CorrectIngredientImageAsync(ingredientName, CurrentIngredient.Image);
-        CurrentIngredient.Clear();
+        CurrentIngredient.ClearIngredient();
     }
     
     private async Task HandleImage(InputFileChangeEventArgs imageFile)
@@ -94,7 +94,7 @@
 
             try
             {
-                await CurrentIngredient.SetImageAsync(image);
+                await CurrentIngredient.SetIngredientImage(image);
             }
             catch (Exception ex)
             {

@@ -7,41 +7,7 @@
 @inject IJSRuntime JsRuntime;
 <PageTitle>Create Recipe</PageTitle>
 
-
-<style>
-    .border-layout {
-        border-radius: 5px;
-        border: 2px solid #48d7ff;
-    }
-
-    .font-layout {
-        background-color: #313131;
-        color: #48d7ff;
-        font-family: "Calibri Light", serif;
-        font-style: italic;
-        font-weight: bold;
-    }
-
-    .custom-header {
-        display: inline-block;
-        padding: 10px;
-    }
-
-    .forms-layout {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 10px;
-    }
-    
-    .paddage{
-        padding: 25px;
-        margin: 10px;
-    }
-    
-</style>
-
-<h1 class="custom-header font-layout border-layout toast-header">
+<h1 class="toast-header header-padding font-layout border-layout" id="create-recipe-header">
     Create a new recipe!
 </h1>
 
@@ -63,7 +29,7 @@
 
                 <div class="col">
                     <label>Image:</label>
-                    <InputText id="image" @bind-Value="CurrentRecipe.Image"/>
+                    <InputText id="image" @bind-Value="CurrentRecipe.Base64Image"/>
                 </div>
                 <button type="submit" class="btn btn-primary col">Create Recipe</button>
             </div>
@@ -174,7 +140,7 @@
 
 @* toaster *@
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="liveToast" class="toast custom-header" role="alert" aria-live="assertive" aria-atomic="true"
+    <div id="liveToast" class="toast header-padding" role="alert" aria-live="assertive" aria-atomic="true"
          data-bs-delay="5000">
         <div class="toast-body">
             Existing ingredient not found in database.
@@ -232,8 +198,8 @@
             throw;
         }
 
-        CurrentRecipe.Clear();
-        CurrentIngredient.Clear();
+        CurrentRecipe.ClearRecipe();
+        CurrentIngredient.ClearIngredient();
         currentIngredients.Clear();
     }
 
@@ -243,7 +209,7 @@
         tempIngredient.PrintIngredient();
 
         currentIngredients.Add(tempIngredient);
-        CurrentIngredient.Clear();
+        CurrentIngredient.ClearIngredient();
     }
 
     public async Task OnValidDbIngredient()
@@ -261,7 +227,7 @@
 
                 OnValidIngredient();
 
-                currentDbIngredient.Clear();
+                currentDbIngredient.ClearIngredient();
 
                 return;
             }

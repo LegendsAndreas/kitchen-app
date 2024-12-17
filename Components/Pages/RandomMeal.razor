@@ -3,19 +3,7 @@
 @inject DBService DbService;
 <PageTitle>Random Meal</PageTitle>
 
-<style>
-    .random-meal-h {
-        background-color: #313131;
-        color: #48d7ff;
-        border-radius: 5px;
-        font-family: "Calibri Light", serif;
-        border: 2px solid;
-        width: fit-content; /* Automatically fits the block of its content to fit it. */
-        margin: 0 auto;
-    }
-</style>
-
-<h1 class="random-meal-h toast-header">
+<h1 class="toast-header border-layout font-layout header-padding" id="random-meal-header">
     <strong>
         <i>Cant decide? Let Fate decide it for you!</i>
     </strong>
@@ -25,7 +13,7 @@
     <div class="card" style="width: 50%; margin: 0 auto;">
         @if (randomRecipe.Name != string.Empty)
         {
-            <img src="data:image/png;base64,@randomRecipe.Image" alt="Random Meal" class="card-img"/>
+            <img src="data:image/png;base64,@randomRecipe.Base64Image" alt="Random Meal" class="card-img"/>
             <div class="card-header">
                 <h3>@randomRecipe.Name</h3>
             </div>

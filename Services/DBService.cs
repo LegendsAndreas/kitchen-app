@@ -19,6 +19,7 @@ public class DBService
     // We then made a NpgsqlConnection, open it and then returns it.
     public async Task<NpgsqlConnection> GetConnection()
     {
+        Console.WriteLine("Getting connection...");
         NpgsqlConnection connection = new(_connectionString);
         await connection.OpenAsync();
         return connection;
@@ -26,6 +27,7 @@ public class DBService
     
     public async Task AddRecipeToDatabase(Recipe recipe)
     {
+        Console.WriteLine("Adding recipe to database...");
         recipe.PrintRecipe();
         try
         {
@@ -40,7 +42,7 @@ public class DBService
 
             cmd.Parameters.AddWithValue("@type", recipe.MealType);
             cmd.Parameters.AddWithValue("@name", recipe.Name);
-            cmd.Parameters.AddWithValue("@image", recipe.Image);
+            cmd.Parameters.AddWithValue("@image", recipe.Base64Image);
             cmd.Parameters.AddWithValue("@calories", recipe.TotalMacros.Calories);
             cmd.Parameters.AddWithValue("@fats", recipe.TotalMacros.Fat);
             cmd.Parameters.AddWithValue("@carbs", recipe.TotalMacros.Carbs);
@@ -57,6 +59,7 @@ public class DBService
     
     private async Task AddIngredientsToRow(List<Ingredient> ingredients)
     {
+        Console.WriteLine("Adding ingredients to row...");
         var conn = await GetConnection();
         foreach (var ingredient in ingredients)
         {
@@ -70,7 +73,7 @@ public class DBService
             float fats = ingredient.Fats;
             float carbs = ingredient.Carbs;
             float protein = ingredient.Protein;
-            float multiplier = ingredient.Multiplier;
+            float multiplier = ingredient.GetMultiplier();
 
             cmd.Parameters.AddWithValue("@name", name);
             cmd.Parameters.AddWithValue("@grams", grams);
@@ -86,6 +89,7 @@ public class DBService
     
     public async Task AddIngredientToDb(Ingredient ingredient)
     {
+        Console.WriteLine("Adding ingredient to database...");
         try
         {
             var conn = await GetConnection();
@@ -112,8 +116,9 @@ public class DBService
         }
     }
     
-    public async Task CorrectRecipeAsync(string type, string name)
+    public async Task CorrectRecipe(string type, string name)
     {
+        Console.WriteLine("Correcting recipe...");
         var conn = await GetConnection();
 
         const string query = "UPDATE recipes SET meal_type = @type WHERE name = @name";
@@ -127,6 +132,7 @@ public class DBService
     
     private List<Recipe> GetDinnerRecipes()
     {
+        Console.WriteLine("Getting dinner recipes...");
         List<Recipe> recipes = new();
         using var conn = new NpgsqlConnection(
             "Host=ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech;Username=neondb_owner;Password=vVljNo8xGsb5;Database=neondb;sslmode=require;");
@@ -142,10 +148,10 @@ public class DBService
             {
                 Recipe recipe = new Recipe
                 {
-                    Number = reader.GetInt32(0),
+                    RecipeId = reader.GetInt32(0),
                     MealType = reader.GetString(1),
                     Name = reader.GetString(2),
-                    Image = reader.GetString(3),
+                    Base64Image = reader.GetString(3),
                     TotalMacros = new Macros
                     {
                         Protein = reader.GetFloat(4),
@@ -163,13 +169,15 @@ public class DBService
     
     public Recipe GetRandomRecipe()
     {
+        Console.WriteLine("Getting random recipe...");
         List<Recipe> recipes = GetDinnerRecipes();
         Recipe randomRecipe = recipes[new Random().Next(0, recipes.Count - 1)];
         return randomRecipe;
     }
     
-    public async Task CorrectRecipeImageAsync(string recipeName, string base64Image)
+    public async Task CorrectRecipeImage(string recipeName, string base64Image)
     {
+        Console.WriteLine("Correcting recipe image...");
         var conn = await GetConnection();
 
         string query = $"UPDATE recipes SET image = '{base64Image}' WHERE name = '{recipeName}'";
@@ -180,6 +188,7 @@ public class DBService
     
     public async Task CorrectRecipeNameAsync(string currentName, string updatedName)
     {
+        Console.WriteLine("Correcting recipe name...");
         var conn = await GetConnection();
 
         const string query = "UPDATE recipes SET name = @currentName WHERE name = @updatedName";
@@ -191,8 +200,9 @@ public class DBService
         await RunAsyncQuery(cmd);
     }
 
-    public async Task<List<Recipe>> GetRecipesAsync()
+    public async Task<List<Recipe>> GetRecipes()
     {
+        Console.WriteLine("Getting recipes...");
         var img = File.ReadAllBytes("wwwroot/pics/PlaceHolderPic.jpg");
         var base64PlaceHolderPic = Convert.ToBase64String(img);
         
@@ -212,9 +222,9 @@ public class DBService
             {
                 recipes.Add(new Recipe
                 {
-                    Number = reader.GetInt32(0),
+                    RecipeId = reader.GetInt32(0),
                     Name = reader.GetString(1),
-                    Image = reader.GetString(2) != "PlaceHolderPic.jpg" ? reader.GetString(2) : base64PlaceHolderPic,
+                    Base64Image = reader.GetString(2) != "PlaceHolderPic.jpg" ? reader.GetString(2) : base64PlaceHolderPic,
                     MealType = reader.GetString(3),
                     Ingredients = await GetIngredientByIdAsync(recipeIdTracker),
                     TotalMacros = new Macros
@@ -232,28 +242,9 @@ public class DBService
         return recipes;
     }
 
-    /*private async Task<Hashtable> GetRecipeImagesAsync()
+    public async Task<List<Recipe>> GetRecipesByCategory(string category)
     {
-        Hashtable recipeImages = new();
-
-        await using var conn = new NpgsqlConnection(_connectionString);
-        await conn.OpenAsync();
-
-        string query = "SELECT image_name, image_base64 FROM images;";
-        await using (var cmd = new NpgsqlCommand(query, conn))
-        await using (var reader = await cmd.ExecuteReaderAsync())
-        {
-            while (await reader.ReadAsync())
-            {
-                recipeImages.Add(reader.GetString(0), reader.GetString(1));
-            }
-        }
-
-        return recipeImages;
-    }*/
-
-    public async Task<List<Recipe>> GetRecipesByCategoryAsync(string category)
-    {
+        Console.WriteLine("Getting recipes by category...");
         List<Recipe> recipes = new();
         try
         {
@@ -271,9 +262,9 @@ public class DBService
                 {
                     recipes.Add(new Recipe
                     {
-                        Number = reader.GetInt32(0),
+                        RecipeId = reader.GetInt32(0),
                         Name = reader.GetString(1),
-                        Image = $"pics/{reader.GetString(2)}",
+                        Base64Image = $"pics/{reader.GetString(2)}",
                         MealType = reader.GetString(3),
                         Ingredients = await GetIngredientByIdAsync(recipeIdTracker),
                         TotalMacros = new Macros
@@ -320,7 +311,8 @@ public class DBService
                 {
                     while (await reader.ReadAsync())
                     {
-                        ingredients.Add(new Ingredient
+                        // Had to change it, so that we add an instantiated object, so that we could use the SetMultiplier method.
+                        /*ingredients.Add(new Ingredient
                         {
                             Name = reader.GetString(0),
                             Grams = reader.GetFloat(1),
@@ -329,7 +321,16 @@ public class DBService
                             Protein = reader.GetFloat(4),
                             Fats = reader.GetFloat(5),
                             Multiplier = reader.GetFloat(6)
-                        });
+                        });*/
+                        var tempIngredient = new Ingredient();
+                        tempIngredient.Name = reader.GetString(0);
+                        tempIngredient.Grams = reader.GetFloat(1);
+                        tempIngredient.Calories = reader.GetFloat(2);
+                        tempIngredient.Carbs = reader.GetFloat(3);
+                        tempIngredient.Protein = reader.GetFloat(4);
+                        tempIngredient.Fats = reader.GetFloat(5);
+                        tempIngredient.SetMultiplier();
+                        ingredients.Add(tempIngredient);
                     }
                 }
             }

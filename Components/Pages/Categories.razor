@@ -28,7 +28,7 @@
         {
             <div class="col" style="padding: 10px">
                 <div class="card h-100"> 
-                    <img src="@recipe.Image" alt="ops..." class="card-img"/> @* card-img helps the look of the cards. *@
+                    <img src="@recipe.Base64Image" alt="ops..." class="card-img"/> @* card-img helps the look of the cards. *@
                     <div class="card-header">
                         <h4>@recipe.Name</h4>
                     </div>
@@ -54,7 +54,7 @@
 
     private async Task SortRecipesByCategory(string category)
     {
-        recipes = await DbService.GetRecipesByCategoryAsync(category);
+        recipes = await DbService.GetRecipesByCategory(category);
         StateHasChanged();
     }
 

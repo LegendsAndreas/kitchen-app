@@ -19,8 +19,8 @@
             @foreach (var recipe in recipes)
             {
                 <div class="col" style="padding: 10px">
-                    <div class="card h-100">
-                        <img src="data:image/png;base64,@recipe.Image" alt="ops..." class="card-img"/>
+                    <div class="card h-100 border-layout">
+                        <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..." class="card-img"/>
                         <div class="card-header">
                             <h4>@recipe.Name</h4>
                         </div>
@@ -63,10 +63,10 @@
 
             recipes.Add(new Recipe
             {
-                Number = 1,
+                RecipeId = 1,
                 MealType = "D",
                 Name = "Recipe 1",
-                Image = base64PlaceHolderPic,
+                Base64Image = base64PlaceHolderPic,
                 TotalMacros = new Macros
                 {
                     Protein = 29,
@@ -77,10 +77,10 @@
             });
             recipes.Add(new Recipe
             {
-                Number = 2,
+                RecipeId = 2,
                 MealType = "D",
                 Name = "Recipe 2",
-                Image = base64PlaceHolderPic,
+                Base64Image = base64PlaceHolderPic,
                 TotalMacros = new Macros
                 {
                     Protein = 29,
@@ -91,10 +91,10 @@
             });
             recipes.Add(new Recipe
             {
-                Number = 3,
+                RecipeId = 3,
                 MealType = "D",
                 Name = "Recipe 3",
-                Image = base64PlaceHolderPic,
+                Base64Image = base64PlaceHolderPic,
                 TotalMacros = new Macros
                 {
                     Protein = 29,
@@ -105,10 +105,10 @@
             });
             recipes.Add(new Recipe
             {
-                Number = 4,
+                RecipeId = 4,
                 MealType = "D",
                 Name = "Recipe 4",
-                Image = base64PlaceHolderPic,
+                Base64Image = base64PlaceHolderPic,
                 TotalMacros = new Macros
                 {
                     Protein = 29,
@@ -119,10 +119,10 @@
             });
             recipes.Add(new Recipe
             {
-                Number = 5,
+                RecipeId = 5,
                 MealType = "D",
                 Name = "Recipe 5",
-                Image = base64PlaceHolderPic,
+                Base64Image = base64PlaceHolderPic,
                 TotalMacros = new Macros
                 {
                     Protein = 29,
@@ -133,10 +133,10 @@
             });
             recipes.Add(new Recipe
             {
-                Number = 6,
+                RecipeId = 6,
                 MealType = "D",
                 Name = "Recipe 6",
-                Image = base64PlaceHolderPic,
+                Base64Image = base64PlaceHolderPic,
                 TotalMacros = new Macros
                 {
                     Protein = 29,
@@ -147,10 +147,10 @@
             });
             recipes.Add(new Recipe
             {
-                Number = 7,
+                RecipeId = 7,
                 MealType = "D",
                 Name = "Recipe 7",
-                Image = base64PlaceHolderPic,
+                Base64Image = base64PlaceHolderPic,
                 TotalMacros = new Macros
                 {
                     Protein = 29,
@@ -161,10 +161,10 @@
             });
             recipes.Add(new Recipe
             {
-                Number = 8,
+                RecipeId = 8,
                 MealType = "D",
                 Name = "Recipe 8",
-                Image = base64PlaceHolderPic,
+                Base64Image = base64PlaceHolderPic,
                 TotalMacros = new Macros
                 {
                     Protein = 29,

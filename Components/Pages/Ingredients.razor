@@ -129,7 +129,7 @@
     {
         Ingredient tempIngredient = currentIngredient.TransferIngredient(currentIngredient);
         await DbService.AddIngredientToDb(tempIngredient);
-        currentIngredient.Clear();
+        currentIngredient.ClearIngredient();
 
         StateHasChanged();
     }

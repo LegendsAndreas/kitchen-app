@@ -1,40 +1,4 @@
 @startuml
-'Class Diagram
-skinparam class{
-    BackgroundColor LightGreen
-}
-
-class recipe <<(C,plum)>>{
-    uint recipe_number
-    char meal_type
-    string recipe_name
-    string image_str
-    ingredient[] ingredients
-    total_macros macros
-}
-
-class ingredient <<(C,plum)>>{
-    string name
-    float kg
-    float calories
-    float fats
-    float carbohydrates
-    float protein
-    float multiplier
-}
-
-class macros <<(C,plum)>>{
-    float total_calories
-    float total_fats
-    float total_carbs
-    float total_protein
-}
-
-ingredient --|{ recipe::ingredients
-macros --> recipe::macros
-@enduml
-
-@startuml
 'DB Diagram
 skinparam class{
     BackgroundColor LightGreen

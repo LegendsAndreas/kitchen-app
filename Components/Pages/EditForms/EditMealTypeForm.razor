@@ -19,8 +19,8 @@
 
     private async Task HandleValidSubmit()
     {
-        await DbService.CorrectRecipeAsync(CurrentRecipe.MealType, CurrentRecipe.Name);
-        CurrentRecipe.Clear();
+        await DbService.CorrectRecipe(CurrentRecipe.MealType, CurrentRecipe.Name);
+        CurrentRecipe.ClearRecipe();
     }
 
 }

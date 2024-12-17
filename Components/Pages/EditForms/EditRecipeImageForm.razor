@@ -41,10 +41,10 @@
     <button class="btn btn-primary" type="submit">Update Image</button>
 </EditForm>
 
-@if (CurrentRecipe.Image != "")
+@if (CurrentRecipe.Base64Image != "")
 {
     <p>Preview image</p>
-    <img src="data:image/png;base64,@CurrentRecipe.Image" alt="Recipe Image" style="max-width: 50%;"/>
+    <img src="data:image/png;base64,@CurrentRecipe.Base64Image" alt="Recipe Image" style="max-width: 50%;"/>
 }
 
 @* No image select toaster *@
@@ -70,15 +70,15 @@
 
     private async Task HandleValidSubmit()
     {
-        if (CurrentRecipe.Image == "")
+        if (CurrentRecipe.Base64Image == "")
         {
             Console.WriteLine("No image selected");
             await JsRuntime.InvokeVoidAsync("showNoImageSelectedToast");
             return;
         }
         
-        await DbService.CorrectRecipeImageAsync(recipeName, CurrentRecipe.Image);
-        CurrentRecipe.Clear();
+        await DbService.CorrectRecipeImage(recipeName, CurrentRecipe.Base64Image);
+        CurrentRecipe.ClearRecipe();
     }
     
     private async Task HandleImage(InputFileChangeEventArgs imageFile)
@@ -94,7 +94,7 @@
 
             try
             {
-                await CurrentRecipe.SetImageAsync(image);
+                await CurrentRecipe.SetRecipeImage(image);
             }
             catch (Exception ex)
             {

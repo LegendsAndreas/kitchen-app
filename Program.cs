@@ -13,9 +13,9 @@ public class Program
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
 
-        builder.Services.AddSingleton<Recipe>();
-        builder.Services.AddSingleton<Ingredient>();
-        builder.Services.AddSingleton<List<Ingredient>>();
+        builder.Services.AddScoped<Recipe>();
+        builder.Services.AddScoped<Ingredient>();
+        builder.Services.AddScoped<List<Ingredient>>();
         builder.Services.AddScoped<RecipeStateService>();
         builder.Services.AddScoped(provider => new List<Recipe>());
 

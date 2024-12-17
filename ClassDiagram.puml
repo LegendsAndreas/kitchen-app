@@ -1,0 +1,50 @@
+@startuml
+skinparam class{
+    BackgroundColor LightGreen
+}
+
+class Recipe <<(C,plum)>>{
+    +int RecipeId
+    +string MealType
+    +string RecipeName
+    +string Base64Image
+    +List<Ingredient> Ingredients
+    +Macros TotalMacros
+    
+    +PrintRecipe()
+    +SetTotalMacros()
+    +ClearRecipe()
+}
+
+class Ingredient <<(C,plum)>>{
+    +string Name
+    +float Grams
+    +float Calories
+    +float Fats
+    +float Carbohydrates
+    +float Protein
+    -float Multiplier
+    +string Image
+    
+    +GetMultiplier()
+    +SetMultiplier()
+    +SetIngredientImage(IBrowserFile image, long allowedFileSize = 10) : Task
+    +ClearIngredient()
+    +SetMultiplier()
+    +PrintIngredient()
+    +TransferIngredient(Ingredient ingredient) : Ingredient
+}
+
+class Macros <<(C,plum)>>{
+    +float Calories
+    +float Fats
+    +float Carbs
+    +float Protein
+    
+    +PrintMacros()
+    +SetMacros(List<Ingredient> ingredients)
+}
+
+Ingredient --|{ Recipe::Ingredients
+Macros --> Recipe::Macros
+@enduml

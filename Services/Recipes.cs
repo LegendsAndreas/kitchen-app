@@ -13,12 +13,35 @@ public class Macros
 
     public void PrintMacros()
     {
-        Console.WriteLine("Printing Macros:");
+        Console.WriteLine("__Printing Macros__");
         Console.WriteLine("--------------------------------------------------------");
         Console.WriteLine("Total calories: " + Calories);
         Console.WriteLine("Total fats: " + Fat);
         Console.WriteLine("Total carbs: " + Carbs);
         Console.WriteLine("Total protein: " + Protein);
+    }
+
+    public void SetMacros(List<Ingredient> ingredients)
+    {
+        Console.WriteLine("Setting macros...");
+        if (ingredients.Count == 0)
+        {
+            Console.WriteLine("No ingredients available.");
+        }
+        else
+        {
+            foreach (var ingredient in ingredients)
+            {
+                Console.WriteLine("Printing ingredient at Macros");
+                ingredient.PrintIngredient();
+                Calories += ingredient.Calories * ingredient.GetMultiplier();
+                Fat += ingredient.Fats * ingredient.GetMultiplier();
+                Carbs += ingredient.Carbs * ingredient.GetMultiplier();
+                Protein += ingredient.Protein * ingredient.GetMultiplier();
+            }
+        }
+
+        PrintMacros();
     }
 }
 
@@ -30,11 +53,24 @@ public class Ingredient
     public float Carbs { get; set; }
     public float Protein { get; set; }
     public float Fats { get; set; }
-    public float Multiplier { get; set; }
+    private float Multiplier { get; set; }
     public string Image { get; set; } = string.Empty;
 
-    public async Task SetImageAsync(IBrowserFile image, long allowedFileSize = 10)
+    public float GetMultiplier()
     {
+        Console.WriteLine("Getting multiplier...");
+        return Multiplier;
+    }
+
+    public void SetMultiplier()
+    {
+        Console.WriteLine("Setting multiplier...");
+        Multiplier = Grams / 100;
+    }
+
+    public async Task SetIngredientImage(IBrowserFile image, long allowedFileSize = 10)
+    {
+        Console.WriteLine("Setting ingredient image...");
         var maxFileSize = allowedFileSize * 1024 * 1024;
 
         if (image.Size > maxFileSize)
@@ -51,8 +87,9 @@ public class Ingredient
         Image = base64Image;
     }
 
-    public void Clear()
+    public void ClearIngredient()
     {
+        Console.WriteLine("Clearing ingredient...");
         Name = string.Empty;
         Grams = 0f;
         Calories = 0f;
@@ -63,14 +100,9 @@ public class Ingredient
         Image = string.Empty;
     }
 
-    public void SetMultiplier()
-    {
-        Multiplier = Grams / 100;
-    }
-
     public void PrintIngredient()
     {
-        Console.WriteLine("Printing Ingredient___");
+        Console.WriteLine("__Printing Ingredient__");
         Console.WriteLine("Ingredient: " + Name);
         Console.WriteLine("Grams: " + Grams);
         Console.WriteLine("Calories: " + Calories);
@@ -82,10 +114,10 @@ public class Ingredient
 
     public Ingredient TransferIngredient(Ingredient ing)
     {
+        Console.WriteLine("Transferring ingredient...");
         // We must create a new instance of Ingredient, where we then SPECIFICALLY assign its values to be equal TO THE VALUE
         // of the variables of CurrentIngredient. Otherwise, we will just be setting tempIngredient to point at CurrentIngredient,
         // which means that if CurrentIngredient changes, so does the ingredient that we insert into the list.
-
         Ingredient transferIngredient = new()
         {
             Name = ing.Name,
@@ -104,22 +136,22 @@ public class Ingredient
 
 public class Recipe
 {
-    public int Number;
+    public int RecipeId;
     [Required] public string MealType { get; set; } = string.Empty;
     [Required] public string Name { get; set; } = string.Empty;
-    [Required] public string Image { get; set; } = string.Empty;
+    [Required] public string Base64Image { get; set; } = string.Empty;
     public List<Ingredient> Ingredients { get; set; } = new();
     public Macros TotalMacros { get; set; } = new();
 
     public void PrintRecipe()
     {
+        Console.WriteLine("Printing recipe...");
         try
         {
-            Console.WriteLine("Reciping recipe...");
-            Console.WriteLine("Recipe Number: " + Number);
+            Console.WriteLine("Recipe Number: " + RecipeId);
             Console.WriteLine("MealType: " + MealType);
             Console.WriteLine("Name: " + Name);
-            Console.WriteLine("Image: " + Image);
+            Console.WriteLine("Image: " + Base64Image);
 
             if (Ingredients.Count != 0)
             {
@@ -137,14 +169,15 @@ public class Recipe
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error print recipe: "+ex.Message);
-            Console.WriteLine("StackTrace: "+ex.StackTrace);
+            Console.WriteLine("Error print recipe: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
             throw;
         }
     }
 
-    public async Task SetImageAsync(IBrowserFile image, long allowedFileSize = 10)
+    public async Task SetRecipeImage(IBrowserFile image, long allowedFileSize = 10)
     {
+        Console.WriteLine("Setting recipe image...");
         var maxFileSize = allowedFileSize * 1024 * 1024;
 
         if (image.Size > maxFileSize)
@@ -158,39 +191,24 @@ public class Recipe
 
         var imageBytes = memoryStream.ToArray();
         var base64Image = Convert.ToBase64String(imageBytes);
-        Image = base64Image;
+        Base64Image = base64Image;
     }
 
     public void SetTotalMacros()
     {
-        if (Ingredients.Count == 0)
-        {
-            Console.WriteLine("No ingredients available.");
-        }
-        else
-        {
-            foreach (var ingredient in Ingredients)
-            {
-                Console.WriteLine("Printing ingredient at Macros");
-                ingredient.PrintIngredient();
-                TotalMacros.Calories += ingredient.Calories * ingredient.Multiplier;
-                TotalMacros.Fat += ingredient.Fats * ingredient.Multiplier;
-                TotalMacros.Carbs += ingredient.Carbs * ingredient.Multiplier;
-                TotalMacros.Protein += ingredient.Protein * ingredient.Multiplier;
-            }
-        }
-
-        TotalMacros.PrintMacros();
+        Console.WriteLine("Setting total macros...");
+        TotalMacros.SetMacros(Ingredients);
     }
 
-    public void Clear()
+    public void ClearRecipe()
     {
-        Number = 0;
-        MealType = String.Empty;
-        Name = String.Empty;
-        Image = String.Empty;
-        Ingredients = new();
-        TotalMacros = new();
+        Console.WriteLine("Clearing recipe...");
+        RecipeId = 0;
+        MealType = string.Empty;
+        Name = string.Empty;
+        Base64Image = string.Empty;
+        Ingredients = [];
+        TotalMacros = new Macros();
     }
 }
 
