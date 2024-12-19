@@ -1,0 +1,72 @@
+@page "/developer"
+@rendermode InteractiveServer
+@using System.Text.Json
+@using Npgsql
+@inject DBService DbService
+
+<button type="button" class="btn btn-primary" onclick="@GetJson">Get Json</button>
+
+@code{
+
+    // Host=mini-basen.crga8yuaes1e.eu-central-1.rds.amazonaws.com;Username=rootgres;Password=Qwerty123;Database=postgres;Port=5432;sslmode=require;
+    private async Task GetJson()
+    {
+        Console.WriteLine("Getting json...");
+        var fetchQuery = "SELECT id, instructions,recipe_id FROM recipe_instructions";
+
+        try
+        {
+            await using var connection = new NpgsqlConnection("Host=mini-basen.crga8yuaes1e.eu-central-1.rds.amazonaws.com;Username=rootgres;Password=Qwerty123;Database=postgres;Port=5432;sslmode=require;");
+            connection.Open();
+
+            await using var command = new NpgsqlCommand(fetchQuery, connection);
+            await using var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                // Extract columns
+                int id = reader.GetInt32(0); // Get 'id' column
+                var jsonData = reader.GetString(1); // Get 'instructions' JSON column
+                int recipeId = 1; // Get 'recipe_id' column
+
+                Console.WriteLine("JsonData: " + jsonData);
+
+                // Deserialize JSON data into RecipeInstructions class
+                var instructions = JsonSerializer.Deserialize<RecipeInstructions>(jsonData);
+
+                // Map everything into a RecipeInstructionRecord object
+                var recipeRecord = new RecipeInstructionRecord
+                {
+                    Id = id,
+                    Instructions = instructions,
+                    RecipeId = recipeId
+                };
+
+                // Output the deserialized data
+                Console.WriteLine($"Record ID: {recipeRecord.Id}");
+                Console.WriteLine($"Recipe Name: {recipeRecord.Instructions.Name}");
+                Console.WriteLine($"Recipe ID: {recipeRecord.RecipeId}");
+                Console.WriteLine("Steps:");
+                foreach (var step in recipeRecord.Instructions.Steps)
+                {
+                    Console.WriteLine($"  Step {step.StepNumber}: {step.Instruction}");
+                }
+
+                Console.WriteLine("Notes:");
+                foreach (var note in recipeRecord.Instructions.Notes)
+                {
+                    Console.WriteLine($"  Note {note.NoteNumber}: {note.NoteText}");
+                }
+
+                Console.WriteLine("-------------------------");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error getting Json: " + e.Message);
+            Console.WriteLine("StackTrace:  " + e.StackTrace);
+            throw;
+        }
+    }
+
+}

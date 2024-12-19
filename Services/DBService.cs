@@ -107,7 +107,7 @@ public class DBService
             cmd.Parameters.AddWithValue("@fats", ingredient.Fats);
             cmd.Parameters.AddWithValue("@carbs", ingredient.Carbs);
             cmd.Parameters.AddWithValue("@protein", ingredient.Protein);
-            cmd.Parameters.AddWithValue("@image", ingredient.Image);
+            cmd.Parameters.AddWithValue("@image", ingredient.Base64Image);
             await RunAsyncQuery(cmd);
         }
         catch (Exception e)
@@ -433,7 +433,7 @@ public class DBService
                         Fats = reader.GetFloat(2),
                         Carbs = reader.GetFloat(3),
                         Protein = reader.GetFloat(4),
-                        Image = reader.GetString(5) != "PlaceHolderPic.jpg" ? reader.GetString(5) : base64PlaceHolderPic
+                        Base64Image = reader.GetString(5) != "PlaceHolderPic.jpg" ? reader.GetString(5) : base64PlaceHolderPic
                     });
                 }
             }

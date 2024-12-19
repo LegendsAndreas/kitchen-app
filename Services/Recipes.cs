@@ -54,13 +54,19 @@ public class Ingredient
     public float Protein { get; set; }
     public float Fats { get; set; }
     private float Multiplier { get; set; }
-    public string Image { get; set; } = string.Empty;
+    public string Base64Image { get; set; } = string.Empty;
 
     public float GetMultiplier()
     {
         Console.WriteLine("Getting multiplier...");
         return Multiplier;
     }
+
+    /*public string GetIngredientImage()
+    {
+        Console.WriteLine("Getting ingredient image...");
+        return Base64Image;
+    }*/
 
     public void SetMultiplier()
     {
@@ -84,7 +90,7 @@ public class Ingredient
 
         var imageBytes = memoryStream.ToArray();
         var base64Image = Convert.ToBase64String(imageBytes);
-        Image = base64Image;
+        Base64Image = base64Image;
     }
 
     public void ClearIngredient()
@@ -97,7 +103,7 @@ public class Ingredient
         Protein = 0f;
         Fats = 0f;
         Multiplier = 0f;
-        Image = string.Empty;
+        Base64Image = string.Empty;
     }
 
     public void PrintIngredient()
@@ -126,7 +132,7 @@ public class Ingredient
             Carbs = ing.Carbs,
             Fats = ing.Fats,
             Protein = ing.Protein,
-            Image = ing.Image
+            Base64Image = ing.Base64Image
         };
         transferIngredient.SetMultiplier();
 
