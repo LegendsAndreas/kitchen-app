@@ -5,7 +5,7 @@
 
 @if (statesRecipe != null)
 {
-    <div class="container" id="recipe-details">
+    <div class="container border-layout" id="recipe-details">
         @* Col one *@
         <div class="content" style="display: inline-flex; justify-content: flex-start; align-items: flex-start;">
             <div id="column-1">
@@ -15,37 +15,85 @@
                 </div>
 
                 <div id="recipe-ingredients">
-                    <ul>
-                        <li class="list-group-item">Pasta 50g</li>
-                        <li class="list-group-item">Pasta 50g</li>
-                        <li class="list-group-item">Pasta 50g</li>
-                        <li class="list-group-item">Pasta 50g</li>
-                        <li class="list-group-item">Pasta 50g</li>
+                    <h4>Ingredients</h4>
+                    <ul class="food-list">
+                        <li>
+                            <span class="label">Tomat Puré&nbsp;</span>
+                            <span class="dots"></span>
+                            <span class="value">&nbsp;200g</span>
+                        </li>
+                        <li>
+                            <span class="label">Spaghetti&nbsp;</span>
+                            <span class="dots"></span>
+                            <span class="value">&nbsp;100g</span>
+                        </li>
+                        <li>
+                            <span class="label">Løg&nbsp;</span>
+                            <span class="dots"></span>
+                            <span class="value">&nbsp;50g</span>
+                        </li>
+                        <li>
+                            <span class="label">Bacon&nbsp;</span>
+                            <span class="dots"></span>
+                            <span class="value">&nbsp;50g</span>
+                        </li>
+                        <li>
+                            <span class="label">Percorino&nbsp;</span>
+                            <span class="dots"></span>
+                            <span class="value">&nbsp;25g</span>
+                        </li>
+                        <li>
+                            <span class="label">Oregano&nbsp;</span>
+                            <span class="dots"></span>
+                            <span class="value">&nbsp;5g</span>
+                        </li>
+                        <li>
+                            <span class="label">Garlic&nbsp;</span>
+                            <span class="dots"></span>
+                            <span class="value">&nbsp;6g</span>
+                        </li>
+
+                        @foreach (var ingredient in statesRecipe.Ingredients)
+                        {
+                            <li>
+                                <span class="label">@ingredient.Name&nbsp;</span>
+                                <span class="dots"></span>
+                                <span class="value">&nbsp;@ingredient.Grams g</span>
+                            </li>
+                        }
                     </ul>
-                    @*@foreach (var ingredient in statesRecipe.Ingredients)
-            {
-                <p>
-                    @ingredient.Name> @ingredient.Grams
-                </p>
-            }*@
                 </div>
 
                 <div id="recipe-macros">
-                    <h5>Macros</h5>
-                    <ul>
-                        <li>Protein @statesRecipe.TotalMacros.Protein</li>
-                        <li>Fat @statesRecipe.TotalMacros.Fat</li>
-                        <li>Carbs @statesRecipe.TotalMacros.Carbs</li>
-                        <li>Calories @statesRecipe.TotalMacros.Calories</li>
+                    <h4>Macros</h4>
+                    <ul class="food-list">
+                        <li>
+                            <span class="label">Protein&nbsp;</span>
+                            <span class="dots"></span>
+                            <span class="value">&nbsp;@statesRecipe.TotalMacros.Protein g</span>
+                        </li>
+                        <li>
+                            <span class="label">Fat&nbsp;</span>
+                            <span class="dots"></span>
+                            <span class="value">&nbsp;@statesRecipe.TotalMacros.Fat g</span>
+                        </li>
+                        <li>
+                            <span class="label">Carbs&nbsp;</span>
+                            <span class="dots"></span>
+                            <span class="value">&nbsp;@statesRecipe.TotalMacros.Carbs g</span>
+                        </li>
+                        <li>
+                            <span class="label">Calories&nbsp;</span>
+                            <span class="dots"></span>
+                            <span class="value">&nbsp;@statesRecipe.TotalMacros.Calories g</span>
+                        </li>
                     </ul>
                 </div>
             </div>
 
             @* Col two *@
             <div id="column-2">
-                <div id="recipe-name">
-                    <h1>@statesRecipe.Name</h1>
-                </div>
+                <h1 id="recipe-name">@statesRecipe.Name</h1>
 
                 <div id="recipe-instructions">
                     <ol>

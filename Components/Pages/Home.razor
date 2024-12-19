@@ -20,7 +20,9 @@
             {
                 <div class="col" style="padding: 10px">
                     <div class="card h-100 border-layout">
-                        <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..." class="card-img"/>
+                        <a href="">
+                            <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..." class="card-img" id="home-recipe-image" @onclick="() => NavigateToDetails(recipe)"/>
+                        </a>
                         <div class="card-header">
                             <h4>@recipe.Name</h4>
                         </div>
@@ -31,9 +33,6 @@
                                 - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
                                 - Protein: @recipe.TotalMacros.Protein.ToString("0")
                             </p>
-                            <button type="submit" class="btn btn-primary" @onclick="() => NavigateToDetails(recipe)">
-                                View Details
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -65,13 +64,13 @@
             {
                 RecipeId = 1,
                 MealType = "D",
-                Name = "Recipe 1",
+                Name = "Amatriciana",
                 Base64Image = base64PlaceHolderPic,
                 TotalMacros = new Macros
                 {
                     Protein = 29,
-                    Fat = 66,
-                    Carbs = 39,
+                    Fat = 29,
+                    Carbs = 110,
                     Calories = 657
                 }
             });

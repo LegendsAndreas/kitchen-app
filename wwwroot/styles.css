@@ -39,6 +39,30 @@
     display:inline-block;
 }
 
+/* Home */
+#home-recipe-image:hover {
+    opacity: 80%;
+}
+
+/*Recipe Details*/
+/*You can change food-list back to macros-list and ingredients-list, if the time calls for it*/
+.food-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em; /* Adds space between list items */
+    max-width: 300px; /* This add additional space between macros name and number */
+}
+
+.food-list li {
+    display: flex;
+    justify-content: space-between; /* Tells the program to add space between the elements */
+}
+
+.dots {
+    flex: 2; /* Dots take up adjustable space */
+    border-bottom: 0.2em dotted white; /* Create a line of dots */
+    height: 1.1em; /* Align dots with text */
+}
 
 
 

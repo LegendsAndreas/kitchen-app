@@ -2,7 +2,7 @@
   "Files": [
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
-      "PackagePath": "staticwebassets\\WebKitchen.bundle.scp.css"
+      "PackagePath": "staticwebassets\\WebKitchen.svo6p3s3ox.bundle.scp.css"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\app.css",
@@ -151,6 +151,10 @@
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",
       "PackagePath": "staticwebassets\\styles.css"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WebKitchen.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WebKitchen.Microsoft.AspNetCore.StaticWebAssets.props",

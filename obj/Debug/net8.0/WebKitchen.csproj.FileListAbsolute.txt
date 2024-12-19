@@ -92,3 +92,6 @@ C:\Users\A\Desktop\Coding\C#\kitchen-app\obj\Debug\net8.0\ref\WebKitchen.dll
 C:\Users\A\Desktop\Coding\C#\kitchen-app\bin\Debug\net8.0\appsettings.json
 C:\Users\A\Desktop\Coding\C#\kitchen-app\bin\Debug\net8.0\appsettings.Development.json
 C:\Users\A\Desktop\Coding\C#\kitchen-app\obj\Debug\net8.0\scopedcss\Components\Pages\RecipeDetails.razor.rz.scp.css
+C:\Users\A\Desktop\Coding\C#\kitchen-app\bin\Debug\net8.0\WebKitchen.staticwebassets.endpoints.json
+C:\Users\A\Desktop\Coding\C#\kitchen-app\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\A\Desktop\Coding\C#\kitchen-app\obj\Debug\net8.0\staticwebassets\msbuild.WebKitchen.Microsoft.AspNetCore.StaticWebAssetEndpoints.props
