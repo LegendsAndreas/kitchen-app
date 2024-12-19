@@ -25,6 +25,12 @@ FROM temp_recipes
 WHERE recipes.id = temp_recipes.id;
 SELECT setval('recipes_id_seq', (SELECT MAX(id) FROM recipes));
 
+- Json.
+When you want to extract data from a JSON file, the variable names in the class that you are inserting it into HAS to be
+the same name as in the JSON file. Or, you can have a different name in your class, and define a JsonPropertyName:
+      [JsonPropertyName("name")]
+      public string Name { get; set; }
+
 -- This piece of shit:
 Despite the fact that the compiler does not mention this, the fact that the @-symbol is on the Model
 and not the actual CurrentIngredient variable, will crash the program with an InvalidOperationException.

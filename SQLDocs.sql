@@ -226,5 +226,56 @@ SET id = temp_recipes.new_id
 WHERE recipes.id = temp_recipes.id;
 SELECT setval('recipes_id_seq', (SELECT MAX(id) FROM recipes));
 
-
 DROP TABLE temp_recipes;
+
+CREATE TABLE recipe_instructions
+(
+    id           SERIAL PRIMARY KEY,
+    instructions JSON
+);
+
+ALTER TABLE recipe_instructions ADD recipe_id INT;
+ALTER TABLE recipe_instructions ADD CONSTRAINT FK_recipe_id FOREIGN KEY (recipe_id) REFERENCES recipes (id);
+
+INSERT INTO recipe_instructions (instructions)
+VALUES ('{
+  "name": "Chocolate Chip Cookies",
+  "steps": [
+    {
+      "step_number": 1,
+      "instruction": "Preheat oven to 350°F (175°C)."
+    },
+    {
+      "step_number": 2,
+      "instruction": "In a bowl, mix flour, baking soda, and salt."
+    },
+    {
+      "step_number": 3,
+      "instruction": "In another bowl, cream together butter and sugar."
+    },
+    {
+      "step_number": 4,
+      "instruction": "Add eggs and vanilla extract to the butter mixture."
+    },
+    {
+      "step_number": 5,
+      "instruction": "Gradually add the dry ingredients and chocolate chips."
+    },
+    {
+      "step_number": 6,
+      "instruction": "Scoop dough onto a baking sheet and bake for 10-12 minutes."
+    }
+  ],
+  "notes": [
+    {
+      "note_number" : 1,
+      "note": "Remember to..."
+    },
+    {
+      "note_number" : 2,
+      "note": "By the way..."
+    }
+  ]
+}');
+
+SELECT id, instructions, recipe_id FROM recipe_instructions;

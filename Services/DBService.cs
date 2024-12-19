@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Data;
+using System.Text.Json;
 using Npgsql;
 
 // jdbc:postgresql://[HOST]/[DATABASE_NAME]?password=[PASSWORD]&sslmode=require&user=[USERNAME]
@@ -24,7 +25,7 @@ public class DBService
         await connection.OpenAsync();
         return connection;
     }
-    
+
     public async Task AddRecipeToDatabase(Recipe recipe)
     {
         Console.WriteLine("Adding recipe to database...");
@@ -56,7 +57,7 @@ public class DBService
             throw;
         }
     }
-    
+
     private async Task AddIngredientsToRow(List<Ingredient> ingredients)
     {
         Console.WriteLine("Adding ingredients to row...");
@@ -86,7 +87,7 @@ public class DBService
             await RunAsyncQuery(cmd);
         }
     }
-    
+
     public async Task AddIngredientToDb(Ingredient ingredient)
     {
         Console.WriteLine("Adding ingredient to database...");
@@ -115,7 +116,7 @@ public class DBService
             throw;
         }
     }
-    
+
     public async Task CorrectRecipe(string type, string name)
     {
         Console.WriteLine("Correcting recipe...");
@@ -129,7 +130,7 @@ public class DBService
 
         await RunAsyncQuery(cmd);
     }
-    
+
     private List<Recipe> GetDinnerRecipes()
     {
         Console.WriteLine("Getting dinner recipes...");
@@ -166,7 +167,7 @@ public class DBService
 
         return recipes;
     }
-    
+
     public Recipe GetRandomRecipe()
     {
         Console.WriteLine("Getting random recipe...");
@@ -174,7 +175,7 @@ public class DBService
         Recipe randomRecipe = recipes[new Random().Next(0, recipes.Count - 1)];
         return randomRecipe;
     }
-    
+
     public async Task CorrectRecipeImage(string recipeName, string base64Image)
     {
         Console.WriteLine("Correcting recipe image...");
@@ -185,7 +186,7 @@ public class DBService
 
         await RunAsyncQuery(cmd);
     }
-    
+
     public async Task CorrectRecipeNameAsync(string currentName, string updatedName)
     {
         Console.WriteLine("Correcting recipe name...");
@@ -200,16 +201,77 @@ public class DBService
         await RunAsyncQuery(cmd);
     }
 
+    public async Task<List<RecipeInstructionRecord>> GetAllRecipeInstructions()
+    {
+        Console.WriteLine("Getting all recipe instructions...");
+        var recipeInstructionsRecords = new List<RecipeInstructionRecord>();
+
+        var query = "SELECT id, instructions, recipe_id FROM recipe_instructions";
+
+        try
+        {
+            await using var conn = await GetConnection();
+            
+            await using var cmd = new NpgsqlCommand(query, conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            
+            while (await reader.ReadAsync())
+            {
+                // Extract columns
+                int id = reader.GetInt32(0); // Get 'id' column
+                var jsonData = reader.GetString(1); // Get 'instructions' JSON column
+                int recipeId = 1; // Get 'recipe_id' column
+
+                Console.WriteLine("JsonData: " + jsonData);
+
+                // Deserialize JSON data into RecipeInstructions class
+                var instructions = JsonSerializer.Deserialize<RecipeInstructions>(jsonData);
+
+                // Map everything into a RecipeInstructionRecord object
+                var recipeRecord = new RecipeInstructionRecord
+                {
+                    Id = id,
+                    Instructions = instructions,
+                    RecipeId = recipeId
+                };
+
+                // Output the deserialized data
+                Console.WriteLine($"Record ID: {recipeRecord.Id}");
+                Console.WriteLine($"Recipe Name: {recipeRecord.Instructions.Name}");
+                Console.WriteLine($"Recipe ID: {recipeRecord.RecipeId}");
+                Console.WriteLine("Steps:");
+                foreach (var step in recipeRecord.Instructions.Steps)
+                {
+                    Console.WriteLine($"  Step {step.StepNumber}: {step.Instruction}");
+                }
+
+                Console.WriteLine("Notes:");
+                foreach (var note in recipeRecord.Instructions.Notes)
+                {
+                    Console.WriteLine($"  Note {note.NoteNumber}: {note.NoteText}");
+                }
+
+                Console.WriteLine("-------------------------");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting all recipe instructions: " + ex.Message);
+            Console.WriteLine("StackTrace:  " + ex.StackTrace);
+            throw;
+        }
+        return recipeInstructionsRecords;
+    }
+
     public async Task<List<Recipe>> GetRecipes()
     {
         Console.WriteLine("Getting recipes...");
         var img = File.ReadAllBytes("wwwroot/pics/PlaceHolderPic.jpg");
         var base64PlaceHolderPic = Convert.ToBase64String(img);
-        
+
         List<Recipe> recipes = new();
 
-        await using var conn = new NpgsqlConnection(_connectionString);
-        await conn.OpenAsync();
+        var conn = await GetConnection();
 
         int recipeIdTracker = 1;
 
@@ -224,7 +286,9 @@ public class DBService
                 {
                     RecipeId = reader.GetInt32(0),
                     Name = reader.GetString(1),
-                    Base64Image = reader.GetString(2) != "PlaceHolderPic.jpg" ? reader.GetString(2) : base64PlaceHolderPic,
+                    Base64Image = reader.GetString(2) != "PlaceHolderPic.jpg"
+                        ? reader.GetString(2)
+                        : base64PlaceHolderPic,
                     MealType = reader.GetString(3),
                     Ingredients = await GetIngredientByIdAsync(recipeIdTracker),
                     TotalMacros = new Macros
@@ -288,7 +352,7 @@ public class DBService
 
         return recipes;
     }
-    
+
     private async Task<List<Ingredient>> GetIngredientByIdAsync(int id)
     {
         List<Ingredient> ingredients = new();
@@ -348,7 +412,7 @@ public class DBService
     {
         var img = await File.ReadAllBytesAsync("wwwroot/pics/PlaceHolderPic.jpg");
         var base64PlaceHolderPic = Convert.ToBase64String(img);
-        
+
         Console.WriteLine("Getting ingredients...");
         List<Ingredient> ingredients = new();
 
@@ -378,13 +442,13 @@ public class DBService
         return ingredients;
     }
 
-    public async Task CorrectIngredientImageAsync(string ingredientName,string base64Image)
+    public async Task CorrectIngredientImageAsync(string ingredientName, string base64Image)
     {
         var conn = await GetConnection();
-        
+
         string query = $"UPDATE ingredients SET image = '{base64Image}' WHERE name = '{ingredientName}'";
         await using var cmd = new NpgsqlCommand(query, conn);
-        
+
         await RunAsyncQuery(cmd);
     }
 

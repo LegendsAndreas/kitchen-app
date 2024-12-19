@@ -12,16 +12,16 @@ skinparam json{
     BackgroundColor Orange
 }
 
-object Recipe {
+object recipe {
     * id SERIAL PRIMARY KEY
     meal_type CHAR
     recipe_name TEXT
-    image_path TEXT
-    ingredients Ingredient[]
+    base64_image TEXT
+    ingredients ingredient[]
     macros recipe_macros
 }
 
-class Ingredient <<(C,plum)>>{
+class ingredient <<(C,plum)>>{
     name TEXT
     grams INT
     calories INT
@@ -29,6 +29,7 @@ class Ingredient <<(C,plum)>>{
     carbohydrates FLOAT
     protein FLOAT
     multiplier FLOAT
+    base64_image TEXT
 }
 
 class recipe_macros <<(C,plum)>>{
@@ -38,12 +39,13 @@ class recipe_macros <<(C,plum)>>{
     total_protein FLOAT
 }
 
-Recipe::ingredient ||--|{ Ingredient
-Recipe::macros --|| recipe_macros
+recipe::ingredient ||--|{ ingredient
+recipe::macros --|| recipe_macros
 
-object Details{
-    recipe_id CONSTRAINT FOREIGN KEY INT
+object recipe_instructions{
+    id SERIAL PRIMARY KEY
     instructions JSON
+    recipe_id CONSTRAINT FOREIGN KEY INT
 }
 
 json Instructions{
@@ -55,8 +57,8 @@ json Instructions{
     "...":"..."
 }
 
-Details::recipe_id -|| Recipe::id
-Instructions -> Details::instructions
+recipe_instructions::recipe_id -> recipe::id
+Instructions -> recipe_instructions::instructions
 
 @enduml
 
