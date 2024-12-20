@@ -64,7 +64,10 @@
     height: 1.1em; /* Align dots with text */
 }
 
-
+/* Instructions */
+.instructions-button{
+    margin: 10px;
+}
 
 #recipe-image-style {
     width: 50%;

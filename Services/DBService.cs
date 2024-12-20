@@ -58,6 +58,11 @@ public class DBService
         }
     }
 
+    public async Task AddInstructionToDb(RecipeInstructionRecord instructions)
+    {
+        
+    }
+
     private async Task AddIngredientsToRow(List<Ingredient> ingredients)
     {
         Console.WriteLine("Adding ingredients to row...");
@@ -211,16 +216,16 @@ public class DBService
         try
         {
             await using var conn = await GetConnection();
-            
+
             await using var cmd = new NpgsqlCommand(query, conn);
             await using var reader = await cmd.ExecuteReaderAsync();
-            
+
             while (await reader.ReadAsync())
             {
                 // Extract columns
                 int id = reader.GetInt32(0); // Get 'id' column
                 var jsonData = reader.GetString(1); // Get 'instructions' JSON column
-                int recipeId = 1; // Get 'recipe_id' column
+                int recipeId = reader.GetInt32(2); // Get 'recipe_id' column
 
                 Console.WriteLine("JsonData: " + jsonData);
 
@@ -228,21 +233,18 @@ public class DBService
                 var instructions = JsonSerializer.Deserialize<RecipeInstructions>(jsonData);
 
                 // Map everything into a RecipeInstructionRecord object
-                var recipeRecord = new RecipeInstructionRecord
-                {
-                    Id = id,
-                    Instructions = instructions,
-                    RecipeId = recipeId
-                };
+                var recipeRecord = new RecipeInstructionRecord { Instructions = instructions };
+                recipeRecord.SetId(id);
+                recipeRecord.SetRecipeId(recipeId);
 
                 // Output the deserialized data
-                Console.WriteLine($"Record ID: {recipeRecord.Id}");
+                Console.WriteLine($"Record ID: {recipeRecord.GetId()}");
                 Console.WriteLine($"Recipe Name: {recipeRecord.Instructions.Name}");
-                Console.WriteLine($"Recipe ID: {recipeRecord.RecipeId}");
+                Console.WriteLine($"Recipe ID: {recipeRecord.GetRecipeId()}");
                 Console.WriteLine("Steps:");
                 foreach (var step in recipeRecord.Instructions.Steps)
                 {
-                    Console.WriteLine($"  Step {step.StepNumber}: {step.Instruction}");
+                    Console.WriteLine($"  Step {step.StepNumber}: {step.StepText}");
                 }
 
                 Console.WriteLine("Notes:");
@@ -260,6 +262,7 @@ public class DBService
             Console.WriteLine("StackTrace:  " + ex.StackTrace);
             throw;
         }
+
         return recipeInstructionsRecords;
     }
 
@@ -433,7 +436,9 @@ public class DBService
                         Fats = reader.GetFloat(2),
                         Carbs = reader.GetFloat(3),
                         Protein = reader.GetFloat(4),
-                        Base64Image = reader.GetString(5) != "PlaceHolderPic.jpg" ? reader.GetString(5) : base64PlaceHolderPic
+                        Base64Image = reader.GetString(5) != "PlaceHolderPic.jpg"
+                            ? reader.GetString(5)
+                            : base64PlaceHolderPic
                     });
                 }
             }

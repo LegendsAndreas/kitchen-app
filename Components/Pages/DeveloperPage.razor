@@ -27,7 +27,7 @@
                 // Extract columns
                 int id = reader.GetInt32(0); // Get 'id' column
                 var jsonData = reader.GetString(1); // Get 'instructions' JSON column
-                int recipeId = 1; // Get 'recipe_id' column
+                int recipeId = reader.GetInt32(2); // Get 'recipe_id' column
 
                 Console.WriteLine("JsonData: " + jsonData);
 
@@ -37,19 +37,20 @@
                 // Map everything into a RecipeInstructionRecord object
                 var recipeRecord = new RecipeInstructionRecord
                 {
-                    Id = id,
                     Instructions = instructions,
-                    RecipeId = recipeId
                 };
+                
+                recipeRecord.SetId(id);
+                recipeRecord.SetRecipeId(recipeId);
 
                 // Output the deserialized data
-                Console.WriteLine($"Record ID: {recipeRecord.Id}");
+                Console.WriteLine($"Record ID: {recipeRecord.GetId()}");
                 Console.WriteLine($"Recipe Name: {recipeRecord.Instructions.Name}");
-                Console.WriteLine($"Recipe ID: {recipeRecord.RecipeId}");
+                Console.WriteLine($"Recipe ID: {recipeRecord.GetRecipeId()}");
                 Console.WriteLine("Steps:");
                 foreach (var step in recipeRecord.Instructions.Steps)
                 {
-                    Console.WriteLine($"  Step {step.StepNumber}: {step.Instruction}");
+                    Console.WriteLine($"  Step {step.StepNumber}: {step.StepText}");
                 }
 
                 Console.WriteLine("Notes:");

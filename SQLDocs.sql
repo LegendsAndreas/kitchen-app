@@ -279,3 +279,4 @@ VALUES ('{
 }');
 
 SELECT id, instructions, recipe_id FROM recipe_instructions;
+UPDATE recipe_instructions SET recipe_id = 5 WHERE id = 1;
