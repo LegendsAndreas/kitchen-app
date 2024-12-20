@@ -28,11 +28,10 @@
     }
 </style>
 
-
 <EditForm Model="@CurrentRecipe" OnValidSubmit="@HandleValidSubmit">
     <div>
-        <label>Recipe Name</label>
-        <InputText id="name" @bind-Value="recipeName"/>
+        <label class="form-label fw-bold">Recipe Name</label>
+        <InputText class="form-control" id="name" @bind-Value="recipeName"/>
     </div>
 
     <label class="file-label" for="fileInput">Choose Image</label>
@@ -44,7 +43,7 @@
 @if (CurrentRecipe.Base64Image != "")
 {
     <p>Preview image</p>
-    <img src="data:image/png;base64,@CurrentRecipe.Base64Image" alt="Recipe Image" style="max-width: 50%;"/>
+    <img src="data:image/png;base64,@CurrentRecipe.Base64Image" alt="Recipe Image" style="width: 75%;"/>
 }
 
 @* No image select toaster *@

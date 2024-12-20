@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "KWj0cBnEyNp45AcKiea3T7Gk1A8mDQ2p5z8XUmUQn9M=",
+  "Hash": "XfpLNGatifcrHoopoXxz5cPcEM3Ys2adj8qGBj++7KQ=",
   "Source": "WebKitchen",
   "BasePath": "_content/WebKitchen",
   "Mode": "Default",
@@ -829,8 +829,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "eeozbgjh6d",
-      "Integrity": "uv6XXw+1M37vcGF1gVEBnFihgSH53Rvtdas9UQA/gJ0=",
+      "Fingerprint": "cjs2czf9hn",
+      "Integrity": "+CSJGgnrXFgsIdB06pr7UonkCYyut8C+rRoTduj56xw=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\styles.css"
@@ -3790,6 +3790,51 @@
       ]
     },
     {
+      "Route": "styles.cjs2czf9hn.css",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1834"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"+CSJGgnrXFgsIdB06pr7UonkCYyut8C+rRoTduj56xw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 20 Dec 2024 21:01:46 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "cjs2czf9hn"
+        },
+        {
+          "Name": "label",
+          "Value": "styles.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-+CSJGgnrXFgsIdB06pr7UonkCYyut8C+rRoTduj56xw="
+        }
+      ]
+    },
+    {
       "Route": "styles.css",
       "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",
       "Selectors": [],
@@ -3800,7 +3845,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1656"
+          "Value": "1834"
         },
         {
           "Name": "Content-Type",
@@ -3808,11 +3853,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"uv6XXw+1M37vcGF1gVEBnFihgSH53Rvtdas9UQA/gJ0=\""
+          "Value": "\"+CSJGgnrXFgsIdB06pr7UonkCYyut8C+rRoTduj56xw=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Fri, 20 Dec 2024 09:20:23 GMT"
+          "Value": "Fri, 20 Dec 2024 21:01:46 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3822,52 +3867,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-uv6XXw+1M37vcGF1gVEBnFihgSH53Rvtdas9UQA/gJ0="
-        }
-      ]
-    },
-    {
-      "Route": "styles.eeozbgjh6d.css",
-      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "1656"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"uv6XXw+1M37vcGF1gVEBnFihgSH53Rvtdas9UQA/gJ0=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Fri, 20 Dec 2024 09:20:23 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "eeozbgjh6d"
-        },
-        {
-          "Name": "label",
-          "Value": "styles.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-uv6XXw+1M37vcGF1gVEBnFihgSH53Rvtdas9UQA/gJ0="
+          "Value": "sha256-+CSJGgnrXFgsIdB06pr7UonkCYyut8C+rRoTduj56xw="
         }
       ]
     },

@@ -22,9 +22,9 @@
 </style>
 
 <div class="dropdown">
-    <a class="btn btn-secondary custom-layout dropdown-toggle btn-lg" href="#" role="button" data-bs-toggle="dropdown"
+    <a class="btn btn-primary custom-layout dropdown-toggle btn-lg" href="#" role="button" data-bs-toggle="dropdown"
        aria-expanded="false">
-        Choose an option
+        Choose what to edit
     </a>
 
     <ul class="dropdown-menu">
@@ -47,7 +47,7 @@
             </button>
         </li>
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("deleteRecipe"))">Delete
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("delete-recipe"))">Delete
                 Recipe
             </button>
         </li>
@@ -72,29 +72,37 @@
     </ul>
 </div>
 
-@switch (selectedOption)
+@if (selectedOption != "")
 {
-    case "mealType":
-        <EditMealTypeForm/>
-        break;
-    case "name":
-        <EditNameForm/>
-        break;
-    case "ingredient":
-        <EditIngredientForm/>
-        break;
-    case "image":
-        <EditRecipeImageForm/>
-        break;
-    case "deleteIngredient":
-        <DeleteIngredientForm/>
-        break;
-    case "ingredientImage":
-        <EditIngredientImageForm/>
-        break;
-    default:
-        <p>Not an option</p>
-        break;
+    <div class="card">
+        <div class="card-body edit-recipes-form custom-button-margin">
+            @switch (selectedOption)
+            {
+                case "mealType":
+                    <EditMealTypeForm/>
+                    break;
+                case "name":
+                    <EditNameForm/>
+                    break;
+                case "ingredient":
+                    <EditIngredientForm/>
+                    break;
+                case "image":
+                    <EditRecipeImageForm/>
+                    break;
+                case "delete-recipe":
+                    <DeleteRecipeForm/>
+                    break;
+                case "deleteIngredient":
+                    <DeleteIngredientForm/>
+                    break;
+                case "ingredientImage":
+                    <EditIngredientImageForm/>
+                    break;
+            }
+        </div>
+
+    </div>
 }
 
 @code {

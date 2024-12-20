@@ -132,7 +132,12 @@
             return;
         }
 
+        recipeInstructionRecord.SetRecipeId(await DbService.GetRecipeIdByName(recipeName));
+        if (recipeInstructionRecord.GetRecipeId() == -1)
+            return;
+
         await DbService.AddInstructionToDb(recipeInstructionRecord);
+        recipeInstructionRecord.Clear();
     }
 
     private void HandleSteps()

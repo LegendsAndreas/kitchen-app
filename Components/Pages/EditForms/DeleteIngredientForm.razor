@@ -4,11 +4,11 @@
 
 <EditForm Model="@_ingredientName" OnValidSubmit="@HandleValidSubmit">
     <div>
-        <label>Ingredient Name</label>
-        <InputText id="name" @bind-Value="_ingredientName"/>
+        <label class="form-label fw-bold">Ingredient Name</label>
+        <InputText id="name" @bind-Value="_ingredientName" class="form-control"/>
     </div>
     
-    <button type="submit">Delete Ingredient</button>
+    <button type="submit" class="btn btn-primary">Delete Ingredient</button>
 </EditForm>
 
 @* Status message toaster *@
@@ -35,7 +35,7 @@
 
     private async Task HandleValidSubmit()
     {
-        _statusMessage = await DbService.DeleteIngredientAsync(_ingredientName);
+        _statusMessage = await DbService.DeleteIngredient(_ingredientName);
         _ingredientName = string.Empty;
         await JsRuntime.InvokeVoidAsync("showStatusMessage");
         StateHasChanged();

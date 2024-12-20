@@ -1,0 +1,72 @@
+@inject DBService DbService;
+@inject IJSRuntime JSRuntime
+
+<EditForm Model="@recipeName" OnSubmit="@HandleSubmit">
+    <div>
+        <label class="form-label fw-bold">Recipe to Delete</label>
+        <InputText id="name" @bind-Value="recipeName" class="form-control"/>
+    </div>
+    <button class="btn btn-primary" type="submit">Delete</button>
+</EditForm>
+
+<!-- Are you sure modal -->
+<div class="modal fade" id="are-you-sure" tabindex="-1" aria-labelledby="areYouSure" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="areYouSure">Confirmation</h5>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="confirmAction(true)">Yes</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="confirmAction(false)">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAreYouSureModal() {
+        const modalElement = document.getElementById("are-you-sure");
+        const modalInstance = new bootstrap.Modal(modalElement);
+        modalInstance.show();
+    }
+
+    // Registering user's response (Yes or No) via JS Interop
+    let confirmationResolve;
+    window.waitForUserConfirmation = function () {
+        return new Promise((resolve) => {
+            confirmationResolve = resolve;
+        });
+    };
+
+    function confirmAction(userConfirmed) {
+        if (confirmationResolve) {
+            confirmationResolve(userConfirmed);
+        }
+    }
+</script>
+
+@code {
+
+    string recipeName = string.Empty;
+
+    private async Task HandleSubmit()
+    {
+        Console.WriteLine("Handling submit delete recipe...");
+        
+        if (await AreYouSure())
+        {
+            var statusMessage = await DbService.DeleteRecipeByName(recipeName);
+            Console.WriteLine(statusMessage);
+        }
+
+        recipeName = string.Empty;
+        StateHasChanged();
+    }
+
+    private async Task<bool> AreYouSure()
+    {
+        await JSRuntime.InvokeVoidAsync("showAreYouSureModal");
+        // Wait for the user's response (true/false)
+        return await JSRuntime.InvokeAsync<bool>("waitForUserConfirmation");
+    }
+
+}

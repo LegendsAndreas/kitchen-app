@@ -1,16 +1,15 @@
-﻿@using WebKitchen.Services;
-@inject Recipe CurrentRecipe;
+﻿@inject Recipe CurrentRecipe;
 @inject DBService DbService;
 
 <EditForm Model="@CurrentRecipe" OnValidSubmit="@HandleValidSubmit">
     <div>
-        <label>Current Name</label>
-        <InputText id="name" @bind-Value="currentName"/>
+        <label class="form-label fw-bold">Current Recipe Name</label>
+        <InputText id="name" @bind-Value="currentName" class="form-control"/>
     </div>
 
     <div>
-        <label>Updated Name</label>
-        <InputText id="type" @bind-Value="CurrentRecipe.Name"/>
+        <label class="form-label fw-bold">Updated Recipe Name</label>
+        <InputText id="type" @bind-Value="CurrentRecipe.Name" class="form-control"/>
     </div>
     <button class="btn btn-primary" type="submit">Update</button>
 </EditForm>

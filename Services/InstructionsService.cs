@@ -16,6 +16,13 @@ public class RecipeInstructionRecord
 
     public int GetId() => Id;
     public int GetRecipeId() => RecipeId;
+
+    public void Clear()
+    {
+        Id = 0;
+        RecipeId = 0;
+        Instructions = new RecipeInstructions();
+    }
 }
 
 public class RecipeInstructions
@@ -42,13 +49,13 @@ public class Step
     public Step TransferStepValues(Step step)
     {
         Console.WriteLine("Transferring step values...");
-        
+
         Step transferStep = new()
         {
             StepNumber = step.StepNumber,
             StepText = step.StepText
         };
-        
+
         return transferStep;
     }
 }
@@ -67,13 +74,13 @@ public class Note
     public Note TransferNoteValues(Note note)
     {
         Console.WriteLine("Transferring note values...");
-        
+
         Note transferNote = new()
         {
             NoteNumber = note.NoteNumber,
             NoteText = note.NoteText
         };
-        
+
         return transferNote;
     }
 }
