@@ -47,6 +47,7 @@ public class Macros
 
 public class Ingredient
 {
+    private uint Id { get; set; }
     [Required] public string Name { get; set; } = string.Empty;
     [Required] public float Grams { get; set; }
     public float Calories { get; set; }
@@ -56,17 +57,30 @@ public class Ingredient
     private float Multiplier { get; set; }
     public string Base64Image { get; set; } = string.Empty;
 
+    public uint GetId()
+    {
+        Console.WriteLine("Getting ID...");
+        return Id;
+    }
+
     public float GetMultiplier()
     {
         Console.WriteLine("Getting multiplier...");
         return Multiplier;
     }
 
-    /*public string GetIngredientImage()
+    public string GetIngredientImage()
     {
         Console.WriteLine("Getting ingredient image...");
         return Base64Image;
-    }*/
+    }
+
+    public void SetId(uint id)
+    {
+        Console.WriteLine("Setting ID...");
+        Id = id;
+    }
+
 
     public void SetMultiplier()
     {
@@ -96,6 +110,7 @@ public class Ingredient
     public void ClearIngredient()
     {
         Console.WriteLine("Clearing ingredient...");
+        Id = 0;
         Name = string.Empty;
         Grams = 0f;
         Calories = 0f;
@@ -109,6 +124,7 @@ public class Ingredient
     public void PrintIngredient()
     {
         Console.WriteLine("__Printing Ingredient__");
+        Console.WriteLine("ID: " + Id);
         Console.WriteLine("Ingredient: " + Name);
         Console.WriteLine("Grams: " + Grams);
         Console.WriteLine("Calories: " + Calories);
@@ -134,6 +150,7 @@ public class Ingredient
             Protein = ing.Protein,
             Base64Image = ing.Base64Image
         };
+        transferIngredient.SetId(ing.GetId());
         transferIngredient.SetMultiplier();
 
         return transferIngredient;
@@ -175,7 +192,7 @@ public class Recipe
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error print recipe: " + ex.Message);
+            Console.WriteLine("Error printing recipe: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             throw;
         }

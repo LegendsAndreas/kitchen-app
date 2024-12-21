@@ -14,8 +14,17 @@ public class RecipeInstructionRecord
     public void SetId(int id) => Id = id;
     public void SetRecipeId(int recipeId) => RecipeId = recipeId;
 
-    public int GetId() => Id;
-    public int GetRecipeId() => RecipeId;
+    public int GetId()
+    {
+        Console.WriteLine("Getting recipe instructions record ID...");
+        return Id;
+    }
+
+    public int GetRecipeId()
+    {
+        Console.WriteLine("Getting recipe instructions record recipe ID...");
+        return RecipeId;
+    }
 
     public void Clear()
     {

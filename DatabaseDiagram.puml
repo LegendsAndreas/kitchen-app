@@ -9,11 +9,11 @@ skinparam object{
 }
 
 skinparam json{
-    BackgroundColor Orange
+    BackgroundColor LightGreen
 }
 
 object recipe {
-    * id SERIAL PRIMARY KEY
+    * id INT
     meal_type CHAR
     recipe_name TEXT
     base64_image TEXT
@@ -43,23 +43,50 @@ recipe::ingredient ||--|{ ingredient
 recipe::macros --|| recipe_macros
 
 object recipe_instructions{
-    id SERIAL PRIMARY KEY
+    * id INT
     instructions JSON
     recipe_id CONSTRAINT FOREIGN KEY INT
 }
 
 object ingredients{
-    
+    * id INT
+    name TEXT
+    calories FLOAT
+    fats FLOAT
+    carbohydrates FLOAT
+    protein FLOAT
+    base64_image TEXT
 }
 
 json Instructions{
     "name":"Amatriciana",
-    "1":"Start by...",
-    "2":"Then, start with the...",
-    "...":"...",
-    "note1":"By the way...",
-    "note2":"Remember to...",
-    "...":"..."
+    "steps": [
+    {
+        "step_number":1,
+        "instruction": "Start by..."
+    },
+    {
+        "step_number":2,
+        "instruction": "Then, start with the..."
+    },
+    {
+        "...":"..."
+    }
+    ],
+    
+    "notes": [
+    {
+        "note_number":1,
+        "note_text": "By the way..."
+    },
+    {
+        "note_number":2,
+        "note_text": "Remember to..."
+    },
+    {
+        "...":"..."
+    }
+    ]
 }
 
 recipe_instructions::recipe_id -> recipe::id

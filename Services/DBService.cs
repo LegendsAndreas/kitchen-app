@@ -465,7 +465,9 @@ public class DBService
 
     /// Updates the details of an existing ingredient in the database.
     /// <param name="ingredient">The ingredient object containing updated values including name, calories, fats, carbohydrates, protein, and base64 image data.</param>
-    /// <return>A task representing the asynchronous operation.</return>
+    /// <return>Task.</return>
+    /// <remarks>Remember that this technically updates EVERY value in a database Ingredient. So don't just send an Ingredient
+    /// with one active value, while the rest are just null.</remarks>
     public async Task UpdateDatabaseIngredient(Ingredient ingredient)
     {
         try
