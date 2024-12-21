@@ -76,7 +76,7 @@
             return;
         }
         
-        await DbService.CorrectRecipeImage(recipeName, CurrentRecipe.Base64Image);
+        await DbService.UpdateRecipeImage(recipeName, CurrentRecipe.Base64Image);
         CurrentRecipe.ClearRecipe();
     }
     

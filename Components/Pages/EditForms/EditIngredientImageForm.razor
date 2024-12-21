@@ -76,7 +76,7 @@
             return;
         }
         
-        await DbService.CorrectIngredientImageAsync(ingredientName, CurrentIngredient.Base64Image);
+        await DbService.UpdateIngredientImage(ingredientName, CurrentIngredient.Base64Image);
         CurrentIngredient.ClearIngredient();
     }
     

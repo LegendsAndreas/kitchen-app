@@ -1,0 +1,73 @@
+@inject DBService DbService
+
+<EditForm Model="@ingredientName">
+    <label class="form-label fw-bold">Ingredient Name</label>
+    <InputText id="name" @bind-Value="ingredientName" class="form-control"/>
+
+    <button type="submit" class="btn btn-primary">Get Database Ingredient</button>
+</EditForm>
+
+@if (ingredientName != string.Empty)
+{
+    <EditForm Model="@ingredient" OnSubmit="@HandleSubmit">
+        <label class="form-label fw-bold">Ingredient Name</label>
+        <InputText @bind-Value="ingredient.Name" class="form-control"/>
+
+        <label class="form-label fw-bold">Ingredient Calories</label>
+        <InputNumber @bind-Value="ingredient.Calories" class="form-control"/>
+
+        <label class="form-label fw-bold">Ingredient Carbs</label>
+        <InputNumber @bind-Value="ingredient.Carbs" class="form-control"/>
+
+        <label class="form-label fw-bold">Ingredient Protein</label>
+        <InputNumber @bind-Value="ingredient.Protein" class="form-control"/>
+
+        <label class="form-label fw-bold">Ingredient Fats</label>
+        <InputNumber @bind-Value="ingredient.Fats" class="form-control"/>
+
+        <label class="file-label" for="fileInput">Choose Image</label>
+        <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
+
+        <button type="submit" class="btn btn-primary">Update Database ingredient</button>
+    </EditForm>
+
+    <div>
+        <p>Database @ingredient.Name Image</p>
+        <img src="data:image/png;base64,@ingredient.Base64Image" alt="Image" class="img-fluid"/>
+    </div>
+}
+
+@code{
+
+    string ingredientName = string.Empty;
+    Ingredient ingredient = new();
+
+    private async Task HandleSubmit()
+    {
+        await DbService.UpdateDatabaseIngredient(ingredient);
+    }
+
+    private async Task HandleImage(InputFileChangeEventArgs imageFile)
+    {
+        foreach (var image in imageFile.GetMultipleFiles())
+        {
+            if (!image.ContentType.Contains("image"))
+            {
+                Console.WriteLine($"\"{image.ContentType}\" is not allowed");
+                // Popup message saying so.
+                return;
+            }
+
+            try
+            {
+                await ingredient.SetIngredientImage(image);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error setting image: " + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+        }
+    }
+
+}

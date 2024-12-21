@@ -64,9 +64,17 @@
                 Ingredient
             </button>
         </li>
-        <li>
+        @*<li>
             <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("ingredientImage"))">
                 Ingredient Image
+            </button>
+        </li>*@
+        <li>
+            <hr class="dropdown-divider"/>
+        </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("database-ingredient"))">
+                Database Ingredient
             </button>
         </li>
     </ul>
@@ -98,6 +106,9 @@
                     break;
                 case "ingredientImage":
                     <EditIngredientImageForm/>
+                    break;
+                case "database-ingredient":
+                    <EditDatabaseIngredient/>
                     break;
             }
         </div>

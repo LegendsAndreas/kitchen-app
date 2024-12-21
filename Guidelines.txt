@@ -31,3 +31,6 @@ catch (Exception ex)
     Console.Writeline("Error getting recipe by id: " + ex.Message);
     Console.Writeline("StackTrace: " + ex.StackTrace)
 }
+
+__general lexicon__
+- Database Ingredient: An ingredient that has been added to the ingredients table in the database.

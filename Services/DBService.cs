@@ -239,7 +239,7 @@ public class DBService
         return ingredients;
     }
 
-    public async Task<List<Ingredient>> GetIngredientsFromTableAsync()
+    public async Task<List<Ingredient>> GetDatabaseIngredients()
     {
         Console.WriteLine("Getting ingredients...");
         var img = await File.ReadAllBytesAsync("wwwroot/pics/PlaceHolderPic.jpg");
@@ -293,6 +293,7 @@ public class DBService
         {
             Console.WriteLine("Recipe not found.");
         }
+
         return recipeId;
     }
 
@@ -403,7 +404,7 @@ public class DBService
         }
     }
 
-    public async Task CorrectRecipe(string type, string name)
+    public async Task UpdateRecipe(string type, string name)
     {
         Console.WriteLine("Correcting recipe...");
         var conn = await GetConnection();
@@ -415,7 +416,7 @@ public class DBService
     }
 
 
-    public async Task CorrectRecipeImage(string recipeName, string base64Image)
+    public async Task UpdateRecipeImage(string recipeName, string base64Image)
     {
         Console.WriteLine("Correcting recipe image...");
         var conn = await GetConnection();
@@ -424,7 +425,7 @@ public class DBService
         await RunAsyncQuery(cmd);
     }
 
-    public async Task CorrectRecipeNameAsync(string currentName, string updatedName)
+    public async Task UpdateRecipeName(string currentName, string updatedName)
     {
         Console.WriteLine("Correcting recipe name...");
         var conn = await GetConnection();
@@ -436,12 +437,64 @@ public class DBService
     }
 
 
-    public async Task CorrectIngredientImageAsync(string ingredientName, string base64Image)
+    public async Task UpdateIngredientImage(string ingredientName, string base64Image)
     {
         var conn = await GetConnection();
         string query = $"UPDATE ingredients SET image = '{base64Image}' WHERE name = '{ingredientName}'";
         await using var cmd = new NpgsqlCommand(query, conn);
         await RunAsyncQuery(cmd);
+    }
+
+    private async Task UpdateTableIdsAsync(string tableName)
+    {
+        await using var conn = new NpgsqlConnection(_connectionString);
+        conn.Open();
+
+        string query = $"CREATE TEMP TABLE temp_{tableName} AS" +
+                       "SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id" +
+                       $"FROM {tableName};" +
+                       $"UPDATE {tableName}" +
+                       $"SET id = temp_{tableName}.new_id" +
+                       $"FROM temp_{tableName}" +
+                       $"WHERE {tableName}.id = temp_{tableName}.id;" +
+                       $"SELECT setval('{tableName}_id_seq', (SELECT MAX(id) FROM {tableName}));" +
+                       $"DROP TABLE temp_{tableName};";
+        await using var cmd = new NpgsqlCommand(query, conn);
+        await RunAsyncQuery(cmd);
+    }
+
+    /// Updates the details of an existing ingredient in the database.
+    /// <param name="ingredient">The ingredient object containing updated values including name, calories, fats, carbohydrates, protein, and base64 image data.</param>
+    /// <return>A task representing the asynchronous operation.</return>
+    public async Task UpdateDatabaseIngredient(Ingredient ingredient)
+    {
+        try
+        {
+            var conn = await GetConnection();
+            string query = "UPDATE ingredients " +
+                           "SET " +
+                           "name = @name," +
+                           "cals = @cals,"+
+                           "fats = @fats,"+
+                           "carbs = @carbs,"+
+                           "protein = @protein,"+
+                           "image = @image "+
+                           "WHERE id = @id";
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@name", ingredient.Name);
+            cmd.Parameters.AddWithValue("@cals", ingredient.Calories);
+            cmd.Parameters.AddWithValue("@fats", ingredient.Fats);
+            cmd.Parameters.AddWithValue("@carbs", ingredient.Carbs);
+            cmd.Parameters.AddWithValue("@protein", ingredient.Protein);
+            cmd.Parameters.AddWithValue("@image", ingredient.Base64Image);
+            await RunAsyncQuery(cmd);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error updating database ingredient: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            throw;
+        }
     }
 
     public async Task<string> DeleteIngredient(string name)
@@ -485,23 +538,6 @@ public class DBService
         return statusMessage;
     }
 
-    private async Task UpdateTableIdsAsync(string tableName)
-    {
-        await using var conn = new NpgsqlConnection(_connectionString);
-        conn.Open();
-
-        string query = $"CREATE TEMP TABLE temp_{tableName} AS" +
-                       "SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id" +
-                       $"FROM {tableName};" +
-                       $"UPDATE {tableName}" +
-                       $"SET id = temp_{tableName}.new_id" +
-                       $"FROM temp_{tableName}" +
-                       $"WHERE {tableName}.id = temp_{tableName}.id;" +
-                       $"SELECT setval('{tableName}_id_seq', (SELECT MAX(id) FROM {tableName}));" +
-                       $"DROP TABLE temp_{tableName};";
-        await using var cmd = new NpgsqlCommand(query, conn);
-        await RunAsyncQuery(cmd);
-    }
 
     private async Task<int> RunAsyncQuery(NpgsqlCommand query)
     {

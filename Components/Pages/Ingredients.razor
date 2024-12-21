@@ -116,7 +116,7 @@
     {
         try
         {
-            IngredientsSingleton = await DbService.GetIngredientsFromTableAsync();
+            IngredientsSingleton = await DbService.GetDatabaseIngredients();
         }
         catch (Exception ex)
         {

@@ -48,6 +48,10 @@ object recipe_instructions{
     recipe_id CONSTRAINT FOREIGN KEY INT
 }
 
+object ingredients{
+    
+}
+
 json Instructions{
     "name":"Amatriciana",
     "1":"Start by...",
