@@ -34,10 +34,10 @@ public class Macros
             {
                 Console.WriteLine("Printing ingredient at Macros");
                 ingredient.PrintIngredient();
-                Calories += ingredient.Calories * ingredient.GetMultiplier();
-                Fat += ingredient.Fats * ingredient.GetMultiplier();
-                Carbs += ingredient.Carbs * ingredient.GetMultiplier();
-                Protein += ingredient.Protein * ingredient.GetMultiplier();
+                Calories += ingredient.CaloriesPer100g * ingredient.GetMultiplier();
+                Fat += ingredient.FatsPer100g * ingredient.GetMultiplier();
+                Carbs += ingredient.CarbsPer100g * ingredient.GetMultiplier();
+                Protein += ingredient.ProteinPer100g * ingredient.GetMultiplier();
             }
         }
 
@@ -50,10 +50,10 @@ public class Ingredient
     private uint Id { get; set; }
     [Required] public string Name { get; set; } = string.Empty;
     [Required] public float Grams { get; set; }
-    public float Calories { get; set; }
-    public float Carbs { get; set; }
-    public float Protein { get; set; }
-    public float Fats { get; set; }
+    public float CaloriesPer100g { get; set; }
+    public float CarbsPer100g { get; set; }
+    public float ProteinPer100g { get; set; }
+    public float FatsPer100g { get; set; }
     private float Multiplier { get; set; }
     public string Base64Image { get; set; } = string.Empty;
 
@@ -113,10 +113,10 @@ public class Ingredient
         Id = 0;
         Name = string.Empty;
         Grams = 0f;
-        Calories = 0f;
-        Carbs = 0f;
-        Protein = 0f;
-        Fats = 0f;
+        CaloriesPer100g = 0f;
+        CarbsPer100g = 0f;
+        ProteinPer100g = 0f;
+        FatsPer100g = 0f;
         Multiplier = 0f;
         Base64Image = string.Empty;
     }
@@ -127,10 +127,10 @@ public class Ingredient
         Console.WriteLine("ID: " + Id);
         Console.WriteLine("Ingredient: " + Name);
         Console.WriteLine("Grams: " + Grams);
-        Console.WriteLine("Calories: " + Calories);
-        Console.WriteLine("Carbs: " + Carbs);
-        Console.WriteLine("Protein: " + Protein);
-        Console.WriteLine("Fats: " + Fats);
+        Console.WriteLine("Calories: " + CaloriesPer100g);
+        Console.WriteLine("Carbs: " + CarbsPer100g);
+        Console.WriteLine("Protein: " + ProteinPer100g);
+        Console.WriteLine("Fats: " + FatsPer100g);
         Console.WriteLine("Multiplier: " + Multiplier);
     }
 
@@ -144,10 +144,10 @@ public class Ingredient
         {
             Name = ing.Name,
             Grams = ing.Grams,
-            Calories = ing.Calories,
-            Carbs = ing.Carbs,
-            Fats = ing.Fats,
-            Protein = ing.Protein,
+            CaloriesPer100g = ing.CaloriesPer100g,
+            CarbsPer100g = ing.CarbsPer100g,
+            FatsPer100g = ing.FatsPer100g,
+            ProteinPer100g = ing.ProteinPer100g,
             Base64Image = ing.Base64Image
         };
         transferIngredient.SetId(ing.GetId());

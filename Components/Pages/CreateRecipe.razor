@@ -54,22 +54,22 @@
 
                 <div class="col">
                     <label>Calories (pr. 100g):</label>
-                    <InputNumber id="calories" @bind-Value="CurrentIngredient.Calories"/>
+                    <InputNumber id="calories" @bind-Value="CurrentIngredient.CaloriesPer100g"/>
                 </div>
 
                 <div class="col">
                     <label>Carbs (pr. 100g):</label>
-                    <InputNumber id="carbs" @bind-Value="CurrentIngredient.Carbs"/>
+                    <InputNumber id="carbs" @bind-Value="CurrentIngredient.CarbsPer100g"/>
                 </div>
 
                 <div class="col">
                     <label>Fats (pr. 100g):</label>
-                    <InputNumber id="fats" @bind-Value="CurrentIngredient.Fats"/>
+                    <InputNumber id="fats" @bind-Value="CurrentIngredient.FatsPer100g"/>
                 </div>
 
                 <div class="col">
                     <label>Protein (pr. 100g):</label>
-                    <InputNumber id="protein" @bind-Value="CurrentIngredient.Protein"/>
+                    <InputNumber id="protein" @bind-Value="CurrentIngredient.ProteinPer100g"/>
                 </div>
                 <button type="submit" class="btn btn-primary">Add Ingredient</button>
             </div>
@@ -121,11 +121,11 @@
                             @ingredient.Name
                         </button>
                         <ul class="dropdown-menu">
-                            <li class="dropdown-item">Calories: @ingredient.Calories.ToString("0")</li>
+                            <li class="dropdown-item">Calories: @ingredient.CaloriesPer100g.ToString("0")</li>
                             <li class="dropdown-item">Grams: @ingredient.Grams.ToString("0")</li>
-                            <li class="dropdown-item">Protein: @ingredient.Protein.ToString("0")</li>
-                            <li class="dropdown-item">Fat: @ingredient.Fats.ToString("0")</li>
-                            <li class="dropdown-item">Carbs: @ingredient.Carbs.ToString("0")</li>
+                            <li class="dropdown-item">Protein: @ingredient.ProteinPer100g.ToString("0")</li>
+                            <li class="dropdown-item">Fat: @ingredient.FatsPer100g.ToString("0")</li>
+                            <li class="dropdown-item">Carbs: @ingredient.CarbsPer100g.ToString("0")</li>
                         </ul>
                         <button type="submit" class="btn btn-danger"
                                 @onclick="() => DeleteRecipe(currentIngredients.IndexOf(ingredient))">
@@ -190,7 +190,7 @@
 
         try
         {
-            await DbService.AddRecipeToDatabase(CurrentRecipe);
+            await DbService.AddRecipeToDb(CurrentRecipe);
         }
         catch (Exception e)
         {
@@ -220,10 +220,10 @@
             {
                 CurrentIngredient.Name = currentDbIngredient.Name;
                 CurrentIngredient.Grams = currentDbIngredient.Grams;
-                CurrentIngredient.Calories = ingredient.Calories;
-                CurrentIngredient.Fats = ingredient.Fats;
-                CurrentIngredient.Carbs = ingredient.Carbs;
-                CurrentIngredient.Protein = ingredient.Protein;
+                CurrentIngredient.CaloriesPer100g = ingredient.CaloriesPer100g;
+                CurrentIngredient.FatsPer100g = ingredient.FatsPer100g;
+                CurrentIngredient.CarbsPer100g = ingredient.CarbsPer100g;
+                CurrentIngredient.ProteinPer100g = ingredient.ProteinPer100g;
 
                 OnValidIngredient();
 

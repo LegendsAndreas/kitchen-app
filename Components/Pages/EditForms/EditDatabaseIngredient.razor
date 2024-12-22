@@ -14,16 +14,16 @@
         <InputText @bind-Value="ingredient.Name" class="form-control"/>
 
         <label class="form-label fw-bold">Ingredient Calories</label>
-        <InputNumber @bind-Value="ingredient.Calories" class="form-control"/>
+        <InputNumber @bind-Value="ingredient.CaloriesPer100g" class="form-control"/>
 
         <label class="form-label fw-bold">Ingredient Carbs</label>
-        <InputNumber @bind-Value="ingredient.Carbs" class="form-control"/>
+        <InputNumber @bind-Value="ingredient.CarbsPer100g" class="form-control"/>
 
         <label class="form-label fw-bold">Ingredient Protein</label>
-        <InputNumber @bind-Value="ingredient.Protein" class="form-control"/>
+        <InputNumber @bind-Value="ingredient.ProteinPer100g" class="form-control"/>
 
         <label class="form-label fw-bold">Ingredient Fats</label>
-        <InputNumber @bind-Value="ingredient.Fats" class="form-control"/>
+        <InputNumber @bind-Value="ingredient.FatsPer100g" class="form-control"/>
 
         <label class="file-label" for="fileInput">Choose Image</label>
         <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
@@ -44,7 +44,7 @@
 
     private async Task HandleSubmit()
     {
-        await DbService.UpdateDatabaseIngredient(ingredient);
+        await DbService.UpdateDbIngredient(ingredient);
     }
 
     private async Task HandleImage(InputFileChangeEventArgs imageFile)

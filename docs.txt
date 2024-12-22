@@ -30,18 +30,6 @@ When you want to extract data from a JSON file, the variable names in the class 
 the same name as in the JSON file. Or, you can have a different name in your class, and define a JsonPropertyName:
       [JsonPropertyName("name")]
       public string Name { get; set; }
-      
-- Return new class.
-If you want to add a new class for something, do it like this:
-    Class1 tempClass1 = new()
-    {
-        Variable1 = value1,
-        Variable2 = value2,
-        ...
-    };
-    return tempClass1;
-This way, you can better modify it, in case the class changes structure. This is especially good if you add a private variable,
-since you cant use SetVariable3() in the creation of the class.
 
 -- This piece of shit:
 Despite the fact that the compiler does not mention this, the fact that the @-symbol is on the Model

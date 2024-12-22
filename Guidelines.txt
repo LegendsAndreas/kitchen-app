@@ -34,3 +34,16 @@ catch (Exception ex)
 
 __general lexicon__
 - Database Ingredient: An ingredient that has been added to the ingredients table in the database.
+- Db/DB: Short for database.
+
+__Return new class__
+If you want to add a new class for something, do it like this:
+    Class1 tempClass1 = new()
+    {
+        Variable1 = value1,
+        Variable2 = value2,
+        ...
+    };
+    return tempClass1;
+This way, you can better modify it, in case the class changes structure. This is especially good if you add a private variable,
+since you cant use SetVariable3() in the creation of the class.

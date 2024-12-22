@@ -19,7 +19,7 @@
 
     private async Task HandleValidSubmit()
     {
-        await DbService.UpdateRecipeName(currentName, CurrentRecipe.Name);
+        await DbService.UpdateRecipeNameByName(currentName, CurrentRecipe.Name);
         CurrentRecipe.ClearRecipe();
     }
 

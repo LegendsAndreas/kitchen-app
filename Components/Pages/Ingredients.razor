@@ -37,32 +37,32 @@
                     <label class="form-label">
                         <strong>Calories</strong>
                     </label>
-                    <InputNumber id="cals" @bind-Value="currentIngredient.Calories"/>
-                    <ValidationMessage For="@(() => currentIngredient.Calories)"/>
+                    <InputNumber id="cals" @bind-Value="currentIngredient.CaloriesPer100g"/>
+                    <ValidationMessage For="@(() => currentIngredient.CaloriesPer100g)"/>
             </div>
 
             <div class="col">
                     <label class="form-label">
                         <strong>Fats</strong>
                     </label>
-                    <InputNumber id="fats" @bind-Value="currentIngredient.Fats"/>
-                    <ValidationMessage For="@(() => currentIngredient.Fats)"/>
+                    <InputNumber id="fats" @bind-Value="currentIngredient.FatsPer100g"/>
+                    <ValidationMessage For="@(() => currentIngredient.FatsPer100g)"/>
             </div>
 
             <div class="col">
                     <label class="form-label">
                         <strong>Carbs</strong>
                     </label>
-                    <InputNumber id="carbs" @bind-Value="currentIngredient.Carbs"/>
-                    <ValidationMessage For="@(() => currentIngredient.Carbs)"/>
+                    <InputNumber id="carbs" @bind-Value="currentIngredient.CarbsPer100g"/>
+                    <ValidationMessage For="@(() => currentIngredient.CarbsPer100g)"/>
             </div>
 
             <div class="col">
                     <label class="form-label">
                         <strong>Protein</strong>
                     </label>
-                    <InputNumber id="protein" @bind-Value="currentIngredient.Protein"/>
-                    <ValidationMessage For="@(() => currentIngredient.Protein)"/>
+                    <InputNumber id="protein" @bind-Value="currentIngredient.ProteinPer100g"/>
+                    <ValidationMessage For="@(() => currentIngredient.ProteinPer100g)"/>
             </div>
 
             <div class="col">
@@ -94,10 +94,10 @@
                     </div>
                     <div class="card-body border-primary">
                         <p class="card-text">
-                            - Calories: @ingredient.Calories.ToString("0") <br>
-                            - Carbs: @ingredient.Carbs.ToString("0.0") <br>
-                            - Fats: @ingredient.Fats.ToString("0.0") <br>
-                            - Protein: @ingredient.Protein.ToString("0.0")
+                            - Calories: @ingredient.CaloriesPer100g.ToString("0") <br>
+                            - Carbs: @ingredient.CarbsPer100g.ToString("0.0") <br>
+                            - Fats: @ingredient.FatsPer100g.ToString("0.0") <br>
+                            - Protein: @ingredient.ProteinPer100g.ToString("0.0")
                         </p>
                     </div>
                 </div>
@@ -116,7 +116,7 @@
     {
         try
         {
-            IngredientsSingleton = await DbService.GetDatabaseIngredients();
+            IngredientsSingleton = await DbService.GetAllDbIngredients();
         }
         catch (Exception ex)
         {

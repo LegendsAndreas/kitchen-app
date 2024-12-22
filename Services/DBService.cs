@@ -220,10 +220,10 @@ public class DBService
                     {
                         Name = reader.GetString(0),
                         Grams = reader.GetFloat(1),
-                        Calories = reader.GetFloat(2),
-                        Carbs = reader.GetFloat(3),
-                        Protein = reader.GetFloat(4),
-                        Fats = reader.GetFloat(5)
+                        CaloriesPer100g = reader.GetFloat(2),
+                        CarbsPer100g = reader.GetFloat(3),
+                        ProteinPer100g = reader.GetFloat(4),
+                        FatsPer100g = reader.GetFloat(5)
                     };
                     tempIngredient.SetMultiplier();
                     ingredients.Add(tempIngredient);
@@ -239,9 +239,13 @@ public class DBService
         return ingredients;
     }
 
-    public async Task<List<Ingredient>> GetDatabaseIngredients()
+    /// Asynchronously retrieves all ingredients from the database.
+    /// Each ingredient includes its name, nutritional values, and associated image.
+    /// If the image is a placeholder, it returns the base64-encoded placeholder image.
+    /// <returns>A list of Ingredient objects retrieved from the database.</returns>
+    public async Task<List<Ingredient>> GetAllDbIngredients()
     {
-        Console.WriteLine("Getting ingredients...");
+        Console.WriteLine("Getting all database ingredients...");
         var img = await File.ReadAllBytesAsync("wwwroot/pics/PlaceHolderPic.jpg");
         var base64PlaceHolderPic = Convert.ToBase64String(img);
 
@@ -250,22 +254,25 @@ public class DBService
         {
             await conn.OpenAsync();
             await using (var cmd = new NpgsqlCommand(
-                             "SELECT name, cals, fats, carbs, protein, image FROM ingredients;", conn))
+                             "SELECT id, name, cals, fats, carbs, protein, image FROM ingredients;", conn))
             await using (var reader = await cmd.ExecuteReaderAsync())
             {
                 while (await reader.ReadAsync())
                 {
-                    ingredients.Add(new Ingredient
+                    Ingredient tempIngredient = new()
                     {
-                        Name = reader.GetString(0),
-                        Calories = reader.GetFloat(1),
-                        Fats = reader.GetFloat(2),
-                        Carbs = reader.GetFloat(3),
-                        Protein = reader.GetFloat(4),
-                        Base64Image = reader.GetString(5) != "PlaceHolderPic.jpg"
-                            ? reader.GetString(5)
+                        Name = reader.GetString(1),
+                        CaloriesPer100g = reader.GetFloat(2),
+                        FatsPer100g = reader.GetFloat(3),
+                        CarbsPer100g = reader.GetFloat(4),
+                        ProteinPer100g = reader.GetFloat(5),
+                        Base64Image = reader.GetString(6) != "PlaceHolderPic.jpg"
+                            ? reader.GetString(6)
                             : base64PlaceHolderPic
-                    });
+                    };
+                    var uintValue = unchecked((uint)reader.GetInt32(0));
+                    tempIngredient.SetId(uintValue);
+                    ingredients.Add(tempIngredient);
                 }
             }
         }
@@ -297,7 +304,9 @@ public class DBService
         return recipeId;
     }
 
-    // We then made a NpgsqlConnection, open it and then returns it.
+
+    /// Asynchronously creates and returns an open database connection using the configured connection string.
+    /// <returns>An instance of NpgsqlConnection that is open and ready for database operations.</returns>
     public async Task<NpgsqlConnection> GetConnection()
     {
         Console.WriteLine("Getting connection...");
@@ -306,7 +315,10 @@ public class DBService
         return connection;
     }
 
-    public async Task AddRecipeToDatabase(Recipe recipe)
+    /// Asynchronously adds a recipe to the database by inserting its details, including meal type, name, image, macros, and ingredients.
+    /// <param name="recipe">The recipe object containing all the required details to be added to the database.</param>
+    /// <return>A task representing the asynchronous operation.</return>
+    public async Task AddRecipeToDb(Recipe recipe)
     {
         Console.WriteLine("Adding recipe to database...");
         recipe.PrintRecipe();
@@ -333,8 +345,12 @@ public class DBService
         }
     }
 
+    /// Asynchronously adds a recipe's instructions to the database.
+    /// <param name="instructions">An object containing the instructions and the associated recipe ID.</param>
+    /// <return>A Task representing the asynchronous operation.</return>
     public async Task AddInstructionToDb(RecipeInstructionRecord instructions)
     {
+        Console.WriteLine("Adding instructions to database...");
         try
         {
             var conn = await GetConnection();
@@ -353,6 +369,9 @@ public class DBService
         }
     }
 
+    /// Adds a list of ingredients to the corresponding row within the recipes database table.
+    /// <param name="ingredients">The list of ingredients to add, each represented by an Ingredient object.</param>
+    /// <return>A Task that represents the asynchronous operation.</return>
     private async Task AddIngredientsToRow(List<Ingredient> ingredients)
     {
         Console.WriteLine("Adding ingredients to row...");
@@ -364,10 +383,10 @@ public class DBService
             NpgsqlCommand cmd = new(query, conn);
             string name = ingredient.Name;
             float grams = ingredient.Grams;
-            float cals = ingredient.Calories;
-            float fats = ingredient.Fats;
-            float carbs = ingredient.Carbs;
-            float protein = ingredient.Protein;
+            float cals = ingredient.CaloriesPer100g;
+            float fats = ingredient.FatsPer100g;
+            float carbs = ingredient.CarbsPer100g;
+            float protein = ingredient.ProteinPer100g;
             float multiplier = ingredient.GetMultiplier();
             cmd.Parameters.AddWithValue("@name", name);
             cmd.Parameters.AddWithValue("@grams", grams);
@@ -380,6 +399,9 @@ public class DBService
         }
     }
 
+    /// Asynchronously adds an ingredient to the database.
+    /// <param name="ingredient">The ingredient object containing details such as name, calories, fats, carbs, protein, and image to be added to the database.</param>
+    /// <return>A task representing the asynchronous operation.</return>
     public async Task AddIngredientToDb(Ingredient ingredient)
     {
         Console.WriteLine("Adding ingredient to database...");
@@ -390,10 +412,10 @@ public class DBService
                 "INSERT INTO ingredients (name, cals, fats, carbs, protein, image) VALUES(@name, @cals, @fats, @carbs, @protein, @image)";
             await using NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@name", ingredient.Name);
-            cmd.Parameters.AddWithValue("@cals", ingredient.Calories);
-            cmd.Parameters.AddWithValue("@fats", ingredient.Fats);
-            cmd.Parameters.AddWithValue("@carbs", ingredient.Carbs);
-            cmd.Parameters.AddWithValue("@protein", ingredient.Protein);
+            cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
+            cmd.Parameters.AddWithValue("@fats", ingredient.FatsPer100g);
+            cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
+            cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
             cmd.Parameters.AddWithValue("@image", ingredient.Base64Image);
             await RunAsyncQuery(cmd);
         }
@@ -404,9 +426,13 @@ public class DBService
         }
     }
 
-    public async Task UpdateRecipe(string type, string name)
+    /// Asynchronously updates the meal type of a recipe in the database by its name.
+    /// <param name="type">The new meal type to be assigned to the recipe.</param>
+    /// <param name="name">The name of the recipe to update.</param>
+    /// <return>A Task representing the asynchronous operation.</return>
+    public async Task UpdateRecipeMealTypeByName(string type, string name)
     {
-        Console.WriteLine("Correcting recipe...");
+        Console.WriteLine("Updating recipe meal type by name...");
         var conn = await GetConnection();
         const string query = "UPDATE recipes SET meal_type = @type WHERE name = @name";
         await using var cmd = new NpgsqlCommand(query, conn);
@@ -416,18 +442,26 @@ public class DBService
     }
 
 
-    public async Task UpdateRecipeImage(string recipeName, string base64Image)
+    /// Updates the image of a recipe based on its name in the database.
+    /// <param name="recipeName">The name of the recipe to update.</param>
+    /// <param name="base64Image">The new image represented as a Base64 string.</param>
+    /// <return>A task that represents the asynchronous update operation.</return>
+    public async Task UpdateRecipeImageByName(string recipeName, string base64Image)
     {
-        Console.WriteLine("Correcting recipe image...");
+        Console.WriteLine("Updating recipe image by name...");
         var conn = await GetConnection();
         string query = $"UPDATE recipes SET image = '{base64Image}' WHERE name = '{recipeName}'";
         await using var cmd = new NpgsqlCommand(query, conn);
         await RunAsyncQuery(cmd);
     }
 
-    public async Task UpdateRecipeName(string currentName, string updatedName)
+    /// Updates the name of a recipe in the database based on its current name.
+    /// <param name="currentName">The current name of the recipe to be updated.</param>
+    /// <param name="updatedName">The new name to update the recipe to.</param>
+    /// <return>A task representing the asynchronous operation.</return>
+    public async Task UpdateRecipeNameByName(string currentName, string updatedName)
     {
-        Console.WriteLine("Correcting recipe name...");
+        Console.WriteLine("Updating recipe name by name...");
         var conn = await GetConnection();
         const string query = "UPDATE recipes SET name = @currentName WHERE name = @updatedName";
         await using var cmd = new NpgsqlCommand(query, conn);
@@ -436,17 +470,26 @@ public class DBService
         await RunAsyncQuery(cmd);
     }
 
-
-    public async Task UpdateIngredientImage(string ingredientName, string base64Image)
+    /// Updates the image of an ingredient in the database by its name.
+    /// <param name="ingredientName">The name of the ingredient to update.</param>
+    /// <param name="base64Image">The Base64-encoded string representing the new image for the ingredient.</param>
+    /// <return>A task representing the asynchronous operation.</return>
+    public async Task UpdateDbIngredientImageByName(string ingredientName, string base64Image)
     {
+        Console.WriteLine("Updating database ingredient image by name...");
         var conn = await GetConnection();
         string query = $"UPDATE ingredients SET image = '{base64Image}' WHERE name = '{ingredientName}'";
         await using var cmd = new NpgsqlCommand(query, conn);
         await RunAsyncQuery(cmd);
     }
 
+    /// Asynchronously updates the ID sequence values for a specified database table to ensure sequential numbering.
+    /// <param name="tableName">The name of the database table whose ID sequence will be updated.</param>
+    /// <return>An asynchronous task representing the operation. Does not return a value.</return>
+    /// <remarks>You HAVE to use this when you delete an element in a table, to make sure the the IDs stay correct.</remarks>
     private async Task UpdateTableIdsAsync(string tableName)
     {
+        Console.WriteLine("Updating table IDs...");
         await using var conn = new NpgsqlConnection(_connectionString);
         conn.Open();
 
@@ -468,12 +511,13 @@ public class DBService
     /// <return>Task.</return>
     /// <remarks>Remember that this technically updates EVERY value in a database Ingredient. So don't just send an Ingredient
     /// with one active value, while the rest are just null.</remarks>
-    public async Task UpdateDatabaseIngredient(Ingredient ingredient)
+    public async Task UpdateDbIngredient(Ingredient ingredient)
     {
+        Console.WriteLine("Updating database ingredient...");
         try
         {
             var conn = await GetConnection();
-            string query = "UPDATE ingredients " +
+            const string query = "UPDATE ingredients " +
                            "SET " +
                            "name = @name," +
                            "cals = @cals,"+
@@ -484,10 +528,10 @@ public class DBService
                            "WHERE id = @id";
             await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@name", ingredient.Name);
-            cmd.Parameters.AddWithValue("@cals", ingredient.Calories);
-            cmd.Parameters.AddWithValue("@fats", ingredient.Fats);
-            cmd.Parameters.AddWithValue("@carbs", ingredient.Carbs);
-            cmd.Parameters.AddWithValue("@protein", ingredient.Protein);
+            cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
+            cmd.Parameters.AddWithValue("@fats", ingredient.FatsPer100g);
+            cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
+            cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
             cmd.Parameters.AddWithValue("@image", ingredient.Base64Image);
             await RunAsyncQuery(cmd);
         }
@@ -499,9 +543,12 @@ public class DBService
         }
     }
 
-    public async Task<string> DeleteIngredient(string name)
+    /// Asynchronously removes an ingredient with the specified name from the database.
+    /// <param name="name">The name of the ingredient to delete.</param>
+    /// <return>A string message indicating whether the deletion was successful or if the ingredient was not found.</return>
+    public async Task<string> DeleteDbIngredientByName(string name)
     {
-        Console.WriteLine("Deleting ingredient...");
+        Console.WriteLine("Deleting database ingredient by name...");
         string statusMessage = $"Ingredient {name} has been deleted.";
 
         await using var conn = new NpgsqlConnection(_connectionString);
@@ -519,6 +566,9 @@ public class DBService
         return statusMessage;
     }
 
+    /// Asynchronously deletes a recipe by its name from the database.
+    /// <param name="recipeName">The name of the recipe to delete.</param>
+    /// <return>A string indicating the status of the deletion operation, such as success or not found.</return>
     public async Task<string> DeleteRecipeByName(string recipeName)
     {
         Console.WriteLine("Deleting recipe by name...");
@@ -541,6 +591,9 @@ public class DBService
     }
 
 
+    /// Executes the provided SQL query asynchronously and processes the number of affected rows.
+    /// <param name="query">An instance of NpgsqlCommand representing the query to be executed.</param>
+    /// <return>An integer representing the number of rows affected by the query.</return>
     private async Task<int> RunAsyncQuery(NpgsqlCommand query)
     {
         int result = await query.ExecuteNonQueryAsync();
