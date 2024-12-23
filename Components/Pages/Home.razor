@@ -4,12 +4,8 @@
 @inject DBService DbService;
 @inject RecipeStateService statesRecipe
 @inject List<Recipe> recipes
-<PageTitle>Recipes</PageTitle>
 
-@* ToDo: When you click on the image of a recipe, you get sent to a page with more details and a guide *@
-@* ToDo: Finish plan meal page *@
-@* ToDo: Have a toast come up when you add a recipe *@
-@* ToDo: Toast come up to show that a recipe did not go through because it lacked an ingredient *@
+<PageTitle>Recipes</PageTitle>
 
 <div class="container">
 
@@ -21,7 +17,8 @@
                 <div class="col" style="padding: 10px">
                     <div class="card h-100 border-layout">
                         <a href="">
-                            <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..." class="card-img" id="home-recipe-image" @onclick="() => NavigateToDetails(recipe)"/>
+                            <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..." class="card-img"
+                                 id="home-recipe-image" @onclick="() => NavigateToDetails(recipe)"/>
                         </a>
                         <div class="card-header">
                             <h4>@recipe.Name</h4>
@@ -41,7 +38,6 @@
     </div>
 
 </div>
-
 
 @code{
     // private List<Recipe> _recipes = new();
