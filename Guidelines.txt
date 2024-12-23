@@ -47,3 +47,6 @@ If you want to add a new class for something, do it like this:
     return tempClass1;
 This way, you can better modify it, in case the class changes structure. This is especially good if you add a private variable,
 since you cant use SetVariable3() in the creation of the class.
+
+__OOP Definition__
+The programming diagram, of encapsulating data (variables) and defining what you can do (methods) with said data (An object).

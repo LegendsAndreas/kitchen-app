@@ -55,22 +55,9 @@
             <hr class="dropdown-divider"/>
         </li>
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("ingredientDb"))">Ingredient
-                in Database
-            </button>
-        </li>
-        <li>
             <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("deleteIngredient"))">Delete
-                Ingredient
+                Database Ingredient
             </button>
-        </li>
-        @*<li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("ingredientImage"))">
-                Ingredient Image
-            </button>
-        </li>*@
-        <li>
-            <hr class="dropdown-divider"/>
         </li>
         <li>
             <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("database-ingredient"))">
@@ -93,6 +80,8 @@
                     <EditNameForm/>
                     break;
                 case "ingredient":
+                    <h2>!!!UNDER CONSTRUCTION!!!</h2>
+                    <p>Move along!</p>
                     <EditIngredientForm/>
                     break;
                 case "image":
