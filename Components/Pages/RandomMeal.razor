@@ -37,12 +37,12 @@
 
     Recipe randomRecipe = new();
 
-    private void RandomRecipe()
+    private async Task RandomRecipe()
     {
         try
         {
             Console.WriteLine("Getting random recipe...");
-            randomRecipe = DbService.GetRandomRecipe();
+            randomRecipe = await DbService.GetRandomRecipe();
             randomRecipe.PrintRecipe();
 
         }

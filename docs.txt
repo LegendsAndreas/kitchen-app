@@ -34,6 +34,9 @@ When you want to extract data from a JSON file, the variable names in the class 
 the same name as in the JSON file. Or, you can have a different name in your class, and define a JsonPropertyName:
       [JsonPropertyName("name")]
       public string Name { get; set; }
+      
+- Const.
+You cant use the const keyword, along with the new() keyword.
 
 -- This piece of shit:
 Despite the fact that the compiler does not mention this, the fact that the @-symbol is on the Model
@@ -41,7 +44,7 @@ and not the actual CurrentIngredient variable, will crash the program with an In
 <EditForm @Model="CurrentIngredient" OnValidSubmit="ValidIngredient">
 
 -- Wha?
-I dont fucking understand the below code. The if-statement (statesRecipe != null), throws the warning that it is always 
+I don't fucking understand the below code. The if-statement (statesRecipe != null), throws the warning that it is always 
 true and that i might as well just remove it altogether. But when i do, and run the program, it gives me a null reference exception.
 And here's the thing, when i run the program with the if statement, with the same paramters and all, it runs just fine and
 can access the statesRecipe.Image!
