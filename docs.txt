@@ -14,6 +14,10 @@ SELECT setval('my_table_id_seq', (SELECT MAX(id) FROM my_table) + 1);
 - CSS.
 Background-color is for the background color and just color is for the color of the text.
 
+- Hot Reloading
+When you add a new razor file, while running, the Hot Reload will not update with the new file, so you have to restart
+the program.
+
 - Deleting row and sorting the ids.
 These three queries resets the id order correctly. Remember to delete the temporary table:
 CREATE TEMP TABLE temp_recipes AS

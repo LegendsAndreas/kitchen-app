@@ -49,4 +49,6 @@ This way, you can better modify it, in case the class changes structure. This is
 since you cant use SetVariable3() in the creation of the class.
 
 __OOP Definition__
-The programming diagram, of encapsulating data (variables) and defining what you can do (methods) with said data (An object).
+The programming diagram, of encapsulating data (variables) and defining the procedures/operations (methods) of what you can do with said data (An object).
+The Gang of Four book definition of OOP that I quite like:
+Object-oriented programs are made up of objects. An object packages both data and the procedures that operate on that data.

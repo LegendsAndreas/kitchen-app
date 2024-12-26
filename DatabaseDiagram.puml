@@ -1,5 +1,4 @@
 @startuml
-'DB Diagram
 skinparam class{
     BackgroundColor LightGreen
 }
@@ -92,34 +91,14 @@ json Instructions{
 recipe_instructions::recipe_id -> recipe::id
 Instructions -> recipe_instructions::instructions
 
+ingredient::name <- ingredients::name
+ingredient::calories <- ingredients::calories
+ingredient::fats <- ingredients::fats
+ingredient::carbohydrates <- ingredients::carbohydrates
+ingredient::protein <- ingredients::protein
+ingredient::base64_image <- ingredients::base64_image
 @enduml
-
-@startuml
-
-if (counter) equals (7) then
-:Print the weekly macros;
-else
-:;
-
-@enduml
-
-
 
 @startuml
 skinparameters
-@enduml
-
-'PlanMeals
-@startuml
-class DailyMeal{
-    List<Recipes>
-    TotalDailyMacros
-}
-
-class WeeklyMeals{
-    List<DailyMeal> [7]
-    TotalWeeklyMacros
-}
-
-DailyMeal --> WeeklyMeals
 @enduml

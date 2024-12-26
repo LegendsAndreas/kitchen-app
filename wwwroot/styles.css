@@ -103,3 +103,11 @@
     color: white;
     cursor: pointer;
 }
+
+#top-row-buttons{
+}
+
+#top-row-buttons a:hover{
+    color:white;
+    background-color: #3a0647;
+}
