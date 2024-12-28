@@ -1,16 +1,16 @@
 @page "/recipe-details"
 @rendermode InteractiveServer
-@inject RecipeStateService recipeStatesService
+@inject SharedRecipeService SharedDetailRecipe
 <PageTitle>Recipe Details</PageTitle>
 
-@if (statesRecipe != null)
+@if (sharedRecipe != null)
 {
     <div class="container border-layout" id="recipe-details">
         @* Col one *@
         <div class="content" style="display: inline-flex; justify-content: flex-start; align-items: flex-start;">
             <div id="column-1">
                 <div id="recipe-image">
-                    <img src="data:image/png;base64,@statesRecipe.Base64Image" alt="Recipe Image is gone..."
+                    <img src="data:image/png;base64,@sharedRecipe.Base64Image" alt="Recipe Image is gone..."
                          id="recipe-image-style"/>
                 </div>
 
@@ -53,7 +53,7 @@
                             <span class="value">&nbsp;6g</span>
                         </li>
 
-                        @foreach (var ingredient in statesRecipe.Ingredients)
+                        @foreach (var ingredient in sharedRecipe.Ingredients)
                         {
                             <li>
                                 <span class="label">@ingredient.Name&nbsp;</span>
@@ -70,22 +70,22 @@
                         <li>
                             <span class="label">Protein&nbsp;</span>
                             <span class="dots"></span>
-                            <span class="value">&nbsp;@statesRecipe.TotalMacros.Protein g</span>
+                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Protein g</span>
                         </li>
                         <li>
                             <span class="label">Fat&nbsp;</span>
                             <span class="dots"></span>
-                            <span class="value">&nbsp;@statesRecipe.TotalMacros.Fat g</span>
+                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Fat g</span>
                         </li>
                         <li>
                             <span class="label">Carbs&nbsp;</span>
                             <span class="dots"></span>
-                            <span class="value">&nbsp;@statesRecipe.TotalMacros.Carbs g</span>
+                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Carbs g</span>
                         </li>
                         <li>
                             <span class="label">Calories&nbsp;</span>
                             <span class="dots"></span>
-                            <span class="value">&nbsp;@statesRecipe.TotalMacros.Calories g</span>
+                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Calories g</span>
                         </li>
                     </ul>
                 </div>
@@ -93,7 +93,7 @@
 
             @* Col two *@
             <div id="column-2">
-                <h1 id="recipe-name">@statesRecipe.Name</h1>
+                <h1 id="recipe-name">@sharedRecipe.Name</h1>
 
                 <div id="recipe-instructions">
                     <ol>
@@ -121,13 +121,13 @@
 }
 
 @code {
-    Recipe statesRecipe = new();
+    Recipe sharedRecipe = new();
     List<string> instructions = new();
     List<string> notes = new();
 
     protected override void OnInitialized()
     {
-        statesRecipe = recipeStatesService.SelectedRecipe;
+        sharedRecipe = SharedDetailRecipe.SelectedRecipe;
         GetInstructions();
         GetNotes();
     }

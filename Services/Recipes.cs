@@ -174,7 +174,7 @@ public class Recipe
             Console.WriteLine("Recipe Number: " + RecipeId);
             Console.WriteLine("MealType: " + MealType);
             Console.WriteLine("Name: " + Name);
-            Console.WriteLine("Image: " + Base64Image);
+            // Console.WriteLine("Image: " + Base64Image);
 
             if (Ingredients.Count != 0)
             {
@@ -235,7 +235,7 @@ public class Recipe
     }
 }
 
-public class RecipeStateService
+public class SharedRecipeService
 {
     public Recipe SelectedRecipe { get; set; }
 
