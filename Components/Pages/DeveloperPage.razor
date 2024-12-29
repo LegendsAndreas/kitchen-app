@@ -1,8 +1,13 @@
 @page "/developer"
 @rendermode InteractiveServer
+@using WebKitchen.Components.Pages.RealTimeSearchBarElement;
 @inject DBService DbService
 @inject List<Recipe> recipes
 @* @inject SharedTestService SharedTest; *@
+
+<div>
+    <RealTimeSearchbar RecipeData="@recipes"/>
+</div>
 
 <div class="container">
     <!-- Search Bar -->
@@ -16,10 +21,19 @@
         {
             <div class="dropdown">
                 <ul class="dropdown-menu show"> @* "show" is vital, since it automatically shows the items. *@
-                    @foreach (var recipe in filteredRecipes)
+                    @if (filteredRecipes.Count != 0)
+                    {
+                        @foreach (var recipe in filteredRecipes)
+                        {
+                            <li>
+                                <button class="dropdown-item" type="button" @onclick="PrintItem">@recipe.Name</button>
+                            </li>
+                        }
+                    }
+                    else
                     {
                         <li>
-                            <button class="dropdown-item" type="button" @onclick="PrintItem">@recipe.Name</button>
+                            <button class="dropdown-item" type="button">No results found</button>
                         </li>
                     }
                 </ul>
