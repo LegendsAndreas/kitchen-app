@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "bYn6u6pOV0SGil+3wFsZHNg9SIwp93S6+UwGQswdOdA=",
+  "Hash": "Cf6eU4+dof2madsFsD2VZS4qY+RCpdJxRZmZfkZr3ZI=",
   "Source": "WebKitchen",
   "BasePath": "_content/WebKitchen",
   "Mode": "Default",
@@ -31,8 +31,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "ScopedCss",
       "AssetTraitValue": "ApplicationBundle",
-      "Fingerprint": "svo6p3s3ox",
-      "Integrity": "eOhBelKL2PNsnHh5Lk7VpMdMkg5SYXABMLzOzvx3REk=",
+      "Fingerprint": "uxehs2lg69",
+      "Integrity": "4pnJc1znEkoqTNL9oYPSUFIOoKAhe8BzVTFZjq6jq24=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\bundle\\WebKitchen.styles.css"
@@ -52,8 +52,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "ScopedCss",
       "AssetTraitValue": "ProjectBundle",
-      "Fingerprint": "svo6p3s3ox",
-      "Integrity": "eOhBelKL2PNsnHh5Lk7VpMdMkg5SYXABMLzOzvx3REk=",
+      "Fingerprint": "uxehs2lg69",
+      "Integrity": "4pnJc1znEkoqTNL9oYPSUFIOoKAhe8BzVTFZjq6jq24=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css"
@@ -309,6 +309,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\pics\\CheasyOst.webp"
+    },
+    {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\DatabaseDiagram.png",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/DatabaseDiagram#[.{fingerprint}]?.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "s9q1l315rj",
+      "Integrity": "QKy44SjpZ7UdJY0uOauLVchASjViLVARHgqg97YvZps=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\DatabaseDiagram.png"
     },
     {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\engelsk.jpg",
@@ -829,8 +850,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "rsc9gbwuur",
-      "Integrity": "9bryrmzgmJ+MA014VqcT/Y8NcwOciP+4XUXx335Utj8=",
+      "Fingerprint": "bdqc09xfuu",
+      "Integrity": "f6SFvrAQsbUpROwCPc1MTCEVDlNhVOJL9Ij7Knq+jMY=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\styles.css"
@@ -1818,6 +1839,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-4GUYaT2UPBvZRbHk3uE2MBu/egdkTioFgUiA67bOcug="
+        }
+      ]
+    },
+    {
+      "Route": "pics/DatabaseDiagram.png",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\DatabaseDiagram.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "80876"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"QKy44SjpZ7UdJY0uOauLVchASjViLVARHgqg97YvZps=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 27 Dec 2024 12:22:07 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-QKy44SjpZ7UdJY0uOauLVchASjViLVARHgqg97YvZps="
+        }
+      ]
+    },
+    {
+      "Route": "pics/DatabaseDiagram.s9q1l315rj.png",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\DatabaseDiagram.png",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "80876"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/png"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"QKy44SjpZ7UdJY0uOauLVchASjViLVARHgqg97YvZps=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 27 Dec 2024 12:22:07 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "s9q1l315rj"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/DatabaseDiagram.png"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-QKy44SjpZ7UdJY0uOauLVchASjViLVARHgqg97YvZps="
         }
       ]
     },
@@ -3790,6 +3893,51 @@
       ]
     },
     {
+      "Route": "styles.bdqc09xfuu.css",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2267"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"f6SFvrAQsbUpROwCPc1MTCEVDlNhVOJL9Ij7Knq+jMY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Fri, 27 Dec 2024 15:52:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "bdqc09xfuu"
+        },
+        {
+          "Name": "label",
+          "Value": "styles.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-f6SFvrAQsbUpROwCPc1MTCEVDlNhVOJL9Ij7Knq+jMY="
+        }
+      ]
+    },
+    {
       "Route": "styles.css",
       "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",
       "Selectors": [],
@@ -3800,7 +3948,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "2048"
+          "Value": "2267"
         },
         {
           "Name": "Content-Type",
@@ -3808,11 +3956,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"9bryrmzgmJ+MA014VqcT/Y8NcwOciP+4XUXx335Utj8=\""
+          "Value": "\"f6SFvrAQsbUpROwCPc1MTCEVDlNhVOJL9Ij7Knq+jMY=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Sat, 21 Dec 2024 12:08:31 GMT"
+          "Value": "Fri, 27 Dec 2024 15:52:57 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3822,52 +3970,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-9bryrmzgmJ+MA014VqcT/Y8NcwOciP+4XUXx335Utj8="
-        }
-      ]
-    },
-    {
-      "Route": "styles.rsc9gbwuur.css",
-      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "2048"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"9bryrmzgmJ+MA014VqcT/Y8NcwOciP+4XUXx335Utj8=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Sat, 21 Dec 2024 12:08:31 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "rsc9gbwuur"
-        },
-        {
-          "Name": "label",
-          "Value": "styles.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-9bryrmzgmJ+MA014VqcT/Y8NcwOciP+4XUXx335Utj8="
+          "Value": "sha256-f6SFvrAQsbUpROwCPc1MTCEVDlNhVOJL9Ij7Knq+jMY="
         }
       ]
     },
@@ -3882,7 +3985,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "6020"
+          "Value": "6012"
         },
         {
           "Name": "Content-Type",
@@ -3890,11 +3993,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"eOhBelKL2PNsnHh5Lk7VpMdMkg5SYXABMLzOzvx3REk=\""
+          "Value": "\"4pnJc1znEkoqTNL9oYPSUFIOoKAhe8BzVTFZjq6jq24=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Mon, 16 Dec 2024 18:48:55 GMT"
+          "Value": "Wed, 25 Dec 2024 23:10:21 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3904,7 +4007,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-eOhBelKL2PNsnHh5Lk7VpMdMkg5SYXABMLzOzvx3REk="
+          "Value": "sha256-4pnJc1znEkoqTNL9oYPSUFIOoKAhe8BzVTFZjq6jq24="
         }
       ]
     },
@@ -3919,7 +4022,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "6020"
+          "Value": "6012"
         },
         {
           "Name": "Content-Type",
@@ -3927,11 +4030,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"eOhBelKL2PNsnHh5Lk7VpMdMkg5SYXABMLzOzvx3REk=\""
+          "Value": "\"4pnJc1znEkoqTNL9oYPSUFIOoKAhe8BzVTFZjq6jq24=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Mon, 16 Dec 2024 18:48:55 GMT"
+          "Value": "Wed, 25 Dec 2024 23:10:21 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3941,12 +4044,12 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-eOhBelKL2PNsnHh5Lk7VpMdMkg5SYXABMLzOzvx3REk="
+          "Value": "sha256-4pnJc1znEkoqTNL9oYPSUFIOoKAhe8BzVTFZjq6jq24="
         }
       ]
     },
     {
-      "Route": "WebKitchen.svo6p3s3ox.bundle.scp.css",
+      "Route": "WebKitchen.uxehs2lg69.bundle.scp.css",
       "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
       "Selectors": [],
       "ResponseHeaders": [
@@ -3956,7 +4059,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "6020"
+          "Value": "6012"
         },
         {
           "Name": "Content-Type",
@@ -3964,11 +4067,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"eOhBelKL2PNsnHh5Lk7VpMdMkg5SYXABMLzOzvx3REk=\""
+          "Value": "\"4pnJc1znEkoqTNL9oYPSUFIOoKAhe8BzVTFZjq6jq24=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Mon, 16 Dec 2024 18:48:55 GMT"
+          "Value": "Wed, 25 Dec 2024 23:10:21 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3978,7 +4081,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "svo6p3s3ox"
+          "Value": "uxehs2lg69"
         },
         {
           "Name": "label",
@@ -3986,12 +4089,12 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-eOhBelKL2PNsnHh5Lk7VpMdMkg5SYXABMLzOzvx3REk="
+          "Value": "sha256-4pnJc1znEkoqTNL9oYPSUFIOoKAhe8BzVTFZjq6jq24="
         }
       ]
     },
     {
-      "Route": "WebKitchen.svo6p3s3ox.styles.css",
+      "Route": "WebKitchen.uxehs2lg69.styles.css",
       "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\bundle\\WebKitchen.styles.css",
       "Selectors": [],
       "ResponseHeaders": [
@@ -4001,7 +4104,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "6020"
+          "Value": "6012"
         },
         {
           "Name": "Content-Type",
@@ -4009,11 +4112,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"eOhBelKL2PNsnHh5Lk7VpMdMkg5SYXABMLzOzvx3REk=\""
+          "Value": "\"4pnJc1znEkoqTNL9oYPSUFIOoKAhe8BzVTFZjq6jq24=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Mon, 16 Dec 2024 18:48:55 GMT"
+          "Value": "Wed, 25 Dec 2024 23:10:21 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -4023,7 +4126,7 @@
       "EndpointProperties": [
         {
           "Name": "fingerprint",
-          "Value": "svo6p3s3ox"
+          "Value": "uxehs2lg69"
         },
         {
           "Name": "label",
@@ -4031,7 +4134,7 @@
         },
         {
           "Name": "integrity",
-          "Value": "sha256-eOhBelKL2PNsnHh5Lk7VpMdMkg5SYXABMLzOzvx3REk="
+          "Value": "sha256-4pnJc1znEkoqTNL9oYPSUFIOoKAhe8BzVTFZjq6jq24="
         }
       ]
     }

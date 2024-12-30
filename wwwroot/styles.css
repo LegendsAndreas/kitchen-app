@@ -5,7 +5,7 @@
 }
 
 .font-layout {
-    background-color: #313131;
+    background-color: #212529;
     color: #48d7ff;
     font-family: "Calibri Light", serif;
     font-style: italic;
@@ -35,8 +35,8 @@
 }
 
 /* Create Recipe */
-#create-recipe-header{
-    display:inline-block;
+#create-recipe-header {
+    display: inline-block;
 }
 
 /* Home */
@@ -65,7 +65,7 @@
 }
 
 /* Instructions */
-.instructions-button{
+.instructions-button {
     margin: 10px;
 }
 
@@ -81,7 +81,7 @@
 }
 
 /*Edit recipes forms*/
-.custom-button-margin button{
+.custom-button-margin button {
     margin-top: 10px;
     margin-bottom: 10px;
     margin-right: 10px;
@@ -104,16 +104,23 @@
     cursor: pointer;
 }
 
-#top-row-buttons{
+#top-row-buttons {
 }
 
-#top-row-buttons a:hover{
-    color:white;
+#top-row-buttons a:hover {
+    color: white;
     background-color: #3a0647;
 }
 
-#about-link span:hover{
-    color:white;
+#about-link span:hover {
+    color: white;
     text-decoration: underline;
     background-color: #3a0647;
+}
+
+.center-content {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
 }

@@ -24,6 +24,10 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/About.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBYm91dC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/Categories.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDYXRlZ29yaWVzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
@@ -94,6 +98,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/RandomMeal.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSYW5kb21NZWFsLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/RealTimeSearchBarElement/RealTimeSearchbar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZWFsVGltZVNlYXJjaEJhckVsZW1lbnRcUmVhbFRpbWVTZWFyY2hiYXIucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Routes.razor]

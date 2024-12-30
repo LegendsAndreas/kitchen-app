@@ -11,98 +11,101 @@
     Create a new recipe!
 </h1>
 
-<div class="forms-layout font-layout border-layout">
-    <EditForm Model="@CurrentRecipe" OnValidSubmit="OnValidRecipe">
-        <DataAnnotationsValidator/>
+<div class="card center-content border-layout">
+    <div class="card-body">
+        <EditForm Model="@CurrentRecipe" OnValidSubmit="OnValidRecipe">
+            <DataAnnotationsValidator/>
 
-        <div class="container text-center border-layout paddage">
-            <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
-                <div class="col">
-                    <label class="form-label">Meal Type:</label>
-                    <InputText id="meal-type" @bind-Value="CurrentRecipe.MealType"/>
-                </div>
+            <div class="container text-center border-layout paddage">
+                <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
+                    <div class="col">
+                        <label class="form-label">Meal Type:</label>
+                        <InputText id="meal-type" @bind-Value="CurrentRecipe.MealType"/>
+                    </div>
 
-                <div class="col">
-                    <label>Recipe Name:</label>
-                    <InputText id="name" @bind-Value="CurrentRecipe.Name"/>
-                </div>
+                    <div class="col">
+                        <label>Recipe Name:</label>
+                        <InputText id="name" @bind-Value="CurrentRecipe.Name"/>
+                    </div>
 
-                <div class="col">
-                    <label>Image:</label>
-                    <InputText id="image" @bind-Value="CurrentRecipe.Base64Image"/>
+                    <div class="col">
+                        <label>Image:</label>
+                        <InputText id="image" @bind-Value="CurrentRecipe.Base64Image"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary col">Create Recipe</button>
                 </div>
-                <button type="submit" class="btn btn-primary col">Create Recipe</button>
             </div>
-        </div>
 
-    </EditForm>
+        </EditForm>
 
-    <EditForm Model="@CurrentIngredient" OnValidSubmit="OnValidIngredient">
-        <DataAnnotationsValidator/>
+        <EditForm Model="@CurrentIngredient" OnValidSubmit="OnValidIngredient">
+            <DataAnnotationsValidator/>
 
-        <div class="container text-center border-layout paddage">
-            <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
-                <div class="col">
-                    <label>Ingredient Name:</label>
-                    <InputText id="ingredient-name" @bind-Value="CurrentIngredient.Name"/>
+            <div class="container text-center border-layout paddage">
+                <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
+                    <div class="col">
+                        <label>Ingredient Name:</label>
+                        <InputText id="ingredient-name" @bind-Value="CurrentIngredient.Name"/>
+                    </div>
+
+                    <div class="col">
+                        <label>Grams:</label>
+                        <InputNumber id="kg" @bind-Value="CurrentIngredient.Grams"/>
+                    </div>
+
+                    <div class="col">
+                        <label>Calories (pr. 100g):</label>
+                        <InputNumber id="calories" @bind-Value="CurrentIngredient.CaloriesPer100g"/>
+                    </div>
+
+                    <div class="col">
+                        <label>Carbs (pr. 100g):</label>
+                        <InputNumber id="carbs" @bind-Value="CurrentIngredient.CarbsPer100g"/>
+                    </div>
+
+                    <div class="col">
+                        <label>Fats (pr. 100g):</label>
+                        <InputNumber id="fats" @bind-Value="CurrentIngredient.FatsPer100g"/>
+                    </div>
+
+                    <div class="col">
+                        <label>Protein (pr. 100g):</label>
+                        <InputNumber id="protein" @bind-Value="CurrentIngredient.ProteinPer100g"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Ingredient</button>
                 </div>
-
-                <div class="col">
-                    <label>Grams:</label>
-                    <InputNumber id="kg" @bind-Value="CurrentIngredient.Grams"/>
-                </div>
-
-                <div class="col">
-                    <label>Calories (pr. 100g):</label>
-                    <InputNumber id="calories" @bind-Value="CurrentIngredient.CaloriesPer100g"/>
-                </div>
-
-                <div class="col">
-                    <label>Carbs (pr. 100g):</label>
-                    <InputNumber id="carbs" @bind-Value="CurrentIngredient.CarbsPer100g"/>
-                </div>
-
-                <div class="col">
-                    <label>Fats (pr. 100g):</label>
-                    <InputNumber id="fats" @bind-Value="CurrentIngredient.FatsPer100g"/>
-                </div>
-
-                <div class="col">
-                    <label>Protein (pr. 100g):</label>
-                    <InputNumber id="protein" @bind-Value="CurrentIngredient.ProteinPer100g"/>
-                </div>
-                <button type="submit" class="btn btn-primary">Add Ingredient</button>
             </div>
-        </div>
-    </EditForm>
+        </EditForm>
 
 
-    <EditForm Model="@currentDbIngredient" OnValidSubmit="OnValidDbIngredient">
-        <DataAnnotationsValidator/>
-        <div class="container text-center border-layout paddage">
-            <div class="row row-cols-1 row-cols-sd-2 row-cols-md-2 row-cols-lg-2 g-3">
+        <EditForm Model="@currentDbIngredient" OnValidSubmit="OnValidDbIngredient">
+            <DataAnnotationsValidator/>
+            <div class="container text-center border-layout paddage">
+                <div class="row row-cols-1 row-cols-sd-2 row-cols-md-2 row-cols-lg-2 g-3">
 
-                <div class="col">
-                    <label>Name</label>
-                    <InputText id="namer" @bind-Value="currentDbIngredient.Name"/>
+                    <div class="col">
+                        <label>Name</label>
+                        <InputText id="namer" @bind-Value="currentDbIngredient.Name"/>
+                    </div>
+
+
+                    <div class="col">
+                        <label>Grams</label>
+                        <InputNumber id="gramser" @bind-Value="currentDbIngredient.Grams"/>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Existing Database Ingredient</button>
                 </div>
-
-
-                <div class="col">
-                    <label>Grams</label>
-                    <InputNumber id="gramser" @bind-Value="currentDbIngredient.Grams"/>
-                </div>
-                <button type="submit" class="btn btn-primary">Add Existing Ingredient</button>
             </div>
-        </div>
-    </EditForm>
+        </EditForm>
+    </div>
 </div>
 
 @* The current ingredients *@
-<div class="accordion" data-bs-theme="dark" id="accordionExample">
+<div class="accordion border-layout" id="accordionExample" style="margin-top: 10px;">
     <div class="accordion-item">
         <h2 class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseOne"
                     aria-expanded="true" aria-controls="collapseOne">
                 Added Ingredients
             </button>

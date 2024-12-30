@@ -2,7 +2,7 @@
   "Files": [
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
-      "PackagePath": "staticwebassets\\WebKitchen.svo6p3s3ox.bundle.scp.css"
+      "PackagePath": "staticwebassets\\WebKitchen.uxehs2lg69.bundle.scp.css"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\app.css",
@@ -35,6 +35,10 @@
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\CheasyOst.webp",
       "PackagePath": "staticwebassets\\pics\\CheasyOst.webp"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\DatabaseDiagram.png",
+      "PackagePath": "staticwebassets\\pics\\DatabaseDiagram.png"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\FaviconPurpleScroll.png",

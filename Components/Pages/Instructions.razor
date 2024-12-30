@@ -2,7 +2,7 @@
 @inject DBService DbService
 @rendermode InteractiveServer
 
-<div class="card">
+<div class="card border-layout">
     <div class="card-body" style="padding: 10px;">
         <EditForm Model="recipeName" OnSubmit="@HandleInstructions">
             <label class="form-label fw-bold">Recipe name:</label>
@@ -19,7 +19,7 @@
     </div>
 </div>
 
-<div class="card" style="margin-top: 10px;">
+<div class="card border-layout" style="margin-top: 10px;">
     <div class="card-body" style="padding: 10px;">
         <EditForm Model="@currentStep" OnSubmit="@HandleSteps">
 
@@ -34,7 +34,7 @@
     </div>
 </div>
 
-<div class="card" style="margin-top: 10px; margin-bottom: 10px;">
+<div class="card border-layout" style="margin-top: 10px;">
     <div class="card-body">
         <EditForm Model="@currentNote" OnSubmit="@HandleNotes">
 
@@ -48,67 +48,68 @@
     </div>
 </div>
 
-@* Steps *@
-<div class="accordion" id="accordion-steps">
-    <div class="accordion-item">
-        <h2 class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                    aria-expanded="true" aria-controls="collapseOne">
-                Added Steps
-            </button>
-        </h2>
-        <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordion-steps">
-            <div class="accordion-body">
-                @if (recipeInstructionRecord.Instructions.Steps.Count == 0)
-                {
-                    <p>No steps added</p>
-                }
+<div class="border-layout" style="margin-top: 10px;">
+    @* Steps *@
+    <div class="accordion" id="accordion-steps">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne"
+                        aria-expanded="true" aria-controls="collapseOne">
+                    Added Steps
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordion-steps">
+                <div class="accordion-body">
+                    @if (recipeInstructionRecord.Instructions.Steps.Count == 0)
+                    {
+                        <p>No steps added</p>
+                    }
 
-                @foreach (var step in recipeInstructionRecord.Instructions.Steps)
-                {
-                    <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
-                        <span>@step.StepNumber : @step.StepText</span>
-                        <button type="button" class="btn btn-danger"
-                                @onclick="() => DeleteStep(recipeInstructionRecord.Instructions.Steps.IndexOf(step))">
-                            <strong>X</strong>
-                        </button>
-                    </div>
-                }
+                    @foreach (var step in recipeInstructionRecord.Instructions.Steps)
+                    {
+                        <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
+                            <span>@step.StepNumber : @step.StepText</span>
+                            <button type="button" class="btn btn-danger"
+                                    @onclick="() => DeleteStep(recipeInstructionRecord.Instructions.Steps.IndexOf(step))">
+                                <strong>X</strong>
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    @* Notes *@
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTwo"
+                        aria-expanded="true" aria-controls="collapseTwo">
+                    Added Notes
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordion-steps">
+                <div class="accordion-body">
+                    @if (recipeInstructionRecord.Instructions.Notes.Count == 0)
+                    {
+                        <p>No notes added</p>
+                    }
+                    @foreach (var note in recipeInstructionRecord.Instructions.Notes)
+                    {
+                        <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
+                            <span>@note.NoteNumber : @note.NoteText</span>
+                            <button type="button" class="btn btn-danger"
+                                    @onclick="() => DeleteNote(recipeInstructionRecord.Instructions.Notes.IndexOf(note))">
+                                <strong>X</strong>
+                            </button>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-@* Notes *@
-<div class="accordion" id="accordion-notes">
-    <div class="accordion-item">
-        <h2 class="accordion-header">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
-                    aria-expanded="true" aria-controls="collapseTwo">
-                Added Notes
-            </button>
-        </h2>
-        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordion-notes">
-            <div class="accordion-body">
-                @if (recipeInstructionRecord.Instructions.Notes.Count == 0)
-                {
-                    <p>No notes added</p>
-                }
-                @foreach (var note in recipeInstructionRecord.Instructions.Notes)
-                {
-                    <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
-                        <span>@note.NoteNumber : @note.NoteText</span>
-                        <button type="button" class="btn btn-danger"
-                                @onclick="() => DeleteNote(recipeInstructionRecord.Instructions.Notes.IndexOf(note))">
-                            <strong>X</strong>
-                        </button>
-                    </div>
-                }
-            </div>
-        </div>
-    </div>
-</div>
-
 
 @code {
 
