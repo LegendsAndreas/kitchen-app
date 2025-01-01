@@ -1,19 +1,27 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+@* @using WebKitchen.Components.Pages.OnRender *@
 @inject NavigationManager navigationManager;
 @inject DBService DbService;
-@inject SharedRecipeService SharedDetailRecipe
-@inject List<Recipe> recipes
-@* @inject SharedTestService SharedTest; *@
+@inject SharedRecipe SharedDetailRecipe
+@inject SharedRecipeList SharedRecipes
 
 <PageTitle>Recipes</PageTitle>
 
 <div class="container">
-    <button class="btn btn-primary" onclick="@(() => navigationManager.NavigateTo("/developer"))">Go To developer</button>
+    @* Uncomment to access the developer page. *@
+    @*<button class="btn btn-primary" onclick="@(() => navigationManager.NavigateTo("/developer"))">Go To developer
+    </button>*@
+
+    @*@if (!hasGottenRecipes)
+    {
+        <p>Loading recipes...</p>
+    }*@
+
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @if (recipes.Count != 0)
+        @if (SharedRecipes.Recipes.Count != 0)
         {
-            @foreach (var recipe in recipes)
+            @foreach (var recipe in SharedRecipes.Recipes)
             {
                 <div class="col" style="padding: 10px">
                     <div class="card h-100 border-layout">
@@ -40,165 +48,41 @@
 
 </div>
 
+@* <OnAfterRenderAsyncRecipesComponent recipesData="@SharedRecipes.Recipes" renderingComponentNameData="Home"/> *@
+
 @code{
-    // private List<Recipe> _recipes = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Console.WriteLine("__Rendering Home__");
+
+        if (firstRender && !SharedRecipes.Recipes.Any())
+        {
+            try
+            {
+                var tempRecipes = await DbService.GetRecipes();
+                SharedRecipes.Recipes = tempRecipes;
+                Console.WriteLine("Acquired Recipes.");
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error getting recipes" + ex);
+                throw;
+            }
+        }
+
+        if (!firstRender)
+            Console.WriteLine("Not first render.");
+
+        if (SharedRecipes.Recipes.Any())
+            Console.WriteLine("Recipes are full.");
+    }
 
     private void NavigateToDetails(Recipe recipe)
     {
         SharedDetailRecipe.SetSelectedRecipe(recipe);
         navigationManager.NavigateTo("/recipe-details");
     }
-
-    protected override void OnInitialized()
-    {
-        /*Console.WriteLine("Test string at home: "+SharedTest.TestString);
-        Console.WriteLine("Test int at home: "+SharedTest.TestInt);
-        SharedTest.TestString = "Home";
-        SharedTest.TestInt = 1;*/
-        Console.WriteLine(recipes.Count);
-        if (recipes.Count != 0) return;
-        var img = File.ReadAllBytes("wwwroot/pics/PlaceHolderPic.jpg");
-        var base64PlaceHolderPic = Convert.ToBase64String(img);
-
-        recipes.Add(new Recipe
-        {
-            RecipeId = 1,
-            MealType = "D",
-            Name = "Amatriciana",
-            Base64Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
-            {
-                Protein = 29,
-                Fat = 29,
-                Carbs = 110,
-                Calories = 657
-            }
-        });
-        recipes.Add(new Recipe
-        {
-            RecipeId = 2,
-            MealType = "D",
-            Name = "Recipe 2",
-            Base64Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
-            {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-        recipes.Add(new Recipe
-        {
-            RecipeId = 3,
-            MealType = "D",
-            Name = "Recipe 3",
-            Base64Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
-            {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-        recipes.Add(new Recipe
-        {
-            RecipeId = 4,
-            MealType = "D",
-            Name = "Recipe 4",
-            Base64Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
-            {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-        recipes.Add(new Recipe
-        {
-            RecipeId = 5,
-            MealType = "D",
-            Name = "Recipe 5",
-            Base64Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
-            {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-        recipes.Add(new Recipe
-        {
-            RecipeId = 6,
-            MealType = "D",
-            Name = "Recipe 6",
-            Base64Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
-            {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-        recipes.Add(new Recipe
-        {
-            RecipeId = 7,
-            MealType = "D",
-            Name = "Recipe 7",
-            Base64Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
-            {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-        recipes.Add(new Recipe
-        {
-            RecipeId = 8,
-            MealType = "D",
-            Name = "Recipe 8",
-            Base64Image = base64PlaceHolderPic,
-            TotalMacros = new Macros
-            {
-                Protein = 29,
-                Fat = 66,
-                Carbs = 39,
-                Calories = 657
-            }
-        });
-    }
-
-    /*protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            await using var connection = await DbService.GetConnection();
-            if (connection.State == System.Data.ConnectionState.Open)
-                Console.WriteLine("Database connection successful");
-            else
-                Console.WriteLine("Failed to connect to database");
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine($"Error connecting to recipes db: {e.Message}");
-        }
-
-        try
-        {
-            _recipes = await DbService.GetRecipesAsync();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error getting recipes" + ex);
-            throw;
-        }
-    }*/
-
 
 }

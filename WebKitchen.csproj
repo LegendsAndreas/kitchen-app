@@ -14,4 +14,8 @@
       <None Include="wwwroot\pics\DatabaseDiagram.png" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Components\Pages\Developer\" />
+    </ItemGroup>
+
 </Project>

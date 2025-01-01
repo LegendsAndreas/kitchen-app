@@ -15,9 +15,9 @@ public class Program
 
         builder.Services.AddScoped<Recipe>();
         builder.Services.AddScoped<Ingredient>();
-        builder.Services.AddScoped<List<Ingredient>>();
-        builder.Services.AddScoped<SharedRecipeService>();
-        builder.Services.AddScoped(_ => new List<Recipe>());
+        builder.Services.AddScoped<SharedIngredientList>();
+        builder.Services.AddScoped<SharedRecipe>();
+        builder.Services.AddScoped<SharedRecipeList>();
 
         builder.Services.AddSingleton(_ =>
         {

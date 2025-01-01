@@ -1,5 +1,6 @@
 @page "/plan-meals"
 @rendermode InteractiveServer
+@inject SharedRecipeList SharedRecipes;
 @inject DBService DbService;
 @inject IJSRuntime JsRuntime;
 <PageTitle>Plan Meals</PageTitle>
@@ -17,20 +18,20 @@
         font-style: italic;
         font-weight: bold;
     }
-    
-    .border-style{
+
+    .border-style {
         background-color: #272B2F;
         padding: 25px;
         border-radius: 10px;
         border: 3px solid #48d7ff;
     }
 
-    .alignment{
+    .alignment {
         display: flex;
         align-items: center;
         justify-content: center;
     }
-    
+
 </style>
 
 @* Total macros for a day *@
@@ -73,10 +74,14 @@
 
         <div class="row g-1">
             <div class="col alignment">Day @(currentTotalMacrosDay + 1)</div>
-            <div class="col alignment">Total Calories: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Calories.ToString("0")</div>
-            <div class="col alignment">Total Fat: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Fat.ToString("0")</div>
-            <div class="col alignment">Total Carbs: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Carbs.ToString("0")</div>
-            <div class="col alignment">Total Protein: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Protein.ToString("0")</div>
+            <div class="col alignment">Total
+                Calories: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Calories.ToString("0")</div>
+            <div class="col alignment">Total
+                Fat: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Fat.ToString("0")</div>
+            <div class="col alignment">Total
+                Carbs: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Carbs.ToString("0")</div>
+            <div class="col alignment">Total
+                Protein: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Protein.ToString("0")</div>
         </div>
     </div>
 
@@ -88,22 +93,23 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
         @foreach (var recipe in mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].DailyMeals)
         {
-        <div class="col" style="padding: 10px">
-            <div class="card h-100">
-                <img src="@recipe.Base64Image" alt="ops..." class="card-img"/> @* card-img helps the look of the cards. *@
-                <div class="card-header">
-                    <h4>@recipe.Name</h4>
-                </div>
-                <div class="card-body border-primary">
-                    <p class="card-text">
-                        - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
-                        - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
-                        - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
-                        - Protein: @recipe.TotalMacros.Protein.ToString("0")
-                    </p>
+            <div class="col" style="padding: 10px">
+                <div class="card h-100 border-layout">
+                    <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..."
+                         class="card-img"/> @* card-img helps the look of the cards. *@
+                    <div class="card-header">
+                        <h4>@recipe.Name</h4>
+                    </div>
+                    <div class="card-body border-primary">
+                        <p class="card-text">
+                            - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
+                            - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
+                            - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
+                            - Protein: @recipe.TotalMacros.Protein.ToString("0")
+                        </p>
+                    </div>
                 </div>
             </div>
-        </div>
         }
     </div>
 
@@ -145,8 +151,6 @@
 
 @code{
 
-    List<Recipe> recipes = new();
-
     string currentRecipeName = string.Empty;
     int currentDay;
 
@@ -154,19 +158,41 @@
 
     int currentTotalMacrosDay;
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        recipes = await DbService.GetRecipes();
+        Console.WriteLine("__Rendering Plan Meals__");
+
+        if (firstRender && !SharedRecipes.Recipes.Any())
+        {
+            try
+            {
+                var tempRecipes = await DbService.GetRecipes();
+                SharedRecipes.Recipes = tempRecipes;
+                Console.WriteLine("Acquired Recipes.");
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error getting recipes" + ex);
+                throw;
+            }
+        }
+
+        if (!firstRender)
+            Console.WriteLine("Not first render.");
+
+        if (SharedRecipes.Recipes.Any())
+            Console.WriteLine("Recipes are full.");
     }
 
     private void ValidRecipe()
     {
-        int index = recipes.FindIndex(recipe => recipe.Name == currentRecipeName);
+        int index = SharedRecipes.Recipes.FindIndex(recipe => recipe.Name == currentRecipeName);
 
         if (index != -1)
         {
             Console.WriteLine($"Found {currentRecipeName} at {index}");
-            mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay(recipes[index], currentDay);
+            mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay(SharedRecipes.Recipes[index], currentDay);
         }
         else
         {

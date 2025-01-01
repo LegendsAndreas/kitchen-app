@@ -1,11 +1,14 @@
 @page "/categories"
 @rendermode InteractiveServer
-<PageTitle>Categories</PageTitle>
-
 @using WebKitchen.Services;
 @inject DBService DbService;
 
-<div class="dropdown">
+<PageTitle>Categories</PageTitle>
+
+<h2>!!!UNDER CONSTRUCTION!!!</h2>
+<p>Move along!</p>
+
+@*<div class="dropdown">
     <a class="btn btn-secondary custom-layout dropdown-toggle btn-lg" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
         Sort Ascending by...
     </a>
@@ -28,7 +31,7 @@
         {
             <div class="col" style="padding: 10px">
                 <div class="card h-100"> 
-                    <img src="@recipe.Base64Image" alt="ops..." class="card-img"/> @* card-img helps the look of the cards. *@
+                    <img src="@recipe.Base64Image" alt="ops..." class="card-img"/> $1$ card-img helps the look of the cards. #1#
                     <div class="card-header">
                         <h4>@recipe.Name</h4>
                     </div>
@@ -58,4 +61,4 @@
         StateHasChanged();
     }
 
-}
+}*@

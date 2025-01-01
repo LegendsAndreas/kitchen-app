@@ -25,10 +25,20 @@ public class DBService
         return connection;
     }
 
+    private async Task<string> GetPlaceHolderPic()
+    {
+        Console.WriteLine("Getting place holder pic...");
+        var img = await File.ReadAllBytesAsync("wwwroot/pics/PlaceHolderPic.jpg");
+        var base64PlaceHolderPic = Convert.ToBase64String(img);
+        return base64PlaceHolderPic;
+    }
+
     private async Task<List<Recipe>> GetDinnerRecipes()
     {
         Console.WriteLine("Getting dinner recipes...");
-        List<Recipe> recipes = new();
+        
+        var base64PlaceHolderPic = await GetPlaceHolderPic();
+        List<Recipe> recipes = [];
         var conn = await GetConnection();
 
         const string query =
@@ -43,7 +53,9 @@ public class DBService
                 RecipeId = reader.GetInt32(0),
                 MealType = reader.GetString(1),
                 Name = reader.GetString(2),
-                Base64Image = reader.GetString(3),
+                Base64Image = reader.GetString(3) != "PlaceHolderPic.jpg"
+                    ? reader.GetString(3)
+                    : base64PlaceHolderPic,
                 TotalMacros = new Macros
                 {
                     Protein = reader.GetFloat(4),
@@ -127,8 +139,8 @@ public class DBService
     public async Task<List<Recipe>> GetRecipes()
     {
         Console.WriteLine("Getting recipes...");
-        var img = await File.ReadAllBytesAsync("wwwroot/pics/PlaceHolderPic.jpg");
-        var base64PlaceHolderPic = Convert.ToBase64String(img);
+        
+        var base64PlaceHolderPic = await GetPlaceHolderPic();
         List<Recipe> recipes = new();
         var conn = await GetConnection();
         int recipeIdTracker = 1;
@@ -209,6 +221,7 @@ public class DBService
 
     private async Task<List<Ingredient>> GetIngredientByIdAsync(int id)
     {
+        Console.WriteLine("Getting ingredients by id...");
         List<Ingredient> ingredients = new();
         try
         {
@@ -257,8 +270,7 @@ public class DBService
     {
         Console.WriteLine("Getting all database ingredients...");
 
-        var img = await File.ReadAllBytesAsync("wwwroot/pics/PlaceHolderPic.jpg");
-        var base64PlaceHolderPic = Convert.ToBase64String(img);
+        var base64PlaceHolderPic = await GetPlaceHolderPic();
 
         List<Ingredient> ingredients = [];
         var conn = await GetConnection();
@@ -381,6 +393,7 @@ public class DBService
     private async Task AddIngredientsToRow(List<Ingredient> ingredients)
     {
         Console.WriteLine("Adding ingredients to row...");
+        
         try
         {
             var conn = await GetConnection();
@@ -424,6 +437,7 @@ public class DBService
     public async Task AddIngredientToDb(Ingredient ingredient)
     {
         Console.WriteLine("Adding ingredient to database...");
+        
         try
         {
             var conn = await GetConnection();
@@ -455,6 +469,7 @@ public class DBService
     public async Task UpdateRecipeMealTypeByName(string type, string name)
     {
         Console.WriteLine("Updating recipe meal type by name...");
+        
         var conn = await GetConnection();
         const string query = "UPDATE recipes SET meal_type = @type WHERE name = @name";
         await using var cmd = new NpgsqlCommand(query, conn);
@@ -470,6 +485,7 @@ public class DBService
     public async Task UpdateRecipeImageByName(string recipeName, string base64Image)
     {
         Console.WriteLine("Updating recipe image by name...");
+        
         var conn = await GetConnection();
         const string query = "UPDATE recipes SET image = @base64_image WHERE name = @recipe_name";
         await using var cmd = new NpgsqlCommand(query, conn);
@@ -485,6 +501,7 @@ public class DBService
     public async Task UpdateRecipeNameByName(string currentName, string updatedName)
     {
         Console.WriteLine("Updating recipe name by name...");
+        
         var conn = await GetConnection();
         const string query = "UPDATE recipes SET name = @currentName WHERE name = @updatedName";
         await using var cmd = new NpgsqlCommand(query, conn);
@@ -500,6 +517,7 @@ public class DBService
     public async Task UpdateDbIngredientImageByName(string ingredientName, string base64Image)
     {
         Console.WriteLine("Updating database ingredient image by name...");
+        
         try
         {
             var conn = await GetConnection();
@@ -524,6 +542,7 @@ public class DBService
     private async Task UpdateTableIdsAsync(string tableName)
     {
         Console.WriteLine("Updating table IDs...");
+        
         try
         {
             var conn = await GetConnection();
@@ -555,6 +574,7 @@ public class DBService
     public async Task UpdateDbIngredient(Ingredient ingredient)
     {
         Console.WriteLine("Updating database ingredient...");
+        
         try
         {
             var conn = await GetConnection();

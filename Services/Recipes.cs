@@ -198,6 +198,12 @@ public class Recipe
         }
     }
 
+    public void PrintImage()
+    {
+        Console.WriteLine("Printing image...");
+        Console.WriteLine("Image: " + Base64Image);
+    }
+
     public async Task SetRecipeImage(IBrowserFile image, long allowedFileSize = 10)
     {
         Console.WriteLine("Setting recipe image...");
@@ -235,7 +241,7 @@ public class Recipe
     }
 }
 
-public class SharedRecipeService
+public class SharedRecipe
 {
     public Recipe SelectedRecipe { get; set; }
 

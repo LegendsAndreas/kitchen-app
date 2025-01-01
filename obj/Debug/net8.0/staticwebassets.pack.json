@@ -29,8 +29,16 @@
       "PackagePath": "staticwebassets\\pics\\BackgroundImage.webp"
     },
     {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisAppetitAgurker.webp",
+      "PackagePath": "staticwebassets\\pics\\BeauvaisAppetitAgurker.webp"
+    },
+    {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisHerregårdsRødkål.jpg",
       "PackagePath": "staticwebassets\\pics\\BeauvaisHerregårdsRødkål.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisRødkål.webp",
+      "PackagePath": "staticwebassets\\pics\\BeauvaisRødkål.webp"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\CheasyOst.webp",
@@ -47,6 +55,10 @@
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\FiskeFilet.webp",
       "PackagePath": "staticwebassets\\pics\\FiskeFilet.webp"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Flæskesteg.webp",
+      "PackagePath": "staticwebassets\\pics\\Flæskesteg.webp"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Havregryn.jpg",
@@ -83,6 +95,10 @@
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\RugbrødMedFiskefilet.webp",
       "PackagePath": "staticwebassets\\pics\\RugbrødMedFiskefilet.webp"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\RøgetHamburgerryg.webp",
+      "PackagePath": "staticwebassets\\pics\\RøgetHamburgerryg.webp"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\SalamiSpegePølse.webp",

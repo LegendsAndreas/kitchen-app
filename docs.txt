@@ -98,3 +98,10 @@ can access the statesRecipe.Image!
 I added a scoped List<Recipe> in my Program.cs file, where an uninitialized element would be inserted into it upon creation.
 Fucking, heresy, of the highest order.
 Anyway, the solution was apparently to modify the build scope line to this: builder.Services.AddScoped(provider => new List<Recipe>());.
+
+-- LIFE IS LIKE A MYSTERY, EVERYONE MOST STAND ALONE! I CAN FELL YOU CALL MY NAME, AND IT FEEEEELS LIKE..... HOMEEEEEEE!!!!!!
+@inject List<Recipe> recipes
+@inject RecipeService recipesService
+If you wrap your list of recipes in a class, it will not reset upon entering a new page.
+Apparently, a "plain object" like List<Recipes> does not have the "internal logic" to persist themselves across components.
+So, if you want something to persist across components, you gotta wrap that thang in a class for itself.

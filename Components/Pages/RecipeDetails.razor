@@ -1,6 +1,6 @@
 @page "/recipe-details"
 @rendermode InteractiveServer
-@inject SharedRecipeService SharedDetailRecipe
+@inject SharedRecipe SharedDetailedRecipe
 <PageTitle>Recipe Details</PageTitle>
 
 @if (sharedRecipe != null)
@@ -127,7 +127,7 @@
 
     protected override void OnInitialized()
     {
-        sharedRecipe = SharedDetailRecipe.SelectedRecipe;
+        sharedRecipe = SharedDetailedRecipe.SelectedRecipe;
         GetInstructions();
         GetNotes();
     }

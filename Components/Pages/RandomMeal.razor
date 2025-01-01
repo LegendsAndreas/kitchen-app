@@ -44,7 +44,6 @@
             Console.WriteLine("Getting random recipe...");
             randomRecipe = await DbService.GetRandomRecipe();
             randomRecipe.PrintRecipe();
-
         }
         catch (Exception e)
         {

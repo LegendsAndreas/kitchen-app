@@ -1,5 +1,5 @@
 CREATE TYPE ingredient AS
-    (
+(
     name                  TEXT,
     grams                 INT,
     calories_pr_hectogram INT,
@@ -7,15 +7,15 @@ CREATE TYPE ingredient AS
     carbs_pr_hectogram    INT,
     protein_pr_hectogram  INT,
     multiplier            FLOAT
-    );
+);
 
 CREATE TYPE recipe_macros AS
-    (
+(
     total_calories FLOAT,
     total_fats     FLOAT,
     total_carbs    FLOAT,
     total_protein  FLOAT
-    );
+);
 
 CREATE TABLE recipes
 (
@@ -35,7 +35,7 @@ VALUES ('D',
         'TestImage',
         ARRAY [
             ROW ('banana',60, 11, 33, 55, 12, 0.6)::ingredient,
-        ROW ('apple', 80, 11, 10, 9, 8, 0.9)::ingredient
+            ROW ('apple', 80, 11, 10, 9, 8, 0.9)::ingredient
             ],
         (647.3, 33.1, 88.9, 22.3)::recipe_macros);
 
@@ -46,7 +46,7 @@ VALUES ('L',
         'TestImage2',
         ARRAY [
             ROW ('Pineapple',44, 123, 74, 95, 31, 0.4)::ingredient,
-        ROW ('Grenade', 160, 6, 33, 5, 1, 0.3)::ingredient
+            ROW ('Grenade', 160, 6, 33, 5, 1, 0.3)::ingredient
             ],
         (3072, 97, 33, 77)::recipe_macros);
 
@@ -110,30 +110,30 @@ CREATE OR REPLACE FUNCTION get_recipe_with_dynamic_ingredients(recipe_id INT)
 AS
 $$
 DECLARE
-recipe        RECORD;
+    recipe        RECORD;
     ingredients   TEXT[];
     dynamic_query TEXT;
     i             INT;
 BEGIN
-SELECT id, meal_type, name, image, ingredients
-INTO recipe
-FROM recipes
-WHERE id = recipe_id;
+    SELECT id, meal_type, name, image, ingredients
+    INTO recipe
+    FROM recipes
+    WHERE id = recipe_id;
 
-ingredients := recipe.ingredients;
+    ingredients := recipe.ingredients;
 
     dynamic_query := 'SELECT ' || recipe.id || ', ''' || recipe.meal_type || ''', ''' || recipe.name || ''', ''' ||
                      recipe.image || ''',';
 
-FOR i IN 1 .. array_length(ingredients, 1)
+    FOR i IN 1 .. array_length(ingredients, 1)
         LOOP
             dynamic_query := dynamic_query || ' ' || quote_literal(ingredients[i]) || ' AS ingredient_' || i || ',';
-END LOOP;
+        END LOOP;
 
     -- Remove trailing comma and append FROM clause
     dynamic_query := left(dynamic_query, length(dynamic_query) - 1) || ' FROM recipes WHERE id = ' || recipe_id;
 
-RETURN QUERY EXECUTE dynamic_query;
+    RETURN QUERY EXECUTE dynamic_query;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -159,7 +159,7 @@ VALUES ('L',
         'TestImage2',
         ARRAY [
             ROW ('Pineapple',44, 123, 74, 95, 31, 0.4)::ingredient,
-        ROW ('Grenade', 160, 6, 33, 5, 1, 0.3)::ingredient
+            ROW ('Grenade', 160, 6, 33, 5, 1, 0.3)::ingredient
             ],
         (3072, 97, 33, 77)::recipe_macros);
 
@@ -222,7 +222,7 @@ SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id
 FROM recipes;
 UPDATE recipes
 SET id = temp_recipes.new_id
-    FROM temp_recipes
+FROM temp_recipes
 WHERE recipes.id = temp_recipes.id;
 SELECT setval('recipes_id_seq', (SELECT MAX(id) FROM recipes));
 
@@ -231,11 +231,15 @@ DROP TABLE temp_recipes;
 CREATE TABLE recipe_instructions
 (
     id           SERIAL PRIMARY KEY,
-    instructions JSON
+    recipe_id    INT,
+    instructions JSON,
+    CONSTRAINT FK_recipe_id FOREIGN KEY (recipe_id) REFERENCES recipes (id)
 );
 
-ALTER TABLE recipe_instructions ADD recipe_id INT;
-ALTER TABLE recipe_instructions ADD CONSTRAINT FK_recipe_id FOREIGN KEY (recipe_id) REFERENCES recipes (id);
+ALTER TABLE recipe_instructions
+    ADD recipe_id INT;
+ALTER TABLE recipe_instructions
+    ADD CONSTRAINT FK_recipe_id FOREIGN KEY (recipe_id) REFERENCES recipes (id);
 
 INSERT INTO recipe_instructions (instructions)
 VALUES ('{
@@ -268,15 +272,18 @@ VALUES ('{
   ],
   "notes": [
     {
-      "note_number" : 1,
+      "note_number": 1,
       "note": "Remember to..."
     },
     {
-      "note_number" : 2,
+      "note_number": 2,
       "note": "By the way..."
     }
   ]
 }');
 
-SELECT id, instructions, recipe_id FROM recipe_instructions;
-UPDATE recipe_instructions SET recipe_id = 5 WHERE id = 1;
+SELECT id, instructions, recipe_id
+FROM recipe_instructions;
+UPDATE recipe_instructions
+SET recipe_id = 5
+WHERE id = 1;

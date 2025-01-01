@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "Cf6eU4+dof2madsFsD2VZS4qY+RCpdJxRZmZfkZr3ZI=",
+  "Hash": "Xt1RMZwK8WVIIwDJGAm6TZUZBEy3CyLAXDoCYlRxH+g=",
   "Source": "WebKitchen",
   "BasePath": "_content/WebKitchen",
   "Mode": "Default",
@@ -206,6 +206,27 @@
       "OriginalItemSpec": "wwwroot\\pics\\BackgroundImage.webp"
     },
     {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisAppetitAgurker.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/BeauvaisAppetitAgurker#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "i3pthsq6pv",
+      "Integrity": "shpbuxiGtRq6ooXLPDQE4vuKIj31lIlKs4LeFXQNhCE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\BeauvaisAppetitAgurker.webp"
+    },
+    {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisHerregårdsRødkål.jpg",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
@@ -225,6 +246,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\pics\\BeauvaisHerregårdsRødkål.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisRødkål.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/BeauvaisRødkål#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "9dt7zc2st4",
+      "Integrity": "bWMA3tcfZWVPBQUkMzKr4b7ttFMaRqvKgDtwMnpRwE8=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\BeauvaisRødkål.webp"
     },
     {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\blåbær.jpg",
@@ -393,6 +435,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\pics\\FiskeFilet.webp"
+    },
+    {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Flæskesteg.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/Flæskesteg#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "255ywvxwee",
+      "Integrity": "hlqlVDTwub0DcUInQU6IR4QmZzIOuRdPeb/17BHRz0s=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\Flæskesteg.webp"
     },
     {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Havregryn.jpg",
@@ -647,6 +710,27 @@
       "OriginalItemSpec": "wwwroot\\pics\\ProteinBrød.webp"
     },
     {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\RøgetHamburgerryg.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/RøgetHamburgerryg#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "fiydsaz1k0",
+      "Integrity": "92Pzns0/8G5jbGVbDI6FWYmCB7b6cVbvi19eBnHX0VY=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\RøgetHamburgerryg.webp"
+    },
+    {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\RugbrødMedFiskefilet.webp",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
@@ -850,8 +934,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "bdqc09xfuu",
-      "Integrity": "f6SFvrAQsbUpROwCPc1MTCEVDlNhVOJL9Ij7Knq+jMY=",
+      "Fingerprint": "rnfe8kro4j",
+      "Integrity": "OTGXxe6XGcv6ZkTgybsRUET+K1loYylm3cC6OPOPPqY=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\styles.css"
@@ -1433,6 +1517,88 @@
       ]
     },
     {
+      "Route": "pics/BeauvaisAppetitAgurker.i3pthsq6pv.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisAppetitAgurker.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "137974"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"shpbuxiGtRq6ooXLPDQE4vuKIj31lIlKs4LeFXQNhCE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 01 Jan 2025 14:19:52 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "i3pthsq6pv"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/BeauvaisAppetitAgurker.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-shpbuxiGtRq6ooXLPDQE4vuKIj31lIlKs4LeFXQNhCE="
+        }
+      ]
+    },
+    {
+      "Route": "pics/BeauvaisAppetitAgurker.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisAppetitAgurker.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "137974"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"shpbuxiGtRq6ooXLPDQE4vuKIj31lIlKs4LeFXQNhCE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 01 Jan 2025 14:19:52 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-shpbuxiGtRq6ooXLPDQE4vuKIj31lIlKs4LeFXQNhCE="
+        }
+      ]
+    },
+    {
       "Route": "pics/BeauvaisHerregårdsRødkål.bljfjtekzq.jpg",
       "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisHerregårdsRødkål.jpg",
       "Selectors": [],
@@ -1511,6 +1677,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-EYh+v4/gF7KDo0U2UtFJ8Ywdo/a7PaIZ8OEOtU/vCes="
+        }
+      ]
+    },
+    {
+      "Route": "pics/BeauvaisRødkål.9dt7zc2st4.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisRødkål.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "155738"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"bWMA3tcfZWVPBQUkMzKr4b7ttFMaRqvKgDtwMnpRwE8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 01 Jan 2025 14:22:29 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "9dt7zc2st4"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/BeauvaisRødkål.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-bWMA3tcfZWVPBQUkMzKr4b7ttFMaRqvKgDtwMnpRwE8="
+        }
+      ]
+    },
+    {
+      "Route": "pics/BeauvaisRødkål.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisRødkål.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "155738"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"bWMA3tcfZWVPBQUkMzKr4b7ttFMaRqvKgDtwMnpRwE8=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 01 Jan 2025 14:22:29 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-bWMA3tcfZWVPBQUkMzKr4b7ttFMaRqvKgDtwMnpRwE8="
         }
       ]
     },
@@ -2167,6 +2415,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-XxMsavlvMo5zBUGUcPuG29JnhpK+IAHfWPJ6+assdIw="
+        }
+      ]
+    },
+    {
+      "Route": "pics/Flæskesteg.255ywvxwee.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Flæskesteg.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "118840"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"hlqlVDTwub0DcUInQU6IR4QmZzIOuRdPeb/17BHRz0s=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 01 Jan 2025 14:22:00 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "255ywvxwee"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/Flæskesteg.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-hlqlVDTwub0DcUInQU6IR4QmZzIOuRdPeb/17BHRz0s="
+        }
+      ]
+    },
+    {
+      "Route": "pics/Flæskesteg.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Flæskesteg.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "118840"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"hlqlVDTwub0DcUInQU6IR4QmZzIOuRdPeb/17BHRz0s=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 01 Jan 2025 14:22:00 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-hlqlVDTwub0DcUInQU6IR4QmZzIOuRdPeb/17BHRz0s="
         }
       ]
     },
@@ -3155,6 +3485,88 @@
       ]
     },
     {
+      "Route": "pics/RøgetHamburgerryg.fiydsaz1k0.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\RøgetHamburgerryg.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "157528"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"92Pzns0/8G5jbGVbDI6FWYmCB7b6cVbvi19eBnHX0VY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 01 Jan 2025 14:21:25 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "fiydsaz1k0"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/RøgetHamburgerryg.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-92Pzns0/8G5jbGVbDI6FWYmCB7b6cVbvi19eBnHX0VY="
+        }
+      ]
+    },
+    {
+      "Route": "pics/RøgetHamburgerryg.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\RøgetHamburgerryg.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "157528"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"92Pzns0/8G5jbGVbDI6FWYmCB7b6cVbvi19eBnHX0VY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 01 Jan 2025 14:21:25 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-92Pzns0/8G5jbGVbDI6FWYmCB7b6cVbvi19eBnHX0VY="
+        }
+      ]
+    },
+    {
       "Route": "pics/RugbrødMedFiskefilet.74hfud6is9.webp",
       "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\RugbrødMedFiskefilet.webp",
       "Selectors": [],
@@ -3893,51 +4305,6 @@
       ]
     },
     {
-      "Route": "styles.bdqc09xfuu.css",
-      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "2267"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"f6SFvrAQsbUpROwCPc1MTCEVDlNhVOJL9Ij7Knq+jMY=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Fri, 27 Dec 2024 15:52:57 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "bdqc09xfuu"
-        },
-        {
-          "Name": "label",
-          "Value": "styles.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-f6SFvrAQsbUpROwCPc1MTCEVDlNhVOJL9Ij7Knq+jMY="
-        }
-      ]
-    },
-    {
       "Route": "styles.css",
       "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",
       "Selectors": [],
@@ -3948,7 +4315,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "2267"
+          "Value": "2405"
         },
         {
           "Name": "Content-Type",
@@ -3956,11 +4323,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"f6SFvrAQsbUpROwCPc1MTCEVDlNhVOJL9Ij7Knq+jMY=\""
+          "Value": "\"OTGXxe6XGcv6ZkTgybsRUET+K1loYylm3cC6OPOPPqY=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Fri, 27 Dec 2024 15:52:57 GMT"
+          "Value": "Mon, 30 Dec 2024 21:11:38 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -3970,7 +4337,52 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-f6SFvrAQsbUpROwCPc1MTCEVDlNhVOJL9Ij7Knq+jMY="
+          "Value": "sha256-OTGXxe6XGcv6ZkTgybsRUET+K1loYylm3cC6OPOPPqY="
+        }
+      ]
+    },
+    {
+      "Route": "styles.rnfe8kro4j.css",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "2405"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"OTGXxe6XGcv6ZkTgybsRUET+K1loYylm3cC6OPOPPqY=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Mon, 30 Dec 2024 21:11:38 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "rnfe8kro4j"
+        },
+        {
+          "Name": "label",
+          "Value": "styles.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-OTGXxe6XGcv6ZkTgybsRUET+K1loYylm3cC6OPOPPqY="
         }
       ]
     },
