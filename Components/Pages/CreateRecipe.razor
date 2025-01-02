@@ -77,7 +77,7 @@
         </EditForm>
 
 
-        <EditForm Model="@SharedDbIngredient.SelectedIngredient" OnValidSubmit="HandleDbIngredient">
+        <EditForm Model="@SharedDbIngredient.SelectedIngredient" OnSubmit="HandleDbIngredient">
             <DataAnnotationsValidator/>
             <div class="container text-center border-layout paddage">
                 <div class="row row-cols-1 row-cols-sd-2 row-cols-md-2 row-cols-lg-2 g-3">
@@ -189,6 +189,7 @@
 
     private async Task HandleRecipe()
     {
+        Console.WriteLine("Handling recipe...");
         if (currentIngredients.Count == 0)
         {
             Console.WriteLine("There are no ingredients.");
@@ -241,6 +242,7 @@
 
     public void HandleIngredient()
     {
+        Console.WriteLine("Handling ingredient...");
         var tempIngredient = CurrentIngredient.TransferIngredient(CurrentIngredient);
         tempIngredient.PrintIngredient();
 
@@ -250,6 +252,7 @@
 
     public void HandleDbIngredient()
     {
+        Console.WriteLine("Handling db ingredient...");
         if (SharedDbIngredient.SelectedIngredient.Grams == 0)
         {
             Console.WriteLine("No grams specified.");
