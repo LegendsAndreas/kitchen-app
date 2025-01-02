@@ -1,0 +1,77 @@
+@inject DBService DbService
+@inject SharedIngredient sharedDbIngredient;
+
+<div class="row mb-3">
+    <div class="col">
+        <input type="text" class="form-control" placeholder="Search recipes..." @bind="searchBarInput"
+               @oninput="OnInputChange"
+               @onfocus="OnSearchBarFocus" @onblur="OnSearchBarBlur">
+    </div>
+    @if (isSearchBarActive && searchBarInput != string.Empty)
+    {
+        <div class="dropdown">
+            <ul class="dropdown-menu show"> @* "show" is vital, since it automatically shows the items. *@
+                @if (FilteredIngredients.Count != 0)
+                {
+                    @foreach (var ingredient in FilteredIngredients)
+                    {
+                        <li>
+                            <a class="dropdown-item"
+                                    onclick="@(() => HandleIngredientItem(ingredient))">@ingredient.Name</a>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li>
+                        <button class="dropdown-item" type="button">No results found</button>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>
+
+@code{
+    private string searchBarInput = string.Empty;
+    private bool isSearchBarActive = false;
+    [Parameter] public List<Ingredient> IngredientsData { get; set; } = [];
+
+    private List<Ingredient> FilteredIngredients => IngredientsData
+        .Where(r => string.IsNullOrEmpty(searchBarInput) || r.Name.Contains(searchBarInput, StringComparison.OrdinalIgnoreCase))
+        .ToList();
+
+    private void OnInputChange(ChangeEventArgs e)
+    {
+        // Console.WriteLine("Input has changed...");
+        searchBarInput = e.Value?.ToString() ?? string.Empty; // "??" checks what value is not null and chooses the non-null value.
+        Console.WriteLine($"Input changed: {searchBarInput}");
+    }
+
+    private void HandleIngredientItem(Ingredient ingredient)
+    {
+        Console.WriteLine("handling ingredient item...:");
+        // ingredient.PrintIngredient();
+        sharedDbIngredient.SelectedIngredient = ingredient.TransferIngredient(ingredient);
+        // Console.WriteLine("Db ingredient:");
+        // sharedDbIngredient.SelectedIngredient.PrintIngredient();
+    }
+
+    private void OnSearchBarFocus()
+    {
+        // Console.WriteLine("Search bar is active...");
+        isSearchBarActive = true;
+        StateHasChanged();
+    }
+
+    private async Task OnSearchBarBlur()
+    {
+        // To make sure that we can click the elements in our dropdown items, we have to use this scuffed delay to make
+        // sure the item does not disappear, before we can actually click it.
+        await Task.Delay(200);
+        // Console.WriteLine("Search bar is no longer active...");
+        isSearchBarActive = false;
+        StateHasChanged();
+    }
+
+}

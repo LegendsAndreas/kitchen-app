@@ -109,3 +109,6 @@ So, if you want something to persist across components, you gotta wrap that than
 -- WHERE id = 0.
 If no rows explicitly have an ID of `X`, the database effectively updates all rows since there is no matching criteria.
 So, if no valid WHERE statement is found, it will essentically treat it as if the WHERE statement does not exist in the query.
+
+-- Real time search bar.
+You cant use a button, or a type="button", because that fucks with the editforms.
