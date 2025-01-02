@@ -1,5 +1,4 @@
 @inject DBService DbService
-@inject List<Recipe> recipes
 
 <div class="row mb-3">
     <div class="col">
@@ -34,9 +33,9 @@
 @code{
     private string searchBarInput = string.Empty;
     private bool isSearchBarActive = false;
-    [Parameter] public List<Recipe> RecipeData { get; set; } = [];
+    [Parameter] public List<Recipe> RecipesData { get; set; } = [];
 
-    private List<Recipe> filteredRecipes => RecipeData
+    private List<Recipe> filteredRecipes => RecipesData
         .Where(r => string.IsNullOrEmpty(searchBarInput) || r.Name.Contains(searchBarInput, StringComparison.OrdinalIgnoreCase))
         .ToList();
 

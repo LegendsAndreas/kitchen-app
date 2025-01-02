@@ -63,6 +63,12 @@ public class Ingredient
         return Id;
     }
 
+    public int GetIntId()
+    {
+        Console.WriteLine("Getting converted ID...");
+        return (int)Id;
+    }
+
     public float GetMultiplier()
     {
         Console.WriteLine("Getting multiplier...");
@@ -155,6 +161,11 @@ public class Ingredient
 
         return transferIngredient;
     }
+}
+
+public class SharedIngredient
+{
+    public Ingredient SelectedIngredient { get; set; } = new();
 }
 
 public class Recipe

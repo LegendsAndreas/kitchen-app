@@ -16,6 +16,7 @@
 
     <ItemGroup>
       <Folder Include="Components\Pages\Developer\" />
+      <Folder Include="Components\Pages\Popups\" />
     </ItemGroup>
 
 </Project>

@@ -1,7 +1,9 @@
 ﻿@page "/ingredients"
 @rendermode InteractiveServer
+@using WebKitchen.Components.Pages.RealTimeSearchBarElement
 @inject DBService DbService;
 @inject SharedIngredientList SharedIngredients;
+@inject SharedIngredient sharedIngredient;
 
 <style>
     .ingredient-form {
@@ -65,7 +67,8 @@
             </div>
 
             <div class="col">
-                <InputFile OnChange="HandleImages" class="btn btn-secondary"/>
+                <label class="file-label btn btn-primary" for="fileInput">Choose Image</label>
+                <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
             </div>
 
             
@@ -137,7 +140,7 @@
             Console.WriteLine("Ingredients are full.");
     }
     
-    private async Task HandleImages(InputFileChangeEventArgs imageFiles)
+    private async Task HandleImage(InputFileChangeEventArgs imageFiles)
     {
         foreach (var image in imageFiles.GetMultipleFiles())
         {

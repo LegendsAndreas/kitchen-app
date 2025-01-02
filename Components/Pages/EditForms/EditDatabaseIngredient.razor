@@ -1,6 +1,6 @@
 @inject DBService DbService
 
-<EditForm Model="@ingredientName">
+<EditForm Model="@ingredientName" OnSubmit="@HandleDatabaseNameSubmit">
     <label class="form-label fw-bold">Ingredient Name</label>
     <InputText id="name" @bind-Value="ingredientName" class="form-control"/>
 
@@ -44,7 +44,18 @@
 
     private async Task HandleSubmit()
     {
+        ingredient.PrintIngredient();
         await DbService.UpdateDbIngredient(ingredient);
+    }
+
+    private async Task HandleDatabaseNameSubmit()
+    {
+        ingredient = await DbService.GetIngredientByName(ingredientName);
+        if (ingredient.GetId() == 0)
+        {
+            // Popup saying so.
+            Console.WriteLine("Ingredient not found.");
+        }
     }
 
     private async Task HandleImage(InputFileChangeEventArgs imageFile)

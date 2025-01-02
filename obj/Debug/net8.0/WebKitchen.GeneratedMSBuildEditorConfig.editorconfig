@@ -108,8 +108,12 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSYW5kb21NZWFsLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/RealTimeSearchBarElement/RealTimeSearchbar.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZWFsVGltZVNlYXJjaEJhckVsZW1lbnRcUmVhbFRpbWVTZWFyY2hiYXIucmF6b3I=
+[C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/RealTimeSearchBarElement/RealTimeIngredientSearchBar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZWFsVGltZVNlYXJjaEJhckVsZW1lbnRcUmVhbFRpbWVJbmdyZWRpZW50U2VhcmNoQmFyLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Pages/RealTimeSearchBarElement/RealTimeRecipeSearchBar.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZWFsVGltZVNlYXJjaEJhckVsZW1lbnRcUmVhbFRpbWVSZWNpcGVTZWFyY2hCYXIucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/A/Desktop/Coding/C\#/kitchen-app/Components/Routes.razor]

@@ -52,3 +52,7 @@ __OOP Definition__
 The programming diagram, of encapsulating data (variables) and defining the procedures/operations (methods) of what you 
 can do with said data (An object). The Gang of Four book definition of OOP that I quite like:
 Object-oriented programs are made up of objects. An object packages both data and the procedures that operate on that data.
+
+__Updating DB__
+When updating an element in the DB, do it ALWAYS by ID. Since the ID is the only TRUE unique thing about every element,
+to ensure proper udatage, we always do it by ID.

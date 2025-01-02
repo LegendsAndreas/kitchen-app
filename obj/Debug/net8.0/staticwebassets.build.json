@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "Xt1RMZwK8WVIIwDJGAm6TZUZBEy3CyLAXDoCYlRxH+g=",
+  "Hash": "IKLaXo5A6AWGwDQdqE8A+4iMb0OFbyjtXwzj1NfbEUU=",
   "Source": "WebKitchen",
   "BasePath": "_content/WebKitchen",
   "Mode": "Default",
@@ -143,6 +143,27 @@
       "OriginalItemSpec": "wwwroot\\bootstrap\\bootstrap.min.css.map"
     },
     {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\æblemos.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/æblemos#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "qda2ozsjt8",
+      "Integrity": "DqXOxkQMxnxnjnB9Slk57+qhrqQ8vVrI7Dm4nYzda+M=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\æblemos.webp"
+    },
+    {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\æg.jpg",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
@@ -183,6 +204,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\pics\\Amatriciana.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\americanKetchup.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/americanKetchup#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "4r1qadtxb0",
+      "Integrity": "oMYMEUBHPcnUk3jVG9UA3lTX8MQMNOQBlbxBOpaG4dg=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\americanKetchup.webp"
     },
     {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BackgroundImage.webp",
@@ -309,6 +351,48 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\pics\\blueberryblondies.webp"
+    },
+    {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BriocheBurgerBoller.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/BriocheBurgerBoller#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "jlwzp00vbu",
+      "Integrity": "xwhX6nK9uFkEPeBGuRZNG5FXsH49YVcbrf4Ix1qdm9k=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\BriocheBurgerBoller.webp"
+    },
+    {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\burgerdressing.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/burgerdressing#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "trx3isogn2",
+      "Integrity": "uY8WWYrmMwhg5EpI0P6bDjX/gIIgQ8l4uMth4oNeFDM=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\burgerdressing.webp"
     },
     {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\casein.jpg",
@@ -479,6 +563,27 @@
       "OriginalItemSpec": "wwwroot\\pics\\Havregryn.jpg"
     },
     {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\havregryn.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/havregryn#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "ci04jagwh1",
+      "Integrity": "lDbyFpvQuaxuZxZw/5rvMPdzTWYnryyBQJsvRQ//Tac=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\havregryn.webp"
+    },
+    {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\havremel.jpg",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
@@ -519,6 +624,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\pics\\JasminRis.webp"
+    },
+    {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\kaffeliquor.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/kaffeliquor#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "kmlvaxvgfq",
+      "Integrity": "PN3T9176jFIC5iIBZd82W09Y6PDEb6pVqga/3OFOOtw=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\kaffeliquor.webp"
     },
     {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\KikRemolade.webp",
@@ -603,6 +729,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\pics\\oile.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\østersovs.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/østersovs#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "x4t66uy465",
+      "Integrity": "/wgPrHRTxZ71hCVVib53Gumt14UD9S1A9yZf81d28CU=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\østersovs.webp"
     },
     {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\PassataDiPomodoro.webp",
@@ -857,6 +1004,27 @@
       "OriginalItemSpec": "wwwroot\\pics\\sød.jpg"
     },
     {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\sødmælk.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/sødmælk#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "qynhi9jra1",
+      "Integrity": "kpl2zyThCqZjp91Jjf/y890WBMC9nquuLR7e7aE3lmk=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\sødmælk.webp"
+    },
+    {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\spag.jpg",
       "SourceId": "WebKitchen",
       "SourceType": "Discovered",
@@ -918,6 +1086,27 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\pics\\Sukker.jpg"
+    },
+    {
+      "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\whiterussian.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/whiterussian#[.{fingerprint}]?.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "ljr58usc7r",
+      "Integrity": "sRrE9Vz+/PN+XzLKPnF35dwCYOGumrh+6XUJ6E/yb54=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\whiterussian.webp"
     },
     {
       "Identity": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",
@@ -1271,6 +1460,88 @@
       ]
     },
     {
+      "Route": "pics/æblemos.qda2ozsjt8.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\æblemos.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "81384"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"DqXOxkQMxnxnjnB9Slk57+qhrqQ8vVrI7Dm4nYzda+M=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 08:36:32 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "qda2ozsjt8"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/æblemos.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-DqXOxkQMxnxnjnB9Slk57+qhrqQ8vVrI7Dm4nYzda+M="
+        }
+      ]
+    },
+    {
+      "Route": "pics/æblemos.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\æblemos.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "81384"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"DqXOxkQMxnxnjnB9Slk57+qhrqQ8vVrI7Dm4nYzda+M=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 08:36:32 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-DqXOxkQMxnxnjnB9Slk57+qhrqQ8vVrI7Dm4nYzda+M="
+        }
+      ]
+    },
+    {
       "Route": "pics/æg.jpg",
       "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\æg.jpg",
       "Selectors": [],
@@ -1431,6 +1702,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-KFypY4/BDxGyPRTdCKGpkTyxB0qe9zo9N5cqYXdD59c="
+        }
+      ]
+    },
+    {
+      "Route": "pics/americanKetchup.4r1qadtxb0.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\americanKetchup.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "69374"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"oMYMEUBHPcnUk3jVG9UA3lTX8MQMNOQBlbxBOpaG4dg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 10:57:07 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "4r1qadtxb0"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/americanKetchup.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-oMYMEUBHPcnUk3jVG9UA3lTX8MQMNOQBlbxBOpaG4dg="
+        }
+      ]
+    },
+    {
+      "Route": "pics/americanKetchup.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\americanKetchup.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "69374"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"oMYMEUBHPcnUk3jVG9UA3lTX8MQMNOQBlbxBOpaG4dg=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 10:57:07 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-oMYMEUBHPcnUk3jVG9UA3lTX8MQMNOQBlbxBOpaG4dg="
         }
       ]
     },
@@ -1923,6 +2276,170 @@
         {
           "Name": "integrity",
           "Value": "sha256-NwrVhJ6YfM3JNbMl0bwYuDrXqdZ4XuCfhjeUoomKcys="
+        }
+      ]
+    },
+    {
+      "Route": "pics/BriocheBurgerBoller.jlwzp00vbu.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BriocheBurgerBoller.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "118336"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"xwhX6nK9uFkEPeBGuRZNG5FXsH49YVcbrf4Ix1qdm9k=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 07:18:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "jlwzp00vbu"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/BriocheBurgerBoller.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-xwhX6nK9uFkEPeBGuRZNG5FXsH49YVcbrf4Ix1qdm9k="
+        }
+      ]
+    },
+    {
+      "Route": "pics/BriocheBurgerBoller.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BriocheBurgerBoller.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "118336"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"xwhX6nK9uFkEPeBGuRZNG5FXsH49YVcbrf4Ix1qdm9k=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 07:18:57 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-xwhX6nK9uFkEPeBGuRZNG5FXsH49YVcbrf4Ix1qdm9k="
+        }
+      ]
+    },
+    {
+      "Route": "pics/burgerdressing.trx3isogn2.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\burgerdressing.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "83818"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"uY8WWYrmMwhg5EpI0P6bDjX/gIIgQ8l4uMth4oNeFDM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 10:57:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "trx3isogn2"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/burgerdressing.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-uY8WWYrmMwhg5EpI0P6bDjX/gIIgQ8l4uMth4oNeFDM="
+        }
+      ]
+    },
+    {
+      "Route": "pics/burgerdressing.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\burgerdressing.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "83818"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"uY8WWYrmMwhg5EpI0P6bDjX/gIIgQ8l4uMth4oNeFDM=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 10:57:21 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-uY8WWYrmMwhg5EpI0P6bDjX/gIIgQ8l4uMth4oNeFDM="
         }
       ]
     },
@@ -2546,6 +3063,51 @@
       ]
     },
     {
+      "Route": "pics/havregryn.ci04jagwh1.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\havregryn.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "169710"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"lDbyFpvQuaxuZxZw/5rvMPdzTWYnryyBQJsvRQ//Tac=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 07:16:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "ci04jagwh1"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/havregryn.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-lDbyFpvQuaxuZxZw/5rvMPdzTWYnryyBQJsvRQ//Tac="
+        }
+      ]
+    },
+    {
       "Route": "pics/Havregryn.jpg",
       "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Havregryn.jpg",
       "Selectors": [],
@@ -2579,6 +3141,43 @@
         {
           "Name": "integrity",
           "Value": "sha256-Kfz+PeMwG9iR6nYkan0kcOEqW3rkVG2Zk/cbx4bKPrg="
+        }
+      ]
+    },
+    {
+      "Route": "pics/havregryn.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\havregryn.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "169710"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"lDbyFpvQuaxuZxZw/5rvMPdzTWYnryyBQJsvRQ//Tac=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 07:16:58 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-lDbyFpvQuaxuZxZw/5rvMPdzTWYnryyBQJsvRQ//Tac="
         }
       ]
     },
@@ -2743,6 +3342,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-IyBUXyknSJPQJuqhR3Ne0rx4kYoV/DMuh8kSAMDQE4g="
+        }
+      ]
+    },
+    {
+      "Route": "pics/kaffeliquor.kmlvaxvgfq.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\kaffeliquor.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "157688"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"PN3T9176jFIC5iIBZd82W09Y6PDEb6pVqga/3OFOOtw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 07:18:26 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "kmlvaxvgfq"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/kaffeliquor.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-PN3T9176jFIC5iIBZd82W09Y6PDEb6pVqga/3OFOOtw="
+        }
+      ]
+    },
+    {
+      "Route": "pics/kaffeliquor.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\kaffeliquor.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "157688"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"PN3T9176jFIC5iIBZd82W09Y6PDEb6pVqga/3OFOOtw=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 07:18:26 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-PN3T9176jFIC5iIBZd82W09Y6PDEb6pVqga/3OFOOtw="
         }
       ]
     },
@@ -3071,6 +3752,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-ddq1jHDtYTcGdFmDNQtsZbcB2aLmOI0sPoGsVxXbV48="
+        }
+      ]
+    },
+    {
+      "Route": "pics/østersovs.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\østersovs.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "122084"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"/wgPrHRTxZ71hCVVib53Gumt14UD9S1A9yZf81d28CU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 07:18:44 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-/wgPrHRTxZ71hCVVib53Gumt14UD9S1A9yZf81d28CU="
+        }
+      ]
+    },
+    {
+      "Route": "pics/østersovs.x4t66uy465.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\østersovs.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "122084"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"/wgPrHRTxZ71hCVVib53Gumt14UD9S1A9yZf81d28CU=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 07:18:44 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "x4t66uy465"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/østersovs.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-/wgPrHRTxZ71hCVVib53Gumt14UD9S1A9yZf81d28CU="
         }
       ]
     },
@@ -4059,6 +4822,88 @@
       ]
     },
     {
+      "Route": "pics/sødmælk.qynhi9jra1.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\sødmælk.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "140014"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"kpl2zyThCqZjp91Jjf/y890WBMC9nquuLR7e7aE3lmk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 07:18:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "qynhi9jra1"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/sødmælk.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-kpl2zyThCqZjp91Jjf/y890WBMC9nquuLR7e7aE3lmk="
+        }
+      ]
+    },
+    {
+      "Route": "pics/sødmælk.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\sødmælk.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "140014"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"kpl2zyThCqZjp91Jjf/y890WBMC9nquuLR7e7aE3lmk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 07:18:03 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-kpl2zyThCqZjp91Jjf/y890WBMC9nquuLR7e7aE3lmk="
+        }
+      ]
+    },
+    {
       "Route": "pics/spag.jkwtj4y1v9.jpg",
       "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\spag.jpg",
       "Selectors": [],
@@ -4301,6 +5146,88 @@
         {
           "Name": "integrity",
           "Value": "sha256-9lAaiZPcCqnUPXtvsVLFXBA/59uz1E5RwQwkIsJlTgQ="
+        }
+      ]
+    },
+    {
+      "Route": "pics/whiterussian.ljr58usc7r.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\whiterussian.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "78992"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"sRrE9Vz+/PN+XzLKPnF35dwCYOGumrh+6XUJ6E/yb54=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 07:17:13 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "ljr58usc7r"
+        },
+        {
+          "Name": "label",
+          "Value": "pics/whiterussian.webp"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-sRrE9Vz+/PN+XzLKPnF35dwCYOGumrh+6XUJ6E/yb54="
+        }
+      ]
+    },
+    {
+      "Route": "pics/whiterussian.webp",
+      "AssetFile": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\whiterussian.webp",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "78992"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/webp"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"sRrE9Vz+/PN+XzLKPnF35dwCYOGumrh+6XUJ6E/yb54=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 02 Jan 2025 07:17:13 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-sRrE9Vz+/PN+XzLKPnF35dwCYOGumrh+6XUJ6E/yb54="
         }
       ]
     },

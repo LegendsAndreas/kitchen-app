@@ -57,6 +57,18 @@ UPDATE recipes
 SET image = 'TestImage2.jpeg'
 WHERE id = 2;
 
+/* SELECT statements */
+SELECT *
+FROM ingredients ORDER BY id;
+
+SELECT id, name, cals, fats, carbs, protein, image FROM ingredients ORDER BY id;
+
+SELECT COUNT(*)
+FROM recipes;
+
+SELECT *
+FROM recipes;
+
 SELECT *
 FROM recipes;
 
@@ -73,17 +85,15 @@ SELECT ingredients
 FROM recipes
 WHERE id = 2;
 
-SELECT unnest(ingredients) AS ingredient
-FROM recipes
-WHERE id = 2;
-
-WITH ingredients_cte AS (SELECT id, unnest(ingredients) AS ingredient
-                         FROM recipes
-                         WHERE id = 2)
-SELECT r.id, r.meal_type, r.name, r.image, i.ingredient, r.macros
-FROM recipes r
-         JOIN ingredients_cte i ON r.id = i.id
-WHERE r.id = 2;
+SELECT id,
+       name,
+       meal_type,
+       image,
+       (macros).total_protein,
+       (macros).total_fats,
+       (macros).total_carbs,
+       (macros).total_calories
+FROM recipes;
 
 SELECT id,
        meal_type,
@@ -97,6 +107,39 @@ SELECT id,
        ingredients[5] AS ingredient_5
 FROM recipes
 WHERE id = 2;
+
+SELECT unnest(ingredients) AS ingredient
+FROM recipes
+WHERE id = 2;
+
+WITH ingredients_cte AS (SELECT id, unnest(ingredients) AS ingredient
+                         FROM recipes
+                         WHERE id = 2)
+SELECT r.id, r.meal_type, r.name, r.image, i.ingredient, r.macros
+FROM recipes r
+         JOIN ingredients_cte i ON r.id = i.id
+WHERE r.id = 2;
+
+SELECT ingredient.name,
+       ingredient.grams,
+       ingredient.calories_pr_hectogram,
+       ingredient.carbs_pr_hectogram,
+       ingredient.protein_pr_hectogram,
+       ingredient.fats_pr_hectogram,
+       ingredient.multiplier
+FROM recipes,
+     unnest(ingredients) as ingredient
+WHERE recipes.id = 2;
+
+/* Update */
+UPDATE ingredients
+SET name    = 'test',
+    cals    = 444,
+    fats    = 444,
+    carbs   = 444,
+    protein = 444,
+    image   = 'fuck'
+WHERE id = 40;
 
 CREATE OR REPLACE FUNCTION get_recipe_with_dynamic_ingredients(recipe_id INT)
     RETURNS TABLE
@@ -142,16 +185,6 @@ DROP FUNCTION get_recipe_with_dynamic_ingredients;
 SELECT *
 FROM get_recipe_with_dynamic_ingredients(1);
 
-SELECT ingredient.name,
-       ingredient.grams,
-       ingredient.calories_pr_hectogram,
-       ingredient.carbs_pr_hectogram,
-       ingredient.protein_pr_hectogram,
-       ingredient.fats_pr_hectogram,
-       ingredient.multiplier
-FROM recipes,
-     unnest(ingredients) as ingredient
-WHERE recipes.id = 2;
 
 INSERT INTO recipes (meal_type, name, image, ingredients, macros)
 VALUES ('L',
@@ -182,13 +215,7 @@ UPDATE recipes
 SET macros = (4, 3, 2, 1)::recipe_macros
 WHERE id = 8;
 
-SELECT COUNT(*)
-FROM recipes;
-
 DELETE
-FROM recipes;
-
-SELECT *
 FROM recipes;
 
 ALTER SEQUENCE recipes_id_seq RESTART WITH 1;
@@ -197,16 +224,6 @@ SELECT sequence_name
 FROM information_schema.recipes
 WHERE table_name = 'recipes'
   AND column_name = 'id';
-
-SELECT id,
-       name,
-       meal_type,
-       image,
-       (macros).total_protein,
-       (macros).total_fats,
-       (macros).total_carbs,
-       (macros).total_calories
-FROM recipes;
 
 DELETE
 FROM recipes

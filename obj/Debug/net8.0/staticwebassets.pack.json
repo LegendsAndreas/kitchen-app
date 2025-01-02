@@ -41,6 +41,10 @@
       "PackagePath": "staticwebassets\\pics\\BeauvaisRødkål.webp"
     },
     {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BriocheBurgerBoller.webp",
+      "PackagePath": "staticwebassets\\pics\\BriocheBurgerBoller.webp"
+    },
+    {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\CheasyOst.webp",
       "PackagePath": "staticwebassets\\pics\\CheasyOst.webp"
     },
@@ -113,12 +117,20 @@
       "PackagePath": "staticwebassets\\pics\\Sukker.jpg"
     },
     {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\americanKetchup.webp",
+      "PackagePath": "staticwebassets\\pics\\americanKetchup.webp"
+    },
+    {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\blueberryblondies.webp",
       "PackagePath": "staticwebassets\\pics\\blueberryblondies.webp"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\blåbær.jpg",
       "PackagePath": "staticwebassets\\pics\\blåbær.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\burgerdressing.webp",
+      "PackagePath": "staticwebassets\\pics\\burgerdressing.webp"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\casein.jpg",
@@ -129,8 +141,16 @@
       "PackagePath": "staticwebassets\\pics\\engelsk.jpg"
     },
     {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\havregryn.webp",
+      "PackagePath": "staticwebassets\\pics\\havregryn.webp"
+    },
+    {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\havremel.jpg",
       "PackagePath": "staticwebassets\\pics\\havremel.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\kaffeliquor.webp",
+      "PackagePath": "staticwebassets\\pics\\kaffeliquor.webp"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\let.jpg",
@@ -165,8 +185,24 @@
       "PackagePath": "staticwebassets\\pics\\sød.jpg"
     },
     {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\sødmælk.webp",
+      "PackagePath": "staticwebassets\\pics\\sødmælk.webp"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\whiterussian.webp",
+      "PackagePath": "staticwebassets\\pics\\whiterussian.webp"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\æblemos.webp",
+      "PackagePath": "staticwebassets\\pics\\æblemos.webp"
+    },
+    {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\æg.jpg",
       "PackagePath": "staticwebassets\\pics\\æg.jpg"
+    },
+    {
+      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\østersovs.webp",
+      "PackagePath": "staticwebassets\\pics\\østersovs.webp"
     },
     {
       "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",

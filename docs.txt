@@ -105,3 +105,7 @@ Anyway, the solution was apparently to modify the build scope line to this: buil
 If you wrap your list of recipes in a class, it will not reset upon entering a new page.
 Apparently, a "plain object" like List<Recipes> does not have the "internal logic" to persist themselves across components.
 So, if you want something to persist across components, you gotta wrap that thang in a class for itself.
+
+-- WHERE id = 0.
+If no rows explicitly have an ID of `X`, the database effectively updates all rows since there is no matching criteria.
+So, if no valid WHERE statement is found, it will essentically treat it as if the WHERE statement does not exist in the query.

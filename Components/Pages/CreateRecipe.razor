@@ -1,9 +1,9 @@
 @page "/create-recipe"
 @rendermode InteractiveServer
+@using WebKitchen.Components.Pages.RealTimeSearchBarElement
 @inject DBService DbService;
-@inject Recipe CurrentRecipe;
-@inject Ingredient CurrentIngredient;
 @inject SharedIngredientList SharedIngredients;
+@inject SharedIngredient SharedDbIngredient
 @inject IJSRuntime JsRuntime;
 
 <PageTitle>Create Recipe</PageTitle>
@@ -14,7 +14,7 @@
 
 <div class="card center-content border-layout">
     <div class="card-body">
-        <EditForm Model="@CurrentRecipe" OnValidSubmit="OnValidRecipe">
+        <EditForm Model="@CurrentRecipe" OnValidSubmit="HandleRecipe">
             <DataAnnotationsValidator/>
 
             <div class="container text-center border-layout paddage">
@@ -29,17 +29,15 @@
                         <InputText id="name" @bind-Value="CurrentRecipe.Name"/>
                     </div>
 
-                    <div class="col">
-                        <label>Image:</label>
-                        <InputText id="image" @bind-Value="CurrentRecipe.Base64Image"/>
-                    </div>
+                    <label class="file-label" for="fileInput">Choose Image</label>
+                    <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
                     <button type="submit" class="btn btn-primary col">Create Recipe</button>
                 </div>
             </div>
 
         </EditForm>
 
-        <EditForm Model="@CurrentIngredient" OnValidSubmit="OnValidIngredient">
+        <EditForm Model="@CurrentIngredient" OnValidSubmit="HandleIngredient">
             <DataAnnotationsValidator/>
 
             <div class="container text-center border-layout paddage">
@@ -79,20 +77,16 @@
         </EditForm>
 
 
-        <EditForm Model="@currentDbIngredient" OnValidSubmit="OnValidDbIngredient">
+        <EditForm Model="@SharedDbIngredient.SelectedIngredient" OnValidSubmit="HandleDbIngredient">
             <DataAnnotationsValidator/>
             <div class="container text-center border-layout paddage">
                 <div class="row row-cols-1 row-cols-sd-2 row-cols-md-2 row-cols-lg-2 g-3">
 
-                    <div class="col">
-                        <label>Name</label>
-                        <InputText id="namer" @bind-Value="currentDbIngredient.Name"/>
-                    </div>
-
+                    <RealTimeIngredientSearchBar IngredientsData="@SharedIngredients.Ingredients"/>
 
                     <div class="col">
                         <label>Grams</label>
-                        <InputNumber id="gramser" @bind-Value="currentDbIngredient.Grams"/>
+                        <InputNumber id="gramser" @bind-Value="SharedDbIngredient.SelectedIngredient.Grams"/>
                     </div>
                     <button type="submit" class="btn btn-primary">Add Existing Database Ingredient</button>
                 </div>
@@ -161,8 +155,9 @@
 </script>
 
 @code {
+    private Ingredient CurrentIngredient = new();
+    private Recipe CurrentRecipe = new();
     readonly List<Ingredient> currentIngredients = new();
-    readonly Ingredient currentDbIngredient = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -192,7 +187,7 @@
             Console.WriteLine("Ingredients are full.");
     }
 
-    private async Task OnValidRecipe()
+    private async Task HandleRecipe()
     {
         if (currentIngredients.Count == 0)
         {
@@ -220,19 +215,56 @@
         CurrentIngredient.ClearIngredient();
         currentIngredients.Clear();
     }
-
-    public void OnValidIngredient()
+    
+    private async Task HandleImage(InputFileChangeEventArgs imageFile)
     {
-        Ingredient tempIngredient = CurrentIngredient.TransferIngredient(CurrentIngredient);
+        foreach (var image in imageFile.GetMultipleFiles())
+        {
+            if (!image.ContentType.Contains("image"))
+            {
+                Console.WriteLine($"\"{image.ContentType}\" is not allowed");
+                // Popup message saying so.
+                return;
+            }
+
+            try
+            {
+                await CurrentRecipe.SetRecipeImage(image);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error setting image: " + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+        }
+    }
+
+    public void HandleIngredient()
+    {
+        var tempIngredient = CurrentIngredient.TransferIngredient(CurrentIngredient);
         tempIngredient.PrintIngredient();
 
         currentIngredients.Add(tempIngredient);
         CurrentIngredient.ClearIngredient();
     }
 
-    public async Task OnValidDbIngredient()
+    public void HandleDbIngredient()
     {
-        foreach (var ingredient in SharedIngredients.Ingredients)
+        if (SharedDbIngredient.SelectedIngredient.Grams == 0)
+        {
+            Console.WriteLine("No grams specified.");
+            return;
+        }
+        
+        CurrentIngredient.Name = SharedDbIngredient.SelectedIngredient.Name;
+        CurrentIngredient.Grams = SharedDbIngredient.SelectedIngredient.Grams;
+        CurrentIngredient.CaloriesPer100g = SharedDbIngredient.SelectedIngredient.CaloriesPer100g;
+        CurrentIngredient.FatsPer100g = SharedDbIngredient.SelectedIngredient.FatsPer100g;
+        CurrentIngredient.CarbsPer100g = SharedDbIngredient.SelectedIngredient.CarbsPer100g;
+        CurrentIngredient.ProteinPer100g = SharedDbIngredient.SelectedIngredient.ProteinPer100g;
+        
+        HandleIngredient();
+        /*foreach (var ingredient in SharedIngredients.Ingredients)
         {
             if (currentDbIngredient.Name == ingredient.Name)
             {
@@ -243,7 +275,7 @@
                 CurrentIngredient.CarbsPer100g = ingredient.CarbsPer100g;
                 CurrentIngredient.ProteinPer100g = ingredient.ProteinPer100g;
 
-                OnValidIngredient();
+                HandleIngredient();
 
                 currentDbIngredient.ClearIngredient();
 
@@ -252,7 +284,7 @@
         }
 
         Console.WriteLine("Not a valid ingredient");
-        await JsRuntime.InvokeVoidAsync("showInvalidIngredientToast");
+        await JsRuntime.InvokeVoidAsync("showInvalidIngredientToast");*/
     }
 
 

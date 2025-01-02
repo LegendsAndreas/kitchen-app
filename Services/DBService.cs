@@ -36,7 +36,7 @@ public class DBService
     private async Task<List<Recipe>> GetDinnerRecipes()
     {
         Console.WriteLine("Getting dinner recipes...");
-        
+
         var base64PlaceHolderPic = await GetPlaceHolderPic();
         List<Recipe> recipes = [];
         var conn = await GetConnection();
@@ -139,7 +139,7 @@ public class DBService
     public async Task<List<Recipe>> GetRecipes()
     {
         Console.WriteLine("Getting recipes...");
-        
+
         var base64PlaceHolderPic = await GetPlaceHolderPic();
         List<Recipe> recipes = new();
         var conn = await GetConnection();
@@ -319,6 +319,45 @@ public class DBService
         return recipeId;
     }
 
+    public async Task<Ingredient> GetIngredientByName(string ingredientName)
+    {
+        var conn = await GetConnection();
+
+        const string query = "SELECT * FROM ingredients WHERE name = @name";
+        await using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@name", ingredientName);
+        var tempIngredient = new Ingredient();
+
+        try
+        {
+            await using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                var uintValue = unchecked((uint)reader.GetInt32(0));
+                tempIngredient.Name = reader.GetString(1);
+                tempIngredient.CaloriesPer100g = reader.GetFloat(2);
+                tempIngredient.FatsPer100g = reader.GetFloat(3);
+                tempIngredient.CarbsPer100g = reader.GetFloat(4);
+                tempIngredient.ProteinPer100g = reader.GetFloat(5);
+                tempIngredient.Base64Image = reader.GetString(6);
+                tempIngredient.SetId(uintValue);
+            }
+            else
+            {
+                Console.WriteLine("Ingredient not found.");
+                return tempIngredient;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting ingredient by name: " + ex.Message);
+            Console.WriteLine("Stacktrace: " + ex.StackTrace);
+            throw;
+        }
+
+        return tempIngredient;
+    }
+
     /// Asynchronously adds a recipe to the database by inserting its details, including meal type, name, image, macros, and ingredients.
     /// <param name="recipe">The recipe object containing all the required details to be added to the database.</param>
     /// <return>A task representing the asynchronous operation.</return>
@@ -393,7 +432,7 @@ public class DBService
     private async Task AddIngredientsToRow(List<Ingredient> ingredients)
     {
         Console.WriteLine("Adding ingredients to row...");
-        
+
         try
         {
             var conn = await GetConnection();
@@ -437,7 +476,7 @@ public class DBService
     public async Task AddIngredientToDb(Ingredient ingredient)
     {
         Console.WriteLine("Adding ingredient to database...");
-        
+
         try
         {
             var conn = await GetConnection();
@@ -469,7 +508,7 @@ public class DBService
     public async Task UpdateRecipeMealTypeByName(string type, string name)
     {
         Console.WriteLine("Updating recipe meal type by name...");
-        
+
         var conn = await GetConnection();
         const string query = "UPDATE recipes SET meal_type = @type WHERE name = @name";
         await using var cmd = new NpgsqlCommand(query, conn);
@@ -485,7 +524,7 @@ public class DBService
     public async Task UpdateRecipeImageByName(string recipeName, string base64Image)
     {
         Console.WriteLine("Updating recipe image by name...");
-        
+
         var conn = await GetConnection();
         const string query = "UPDATE recipes SET image = @base64_image WHERE name = @recipe_name";
         await using var cmd = new NpgsqlCommand(query, conn);
@@ -501,7 +540,7 @@ public class DBService
     public async Task UpdateRecipeNameByName(string currentName, string updatedName)
     {
         Console.WriteLine("Updating recipe name by name...");
-        
+
         var conn = await GetConnection();
         const string query = "UPDATE recipes SET name = @currentName WHERE name = @updatedName";
         await using var cmd = new NpgsqlCommand(query, conn);
@@ -517,7 +556,7 @@ public class DBService
     public async Task UpdateDbIngredientImageByName(string ingredientName, string base64Image)
     {
         Console.WriteLine("Updating database ingredient image by name...");
-        
+
         try
         {
             var conn = await GetConnection();
@@ -542,7 +581,7 @@ public class DBService
     private async Task UpdateTableIdsAsync(string tableName)
     {
         Console.WriteLine("Updating table IDs...");
-        
+
         try
         {
             var conn = await GetConnection();
@@ -565,6 +604,7 @@ public class DBService
             throw;
         }
     }
+
 
     /// Updates the details of an existing ingredient in the database.
     /// <param name="ingredient">The ingredient object containing updated values including name, calories, fats, carbohydrates, protein, and base64 image data.</param>
@@ -594,6 +634,14 @@ public class DBService
             cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
             cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
             cmd.Parameters.AddWithValue("@image", ingredient.Base64Image);
+            cmd.Parameters.AddWithValue("@id", ingredient.GetIntId());
+            
+            if (isIngredientIdZero(ingredient))
+            {
+                Console.WriteLine("Ingredient ID is zero. Not updating.");
+                return;
+            }
+            
             await RunAsyncQuery(cmd);
         }
         catch (Exception ex)
@@ -647,6 +695,14 @@ public class DBService
             await UpdateTableIdsAsync("ingredients");
 
         return statusMessage;
+    }
+
+    private bool isIngredientIdZero(Ingredient ingredient)
+    {
+        Console.WriteLine("Checking if ingredient ID is 0...");
+        if (ingredient.GetId() != 0) return false;
+        Console.WriteLine("Ingredient ID is 0");
+        return true;
     }
 
 
