@@ -67,7 +67,7 @@ SELECT COUNT(*)
 FROM recipes;
 
 SELECT *
-FROM recipes;
+FROM recipes ORDER BY id;
 
 SELECT *
 FROM recipes;
@@ -93,7 +93,7 @@ SELECT id,
        (macros).total_fats,
        (macros).total_carbs,
        (macros).total_calories
-FROM recipes;
+FROM recipes ORDER BY id;
 
 SELECT id,
        meal_type,

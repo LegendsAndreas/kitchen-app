@@ -1,6 +1,5 @@
-@using WebKitchen.Services;
+@using WebKitchen.Components.Pages.SharedComponents
 @inject IJSRuntime JsRuntime
-@inject Recipe CurrentRecipe;
 @inject DBService DbService;
 
 <style>
@@ -28,10 +27,10 @@
     }
 </style>
 
-<EditForm Model="@CurrentRecipe" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@recipeId" OnValidSubmit="@HandleValidSubmit">
     <div>
         <label class="form-label fw-bold">Recipe Name</label>
-        <InputText class="form-control" id="name" @bind-Value="recipeName"/>
+        <InputNumber class="form-control" id="name" @bind-Value="recipeId"/>
     </div>
 
     <label class="file-label" for="fileInput">Choose Image</label>
@@ -40,10 +39,10 @@
     <button class="btn btn-primary" type="submit">Update Image</button>
 </EditForm>
 
-@if (CurrentRecipe.Base64Image != "")
+@if (currentRecipe.Base64Image != "")
 {
     <p>Preview image</p>
-    <img src="data:image/png;base64,@CurrentRecipe.Base64Image" alt="Recipe Image" style="width: 75%;"/>
+    <img src="data:image/png;base64,@currentRecipe.Base64Image" alt="Recipe Image" style="width: 75%;"/>
 }
 
 @* No image select toaster *@
@@ -64,20 +63,24 @@
     }
 </script>
 
+<RecipeStatusToast @ref="Toast"></RecipeStatusToast>
+
 @code{
-    string recipeName = string.Empty;
+    int recipeId;
+    Recipe currentRecipe = new();
+    RecipeStatusToast? Toast;
 
     private async Task HandleValidSubmit()
     {
-        if (CurrentRecipe.Base64Image == "")
+        if (currentRecipe.Base64Image == "")
         {
             Console.WriteLine("No image selected");
             await JsRuntime.InvokeVoidAsync("showNoImageSelectedToast");
             return;
         }
         
-        await DbService.UpdateRecipeImageByName(recipeName, CurrentRecipe.Base64Image);
-        CurrentRecipe.ClearRecipe();
+        await DbService.UpdateRecipeImageByRecipeId(currentRecipe.Base64Image, currentRecipe.RecipeId);
+        currentRecipe.ClearRecipe();
     }
     
     private async Task HandleImage(InputFileChangeEventArgs imageFile)
@@ -93,7 +96,7 @@
 
             try
             {
-                await CurrentRecipe.SetRecipeImage(image);
+                await currentRecipe.SetRecipeImage(image);
             }
             catch (Exception ex)
             {

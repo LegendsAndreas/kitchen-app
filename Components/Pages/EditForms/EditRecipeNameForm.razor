@@ -1,0 +1,65 @@
+﻿@using WebKitchen.Components.Pages.SharedComponents;
+@inject DBService DbService;
+
+<EditForm Model="@recipeId" OnSubmit="@HandleGettingId">
+    <div>
+        <label class="form-label fw-bold">Current Recipe Name</label>
+        <InputNumber id="recipe-name" @bind-Value="recipeId" class="form-control"/>
+    </div>
+    <button type="submit" class="btn btn-primary"></button>
+</EditForm>
+
+@if (currentRecipe != null)
+{
+    <EditForm Model="@currentRecipe" OnSubmit="@HandleSubmit">
+        <label class="form-label fw-bold">Updated Recipe Name</label>
+        <InputText id="name" @bind-Value="currentRecipe.Name" class="form-control"/>
+        <button type="submit" class="btn btn-primary">Update Recipe Name</button>
+    </EditForm>
+}
+
+@* toaster *@
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="liveToast" class="toast header-padding border-layout" role="alert" aria-live="assertive" aria-atomic="true"
+         data-bs-delay="5000">
+        <div class="toast-body">
+            @sqlStatusMessage
+        </div>
+    </div>
+</div>
+
+<script>
+    function showRecipeToastStatus() {
+        const toastLiveExample = document.getElementById('liveToast');
+        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+        toastBootstrap.show();
+    }
+</script>
+
+<RecipeStatusToast @ref="Toast"></RecipeStatusToast>
+
+@code{
+    int recipeId;
+    string sqlStatusMessage = "<SQL Status Message>";
+    private RecipeStatusToast? Toast;
+    Recipe? currentRecipe;
+
+    private async Task HandleGettingId()
+    {
+        currentRecipe = await DbService.GetRecipeById(recipeId);
+    }
+    
+    private async Task HandleSubmit()
+    {
+        if (currentRecipe != null)
+        {
+            sqlStatusMessage = await DbService.UpdateRecipeNameByRecipeId(currentRecipe.Name, currentRecipe.RecipeId);
+
+            if (Toast != null)
+                await Toast.ShowToastAsync(sqlStatusMessage);
+            
+            currentRecipe = null;
+        }
+    }
+
+}

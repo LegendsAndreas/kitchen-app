@@ -30,7 +30,7 @@
                                  id="home-recipe-image" @onclick="() => NavigateToDetails(recipe)"/>
                         </a>
                         <div class="card-header">
-                            <h4>@recipe.Name</h4>
+                            <h4>@recipe.RecipeId. @recipe.Name</h4>
                         </div>
                         <div class="card-body border-primary">
                             <p class="card-text">
@@ -60,7 +60,7 @@
         {
             try
             {
-                var tempRecipes = await DbService.GetRecipes();
+                var tempRecipes = await DbService.GetAllRecipes();
                 SharedRecipes.Recipes = tempRecipes;
                 Console.WriteLine("Acquired Recipes.");
                 StateHasChanged();
@@ -82,6 +82,7 @@
     private void NavigateToDetails(Recipe recipe)
     {
         SharedDetailRecipe.SetSelectedRecipe(recipe);
+        SharedDetailRecipe.SelectedRecipe.PrintRecipe();
         navigationManager.NavigateTo("/recipe-details");
     }
 

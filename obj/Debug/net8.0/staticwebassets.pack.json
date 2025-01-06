@@ -1,216 +1,36 @@
 {
   "Files": [
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
-      "PackagePath": "staticwebassets\\WebKitchen.uxehs2lg69.bundle.scp.css"
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
+      "PackagePath": "staticwebassets\\WebKitchen.bundle.scp.css"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\app.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\app.css",
       "PackagePath": "staticwebassets\\app.css"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.bundle.min.js",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.bundle.min.js",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.bundle.min.js"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css.map",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Amatriciana.jpg",
-      "PackagePath": "staticwebassets\\pics\\Amatriciana.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BackgroundImage.webp",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\BackgroundImage.webp",
       "PackagePath": "staticwebassets\\pics\\BackgroundImage.webp"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisAppetitAgurker.webp",
-      "PackagePath": "staticwebassets\\pics\\BeauvaisAppetitAgurker.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisHerregårdsRødkål.jpg",
-      "PackagePath": "staticwebassets\\pics\\BeauvaisHerregårdsRødkål.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BeauvaisRødkål.webp",
-      "PackagePath": "staticwebassets\\pics\\BeauvaisRødkål.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\BriocheBurgerBoller.webp",
-      "PackagePath": "staticwebassets\\pics\\BriocheBurgerBoller.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\CheasyOst.webp",
-      "PackagePath": "staticwebassets\\pics\\CheasyOst.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\DatabaseDiagram.png",
-      "PackagePath": "staticwebassets\\pics\\DatabaseDiagram.png"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\FaviconPurpleScroll.png",
-      "PackagePath": "staticwebassets\\pics\\FaviconPurpleScroll.png"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\FiskeFilet.webp",
-      "PackagePath": "staticwebassets\\pics\\FiskeFilet.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Flæskesteg.webp",
-      "PackagePath": "staticwebassets\\pics\\Flæskesteg.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Havregryn.jpg",
-      "PackagePath": "staticwebassets\\pics\\Havregryn.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\JasminRis.webp",
-      "PackagePath": "staticwebassets\\pics\\JasminRis.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\KikRemolade.webp",
-      "PackagePath": "staticwebassets\\pics\\KikRemolade.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\MosedeKartofler.jpg",
-      "PackagePath": "staticwebassets\\pics\\MosedeKartofler.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\PassataDiPomodoro.webp",
-      "PackagePath": "staticwebassets\\pics\\PassataDiPomodoro.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Piskefløde.jpg",
-      "PackagePath": "staticwebassets\\pics\\Piskefløde.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\PlaceHolderPic.jpg",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\PlaceHolderPic.jpg",
       "PackagePath": "staticwebassets\\pics\\PlaceHolderPic.jpg"
     },
     {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\ProteinBrød.webp",
-      "PackagePath": "staticwebassets\\pics\\ProteinBrød.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\RugbrødMedFiskefilet.webp",
-      "PackagePath": "staticwebassets\\pics\\RugbrødMedFiskefilet.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\RøgetHamburgerryg.webp",
-      "PackagePath": "staticwebassets\\pics\\RøgetHamburgerryg.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\SalamiSpegePølse.webp",
-      "PackagePath": "staticwebassets\\pics\\SalamiSpegePølse.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Smør.jpg",
-      "PackagePath": "staticwebassets\\pics\\Smør.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\Sukker.jpg",
-      "PackagePath": "staticwebassets\\pics\\Sukker.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\americanKetchup.webp",
-      "PackagePath": "staticwebassets\\pics\\americanKetchup.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\blueberryblondies.webp",
-      "PackagePath": "staticwebassets\\pics\\blueberryblondies.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\blåbær.jpg",
-      "PackagePath": "staticwebassets\\pics\\blåbær.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\burgerdressing.webp",
-      "PackagePath": "staticwebassets\\pics\\burgerdressing.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\casein.jpg",
-      "PackagePath": "staticwebassets\\pics\\casein.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\engelsk.jpg",
-      "PackagePath": "staticwebassets\\pics\\engelsk.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\havregryn.webp",
-      "PackagePath": "staticwebassets\\pics\\havregryn.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\havremel.jpg",
-      "PackagePath": "staticwebassets\\pics\\havremel.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\kaffeliquor.webp",
-      "PackagePath": "staticwebassets\\pics\\kaffeliquor.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\let.jpg",
-      "PackagePath": "staticwebassets\\pics\\let.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\oile.jpg",
-      "PackagePath": "staticwebassets\\pics\\oile.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\penut.jpg",
-      "PackagePath": "staticwebassets\\pics\\penut.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\skum.jpg",
-      "PackagePath": "staticwebassets\\pics\\skum.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\skyneutral.jpg",
-      "PackagePath": "staticwebassets\\pics\\skyneutral.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\spag.jpg",
-      "PackagePath": "staticwebassets\\pics\\spag.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\spaghettibolognese.webp",
-      "PackagePath": "staticwebassets\\pics\\spaghettibolognese.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\sød.jpg",
-      "PackagePath": "staticwebassets\\pics\\sød.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\sødmælk.webp",
-      "PackagePath": "staticwebassets\\pics\\sødmælk.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\whiterussian.webp",
-      "PackagePath": "staticwebassets\\pics\\whiterussian.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\æblemos.webp",
-      "PackagePath": "staticwebassets\\pics\\æblemos.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\æg.jpg",
-      "PackagePath": "staticwebassets\\pics\\æg.jpg"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\pics\\østersovs.webp",
-      "PackagePath": "staticwebassets\\pics\\østersovs.webp"
-    },
-    {
-      "Id": "C:\\Users\\A\\Desktop\\Coding\\C#\\kitchen-app\\wwwroot\\styles.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\styles.css",
       "PackagePath": "staticwebassets\\styles.css"
-    },
-    {
-      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WebKitchen.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",
-      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssetEndpoints.props"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.WebKitchen.Microsoft.AspNetCore.StaticWebAssets.props",

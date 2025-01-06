@@ -1,5 +1,6 @@
 @page "/recipe-details"
 @rendermode InteractiveServer
+@inject DBService DbService
 @inject SharedRecipe SharedDetailedRecipe
 <PageTitle>Recipe Details</PageTitle>
 
@@ -17,48 +18,12 @@
                 <div id="recipe-ingredients">
                     <h4>Ingredients</h4>
                     <ul class="food-list">
-                        <li>
-                            <span class="label">Tomat Puré&nbsp;</span>
-                            <span class="dots"></span>
-                            <span class="value">&nbsp;200g</span>
-                        </li>
-                        <li>
-                            <span class="label">Spaghetti&nbsp;</span>
-                            <span class="dots"></span>
-                            <span class="value">&nbsp;100g</span>
-                        </li>
-                        <li>
-                            <span class="label">Løg&nbsp;</span>
-                            <span class="dots"></span>
-                            <span class="value">&nbsp;50g</span>
-                        </li>
-                        <li>
-                            <span class="label">Bacon&nbsp;</span>
-                            <span class="dots"></span>
-                            <span class="value">&nbsp;50g</span>
-                        </li>
-                        <li>
-                            <span class="label">Percorino&nbsp;</span>
-                            <span class="dots"></span>
-                            <span class="value">&nbsp;25g</span>
-                        </li>
-                        <li>
-                            <span class="label">Oregano&nbsp;</span>
-                            <span class="dots"></span>
-                            <span class="value">&nbsp;5g</span>
-                        </li>
-                        <li>
-                            <span class="label">Garlic&nbsp;</span>
-                            <span class="dots"></span>
-                            <span class="value">&nbsp;6g</span>
-                        </li>
-
                         @foreach (var ingredient in sharedRecipe.Ingredients)
                         {
                             <li>
                                 <span class="label">@ingredient.Name&nbsp;</span>
                                 <span class="dots"></span>
-                                <span class="value">&nbsp;@ingredient.Grams g</span>
+                                <span class="value">&nbsp;@ingredient.Grams.ToString(".00")g</span>
                             </li>
                         }
                     </ul>
@@ -70,22 +35,22 @@
                         <li>
                             <span class="label">Protein&nbsp;</span>
                             <span class="dots"></span>
-                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Protein g</span>
+                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Protein.ToString(".00")g</span>
                         </li>
                         <li>
                             <span class="label">Fat&nbsp;</span>
                             <span class="dots"></span>
-                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Fat g</span>
+                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Fat.ToString(".00")g</span>
                         </li>
                         <li>
                             <span class="label">Carbs&nbsp;</span>
                             <span class="dots"></span>
-                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Carbs g</span>
+                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Carbs.ToString(".00")g</span>
                         </li>
                         <li>
                             <span class="label">Calories&nbsp;</span>
                             <span class="dots"></span>
-                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Calories g</span>
+                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Calories.ToString(".00")g</span>
                         </li>
                     </ul>
                 </div>
@@ -97,9 +62,16 @@
 
                 <div id="recipe-instructions">
                     <ol>
-                        @foreach (var instruction in instructions)
+                        @if (recipeInstructionRecord.Instructions.Steps.Count>0)
                         {
-                            <li>@instruction</li>
+                            @foreach (var instruction in recipeInstructionRecord.Instructions.Steps)
+                            {
+                                <li>@instruction</li>
+                            }
+                        }
+                        else
+                        { 
+                            <p>No instructions added</p>
                         }
                     </ol>
 
@@ -108,12 +80,18 @@
                 <div id="recipe-notes">
                     <h5>Notes</h5>
                     <ul>
-                        @foreach (var note in notes)
+                        @if (recipeInstructionRecord.Instructions.Notes.Count == 0)
                         {
-                            <li>@note</li>
+                            <p>No notes added</p>
+                        }
+                        else
+                        {
+                            foreach (var note in recipeInstructionRecord.Instructions.Notes)
+                            {
+                                <li>@note</li>
+                            }
                         }
                     </ul>
-
                 </div>
             </div>
         </div>
@@ -122,31 +100,20 @@
 
 @code {
     Recipe sharedRecipe = new();
-    List<string> instructions = new();
-    List<string> notes = new();
+    RecipeInstructionRecord recipeInstructionRecord = new();
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        sharedRecipe = SharedDetailedRecipe.SelectedRecipe;
-        GetInstructions();
-        GetNotes();
-    }
+        if (SharedDetailedRecipe?.SelectedRecipe != null)
+        {
+            sharedRecipe = SharedDetailedRecipe.SelectedRecipe;
 
-    private void GetInstructions()
-    {
-        instructions.Add("Firstly...");
-        instructions.Add("Secondly...");
-        instructions.Add("Thirdly...");
-        instructions.Add("Fourthly...");
-        instructions.Add("Fifthly...");
-        instructions.Add("Sixthly...");
-    }
-
-    private void GetNotes()
-    {
-        notes.Add("By the way...");
-        notes.Add("Also...");
-        notes.Add("Remember to...");
+            // Ensure sharedRecipe.RecipeId is valid before fetching instructions
+            if (sharedRecipe.RecipeId > 0)
+            {
+                recipeInstructionRecord = await DbService.GetRecipeInstructionByRecipeId(sharedRecipe.RecipeId);
+            }
+        }
     }
 
 }

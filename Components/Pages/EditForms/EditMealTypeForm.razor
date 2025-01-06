@@ -1,26 +1,56 @@
-﻿@inject Recipe CurrentRecipe;
+﻿@using WebKitchen.Components.Pages.SharedComponents;
 @inject DBService DbService;
+@inject IJSRuntime JsRuntime;
 
-<EditForm Model="@CurrentRecipe" OnValidSubmit="@HandleValidSubmit">
+<EditForm Model="@recipeId" OnSubmit="@HandleGettingRecipe">
     <div>
-        <label class="form-label fw-bold">Recipe Name</label>
-        <InputText id="name" @bind-Value="CurrentRecipe.Name" class="form-control"/>
+        <label class="form-label fw-bold">Recipe Id</label>
+        <InputNumber id="recipeId" @bind-Value="recipeId" class="form-control"/>
     </div>
-
-    <div>
-        <label class="form-label fw-bold">Updated Meal Type</label>
-        <InputText id="type" @bind-Value="CurrentRecipe.MealType" class="form-control" maxlength="1"/>
-        @* Since the meal type is only a single, we can limit it to just 1 character. *@
-    </div>
-    <button type="submit" class="btn btn-primary">Update</button>
+    <button type="submit" class="btn btn-primary">Get Recipe</button>
 </EditForm>
+
+
+@if (currentRecipe != null)
+{
+    <EditForm Model="@currentRecipe" OnSubmit="@HandleSubmit">
+        <label class="form-label fw-bold">Updated Meal Type</label>
+        <InputText id="mealType" @bind-Value="currentRecipe.MealType" class="form-control"/>
+        <button type="submit" class="btn btn-primary">Update Meal Type</button>
+    </EditForm>
+
+    <PreviewRecipe currentRecipeData="@currentRecipe"/>
+}
+
+<RecipeStatusToast @ref="Toast"></RecipeStatusToast>
 
 @code{
 
-    private async Task HandleValidSubmit()
+    int recipeId = 0;
+    string sqlStatusMessage = "<SQL Status Message>";
+    private RecipeStatusToast? Toast;
+    Recipe? currentRecipe;
+
+    private async Task HandleGettingRecipe()
     {
-        await DbService.UpdateRecipeMealTypeByName(CurrentRecipe.MealType, CurrentRecipe.Name);
-        CurrentRecipe.ClearRecipe();
+        Console.WriteLine("Handling submit...");
+        currentRecipe = await DbService.GetRecipeById(recipeId);
     }
+
+    private async Task HandleSubmit()
+    {
+        Console.WriteLine("Handling submit...");
+        if (currentRecipe != null)
+        {
+            Console.WriteLine("Current recipe not null.");
+            sqlStatusMessage = await DbService.UpdateRecipeMealTypeRecipeId(currentRecipe.MealType, currentRecipe.RecipeId);
+
+            if (Toast != null)
+                await Toast.ShowToastAsync(sqlStatusMessage);
+            
+            currentRecipe = null;
+        }
+    }
+
 
 }

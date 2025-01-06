@@ -6,10 +6,11 @@ public class RecipeInstructionRecord
 {
     private int Id { get; set; }
 
+    private int RecipeId { get; set; }
+
     [JsonPropertyName("instructions")]
     public RecipeInstructions Instructions { get; set; } = new(); // Deserialized JSON data
 
-    private int RecipeId { get; set; }
 
     public void SetId(int id) => Id = id;
     public void SetRecipeId(int recipeId) => RecipeId = recipeId;

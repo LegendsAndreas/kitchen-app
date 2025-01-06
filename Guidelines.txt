@@ -18,6 +18,14 @@ When a function is called, there has to be a console message that says that it i
 Example: GetRecipeById(), has to have the console message at the start: Console.Writeline("Getting recipe by id...").
 The only time, where this is not the case, is when you are calling a function whose job is to print in the console anyway.
 
+Be specific in how you call something.
+For example, don't call a function "GetIngredientsById", rather call it "GetIngredientsByRecipeId". This helps to reduce
+confusion on what type of ID we are using to get something.
+
+The order of parameters should, when it comes to what should be changed and by how it should be changed, should be the 
+parameter that is changing something and then the parameters that is going by how something should be changed.
+Example: UpdateRecipeNameByRecipeId(string updatedName, int recipeId).
+
 __Exception guide__
 Exceptions are called "ex". In a try-catch clause, the error message has to display the message, along with a user defined 
 message that says what action went wrong, along with the stacktrace.

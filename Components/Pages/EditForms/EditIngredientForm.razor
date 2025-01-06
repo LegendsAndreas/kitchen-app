@@ -1,0 +1,26 @@
+@using WebKitchen.Components.Pages.SharedComponents
+@inject DBService DbService
+
+<EditForm Model="@recipeId">
+    <label class="form-label fw-bold">Recipe Id</label>
+    <InputNumber id="name" @bind-Value="recipeId" class="form-control"/>
+
+    <button type="submit" class="btn btn-primary" @onclick="HandleSubmit">Get Recipe</button>
+</EditForm>
+
+@if (currentRecipe != null)
+{
+    <PreviewRecipe currentRecipeData="@currentRecipe"/>
+}
+
+@code{
+
+    int recipeId;
+    Recipe? currentRecipe;
+
+    private async Task HandleSubmit()
+    {
+        currentRecipe = await DbService.GetRecipeById(recipeId);
+    }
+
+}

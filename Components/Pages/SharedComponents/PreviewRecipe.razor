@@ -1,0 +1,21 @@
+﻿<h3>Selected Recipe</h3>
+<div class="col" style="padding: 10px">
+    <div class="card h-100 border-layout">
+        <img src="data:image/png;base64,@currentRecipeData.Base64Image" alt="ops..." class="card-img"/>
+        <div class="card-header">
+            <h4>@currentRecipeData.RecipeId. @currentRecipeData.Name</h4>
+        </div>
+        <div class="card-body border-primary">
+            <p class="card-text">
+                - Calories: @currentRecipeData.TotalMacros.Calories.ToString("0") <br>
+                - Carbs: @currentRecipeData.TotalMacros.Carbs.ToString("0") <br>
+                - Fats: @currentRecipeData.TotalMacros.Fat.ToString("0") <br>
+                - Protein: @currentRecipeData.TotalMacros.Protein.ToString("0")
+            </p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Recipe currentRecipeData { get; set; } = new();
+}
