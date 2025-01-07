@@ -80,7 +80,7 @@ public class DBService
             return null;
         }
 
-        var recipe = new Recipe();
+        Recipe recipe;
 
         const string query = "SELECT id, name, image, meal_type," +
                              "(macros).total_calories," +
@@ -700,7 +700,7 @@ public class DBService
             Console.WriteLine("Recipe id is below 1.");
             return "Recipe image did not get updated; recipe ID is less than 1.";
         }
-        
+
         var statusMessage = "Recipe image got updated.";
         const string query = "UPDATE recipes SET image = @base64_image WHERE id = @recipe_id";
 
@@ -711,7 +711,7 @@ public class DBService
             cmd.Parameters.AddWithValue("@base64_image", base64Image);
             cmd.Parameters.AddWithValue("@recipe_id", recipeId);
             var result = await RunAsyncQuery(cmd);
-            
+
             if (result == 0)
             {
                 Console.WriteLine("Recipe ID is not found in database.");
@@ -724,7 +724,7 @@ public class DBService
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             throw;
         }
-        
+
         return statusMessage;
     }
 
@@ -800,22 +800,22 @@ public class DBService
     /// <param name="tableName">The name of the database table whose ID sequence will be updated.</param>
     /// <return>An asynchronous task representing the operation. Does not return a value.</return>
     /// <remarks>You HAVE to use this when you delete an element in a table, to make sure the the IDs stay correct.</remarks>
-    private async Task UpdateTableIdsAsync(string tableName)
+    private async Task UpdateTableIds(string tableName)
     {
         Console.WriteLine("Updating table IDs...");
 
+        var query = $"CREATE TEMP TABLE temp_{tableName} AS" +
+                    "SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id" +
+                    $"FROM {tableName};" +
+                    $"UPDATE {tableName}" +
+                    $"SET id = temp_{tableName}.new_id" +
+                    $"FROM temp_{tableName}" +
+                    $"WHERE {tableName}.id = temp_{tableName}.id;" +
+                    $"SELECT setval('{tableName}_id_seq', (SELECT MAX(id) FROM {tableName}));" +
+                    $"DROP TABLE temp_{tableName};";
         try
         {
             var conn = await GetConnection();
-            string query = $"CREATE TEMP TABLE temp_{tableName} AS" +
-                           "SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id" +
-                           $"FROM {tableName};" +
-                           $"UPDATE {tableName}" +
-                           $"SET id = temp_{tableName}.new_id" +
-                           $"FROM temp_{tableName}" +
-                           $"WHERE {tableName}.id = temp_{tableName}.id;" +
-                           $"SELECT setval('{tableName}_id_seq', (SELECT MAX(id) FROM {tableName}));" +
-                           $"DROP TABLE temp_{tableName};";
             await using var cmd = new NpgsqlCommand(query, conn);
             await RunAsyncQuery(cmd);
         }
@@ -891,7 +891,7 @@ public class DBService
         if (result < 1)
             statusMessage = $"Ingredient {name} was not found.";
         else
-            await UpdateTableIdsAsync("ingredients");
+            await UpdateTableIds("ingredients");
 
         return statusMessage;
     }
@@ -899,22 +899,29 @@ public class DBService
     /// Asynchronously deletes a recipe by its name from the database.
     /// <param name="recipeName">The name of the recipe to delete.</param>
     /// <return>A string indicating the status of the deletion operation, such as success or not found.</return>
-    public async Task<string> DeleteRecipeByName(string recipeName)
+    public async Task<string> DeleteRecipeById(int recipeId)
     {
         Console.WriteLine("Deleting recipe by name...");
-        string statusMessage = $"Ingredient {recipeName} has been deleted.";
+
+        if (recipeId < 1)
+        {
+            Console.WriteLine("Recipe ID is less than 1.");
+            return "Recipe was not deleted; recipe ID is less than 1.";
+        }
+
+        var statusMessage = $"Ingredient {recipeId} has been deleted.";
 
         var conn = await GetConnection();
 
-        const string query = "DELETE FROM ingredients WHERE name = @recipe_name";
+        const string query = "DELETE FROM ingredients WHERE id = @recipe_id";
         await using var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("@recipe_name", recipeName);
+        cmd.Parameters.AddWithValue("@recipe_id", recipeId);
 
-        int result = await RunAsyncQuery(cmd);
+        var result = await RunAsyncQuery(cmd);
         if (result < 1)
-            statusMessage = $"Recipe {recipeName} was not found.";
+            statusMessage = $"Recipe {recipeId} was not found.";
         else
-            await UpdateTableIdsAsync("ingredients");
+            await UpdateTableIds("ingredients");
 
         return statusMessage;
     }

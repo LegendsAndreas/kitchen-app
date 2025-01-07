@@ -1,13 +1,20 @@
+@using WebKitchen.Components.Pages.SharedComponents;
 @inject DBService DbService;
 @inject IJSRuntime JSRuntime
 
-<EditForm Model="@recipeName" OnSubmit="@HandleSubmit">
-    <div>
-        <label class="form-label fw-bold">Recipe to Delete</label>
-        <InputText id="name" @bind-Value="recipeName" class="form-control"/>
-    </div>
-    <button class="btn btn-primary" type="submit">Delete</button>
+<EditForm Model="@recipeId" OnSubmit="@HandleGettingRecipe">
+    <label class="form-label fw-bold">Recipe ID to delete</label>
+    <InputNumber id="name" @bind-Value="recipeId" class="form-control"/>
+    <button class="btn btn-primary" type="submit">Get Recipe</button>
 </EditForm>
+
+@if (currentRecipe != null)
+{
+    <PreviewRecipe CurrentPreviewRecipe="@currentRecipe"/>
+    <button class="btn btn-danger" @onclick="HandleSubmit">Delete Recipe</button>
+}
+
+<RecipeStatusToast @ref="RecipeStatusToaster"/>
 
 <!-- Are you sure modal -->
 <div class="modal fade" id="are-you-sure" tabindex="-1" aria-labelledby="areYouSure" aria-hidden="true">
@@ -15,8 +22,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="areYouSure">Confirmation</h5>
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="confirmAction(true)">Yes</button>
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="confirmAction(false)">No</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="confirmAction(true)">
+                    Yes
+                </button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="confirmAction(false)">No
+                </button>
             </div>
         </div>
     </div>
@@ -46,19 +56,28 @@
 
 @code {
 
-    string recipeName = string.Empty;
+    int recipeId;
+    Recipe? currentRecipe;
+    RecipeStatusToast? RecipeStatusToaster;
+
+    private async Task HandleGettingRecipe()
+    {
+        currentRecipe = await DbService.GetRecipeById(recipeId);
+    }
 
     private async Task HandleSubmit()
     {
         Console.WriteLine("Handling submit delete recipe...");
-        
+
         if (await AreYouSure())
         {
-            var statusMessage = await DbService.DeleteRecipeByName(recipeName);
+            var statusMessage = await DbService.DeleteRecipeById(recipeId);
+            if (RecipeStatusToaster != null)
+                await RecipeStatusToaster.ShowToastAsync(statusMessage);
+            
             Console.WriteLine(statusMessage);
         }
 
-        recipeName = string.Empty;
         StateHasChanged();
     }
 

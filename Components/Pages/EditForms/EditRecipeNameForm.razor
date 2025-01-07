@@ -2,11 +2,9 @@
 @inject DBService DbService;
 
 <EditForm Model="@recipeId" OnSubmit="@HandleGettingId">
-    <div>
-        <label class="form-label fw-bold">Current Recipe Name</label>
+        <label class="form-label fw-bold">Recipe ID</label>
         <InputNumber id="recipe-name" @bind-Value="recipeId" class="form-control"/>
-    </div>
-    <button type="submit" class="btn btn-primary"></button>
+    <button type="submit" class="btn btn-primary">Get Recipe</button>
 </EditForm>
 
 @if (currentRecipe != null)
@@ -16,7 +14,12 @@
         <InputText id="name" @bind-Value="currentRecipe.Name" class="form-control"/>
         <button type="submit" class="btn btn-primary">Update Recipe Name</button>
     </EditForm>
+    
+    <p>Preview</p>
+    <PreviewRecipe CurrentPreviewRecipe="@currentRecipe"/>
 }
+
+<RecipeStatusToast @ref="Toast"></RecipeStatusToast>
 
 @* toaster *@
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -36,7 +39,6 @@
     }
 </script>
 
-<RecipeStatusToast @ref="Toast"></RecipeStatusToast>
 
 @code{
     int recipeId;

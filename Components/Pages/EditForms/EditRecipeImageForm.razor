@@ -6,7 +6,7 @@
     .hidden-file-input {
         display: none;
     }
-    
+
     .file-label {
         padding: 0.5em 1em;
         border-radius: 4px;
@@ -14,75 +14,63 @@
         color: white;
         cursor: pointer;
     }
-
-    .toast-form {
-        background-color: #272B2F;
-        padding: 25px;
-        border-radius: 10px;
-        border: 3px solid #48d7ff;
-        color: #48d7ff;
-        font-family: "Calibri Light", sans-serif;
-        font-style: italic;
-        font-weight: bold;
-    }
 </style>
 
-<EditForm Model="@recipeId" OnValidSubmit="@HandleValidSubmit">
-    <div>
-        <label class="form-label fw-bold">Recipe Name</label>
-        <InputNumber class="form-control" id="name" @bind-Value="recipeId"/>
-    </div>
+<EditForm Model="@recipeId" OnSubmit="@HandleGettingRecipe">
+    <label class="form-label fw-bold">Recipe ID</label>
+    <InputNumber class="form-control" id="name" @bind-Value="recipeId"/>
+    <button class="btn btn-primary" type="submit">Get Recipe</button>
+</EditForm>
 
+<EditForm Model="@Base64Image" OnSubmit="@HandleSubmit">
     <label class="file-label" for="fileInput">Choose Image</label>
     <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
-    
     <button class="btn btn-primary" type="submit">Update Image</button>
 </EditForm>
 
-@if (currentRecipe.Base64Image != "")
+@if (Base64Image != "")
 {
     <p>Preview image</p>
-    <img src="data:image/png;base64,@currentRecipe.Base64Image" alt="Recipe Image" style="width: 75%;"/>
+    <img src="data:image/png;base64,@Base64Image" alt="Recipe Image" style="width: 75%;"/>
 }
 
-@* No image select toaster *@
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="no-image-toast" class="toast toast-form" role="alert" aria-live="assertive" aria-atomic="true"
-         data-bs-delay="4000">
-        <div>
-            No image selected.
-        </div>
-    </div>
-</div>
+@if (currentRecipe != null)
+{
+    <PreviewRecipe CurrentPreviewRecipe="@currentRecipe"/>
+}
 
-<script>
-    function showNoImageSelectedToast() {
-        const toastLiveExample = document.getElementById('no-image-toast');
-        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-        toastBootstrap.show();
-    }
-</script>
-
-<RecipeStatusToast @ref="Toast"></RecipeStatusToast>
+<NoImageSelectedToast @ref="NoImageToaster"/>
+<RecipeStatusToast @ref="RecipeStatusToaster"/>
 
 @code{
     int recipeId;
-    Recipe currentRecipe = new();
-    RecipeStatusToast? Toast;
+    string Base64Image = "";
+    Recipe? currentRecipe;
+    RecipeStatusToast? RecipeStatusToaster;
+    NoImageSelectedToast? NoImageToaster;
 
-    private async Task HandleValidSubmit()
+    private async Task HandleGettingRecipe()
     {
-        if (currentRecipe.Base64Image == "")
+        currentRecipe = await DbService.GetRecipeById(recipeId);
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Base64Image == "")
         {
             Console.WriteLine("No image selected");
-            await JsRuntime.InvokeVoidAsync("showNoImageSelectedToast");
+            if (NoImageToaster != null) 
+                await NoImageToaster.ShowToast();
             return;
         }
-        
-        await DbService.UpdateRecipeImageByRecipeId(currentRecipe.Base64Image, currentRecipe.RecipeId);
-        currentRecipe.ClearRecipe();
+
+        if (currentRecipe != null)
+        {
+            await DbService.UpdateRecipeImageByRecipeId(currentRecipe.Base64Image, currentRecipe.RecipeId);
+            currentRecipe.ClearRecipe();
+        }
     }
-    
+
     private async Task HandleImage(InputFileChangeEventArgs imageFile)
     {
         foreach (var image in imageFile.GetMultipleFiles())
@@ -96,11 +84,13 @@
 
             try
             {
-                await currentRecipe.SetRecipeImage(image);
+                var tempRecipe = new Recipe();
+                await tempRecipe.SetRecipeImage(image);
+                Base64Image = tempRecipe.Base64Image;
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error setting image: "+ex.Message);
+                Console.WriteLine("Error setting image: " + ex.Message);
                 Console.WriteLine(ex.StackTrace);
             }
         }
