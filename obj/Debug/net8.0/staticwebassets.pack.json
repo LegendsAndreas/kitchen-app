@@ -25,6 +25,14 @@
       "PackagePath": "staticwebassets\\pics\\BackgroundImage.webp"
     },
     {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\ClassDiagram.png",
+      "PackagePath": "staticwebassets\\pics\\ClassDiagram.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\DatabaseDiagram.png",
+      "PackagePath": "staticwebassets\\pics\\DatabaseDiagram.png"
+    },
+    {
       "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\PlaceHolderPic.jpg",
       "PackagePath": "staticwebassets\\pics\\PlaceHolderPic.jpg"
     },

@@ -1,4 +1,6 @@
+@rendermode InteractiveServer
 @inject DBService DbService
+@inject SharedRecipe sharedRecipe
 
 <div class="row mb-3">
     <div class="col">
@@ -15,7 +17,8 @@
                     @foreach (var recipe in filteredRecipes)
                     {
                         <li>
-                            <button class="dropdown-item" type="button" @onclick="PrintItem">@recipe.Name</button>
+                            <a class="dropdown-item"
+                               onclick="@(() => HandleRecipeItem(recipe))">@recipe.Name</a>
                         </li>
                     }
                 }
@@ -63,9 +66,12 @@
         StateHasChanged();
     }
 
-    private void PrintItem()
+    private void HandleRecipeItem(Recipe recipe)
     {
-        Console.WriteLine("Item clicked");
+        Console.WriteLine("handling ingredient item...");
+        sharedRecipe.SelectedRecipe = recipe;
+        sharedRecipe.SelectedRecipe.PrintRecipe();
+        StateHasChanged();
     }
 
 }

@@ -2,7 +2,7 @@
 @rendermode InteractiveServer
 @using WebKitchen.Components.Pages.RealTimeSearchBarElement
 @inject DBService DbService;
-@inject SharedIngredientList SharedIngredients;
+@inject SharedIngredientList GlobalIngredients;
 @inject SharedIngredient SharedDbIngredient
 @inject IJSRuntime JsRuntime;
 
@@ -11,6 +11,12 @@
 <h1 class="toast-header header-padding font-layout border-layout" id="create-recipe-header">
     Create a new recipe!
 </h1>
+
+@* !!!PROBLEM!!!
+Since we are using child components (PreviewRecipe and RealTimeIngredientSearchBar), when we StateHasChanged()
+in the child components, the parent component (CreateRecipe) does not get the memo. Therefore, we have to find a way to tell the parent
+StateHasChanged(). Right now, we just have this button as a temporary solution. *@
+<button type="button" class="btn btn-primary" @onclick="UpdatePage">Update Page Real Quick</button>
 
 <div class="card center-content border-layout">
     <div class="card-body">
@@ -79,7 +85,7 @@
             <div class="container text-center border-layout paddage">
                 <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
 
-                    <RealTimeIngredientSearchBar IngredientsData="@SharedIngredients.Ingredients"/>
+                    <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"/>
 
                     <div class="col">
                         <label class="form-label">Grams</label>
@@ -167,12 +173,12 @@
         // Console.WriteLine("Rendering Create Recipe...");
         // Console.WriteLine("Ingredients: " + SharedIngredients.Ingredients.Count);
 
-        if (firstRender && !SharedIngredients.Ingredients.Any())
+        if (firstRender && !GlobalIngredients.Ingredients.Any())
         {
             try
             {
                 var tempIngredients = await DbService.GetAllDbIngredients();
-                SharedIngredients.Ingredients = tempIngredients;
+                GlobalIngredients.Ingredients = tempIngredients;
                 Console.WriteLine("Acquired ingredients.");
                 StateHasChanged();
             }
@@ -276,6 +282,11 @@
     private void DeleteRecipe(int index)
     {
         currentIngredients.RemoveAt(index);
+        StateHasChanged();
+    }
+
+    public void UpdatePage()
+    {
         StateHasChanged();
     }
 

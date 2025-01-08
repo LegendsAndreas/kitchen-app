@@ -1,5 +1,6 @@
 @page "/recipe-details"
 @rendermode InteractiveServer
+@using WebKitchen.Components.Pages.SharedComponents
 @inject DBService DbService
 @inject SharedRecipe SharedDetailedRecipe
 <PageTitle>Recipe Details</PageTitle>
@@ -62,16 +63,19 @@
 
                 <div id="recipe-instructions">
                     <ol>
-                        @if (recipeInstructionRecord.Instructions.Steps.Count>0)
+                        @if (recipeInstructionRecord != null)
                         {
-                            @foreach (var instruction in recipeInstructionRecord.Instructions.Steps)
+                            @if (recipeInstructionRecord.Instructions.Steps.Count > 0)
                             {
-                                <li>@instruction</li>
+                                @foreach (var instruction in recipeInstructionRecord.Instructions.Steps)
+                                {
+                                    <li>@instruction.StepText</li>
+                                }
                             }
-                        }
-                        else
-                        { 
-                            <p>No instructions added</p>
+                            else
+                            {
+                                <p>No instructions added</p>
+                            }
                         }
                     </ol>
 
@@ -98,22 +102,33 @@
     </div>
 }
 
+<RecipeStatusToast @ref="recipeStatusToaster"/>
+
 @code {
     Recipe sharedRecipe = new();
-    RecipeInstructionRecord recipeInstructionRecord = new();
+    RecipeStatusToast? recipeStatusToaster;
+    RecipeInstructionRecord? recipeInstructionRecord = new();
 
     protected override async Task OnInitializedAsync()
     {
+        Console.WriteLine("Initializing recipe details...");
         if (SharedDetailedRecipe?.SelectedRecipe != null)
         {
             sharedRecipe = SharedDetailedRecipe.SelectedRecipe;
 
-            // Ensure sharedRecipe.RecipeId is valid before fetching instructions
             if (sharedRecipe.RecipeId > 0)
             {
                 recipeInstructionRecord = await DbService.GetRecipeInstructionByRecipeId(sharedRecipe.RecipeId);
+                if (recipeInstructionRecord == null && recipeStatusToaster != null)
+                    await recipeStatusToaster.ShowToastAsync("No instructions found/added.");
+                else
+                {
+                    Console.WriteLine("Recipe instructions found...");
+                    if (recipeInstructionRecord != null) recipeInstructionRecord.PrintRecipeInstructionsRecord();
+                }
             }
         }
     }
 
 }
+

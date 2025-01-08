@@ -6,15 +6,60 @@
         <h1>About Recipes</h1>
 
         <p>This is a macro tracker app, designed by yours truly Andreas Ø. Christoffersen.</p>
+        <p>Also, if the images of a recipe is just am empty bowl, that is a placeholder image and is ment to be
+            replaced, eventually.</p>
         <h3><u>The database</u></h3>
         <p>The database is run by Neon.Tech, on a Launch-subscription. I am currently figuring out how to
             host my own Postgres server with Proxmox, or just hosting one locally on my PC.</p>
-        <p>The Database setup is can be seen pictured below:</p>
+        <p>The Database setup can be seen pictured below:</p>
         <img src="pics/DatabaseDiagram.png" alt="Ops..." style="width: 65%"/>
-        <p></p>
+        <p style="margin-top: 10px">A recipe is stored in the table "recipe". One row of recipe, has a unique ID, which
+            is the primary way of
+            identifying a recipe, since this is the only thing that is actually unique of a row of recipe. <br/>
+            It also holds the meal type, a single character, which can be: D (Dinner), B (Breakfast), L (Lunch), S (A
+            Side), K (Snack). <br/>
+            It also has th e name of the recipe, in a string format, as well as the image of the recipe. The image is
+            actually a base64-encoded string, which works as a bitmap of the image. This makes it nice and easy to set
+            images to a specific recipe, as well as getting it. It does however, come at the expense of being quite
+            expensive, in terms of data, to take out and in of the database. <br/>
+            It also composes of two custom types: ingredient and recipe_macros. </p>
+        <p>The variable Ingredients is an array of
+            ingredients. Thanks to the fact that this is a Postgres server, we have access to a direct array type, as
+            oppose to many other SQL servers that don't run on Postgres. An ingredient holds the name of the ingredient,
+            as well as the amount of it used in a specific recipe, represented by grams. It then holds the total amount
+            of calories, fat, carbs and protein for that ingredient. It also has a multiplier, that determines how each
+            macro should be applied, in terms of percentages. And lastly, it also has an image of the ingredient it
+            represents, in the same way that a recipe has an image.</p>
+        <p>
+            The type recipe_macros holds the total amount of calories, fat, carbs and protein for a specific recipe,
+            which is found by adding and multiplying the amount of each macro with the multiplier. <br/>
+            The calculations works as such: <br/>
+            For each ingredient in the list of ingredients: <br/>
+            - Calculate the total calories: <br/>
+            Add (ingredient's calories per 100g multiplied by its multiplier) to the total calories <br/>
+            - Calculate the total fats: <br/>
+            Add (ingredient's fats per 100g multiplied by its multiplier) to the total fats <br/>
+            - Calculate the total carbohydrates: <br/>
+            Add (ingredient's carbs per 100g multiplied by its multiplier) to the total carbohydrates <br/>
+            - Calculate the total protein: <br/>
+            Add (ingredient's protein per 100g multiplied by its multiplier) to the total protein <br/>
+        </p>
+        <p>
+            The database also has a table "ingredients", which represents the ingredients that are stored in the
+            database. The ingredients table is nearly identical with our class ingredient, but does not have a
+            multiplier and a grams value, since these are different, based on the recipe. The reason for this table, is
+            so that you can more easily add ingredients to a recipe.
+        </p>
+        <p>
+            Lastly, the database also has a table "recipe_instructions", which holds a JSON file, which contains the
+            instructions for a specific recipe as well as side notes for the recipe.
+        </p>
+        <p>
+            The macro tracker app is currently in development, and will be updated as the app is developed.
+        </p>
     </div>
 </div>
 
 @code {
-    
+
 }

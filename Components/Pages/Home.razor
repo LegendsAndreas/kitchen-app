@@ -4,7 +4,7 @@
 @inject NavigationManager navigationManager;
 @inject DBService DbService;
 @inject SharedRecipe SharedDetailRecipe
-@inject SharedRecipeList SharedRecipes
+@inject SharedRecipeList GlobalRecipes
 
 <PageTitle>Recipes</PageTitle>
 
@@ -13,15 +13,15 @@
     @*<button class="btn btn-primary" onclick="@(() => navigationManager.NavigateTo("/developer"))">Go To developer
     </button>*@
 
-    @*@if (!hasGottenRecipes)
+    @*@if (gettingRecipes)
     {
         <p>Loading recipes...</p>
     }*@
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @if (SharedRecipes.Recipes.Count != 0)
+        @if (GlobalRecipes.Recipes.Count != 0)
         {
-            @foreach (var recipe in SharedRecipes.Recipes)
+            @foreach (var recipe in GlobalRecipes.Recipes)
             {
                 <div class="col" style="padding: 10px">
                     <div class="card h-100 border-layout">
@@ -48,35 +48,40 @@
 
 </div>
 
-@* <OnAfterRenderAsyncRecipesComponent recipesData="@SharedRecipes.Recipes" renderingComponentNameData="Home"/> *@
-
 @code{
 
+    bool gettingRecipes = false;
+    
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         Console.WriteLine("__Rendering Home__");
 
-        if (firstRender && !SharedRecipes.Recipes.Any())
+        if (firstRender && !GlobalRecipes.Recipes.Any())
         {
+            gettingRecipes = true;
             try
             {
                 var tempRecipes = await DbService.GetAllRecipes();
-                SharedRecipes.Recipes = tempRecipes;
+                GlobalRecipes.Recipes = tempRecipes;
                 Console.WriteLine("Acquired Recipes.");
                 StateHasChanged();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error getting recipes" + ex);
-                throw;
+                Console.WriteLine("Error getting recipes: " + ex.Message);
+                Console.WriteLine("StackTrace: " + ex.StackTrace);
+                gettingRecipes = false;
+                return;
             }
         }
 
         if (!firstRender)
             Console.WriteLine("Not first render.");
 
-        if (SharedRecipes.Recipes.Any())
+        if (GlobalRecipes.Recipes.Any())
             Console.WriteLine("Recipes are full.");
+        
+        gettingRecipes = false;
     }
 
     private void NavigateToDetails(Recipe recipe)

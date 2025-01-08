@@ -43,6 +43,18 @@ public class Macros
 
         PrintMacros();
     }
+
+    public Macros TransferMacros(Macros macros)
+    {
+        Macros tempMacros = new()
+        {
+            Calories = macros.Calories,
+            Fat = macros.Fat,
+            Carbs = macros.Carbs,
+            Protein = macros.Protein
+        };
+        return tempMacros;
+    }
 }
 
 public class Ingredient
@@ -207,6 +219,27 @@ public class Recipe
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             throw;
         }
+    }
+
+    public Recipe TransferRecipe(Recipe recipe)
+    {
+        Recipe tempRecipe = new()
+        {
+            RecipeId = recipe.RecipeId,
+            MealType = recipe.MealType,
+            Name = recipe.Name,
+            Base64Image = recipe.Base64Image,
+        };
+
+        foreach (var ingredient in recipe.Ingredients)
+        {
+            var tempIngredient = ingredient.TransferIngredient(ingredient);
+            tempRecipe.Ingredients.Add(tempIngredient);
+        }
+        
+        tempRecipe.TotalMacros = tempRecipe.TotalMacros.TransferMacros(recipe.TotalMacros);
+        
+        return tempRecipe;
     }
 
     public void PrintImage()

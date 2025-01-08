@@ -1,25 +1,8 @@
 @page "/edit"
 @rendermode InteractiveServer
 @using WebKitchen.Components.Pages.EditForms;
+
 <PageTitle>Edit</PageTitle>
-
-<style>
-    .header-padding {
-        background-color: #313131;
-        color: #48d7ff;
-        border-radius: 5px;
-        font-family: "Calibri Light", serif;
-        display: inline-block;
-        border: 2px solid #48d7ff;
-        font-style: italic;
-        font-weight: bold;
-    }
-
-    .header-padding:hover {
-        background-color: #313131;
-        color: #48d7ff;
-    }
-</style>
 
 <div class="dropdown">
     <a class="btn btn-primary custom-layout dropdown-toggle btn-lg" href="#" role="button" data-bs-toggle="dropdown"
@@ -62,6 +45,14 @@
         <li>
             <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("database-ingredient"))">
                 Database Ingredient
+            </button>
+        </li>
+        <li>
+            <hr class="dropdown-divider"/>
+        </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("instruction"))">
+                Instructions
             </button>
         </li>
     </ul>

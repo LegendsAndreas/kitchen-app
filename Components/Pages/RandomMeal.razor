@@ -10,7 +10,7 @@
 </h1>
 
 <div class="container">
-    <div class="card" style="width: 50%; margin: 0 auto;">
+    <div class="card @cardBorderLayoutClass" style="width: 50%; margin: 10px auto 0;">
         @if (randomRecipe.Name != string.Empty)
         {
             <img src="data:image/png;base64,@randomRecipe.Base64Image" alt="Random Meal" class="card-img"/>
@@ -36,6 +36,7 @@
 @code {
 
     Recipe randomRecipe = new();
+    string cardBorderLayoutClass = "";
 
     private async Task RandomRecipe()
     {
@@ -44,6 +45,7 @@
             Console.WriteLine("Getting random recipe...");
             randomRecipe = await DbService.GetRandomRecipe();
             randomRecipe.PrintRecipe();
+            cardBorderLayoutClass = "border-layout";
         }
         catch (Exception e)
         {

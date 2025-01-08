@@ -1,24 +1,71 @@
 @page "/instructions"
+@using WebKitchen.Components.Pages.SharedComponents
 @inject DBService DbService
 @inject IJSRuntime JsRuntime;
 @rendermode InteractiveServer
 
 <PageTitle>Instructions</PageTitle>
 
+<h1>Does not do anything at the moment. Still under construction.</h1>
+
 <div class="card border-layout">
     <div class="card-body" style="padding: 10px;">
-        <EditForm Model="recipeName" OnSubmit="@HandleInstructions">
-            <label class="form-label fw-bold">Recipe name:</label>
-            <InputText @bind-Value="recipeName" class="form-control"/>
+        <div class="container-fluid">
+            <div class="row justify-content-center">
+                <div class="col">
+                    <EditForm Model="@recipeId" OnSubmit="@HandleGettingRecipe">
+                        <label class="form-label fw-bold">Recipe ID:</label>
+                        <InputNumber @bind-Value="recipeId" class="form-control"/>
 
-            <button type="submit" class="btn btn-primary instructions-button">Add Recipe Instructions</button>
-            @* The user presses a button, which shows a preview of whatever recipe they want to assign instructions to *@
-            @*<div id="recipe-preview">
-                <div>Recipe name</div>
-                <div>Recipe number</div>
-                <div>Recipe image</div>
-            </div>*@
-        </EditForm>
+                        <button type="submit" class="btn btn-primary instructions-button">Get Recipe</button>
+                    </EditForm>
+                </div>
+                <div class="col col-5">
+                    <div class="row row-cols-2">
+                        <div class="col">
+                            <div id="preview-text">
+                                <p>Preview:</p>
+                                @if (currentRecipe != null)
+                                {
+                                    <p>@currentRecipe.RecipeId. @currentRecipe.Name</p>
+                                    <span>Calories: @currentRecipe.TotalMacros.Calories.ToString(".00")</span>
+                                    <span>Fat: @currentRecipe.TotalMacros.Fat.ToString(".00")</span>
+                                    <span>Carbs: @currentRecipe.TotalMacros.Carbs.ToString(".00")</span>
+                                    <span>Protein: @currentRecipe.TotalMacros.Protein.ToString(".00")</span>
+                                }
+                                else
+                                {
+                                    <p>Choose recipe to get preview</p>
+                                }
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div id="preview-img">
+                                @if (currentRecipe != null)
+                                {
+                                    <img src="data:image/png;base64,@currentRecipe.Base64Image" alt="ops..."
+                                         class="card-img"
+                                         style="width: 75%"/>
+                                }
+                                else
+                                {
+                                    <img src="pics/PlaceHolderPic.jpg" alt="ops..." class="card-img"
+                                         style="width: 75%"/>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-start">
+                <div class="col">
+                    <button type="button" @onclick="HandleInstructions" class="btn btn-primary instructions-button">
+                        Create Instructions
+                    </button>
+                </div>
+
+            </div>
+        </div>
     </div>
 </div>
 
@@ -132,19 +179,31 @@
     }
 </script>
 
+<RecipeStatusToast @ref="RecipeStatusToaster"/>
+
 @code {
 
-    RecipeInstructionRecord recipeInstructionRecord = new();
+    int recipeId;
     Step currentStep = new();
     Note currentNote = new();
-    string recipeName = "";
+    Recipe? currentRecipe;
+    RecipeStatusToast? RecipeStatusToaster;
+    RecipeInstructionRecord recipeInstructionRecord = new();
+
+    private async Task HandleGettingRecipe()
+    {
+        Console.WriteLine("Handling getting recipe...");
+        currentRecipe = await DbService.GetRecipeById(recipeId);
+        if (currentRecipe == null && RecipeStatusToaster != null)
+            await RecipeStatusToaster.ShowToastAsync("Recipe not found.");
+    }
 
     private async Task HandleInstructions()
     {
         Console.WriteLine("Handling instructions...");
-        if (recipeName == "")
+        if (currentRecipe == null)
         {
-            Console.WriteLine("No added recipe name");
+            Console.WriteLine("No added recipe object");
             return;
         }
 
@@ -154,13 +213,8 @@
             return;
         }
 
-        recipeInstructionRecord.SetRecipeId(await DbService.GetRecipeIdByName(recipeName));
-        if (recipeInstructionRecord.GetRecipeId() == -1)
-        {
-            Console.WriteLine("Recipe not found.");
-            await JsRuntime.InvokeVoidAsync("showInvalidRecipeToast");
-            return;
-        }
+        recipeInstructionRecord.SetRecipeId(currentRecipe.RecipeId);
+        recipeInstructionRecord.Instructions.Name = currentRecipe.Name;
 
         await DbService.AddInstructionToDb(recipeInstructionRecord);
         recipeInstructionRecord.Clear();

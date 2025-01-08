@@ -153,10 +153,10 @@ public class DBService
         return recipe;
     }
 
-    public async Task<RecipeInstructionRecord> GetRecipeInstructionByRecipeId(int RecipeId)
+    public async Task<RecipeInstructionRecord?> GetRecipeInstructionByRecipeId(int RecipeId)
     {
         Console.WriteLine("Getting recipe instructions by id...");
-        RecipeInstructionRecord instructionsRecord = new();
+        RecipeInstructionRecord instructionsRecord;
         const string query = "SELECT id, instructions, recipe_id FROM recipe_instructions WHERE recipe_id = @recipeId;";
 
         try
@@ -175,13 +175,24 @@ public class DBService
 
                 var instructions = JsonSerializer.Deserialize<RecipeInstructions>(jsonData);
 
-                var recipeRecord = new RecipeInstructionRecord { Instructions = instructions };
-                recipeRecord.SetId(id);
-                recipeRecord.SetRecipeId(recipeId);
+                if (instructions == null)
+                {
+                    Console.WriteLine("Error deserializing instructions.");
+                    return null;
+                }
+
+                var tempInstructionsRecord = new RecipeInstructionRecord { Instructions = instructions };
+                tempInstructionsRecord.SetId(id);
+                tempInstructionsRecord.SetRecipeId(recipeId);
+                
+                tempInstructionsRecord.PrintRecipeInstructionsRecord();
+                
+                instructionsRecord = tempInstructionsRecord;
             }
             else
             {
                 Console.WriteLine("Recipe instructions not found.");
+                return null;
             }
         }
         catch (Exception ex)
@@ -191,24 +202,8 @@ public class DBService
             throw;
         }
 
+
         return instructionsRecord;
-        // Output the deserialized data
-        /*Console.WriteLine($"Record ID: {recipeRecord.GetId()}");
-        Console.WriteLine($"Recipe Name: {recipeRecord.Instructions.Name}");
-        Console.WriteLine($"Recipe ID: {recipeRecord.GetRecipeId()}");
-        Console.WriteLine("Steps:");
-        foreach (var step in recipeRecord.Instructions.Steps)
-        {
-            Console.WriteLine($"  Step {step.StepNumber}: {step.StepText}");
-        }
-
-        Console.WriteLine("Notes:");
-        foreach (var note in recipeRecord.Instructions.Notes)
-        {
-            Console.WriteLine($"  Note {note.NoteNumber}: {note.NoteText}");
-        }
-
-        Console.WriteLine("-------------------------");*/
     }
 
     public async Task<Recipe> GetRandomRecipe()
@@ -546,17 +541,18 @@ public class DBService
     public async Task AddInstructionToDb(RecipeInstructionRecord instructions)
     {
         Console.WriteLine("Adding instructions to database...");
+
+        var serializedJsonData = JsonSerializer.Serialize(instructions.Instructions);
+        const string query = "INSERT INTO recipe_instructions " +
+                             "(instructions, recipe_id) " +
+                             "VALUES (" +
+                             "@json_data," +
+                             "@recipe_id)";
         try
         {
             var conn = await GetConnection();
-            var serializedJsonData = JsonSerializer.Serialize(instructions.Instructions);
-            const string query = "INSERT INTO recipe_instructions " +
-                                 "(instructions, recipe_id) " +
-                                 "VALUES (" +
-                                 "@json_data," +
-                                 "@recipe_id)";
             NpgsqlCommand cmd = new(query, conn);
-            cmd.Parameters.AddWithValue("@json_data", serializedJsonData);
+            cmd.Parameters.AddWithValue("@json_data", NpgsqlTypes.NpgsqlDbType.Json, serializedJsonData);
             cmd.Parameters.AddWithValue("@recipe_id", instructions.GetRecipeId());
             await RunAsyncQuery(cmd);
         }
@@ -693,7 +689,7 @@ public class DBService
     /// <return>A task that represents the asynchronous update operation.</return>
     public async Task<string> UpdateRecipeImageByRecipeId(string base64Image, int recipeId)
     {
-        Console.WriteLine("Updating recipe image by name...");
+        Console.WriteLine("Updating recipe image by id...");
 
         if (recipeId < 1)
         {
@@ -701,9 +697,10 @@ public class DBService
             return "Recipe image did not get updated; recipe ID is less than 1.";
         }
 
+        Console.WriteLine("Recipe id = " + recipeId);
+
         var statusMessage = "Recipe image got updated.";
         const string query = "UPDATE recipes SET image = @base64_image WHERE id = @recipe_id";
-
         try
         {
             var conn = await GetConnection();
@@ -745,7 +742,6 @@ public class DBService
         }
 
         const string query = "UPDATE recipes SET name = @updatedName WHERE id = @recipe_id";
-
         try
         {
             var conn = await GetConnection();
@@ -779,10 +775,10 @@ public class DBService
     {
         Console.WriteLine("Updating database ingredient image by name...");
 
+        const string query = "UPDATE ingredients SET image = @base64_image WHERE name = @ingredient_name";
         try
         {
             var conn = await GetConnection();
-            const string query = "UPDATE ingredients SET image = @base64_image WHERE name = @ingredient_name";
             await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@base64_image", base64Image);
             cmd.Parameters.AddWithValue("@ingredient_name", ingredientName);
@@ -804,12 +800,12 @@ public class DBService
     {
         Console.WriteLine("Updating table IDs...");
 
-        var query = $"CREATE TEMP TABLE temp_{tableName} AS" +
-                    "SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id" +
+        var query = $"CREATE TEMP TABLE temp_{tableName} AS " +
+                    "SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id " +
                     $"FROM {tableName};" +
-                    $"UPDATE {tableName}" +
-                    $"SET id = temp_{tableName}.new_id" +
-                    $"FROM temp_{tableName}" +
+                    $"UPDATE {tableName} " +
+                    $"SET id = temp_{tableName}.new_id " +
+                    $"FROM temp_{tableName} " +
                     $"WHERE {tableName}.id = temp_{tableName}.id;" +
                     $"SELECT setval('{tableName}_id_seq', (SELECT MAX(id) FROM {tableName}));" +
                     $"DROP TABLE temp_{tableName};";
@@ -913,7 +909,7 @@ public class DBService
 
         var conn = await GetConnection();
 
-        const string query = "DELETE FROM ingredients WHERE id = @recipe_id";
+        const string query = "DELETE FROM recipes WHERE id = @recipe_id";
         await using var cmd = new NpgsqlCommand(query, conn);
         cmd.Parameters.AddWithValue("@recipe_id", recipeId);
 
@@ -921,7 +917,7 @@ public class DBService
         if (result < 1)
             statusMessage = $"Recipe {recipeId} was not found.";
         else
-            await UpdateTableIds("ingredients");
+            await UpdateTableIds("recipes");
 
         return statusMessage;
     }

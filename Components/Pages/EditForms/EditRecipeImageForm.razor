@@ -22,16 +22,16 @@
     <button class="btn btn-primary" type="submit">Get Recipe</button>
 </EditForm>
 
-<EditForm Model="@Base64Image" OnSubmit="@HandleSubmit">
+<EditForm Model="@base64Image" OnSubmit="@HandleSubmit">
     <label class="file-label" for="fileInput">Choose Image</label>
     <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
     <button class="btn btn-primary" type="submit">Update Image</button>
 </EditForm>
 
-@if (Base64Image != "")
+@if (base64Image != "")
 {
     <p>Preview image</p>
-    <img src="data:image/png;base64,@Base64Image" alt="Recipe Image" style="width: 75%;"/>
+    <img src="data:image/png;base64,@base64Image" alt="Recipe Image" style="width: 75%;"/>
 }
 
 @if (currentRecipe != null)
@@ -44,7 +44,8 @@
 
 @code{
     int recipeId;
-    string Base64Image = "";
+    string base64Image = "";
+    string sqlStatusMessage = "";
     Recipe? currentRecipe;
     RecipeStatusToast? RecipeStatusToaster;
     NoImageSelectedToast? NoImageToaster;
@@ -56,17 +57,19 @@
 
     private async Task HandleSubmit()
     {
-        if (Base64Image == "")
+        if (base64Image == "")
         {
             Console.WriteLine("No image selected");
-            if (NoImageToaster != null) 
+            if (NoImageToaster != null)
                 await NoImageToaster.ShowToast();
             return;
         }
 
         if (currentRecipe != null)
         {
-            await DbService.UpdateRecipeImageByRecipeId(currentRecipe.Base64Image, currentRecipe.RecipeId);
+            sqlStatusMessage = await DbService.UpdateRecipeImageByRecipeId(base64Image, currentRecipe.RecipeId);
+            if (RecipeStatusToaster != null)
+                await RecipeStatusToaster.ShowToastAsync(sqlStatusMessage);
             currentRecipe.ClearRecipe();
         }
     }
@@ -86,7 +89,7 @@
             {
                 var tempRecipe = new Recipe();
                 await tempRecipe.SetRecipeImage(image);
-                Base64Image = tempRecipe.Base64Image;
+                base64Image = tempRecipe.Base64Image;
             }
             catch (Exception ex)
             {

@@ -15,6 +15,26 @@ public class RecipeInstructionRecord
     public void SetId(int id) => Id = id;
     public void SetRecipeId(int recipeId) => RecipeId = recipeId;
 
+    public void PrintRecipeInstructionsRecord()
+    {
+        Console.WriteLine("Printing recipe instructions record...");
+        
+        Console.WriteLine($"Record ID: {GetId()}");
+        Console.WriteLine($"Recipe Name: {Instructions.Name}");
+        Console.WriteLine($"Recipe ID: {GetRecipeId()}");
+        Console.WriteLine("Steps:");
+        foreach (var step in Instructions.Steps)
+        {
+            Console.WriteLine($"  Step {step.StepNumber}: {step.StepText}");
+        }
+
+        Console.WriteLine("Notes:");
+        foreach (var note in Instructions.Notes)
+        {
+            Console.WriteLine($"  Note {note.NoteNumber}: {note.NoteText}");
+        }
+    }
+
     public int GetId()
     {
         Console.WriteLine("Getting recipe instructions record ID...");
@@ -42,6 +62,7 @@ public class RecipeInstructions
     [JsonPropertyName("steps")] public List<Step> Steps { get; set; } = [];
 
     [JsonPropertyName("notes")] public List<Note> Notes { get; set; } = [];
+    
 }
 
 public class Step

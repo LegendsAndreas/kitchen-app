@@ -1,9 +1,7 @@
 ﻿@page "/ingredients"
 @rendermode InteractiveServer
-@using WebKitchen.Components.Pages.RealTimeSearchBarElement
 @inject DBService DbService;
-@inject SharedIngredientList SharedIngredients;
-@inject SharedIngredient sharedIngredient;
+@inject SharedIngredientList GlobalIngredients;
 
 <style>
     .ingredient-form {
@@ -83,7 +81,7 @@
 <div class="container">
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @foreach (var ingredient in SharedIngredients.Ingredients)
+        @foreach (var ingredient in GlobalIngredients.Ingredients)
         {
             <div class="col" style="padding: 10px">
                 <div class="card h-100 border-layout">
@@ -117,12 +115,12 @@
     {
         Console.WriteLine("__Rendering Ingredients__");
 
-        if (firstRender && !SharedIngredients.Ingredients.Any())
+        if (firstRender && !GlobalIngredients.Ingredients.Any())
         {
             try
             {
                 var tempIngredient = await DbService.GetAllDbIngredients();
-                SharedIngredients.Ingredients = tempIngredient;
+                GlobalIngredients.Ingredients = tempIngredient;
                 Console.WriteLine("Acquired Ingredients.");
                 StateHasChanged();
             }
@@ -136,7 +134,7 @@
         if (!firstRender)
             Console.WriteLine("Not first render.");
 
-        if (SharedIngredients.Ingredients.Any())
+        if (GlobalIngredients.Ingredients.Any())
             Console.WriteLine("Ingredients are full.");
     }
     
