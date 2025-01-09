@@ -40,14 +40,14 @@
 }
 
 <NoImageSelectedToast @ref="NoImageToaster"/>
-<RecipeStatusToast @ref="RecipeStatusToaster"/>
+<StatusMessageToast @ref="RecipeStatusToaster"/>
 
 @code{
     int recipeId;
     string base64Image = "";
     string sqlStatusMessage = "";
     Recipe? currentRecipe;
-    RecipeStatusToast? RecipeStatusToaster;
+    StatusMessageToast? RecipeStatusToaster;
     NoImageSelectedToast? NoImageToaster;
 
     private async Task HandleGettingRecipe()

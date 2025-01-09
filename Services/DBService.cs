@@ -39,7 +39,7 @@ public class DBService
 
         var base64PlaceHolderPic = await GetPlaceHolderPic();
         List<Recipe> recipes = [];
-        var conn = await GetConnection();
+        await using var conn = await GetConnection();
 
         const string query =
             "SELECT id, meal_type, name, image, (macros).total_protein, (macros).total_fats, (macros).total_carbs, (macros).total_calories FROM recipes WHERE meal_type = 'D';";
@@ -91,7 +91,7 @@ public class DBService
                              "WHERE id = @id";
         try
         {
-            var conn = await GetConnection();
+            await using var conn = await GetConnection();
             await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@id", recipeId);
 
@@ -184,9 +184,9 @@ public class DBService
                 var tempInstructionsRecord = new RecipeInstructionRecord { Instructions = instructions };
                 tempInstructionsRecord.SetId(id);
                 tempInstructionsRecord.SetRecipeId(recipeId);
-                
+
                 tempInstructionsRecord.PrintRecipeInstructionsRecord();
-                
+
                 instructionsRecord = tempInstructionsRecord;
             }
             else
@@ -278,7 +278,7 @@ public class DBService
 
         // var base64PlaceHolderPic = await GetPlaceHolderPic();
         List<Recipe> recipes = new();
-        var conn = await GetConnection();
+        await using var conn = await GetConnection();
 
         const string query = "SELECT id, name, image, meal_type," +
                              "(macros).total_calories," +
@@ -293,23 +293,6 @@ public class DBService
         {
             var tempRecipe = await BuildRecipe(reader);
             recipes.Add(tempRecipe);
-            /*recipes.Add(new Recipe
-            {
-                RecipeId = reader.GetInt32(0),
-                Name = reader.GetString(1),
-                Base64Image = reader.GetString(2) != "PlaceHolderPic.jpg"
-                    ? reader.GetString(2)
-                    : base64PlaceHolderPic,
-                MealType = reader.GetString(3),
-                Ingredients = await GetIngredientByRecipeIdAsync(reader.GetInt32(0)),
-                TotalMacros = new Macros
-                {
-                    Calories = reader.GetFloat(4),
-                    Fat = reader.GetFloat(5),
-                    Carbs = reader.GetFloat(6),
-                    Protein = reader.GetFloat(7)
-                }
-            });*/
         }
 
         return recipes;
@@ -321,7 +304,7 @@ public class DBService
         List<Recipe> recipes = [];
         try
         {
-            var conn = await GetConnection();
+            await using var conn = await GetConnection();
             int recipeIdTracker = 1;
             await using var cmd = new NpgsqlCommand(
                 $"SELECT id, name, image, meal_type, (macros).total_calories, (macros).total_fats, (macros).total_carbs, (macros).total_protein FROM recipes ORDER BY {category}",
@@ -362,7 +345,7 @@ public class DBService
         List<Ingredient> ingredients = new();
         try
         {
-            var conn = await GetConnection();
+            await using var conn = await GetConnection();
             const string query = "SELECT ingredient.name," +
                                  "ingredient.grams," +
                                  "ingredient.calories_pr_hectogram," +
@@ -410,7 +393,7 @@ public class DBService
         var base64PlaceHolderPic = await GetPlaceHolderPic();
 
         List<Ingredient> ingredients = [];
-        var conn = await GetConnection();
+        await using var conn = await GetConnection();
 
         const string query = "SELECT id, name, cals, fats, carbs, protein, image FROM ingredients";
         await using var cmd = new NpgsqlCommand(query, conn);
@@ -443,7 +426,7 @@ public class DBService
     {
         Console.WriteLine("Getting recipe id by name...");
         var recipeId = -1;
-        var conn = await GetConnection();
+        await using var conn = await GetConnection();
         const string query = "SELECT id FROM recipes WHERE name = @name";
         await using var cmd = new NpgsqlCommand(query, conn);
         cmd.Parameters.AddWithValue("@name", recipeName);
@@ -458,7 +441,9 @@ public class DBService
 
     public async Task<Ingredient> GetIngredientByName(string ingredientName)
     {
-        var conn = await GetConnection();
+        Console.WriteLine("Getting ingredient by name...");
+        
+        await using var conn = await GetConnection();
 
         const string query = "SELECT * FROM ingredients WHERE name = @name";
         await using var cmd = new NpgsqlCommand(query, conn);
@@ -504,7 +489,7 @@ public class DBService
         recipe.PrintRecipe();
         try
         {
-            var conn = await GetConnection();
+            await using var conn = await GetConnection();
             const string query = "INSERT INTO recipes " +
                                  "(meal_type, name, image, macros) " +
                                  "VALUES (" +
@@ -538,10 +523,11 @@ public class DBService
     /// Asynchronously adds a recipe's instructions to the database.
     /// <param name="instructions">An object containing the instructions and the associated recipe ID.</param>
     /// <return>A Task representing the asynchronous operation.</return>
-    public async Task AddInstructionToDb(RecipeInstructionRecord instructions)
+    public async Task<string> AddInstructionToDb(RecipeInstructionRecord instructions)
     {
         Console.WriteLine("Adding instructions to database...");
 
+        var statusMessage = "Instructions successfully added.";
         var serializedJsonData = JsonSerializer.Serialize(instructions.Instructions);
         const string query = "INSERT INTO recipe_instructions " +
                              "(instructions, recipe_id) " +
@@ -550,11 +536,13 @@ public class DBService
                              "@recipe_id)";
         try
         {
-            var conn = await GetConnection();
+            await using var conn = await GetConnection();
             NpgsqlCommand cmd = new(query, conn);
             cmd.Parameters.AddWithValue("@json_data", NpgsqlTypes.NpgsqlDbType.Json, serializedJsonData);
             cmd.Parameters.AddWithValue("@recipe_id", instructions.GetRecipeId());
-            await RunAsyncQuery(cmd);
+            var result = await RunAsyncQuery(cmd);
+            if (result < 1)
+                statusMessage = "Instructions did not get added to database; recipe ID was not found in database.";
         }
         catch (Exception ex)
         {
@@ -562,6 +550,8 @@ public class DBService
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             throw;
         }
+
+        return statusMessage;
     }
 
     /// Adds a list of ingredients to the corresponding row within the recipes database table.
@@ -573,7 +563,7 @@ public class DBService
 
         try
         {
-            var conn = await GetConnection();
+            await using var conn = await GetConnection();
             foreach (var ingredient in ingredients)
             {
                 const string query = "UPDATE recipes " +
@@ -589,7 +579,7 @@ public class DBService
                                      "@multiplier" +
                                      ")::ingredient) " +
                                      "WHERE id IN (SELECT COUNT(*) FROM recipes)";
-                NpgsqlCommand cmd = new(query, conn);
+                await using var cmd = new NpgsqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@name", ingredient.Name);
                 cmd.Parameters.AddWithValue("@grams", ingredient.Grams);
                 cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
@@ -617,12 +607,12 @@ public class DBService
 
         try
         {
-            var conn = await GetConnection();
+            await using var conn = await GetConnection();
             const string query =
                 "INSERT INTO ingredients " +
                 "(name, cals, fats, carbs, protein, image) " +
                 "VALUES(@name, @cals, @fats, @carbs, @protein, @image)";
-            await using NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+            await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@name", ingredient.Name);
             cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
             cmd.Parameters.AddWithValue("@fats", ingredient.FatsPer100g);
@@ -660,7 +650,7 @@ public class DBService
 
         try
         {
-            var conn = await GetConnection();
+            await using var conn = await GetConnection();
             await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@type", mealType);
             cmd.Parameters.AddWithValue("@recipe_id", recipeId);
@@ -703,7 +693,7 @@ public class DBService
         const string query = "UPDATE recipes SET image = @base64_image WHERE id = @recipe_id";
         try
         {
-            var conn = await GetConnection();
+            await using var conn = await GetConnection();
             await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@base64_image", base64Image);
             cmd.Parameters.AddWithValue("@recipe_id", recipeId);
@@ -744,7 +734,7 @@ public class DBService
         const string query = "UPDATE recipes SET name = @updatedName WHERE id = @recipe_id";
         try
         {
-            var conn = await GetConnection();
+            await using var conn = await GetConnection();
             await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@updatedName", updatedName);
             cmd.Parameters.AddWithValue("@recipe_id", recipeId);
@@ -778,7 +768,7 @@ public class DBService
         const string query = "UPDATE ingredients SET image = @base64_image WHERE name = @ingredient_name";
         try
         {
-            var conn = await GetConnection();
+            await using var conn = await GetConnection();
             await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@base64_image", base64Image);
             cmd.Parameters.AddWithValue("@ingredient_name", ingredientName);
@@ -811,7 +801,7 @@ public class DBService
                     $"DROP TABLE temp_{tableName};";
         try
         {
-            var conn = await GetConnection();
+            await using var conn = await GetConnection();
             await using var cmd = new NpgsqlCommand(query, conn);
             await RunAsyncQuery(cmd);
         }
@@ -835,7 +825,7 @@ public class DBService
 
         try
         {
-            var conn = await GetConnection();
+            await using var conn = await GetConnection();
             const string query = "UPDATE ingredients " +
                                  "SET " +
                                  "name = @name," +
@@ -878,7 +868,7 @@ public class DBService
         Console.WriteLine("Deleting database ingredient by name...");
         var statusMessage = $"Ingredient {name} has been deleted.";
 
-        var conn = await GetConnection();
+        await using var conn = await GetConnection();
         const string query = "DELETE FROM ingredients WHERE name = @name";
         await using var cmd = new NpgsqlCommand(query, conn);
         cmd.Parameters.AddWithValue("@name", name);
@@ -907,7 +897,7 @@ public class DBService
 
         var statusMessage = $"Ingredient {recipeId} has been deleted.";
 
-        var conn = await GetConnection();
+        await using var conn = await GetConnection();
 
         const string query = "DELETE FROM recipes WHERE id = @recipe_id";
         await using var cmd = new NpgsqlCommand(query, conn);

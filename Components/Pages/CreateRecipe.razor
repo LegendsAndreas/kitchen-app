@@ -4,7 +4,6 @@
 @inject DBService DbService;
 @inject SharedIngredientList GlobalIngredients;
 @inject SharedIngredient SharedDbIngredient
-@inject IJSRuntime JsRuntime;
 
 <PageTitle>Create Recipe</PageTitle>
 
@@ -144,28 +143,10 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
     </div>
 </div>
 
-@* toaster *@
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="liveToast" class="toast header-padding" role="alert" aria-live="assertive" aria-atomic="true"
-         data-bs-delay="5000">
-        <div class="toast-body">
-            Existing ingredient not found in database.
-        </div>
-    </div>
-</div>
-
-<script>
-    function showInvalidIngredientToast() {
-        const toastLiveExample = document.getElementById('liveToast');
-        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-        toastBootstrap.show();
-    }
-</script>
-
 @code {
     private Ingredient CurrentIngredient = new();
     private Recipe CurrentRecipe = new();
-    private int currentIngredientGrams = 0;
+    private int currentIngredientGrams;
     readonly List<Ingredient> currentIngredients = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -22,13 +22,13 @@
     <PreviewRecipe CurrentPreviewRecipe="@currentRecipe"/>
 }
 
-<RecipeStatusToast @ref="Toast"></RecipeStatusToast>
+<StatusMessageToast @ref="Toast"></StatusMessageToast>
 
 @code{
 
     int recipeId = 0;
     string sqlStatusMessage = "<SQL Status Message>";
-    private RecipeStatusToast? Toast;
+    private StatusMessageToast? Toast;
     Recipe? currentRecipe;
 
     private async Task HandleGettingRecipe()

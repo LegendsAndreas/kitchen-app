@@ -19,7 +19,7 @@
     <PreviewRecipe CurrentPreviewRecipe="@currentRecipe"/>
 }
 
-<RecipeStatusToast @ref="Toast"></RecipeStatusToast>
+<StatusMessageToast @ref="Toast"></StatusMessageToast>
 
 @* toaster *@
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -43,7 +43,7 @@
 @code{
     int recipeId;
     string sqlStatusMessage = "<SQL Status Message>";
-    private RecipeStatusToast? Toast;
+    private StatusMessageToast? Toast;
     Recipe? currentRecipe;
 
     private async Task HandleGettingId()

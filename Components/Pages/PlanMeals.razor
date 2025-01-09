@@ -1,6 +1,5 @@
 @page "/plan-meals"
 @rendermode InteractiveServer
-@using System.Data
 @using WebKitchen.Components.Pages.RealTimeSearchBarElement
 @using WebKitchen.Components.Pages.SharedComponents
 @inject SharedRecipeList GlobalRecipes;
@@ -170,8 +169,15 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
 
     int currentDay;
     int currentTotalMacrosDay;
-    string currentRecipeName = string.Empty;
     MealPlan mealPlanMacrosAndRecipes = new();
+
+    protected override void OnInitialized()
+    {
+        Console.WriteLine("__Initializing plan meals__");
+        
+        if (SharedSelectedRecipe.SelectedRecipe != null)
+            SharedSelectedRecipe.SelectedRecipe = null!;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

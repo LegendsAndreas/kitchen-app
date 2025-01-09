@@ -304,3 +304,9 @@ FROM recipe_instructions;
 UPDATE recipe_instructions
 SET recipe_id = 5
 WHERE id = 1;
+
+SELECT
+    count(*) AS total_connections,
+    count(*) FILTER (WHERE state = 'active') AS active_connections,
+    count(*) FILTER (WHERE state = 'idle') AS idle_connections
+FROM pg_stat_activity;

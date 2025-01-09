@@ -1,12 +1,9 @@
 @page "/instructions"
 @using WebKitchen.Components.Pages.SharedComponents
 @inject DBService DbService
-@inject IJSRuntime JsRuntime;
 @rendermode InteractiveServer
 
 <PageTitle>Instructions</PageTitle>
-
-<h1>Does not do anything at the moment. Still under construction.</h1>
 
 <div class="card border-layout">
     <div class="card-body" style="padding: 10px;">
@@ -57,14 +54,9 @@
                     </div>
                 </div>
             </div>
-            <div class="row justify-content-start">
-                <div class="col">
-                    <button type="button" @onclick="HandleInstructions" class="btn btn-primary instructions-button">
-                        Create Instructions
-                    </button>
-                </div>
-
-            </div>
+            <button type="button" @onclick="HandleInstructions" class="btn btn-primary instructions-button">
+                Create Instructions
+            </button>
         </div>
     </div>
 </div>
@@ -161,25 +153,7 @@
     </div>
 </div>
 
-@* toaster *@
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="liveToast" class="toast header-padding border-layout" role="alert" aria-live="assertive" aria-atomic="true"
-         data-bs-delay="5000">
-        <div class="toast-body">
-            Recipe not found.
-        </div>
-    </div>
-</div>
-
-<script>
-    function showInvalidRecipeToast() {
-        const toastLiveExample = document.getElementById('liveToast');
-        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-        toastBootstrap.show();
-    }
-</script>
-
-<RecipeStatusToast @ref="RecipeStatusToaster"/>
+<StatusMessageToast @ref="StatusMessageToaster"/>
 
 @code {
 
@@ -187,15 +161,15 @@
     Step currentStep = new();
     Note currentNote = new();
     Recipe? currentRecipe;
-    RecipeStatusToast? RecipeStatusToaster;
+    StatusMessageToast? StatusMessageToaster;
     RecipeInstructionRecord recipeInstructionRecord = new();
 
     private async Task HandleGettingRecipe()
     {
         Console.WriteLine("Handling getting recipe...");
         currentRecipe = await DbService.GetRecipeById(recipeId);
-        if (currentRecipe == null && RecipeStatusToaster != null)
-            await RecipeStatusToaster.ShowToastAsync("Recipe not found.");
+        if (currentRecipe == null && StatusMessageToaster != null)
+            await StatusMessageToaster.ShowToastAsync("Recipe not found.");
     }
 
     private async Task HandleInstructions()
@@ -216,7 +190,10 @@
         recipeInstructionRecord.SetRecipeId(currentRecipe.RecipeId);
         recipeInstructionRecord.Instructions.Name = currentRecipe.Name;
 
-        await DbService.AddInstructionToDb(recipeInstructionRecord);
+        var statusMessage = await DbService.AddInstructionToDb(recipeInstructionRecord);
+        if (StatusMessageToaster != null)
+            await StatusMessageToaster.ShowToastAsync(statusMessage);
+        
         recipeInstructionRecord.Clear();
     }
 

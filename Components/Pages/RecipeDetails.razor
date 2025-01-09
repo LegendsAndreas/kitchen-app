@@ -34,6 +34,11 @@
                     <h4>Macros</h4>
                     <ul class="food-list">
                         <li>
+                            <span class="label">Calories&nbsp;</span>
+                            <span class="dots"></span>
+                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Calories.ToString(".00")</span>
+                        </li>
+                        <li>
                             <span class="label">Protein&nbsp;</span>
                             <span class="dots"></span>
                             <span class="value">&nbsp;@sharedRecipe.TotalMacros.Protein.ToString(".00")g</span>
@@ -47,11 +52,6 @@
                             <span class="label">Carbs&nbsp;</span>
                             <span class="dots"></span>
                             <span class="value">&nbsp;@sharedRecipe.TotalMacros.Carbs.ToString(".00")g</span>
-                        </li>
-                        <li>
-                            <span class="label">Calories&nbsp;</span>
-                            <span class="dots"></span>
-                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Calories.ToString(".00")g</span>
                         </li>
                     </ul>
                 </div>
@@ -72,10 +72,10 @@
                                     <li>@instruction.StepText</li>
                                 }
                             }
-                            else
-                            {
-                                <p>No instructions added</p>
-                            }
+                        }
+                        else
+                        {
+                            <p>No steps added.</p>
                         }
                     </ol>
 
@@ -84,16 +84,23 @@
                 <div id="recipe-notes">
                     <h5>Notes</h5>
                     <ul>
-                        @if (recipeInstructionRecord.Instructions.Notes.Count == 0)
+                        @if (recipeInstructionRecord != null)
                         {
-                            <p>No notes added</p>
+                            if (recipeInstructionRecord.Instructions.Notes.Count > 0)
+                            {
+                                foreach (var note in recipeInstructionRecord.Instructions.Notes)
+                                {
+                                    <li>@note.NoteText</li>
+                                }
+                            }
+                            else
+                            {
+                                <p>No notes added.</p>
+                            }
                         }
                         else
                         {
-                            foreach (var note in recipeInstructionRecord.Instructions.Notes)
-                            {
-                                <li>@note</li>
-                            }
+                            <p>No notes added.</p>
                         }
                     </ul>
                 </div>
@@ -102,11 +109,11 @@
     </div>
 }
 
-<RecipeStatusToast @ref="recipeStatusToaster"/>
+<StatusMessageToast @ref="recipeStatusToaster"/>
 
 @code {
     Recipe sharedRecipe = new();
-    RecipeStatusToast? recipeStatusToaster;
+    StatusMessageToast? recipeStatusToaster;
     RecipeInstructionRecord? recipeInstructionRecord = new();
 
     protected override async Task OnInitializedAsync()
@@ -124,7 +131,8 @@
                 else
                 {
                     Console.WriteLine("Recipe instructions found...");
-                    if (recipeInstructionRecord != null) recipeInstructionRecord.PrintRecipeInstructionsRecord();
+                    if (recipeInstructionRecord != null)
+                        recipeInstructionRecord.PrintRecipeInstructionsRecord();
                 }
             }
         }

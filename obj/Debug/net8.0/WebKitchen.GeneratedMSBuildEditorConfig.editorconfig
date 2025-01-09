@@ -122,8 +122,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTaGFyZWRDb21wb25lbnRzXFByZXZpZXdSZWNpcGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/SharedComponents/RecipeStatusToast.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTaGFyZWRDb21wb25lbnRzXFJlY2lwZVN0YXR1c1RvYXN0LnJhem9y
+[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/SharedComponents/StatusMessageToast.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTaGFyZWRDb21wb25lbnRzXFN0YXR1c01lc3NhZ2VUb2FzdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Routes.razor]

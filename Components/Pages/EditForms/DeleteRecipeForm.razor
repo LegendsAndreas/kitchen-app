@@ -14,7 +14,7 @@
     <button class="btn btn-danger" @onclick="HandleSubmit">Delete Recipe</button>
 }
 
-<RecipeStatusToast @ref="RecipeStatusToaster"/>
+<StatusMessageToast @ref="RecipeStatusToaster"/>
 
 <!-- Are you sure modal -->
 <div class="modal fade" id="are-you-sure" tabindex="-1" aria-labelledby="areYouSure" aria-hidden="true">
@@ -58,7 +58,7 @@
 
     int recipeId;
     Recipe? currentRecipe;
-    RecipeStatusToast? RecipeStatusToaster;
+    StatusMessageToast? RecipeStatusToaster;
 
     private async Task HandleGettingRecipe()
     {
