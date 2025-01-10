@@ -2,6 +2,10 @@ using System.Text.Json;
 using Npgsql;
 
 // jdbc:postgresql://[HOST]/[DATABASE_NAME]?password=[PASSWORD]&sslmode=require&user=[USERNAME]
+// jdbc:postgresql://[HOST]/[DATABASE_NAME]?password=[PASSWORD]&user=[USERNAME]
+// Remember that a connection string largely opperates on regex logic, so it does not matter too much where you put your variables.
+// So, if you don't need sslmode, you can just delete it entirely.
+// jdbc:postgresql://ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech/neondb?sslmode=require&user=neondb_owner&password=vVljNo8xGsb5
 
 namespace WebKitchen.Services;
 
@@ -185,8 +189,6 @@ public class DBService
                 tempInstructionsRecord.SetId(id);
                 tempInstructionsRecord.SetRecipeId(recipeId);
 
-                tempInstructionsRecord.PrintRecipeInstructionsRecord();
-
                 instructionsRecord = tempInstructionsRecord;
             }
             else
@@ -201,7 +203,6 @@ public class DBService
             Console.WriteLine("Stacktrace: " + ex.StackTrace);
             throw;
         }
-
 
         return instructionsRecord;
     }
@@ -243,23 +244,7 @@ public class DBService
                 recipeRecord.SetId(id);
                 recipeRecord.SetRecipeId(recipeId);
 
-                // Output the deserialized data
-                Console.WriteLine($"Record ID: {recipeRecord.GetId()}");
-                Console.WriteLine($"Recipe Name: {recipeRecord.Instructions.Name}");
-                Console.WriteLine($"Recipe ID: {recipeRecord.GetRecipeId()}");
-                Console.WriteLine("Steps:");
-                foreach (var step in recipeRecord.Instructions.Steps)
-                {
-                    Console.WriteLine($"  Step {step.StepNumber}: {step.StepText}");
-                }
-
-                Console.WriteLine("Notes:");
-                foreach (var note in recipeRecord.Instructions.Notes)
-                {
-                    Console.WriteLine($"  Note {note.NoteNumber}: {note.NoteText}");
-                }
-
-                Console.WriteLine("-------------------------");
+                recipeRecord.PrintRecipeInstructionsRecord();
             }
         }
         catch (Exception ex)
@@ -442,7 +427,7 @@ public class DBService
     public async Task<Ingredient> GetIngredientByName(string ingredientName)
     {
         Console.WriteLine("Getting ingredient by name...");
-        
+
         await using var conn = await GetConnection();
 
         const string query = "SELECT * FROM ingredients WHERE name = @name";
@@ -578,7 +563,7 @@ public class DBService
                                      "@protein," +
                                      "@multiplier" +
                                      ")::ingredient) " +
-                                     "WHERE id IN (SELECT COUNT(*) FROM recipes)";
+                                     "WHERE id IN (SELECT COUNT(*) FROM recipes)"; // Since every new recipe is actually the last one in the table, we can just add all the occurrences of id into one and that will be our recipe id.
                 await using var cmd = new NpgsqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@name", ingredient.Name);
                 cmd.Parameters.AddWithValue("@grams", ingredient.Grams);
@@ -673,6 +658,98 @@ public class DBService
         return statusMessage;
     }
 
+    public async Task<string> UpdateRecipeIngredientsById(List<Ingredient> ingredients, int recipeId)
+    {
+        Console.WriteLine("Updating recipe ingredients by id...");
+
+        if (recipeId < 1)
+        {
+            Console.WriteLine("Recipe ID is less than 1");
+            return "Recipe ingredients did not get updated; recipe ID is less than 1";
+        }
+
+        var statusMessage = "Recipe ingredients got updated.";
+        try
+        {
+            // We can reuse AddIngredientsToRow, because the functions actually already updates an existing element in the database.
+            await UpdateIngredients(ingredients, recipeId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("error updating recipe ingredients by id: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            throw;
+        }
+
+        return statusMessage;
+    }
+
+    private async Task EmptyRecipeIngredientsByRecipeId(int recipeId)
+    {
+        Console.WriteLine("emptying recipe ingredients by recipe id...");
+
+        try
+        {
+            await using var conn = await GetConnection();
+            const string query = "UPDATE recipes " +
+                                 "SET ingredients = array[]::ingredient[] "+
+                                 "WHERE id = @recipe_id";
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@recipe_id", recipeId);
+            await RunAsyncQuery(cmd);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error adding ingredients to row: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            throw;
+        }
+    }
+
+    private async Task UpdateIngredients(List<Ingredient> ingredients, int recipeId)
+    {
+        Console.WriteLine("Updating ingredients...");
+
+        await EmptyRecipeIngredientsByRecipeId(recipeId);
+        
+        try
+        {
+            await using var conn = await GetConnection();
+            foreach (var ingredient in ingredients)
+            {
+                const string query = "UPDATE recipes " +
+                                     "SET ingredients =" +
+                                     "array_append(ingredients," +
+                                     "ROW(" +
+                                     "@name," +
+                                     "@grams," +
+                                     "@cals," +
+                                     "@fats," +
+                                     "@carbs," +
+                                     "@protein," +
+                                     "@multiplier" +
+                                     ")::ingredient) " +
+                                     "WHERE id = @recipe_id";
+                await using var cmd = new NpgsqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@name", ingredient.Name);
+                cmd.Parameters.AddWithValue("@grams", ingredient.Grams);
+                cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
+                cmd.Parameters.AddWithValue("@fats", ingredient.FatsPer100g);
+                cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
+                cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
+                cmd.Parameters.AddWithValue("@multiplier", ingredient.GetMultiplier());
+                cmd.Parameters.AddWithValue("@recipe_id", recipeId);
+                await RunAsyncQuery(cmd);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error adding ingredients to row: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            throw;
+        }
+    }
+
     /// Updates the image of a recipe based on its name in the database.
     /// <param name="recipeName">The name of the recipe to update.</param>
     /// <param name="base64Image">The new image represented as a Base64 string.</param>
@@ -686,8 +763,6 @@ public class DBService
             Console.WriteLine("Recipe id is below 1.");
             return "Recipe image did not get updated; recipe ID is less than 1.";
         }
-
-        Console.WriteLine("Recipe id = " + recipeId);
 
         var statusMessage = "Recipe image got updated.";
         const string query = "UPDATE recipes SET image = @base64_image WHERE id = @recipe_id";

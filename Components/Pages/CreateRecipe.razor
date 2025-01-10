@@ -133,7 +133,7 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
                             <li class="dropdown-item">Carbs: @ingredient.CarbsPer100g.ToString("0")</li>
                         </ul>
                         <button type="submit" class="btn btn-danger"
-                                @onclick="() => DeleteRecipe(currentIngredients.IndexOf(ingredient))">
+                                @onclick="() => DeleteIngredient(currentIngredients.IndexOf(ingredient))">
                             <strong>X</strong>
                         </button>
                     </div>
@@ -260,7 +260,7 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
     }
 
 
-    private void DeleteRecipe(int index)
+    private void DeleteIngredient(int index)
     {
         currentIngredients.RemoveAt(index);
         StateHasChanged();

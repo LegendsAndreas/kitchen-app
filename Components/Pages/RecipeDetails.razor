@@ -1,6 +1,5 @@
 @page "/recipe-details"
 @rendermode InteractiveServer
-@using WebKitchen.Components.Pages.SharedComponents
 @inject DBService DbService
 @inject SharedRecipe SharedDetailedRecipe
 <PageTitle>Recipe Details</PageTitle>
@@ -8,15 +7,11 @@
 @if (sharedRecipe != null)
 {
     <div class="container border-layout" id="recipe-details">
-        @* Col one *@
-        <div class="content" style="display: inline-flex; justify-content: flex-start; align-items: flex-start;">
-            <div id="column-1">
-                <div id="recipe-image">
-                    <img src="data:image/png;base64,@sharedRecipe.Base64Image" alt="Recipe Image is gone..."
-                         id="recipe-image-style"/>
-                </div>
-
-                <div id="recipe-ingredients">
+        <div class="row">
+            <div class="col-8">
+                <img src="data:image/png;base64,@sharedRecipe.Base64Image" alt="Recipe Image is gone..."
+                     id="recipe-image-style"/>
+                <div>
                     <h4>Ingredients</h4>
                     <ul class="food-list">
                         @foreach (var ingredient in sharedRecipe.Ingredients)
@@ -30,7 +25,7 @@
                     </ul>
                 </div>
 
-                <div id="recipe-macros">
+                <div>
                     <h4>Macros</h4>
                     <ul class="food-list">
                         <li>
@@ -56,12 +51,10 @@
                     </ul>
                 </div>
             </div>
-
-            @* Col two *@
-            <div id="column-2">
-                <h1 id="recipe-name">@sharedRecipe.Name</h1>
-
-                <div id="recipe-instructions">
+            
+            <div class="col">
+                <h1>@sharedRecipe.Name</h1>
+                <div>
                     <ol>
                         @if (recipeInstructionRecord != null)
                         {
@@ -81,7 +74,7 @@
 
                 </div>
 
-                <div id="recipe-notes">
+                <div>
                     <h5>Notes</h5>
                     <ul>
                         @if (recipeInstructionRecord != null)
@@ -109,11 +102,8 @@
     </div>
 }
 
-<StatusMessageToast @ref="recipeStatusToaster"/>
-
 @code {
     Recipe sharedRecipe = new();
-    StatusMessageToast? recipeStatusToaster;
     RecipeInstructionRecord? recipeInstructionRecord = new();
 
     protected override async Task OnInitializedAsync()
@@ -126,14 +116,6 @@
             if (sharedRecipe.RecipeId > 0)
             {
                 recipeInstructionRecord = await DbService.GetRecipeInstructionByRecipeId(sharedRecipe.RecipeId);
-                if (recipeInstructionRecord == null && recipeStatusToaster != null)
-                    await recipeStatusToaster.ShowToastAsync("No instructions found/added.");
-                else
-                {
-                    Console.WriteLine("Recipe instructions found...");
-                    if (recipeInstructionRecord != null)
-                        recipeInstructionRecord.PrintRecipeInstructionsRecord();
-                }
             }
         }
     }

@@ -61,32 +61,46 @@
 @if (selectedOption != "")
 {
     <div class="card border-layout">
-        <div class="card-body edit-recipes-form custom-button-margin">
+        <div class="card-body custom-button-margin">
             @switch (selectedOption)
             {
                 case "mealType":
-                    <EditMealTypeForm/>
+                    <div class="edit-recipes-form">
+                        <EditMealTypeForm/>
+                    </div>
                     break;
                 case "name":
-                    <EditRecipeNameForm/>
+                    <div class="edit-recipes-form">
+                        <EditRecipeNameForm/>
+                    </div>
                     break;
                 case "ingredient":
                     <EditIngredientForm/>
                     break;
                 case "image":
-                    <EditRecipeImageForm/>
+                    <div class="edit-recipes-form">
+                        <EditRecipeImageForm/>
+                    </div>
                     break;
                 case "delete-recipe":
-                    <DeleteRecipeForm/>
+                    <div class="edit-recipes-form">
+                        <DeleteRecipeForm/>
+                    </div>
                     break;
                 case "deleteIngredient":
-                    <DeleteDbIngredientForm/>
+                    <div class="edit-recipes-form">
+                        <DeleteDbIngredientForm/>
+                    </div>
                     break;
                 case "ingredientImage":
-                    <EditDbIngredientImageForm/>
+                    <div class="edit-recipes-form">
+                        <EditDbIngredientImageForm/>
+                    </div>
                     break;
                 case "database-ingredient":
-                    <EditDatabaseIngredient/>
+                    <div class="edit-recipes-form">
+                        <EditDatabaseIngredient/>
+                    </div>
                     break;
             }
         </div>
