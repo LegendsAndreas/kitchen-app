@@ -140,6 +140,36 @@ main[b-yu5zy0riwu] {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-plus-square-fill' viewBox='0 0 16 16'%3E%3Cpath d='M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0z'/%3E%3C/svg%3E");
 }
 
+.bi-ingredients-nav-menu[b-twkjl3yewd]{
+    /*https://icons8.com/icon/yhLd8tzVpjMR/ingredients-for-cooking*/
+    background-image: url('pics/icons8-ingredients-for-cooking-48.png');
+}
+
+.bi-random-recipe-nav-menu[b-twkjl3yewd]{
+    /*https://icons8.com/icon/gufc1wRBNXLz/external-dice-pirates-icongeek26-glyph-icongeek26*/
+    background-image: url('pics/random.png');
+}
+
+.bi-plan-nav-menu[b-twkjl3yewd]{
+    /*https://icons8.com/icon/31197/strategy-board*/
+    background-image: url('pics/icons8-plan-50.png');
+}
+
+.bi-categories-nav-menu[b-twkjl3yewd]{
+    /*https://icons8.com/icon/auzeK9qprGGe/menu*/
+    background-image: url('pics/icons8-categories.png');
+}
+
+.bi-instructions-nav-menu[b-twkjl3yewd]{
+    /*https://icons8.com/icon/VGfHLT1YOJ2h/instructions*/
+    background-image: url('pics/icons8-instructions-60.png');
+}
+
+.bi-edit-nav-menu[b-twkjl3yewd]{
+    /*https://icons8.com/icon/i5ego32rYU1V/edit*/
+    background-image: url('pics/icons8-edit-58.png');
+}
+
 .bi-list-nested-nav-menu[b-twkjl3yewd] {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='white' class='bi bi-list-nested' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z'/%3E%3C/svg%3E");
 }

@@ -380,7 +380,7 @@ public class DBService
         List<Ingredient> ingredients = [];
         await using var conn = await GetConnection();
 
-        const string query = "SELECT id, name, cals, fats, carbs, protein, image FROM ingredients";
+        const string query = "SELECT id, name, cals, fats, carbs, protein, image FROM ingredients ORDER BY id";
         await using var cmd = new NpgsqlCommand(query, conn);
         await using var reader = await cmd.ExecuteReaderAsync();
         while (await reader.ReadAsync())

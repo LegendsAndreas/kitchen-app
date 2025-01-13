@@ -183,7 +183,11 @@ public class SharedIngredient
 public class Recipe
 {
     public int RecipeId;
-    [Required] public string MealType { get; set; } = string.Empty;
+
+    [Required]
+    [StringLength(1, ErrorMessage = "Meal type must be one character long.")]
+    public string MealType { get; set; } = string.Empty;
+
     [Required] public string Name { get; set; } = string.Empty;
     [Required] public string Base64Image { get; set; } = string.Empty;
     public List<Ingredient> Ingredients { get; set; } = new();
@@ -236,9 +240,9 @@ public class Recipe
             var tempIngredient = ingredient.TransferIngredient(ingredient);
             tempRecipe.Ingredients.Add(tempIngredient);
         }
-        
+
         tempRecipe.TotalMacros = tempRecipe.TotalMacros.TransferMacros(recipe.TotalMacros);
-        
+
         return tempRecipe;
     }
 

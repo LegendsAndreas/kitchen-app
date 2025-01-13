@@ -37,6 +37,54 @@
       "PackagePath": "staticwebassets\\pics\\PlaceHolderPic.jpg"
     },
     {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\choko.webp",
+      "PackagePath": "staticwebassets\\pics\\choko.webp"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\icons8-categories.png",
+      "PackagePath": "staticwebassets\\pics\\icons8-categories.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\icons8-edit-58.png",
+      "PackagePath": "staticwebassets\\pics\\icons8-edit-58.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\icons8-ingredients-for-cooking-48.png",
+      "PackagePath": "staticwebassets\\pics\\icons8-ingredients-for-cooking-48.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\icons8-instructions-60.png",
+      "PackagePath": "staticwebassets\\pics\\icons8-instructions-60.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\icons8-plan-50.png",
+      "PackagePath": "staticwebassets\\pics\\icons8-plan-50.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\ingredient.png",
+      "PackagePath": "staticwebassets\\pics\\ingredient.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\kylling.webp",
+      "PackagePath": "staticwebassets\\pics\\kylling.webp"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\proteinbars.webp",
+      "PackagePath": "staticwebassets\\pics\\proteinbars.webp"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\random.png",
+      "PackagePath": "staticwebassets\\pics\\random.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\skyr.webp",
+      "PackagePath": "staticwebassets\\pics\\skyr.webp"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\vanilje.webp",
+      "PackagePath": "staticwebassets\\pics\\vanilje.webp"
+    },
+    {
       "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\styles.css",
       "PackagePath": "staticwebassets\\styles.css"
     },

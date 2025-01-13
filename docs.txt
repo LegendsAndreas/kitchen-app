@@ -108,7 +108,23 @@ So, if you want something to persist across components, you gotta wrap that than
 
 -- WHERE id = 0.
 If no rows explicitly have an ID of `X`, the database effectively updates all rows since there is no matching criteria.
-So, if no valid WHERE statement is found, it will essentically treat it as if the WHERE statement does not exist in the query.
+So, if no valid WHERE statement is found, it will essentially treat it as if the WHERE statement does not exist in the query.
 
 -- Real time search bar.
 You cant use a button, or a type="button", because that fucks with the editforms.
+
+-- Missing ")".
+When you hover the mouse at either code bracket, it turns red, which indicates that the content of it gives an error.
+BUT, BECAUSE THIS LANGUAGE IS MADE BY A BEING SO DEFFITIENT IN IQ, THAT THE WORDS "IDIOT", "DUMBASS" OR THE LIKE DOES NOT DO JUSTICE,
+THE ERROR IS NOT CAUGHT BEFORE COMPILE, ONLY DURING COMPILE TIME!
+The error we get during compile time is also only midly useful:
+Microsoft.CodeAnalysis.Razor.Compiler\Microsoft.NET.Sdk.Razor.SourceGenerators.RazorSourceGenerator\Components_Pages_EditForms_EditIngredientForm_razor.g.cs(187,15): error CS1026: ) expected.
+The problem being that we forgot a parenthises, in the onclick value.
+
+        @if (currentRecipe != null)
+        {
+            <button class="btn btn-primary" @onclick="()=> UpdateIngredients(currentRecipe.RecipeId" type="button">
+                Update ingredients
+            </button>
+            ...
+        }

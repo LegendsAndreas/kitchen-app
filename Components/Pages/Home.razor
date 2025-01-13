@@ -1,6 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @* @using WebKitchen.Components.Pages.OnRender *@
+@using WebKitchen.Components.Pages.SharedComponents
 @inject NavigationManager navigationManager;
 @inject DBService DbService;
 @inject SharedRecipe SharedDetailRecipe
@@ -48,9 +49,12 @@
 
 </div>
 
+<StatusMessageToast @ref="StatusMessageToaster"/>
+
 @code{
 
     bool gettingRecipes = false;
+    StatusMessageToast? StatusMessageToaster;
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -70,6 +74,18 @@
             {
                 Console.WriteLine("Error getting recipes: " + ex.Message);
                 Console.WriteLine("StackTrace: " + ex.StackTrace);
+
+                if (ex.Message.Contains("Failed to connect"))
+                {
+                    if (StatusMessageToaster != null)
+                        await StatusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
+                }
+                else
+                {
+                    if (StatusMessageToaster != null)
+                        await StatusMessageToaster.ShowToastAsync(ex.Message);
+                }
+                
                 gettingRecipes = false;
                 return;
             }
