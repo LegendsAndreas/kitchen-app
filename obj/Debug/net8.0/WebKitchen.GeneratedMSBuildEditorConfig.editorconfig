@@ -9,139 +9,139 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = WebKitchen
 build_property.RootNamespace = WebKitchen
-build_property.ProjectDir = C:\Users\andre\Desktop\Pog grammering\C#\kitchen-app\
+build_property.ProjectDir = C:\Users\andre\Desktop\deploy\kitchen-app\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\andre\Desktop\Pog grammering\C#\kitchen-app
+build_property.MSBuildProjectDirectory = C:\Users\andre\Desktop\deploy\kitchen-app
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/App.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/App.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/About.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/About.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBYm91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/Categories.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/Categories.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDYXRlZ29yaWVzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/CreateRecipe.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/CreateRecipe.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDcmVhdGVSZWNpcGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/DeveloperPage.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/DeveloperPage.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xEZXZlbG9wZXJQYWdlLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/Edit.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/Edit.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFZGl0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/EditForms/DeleteDbIngredientForm.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/EditForms/DeleteDbIngredientForm.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFZGl0Rm9ybXNcRGVsZXRlRGJJbmdyZWRpZW50Rm9ybS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/EditForms/DeleteRecipeForm.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/EditForms/DeleteRecipeForm.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFZGl0Rm9ybXNcRGVsZXRlUmVjaXBlRm9ybS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/EditForms/EditDatabaseIngredient.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/EditForms/EditDatabaseIngredient.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFZGl0Rm9ybXNcRWRpdERhdGFiYXNlSW5ncmVkaWVudC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/EditForms/EditDbIngredientImageForm.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/EditForms/EditDbIngredientImageForm.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFZGl0Rm9ybXNcRWRpdERiSW5ncmVkaWVudEltYWdlRm9ybS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/EditForms/EditIngredientForm.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/EditForms/EditIngredientForm.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFZGl0Rm9ybXNcRWRpdEluZ3JlZGllbnRGb3JtLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/EditForms/EditMealTypeForm.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/EditForms/EditMealTypeForm.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFZGl0Rm9ybXNcRWRpdE1lYWxUeXBlRm9ybS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/EditForms/EditRecipeImageForm.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/EditForms/EditRecipeImageForm.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFZGl0Rm9ybXNcRWRpdFJlY2lwZUltYWdlRm9ybS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/EditForms/EditRecipeNameForm.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/EditForms/EditRecipeNameForm.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFZGl0Rm9ybXNcRWRpdFJlY2lwZU5hbWVGb3JtLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/Error.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/Error.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xFcnJvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/Home.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/Home.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/Ingredients.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/Ingredients.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xJbmdyZWRpZW50cy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/Instructions.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/Instructions.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xJbnN0cnVjdGlvbnMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/OnRender/OnAfterRenderAsyncIngredientsComponent.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/OnRender/OnAfterRenderAsyncIngredientsComponent.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xPblJlbmRlclxPbkFmdGVyUmVuZGVyQXN5bmNJbmdyZWRpZW50c0NvbXBvbmVudC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/OnRender/OnAfterRenderAsyncRecipesComponent.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/OnRender/OnAfterRenderAsyncRecipesComponent.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xPblJlbmRlclxPbkFmdGVyUmVuZGVyQXN5bmNSZWNpcGVzQ29tcG9uZW50LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/PlanMeals.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/PlanMeals.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xQbGFuTWVhbHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/RandomMeal.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/RandomMeal.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSYW5kb21NZWFsLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/RealTimeSearchBarElement/RealTimeIngredientSearchBar.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/RealTimeSearchBarElement/RealTimeIngredientSearchBar.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZWFsVGltZVNlYXJjaEJhckVsZW1lbnRcUmVhbFRpbWVJbmdyZWRpZW50U2VhcmNoQmFyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/RealTimeSearchBarElement/RealTimeRecipeSearchBar.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/RealTimeSearchBarElement/RealTimeRecipeSearchBar.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZWFsVGltZVNlYXJjaEJhckVsZW1lbnRcUmVhbFRpbWVSZWNpcGVTZWFyY2hCYXIucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/SharedComponents/NoImageSelectedToast.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/SharedComponents/NoImageSelectedToast.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTaGFyZWRDb21wb25lbnRzXE5vSW1hZ2VTZWxlY3RlZFRvYXN0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/SharedComponents/PreviewRecipe.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/SharedComponents/PreviewRecipe.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTaGFyZWRDb21wb25lbnRzXFByZXZpZXdSZWNpcGUucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/SharedComponents/StatusMessageToast.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/SharedComponents/StatusMessageToast.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xTaGFyZWRDb21wb25lbnRzXFN0YXR1c01lc3NhZ2VUb2FzdC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Routes.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Routes.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/_Imports.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Layout/MainLayout.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Layout/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-yu5zy0riwu
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Layout/NavMenu.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Layout/NavMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmF2TWVudS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = b-twkjl3yewd
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/Pages/RecipeDetails.razor]
+[C:/Users/andre/Desktop/deploy/kitchen-app/Components/Pages/RecipeDetails.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xSZWNpcGVEZXRhaWxzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = b-v9zpp2rsdb

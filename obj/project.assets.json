@@ -196,11 +196,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\WebKitchen.csproj",
+      "projectUniqueName": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\WebKitchen.csproj",
       "projectName": "WebKitchen",
-      "projectPath": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\WebKitchen.csproj",
+      "projectPath": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\WebKitchen.csproj",
       "packagesPath": "C:\\Users\\andre\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\obj\\",
+      "outputPath": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\andre\\AppData\\Roaming\\NuGet\\NuGet.Config",
