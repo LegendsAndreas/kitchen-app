@@ -6,6 +6,7 @@ public class User
     public string Name { get; set; }
     private string Email { get; set; }
     private string Password { get; set; }
+    public List<Recipe> Recipes { get; set; } = [];
 
     public int GetUserId()
     {

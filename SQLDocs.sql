@@ -27,6 +27,15 @@ CREATE TABLE recipes
     macros      recipe_macros
 );
 
+CREATE TABLE users
+(
+    id         SERIAL PRIMARY KEY,
+    username   TEXT,
+    email      TEXT,
+    password   TEXT,
+    recipe_ids INT[]
+);
+
 DROP TABLE recipes;
 
 INSERT INTO recipes (meal_type, name, image, ingredients, macros)
@@ -59,15 +68,19 @@ WHERE id = 2;
 
 /* SELECT statements */
 SELECT *
-FROM ingredients ORDER BY id;
+FROM ingredients
+ORDER BY id;
 
-SELECT id, name, cals, fats, carbs, protein, image FROM ingredients ORDER BY id;
+SELECT id, name, cals, fats, carbs, protein, image
+FROM ingredients
+ORDER BY id;
 
 SELECT COUNT(*)
 FROM recipes;
 
 SELECT *
-FROM recipes ORDER BY id;
+FROM recipes
+ORDER BY id;
 
 SELECT *
 FROM recipes;
@@ -93,7 +106,8 @@ SELECT id,
        (macros).total_fats,
        (macros).total_carbs,
        (macros).total_calories
-FROM recipes ORDER BY id;
+FROM recipes
+ORDER BY id;
 
 SELECT id,
        meal_type,
@@ -305,8 +319,7 @@ UPDATE recipe_instructions
 SET recipe_id = 5
 WHERE id = 1;
 
-SELECT
-    count(*) AS total_connections,
-    count(*) FILTER (WHERE state = 'active') AS active_connections,
-    count(*) FILTER (WHERE state = 'idle') AS idle_connections
+SELECT count(*)                                 AS total_connections,
+       count(*) FILTER (WHERE state = 'active') AS active_connections,
+       count(*) FILTER (WHERE state = 'idle')   AS idle_connections
 FROM pg_stat_activity;

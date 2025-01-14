@@ -987,6 +987,15 @@ public class DBService
         return statusMessage;
     }
 
+    public User GetUserByUsernameAndPassword(string username, string password)
+    {
+        var tempUser = new User();
+        
+        const string query = "SELECT id, na FROM users WHERE username = @username AND password = @password";
+        
+        return tempUser;
+    }
+
     private bool isIngredientIdZero(Ingredient ingredient)
     {
         Console.WriteLine("Checking if ingredient ID is 0...");
