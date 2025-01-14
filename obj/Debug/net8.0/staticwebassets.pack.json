@@ -1,43 +1,91 @@
 {
   "Files": [
     {
-      "Id": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\WebKitchen.bundle.scp.css",
       "PackagePath": "staticwebassets\\WebKitchen.bundle.scp.css"
     },
     {
-      "Id": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\wwwroot\\app.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\app.css",
       "PackagePath": "staticwebassets\\app.css"
     },
     {
-      "Id": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.bundle.min.js",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.bundle.min.js",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.bundle.min.js"
     },
     {
-      "Id": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
     },
     {
-      "Id": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\bootstrap\\bootstrap.min.css.map",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
     },
     {
-      "Id": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\wwwroot\\pics\\BackgroundImage.webp",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\BackgroundImage.webp",
       "PackagePath": "staticwebassets\\pics\\BackgroundImage.webp"
     },
     {
-      "Id": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\wwwroot\\pics\\ClassDiagram.png",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\ClassDiagram.png",
       "PackagePath": "staticwebassets\\pics\\ClassDiagram.png"
     },
     {
-      "Id": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\wwwroot\\pics\\DatabaseDiagram.png",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\DatabaseDiagram.png",
       "PackagePath": "staticwebassets\\pics\\DatabaseDiagram.png"
     },
     {
-      "Id": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\wwwroot\\pics\\PlaceHolderPic.jpg",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\PlaceHolderPic.jpg",
       "PackagePath": "staticwebassets\\pics\\PlaceHolderPic.jpg"
     },
     {
-      "Id": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\wwwroot\\styles.css",
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\choko.webp",
+      "PackagePath": "staticwebassets\\pics\\choko.webp"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\icons8-categories.png",
+      "PackagePath": "staticwebassets\\pics\\icons8-categories.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\icons8-edit-58.png",
+      "PackagePath": "staticwebassets\\pics\\icons8-edit-58.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\icons8-ingredients-for-cooking-48.png",
+      "PackagePath": "staticwebassets\\pics\\icons8-ingredients-for-cooking-48.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\icons8-instructions-60.png",
+      "PackagePath": "staticwebassets\\pics\\icons8-instructions-60.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\icons8-plan-50.png",
+      "PackagePath": "staticwebassets\\pics\\icons8-plan-50.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\ingredient.png",
+      "PackagePath": "staticwebassets\\pics\\ingredient.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\kylling.webp",
+      "PackagePath": "staticwebassets\\pics\\kylling.webp"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\proteinbars.webp",
+      "PackagePath": "staticwebassets\\pics\\proteinbars.webp"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\random.png",
+      "PackagePath": "staticwebassets\\pics\\random.png"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\skyr.webp",
+      "PackagePath": "staticwebassets\\pics\\skyr.webp"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\vanilje.webp",
+      "PackagePath": "staticwebassets\\pics\\vanilje.webp"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\styles.css",
       "PackagePath": "staticwebassets\\styles.css"
     },
     {

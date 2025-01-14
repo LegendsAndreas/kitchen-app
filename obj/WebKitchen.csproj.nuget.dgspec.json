@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\WebKitchen.csproj": {}
+    "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\WebKitchen.csproj": {}
   },
   "projects": {
-    "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\WebKitchen.csproj": {
+    "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\WebKitchen.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\WebKitchen.csproj",
+        "projectUniqueName": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\WebKitchen.csproj",
         "projectName": "WebKitchen",
-        "projectPath": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\WebKitchen.csproj",
+        "projectPath": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\WebKitchen.csproj",
         "packagesPath": "C:\\Users\\andre\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\obj\\",
+        "outputPath": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\andre\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -62,12 +62,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.NETCore.App.Host.linux-x64",
-              "version": "[8.0.10, 8.0.10]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -77,11 +71,6 @@
             }
           },
           "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
-        }
-      },
-      "runtimes": {
-        "linux-x64": {
-          "#import": []
         }
       }
     }

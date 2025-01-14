@@ -2,10 +2,11 @@
 @rendermode InteractiveServer
 @* @using WebKitchen.Components.Pages.OnRender *@
 @using WebKitchen.Components.Pages.SharedComponents
-@inject NavigationManager navigationManager;
+@inject User CurrentUser;
 @inject DBService DbService;
 @inject SharedRecipe SharedDetailRecipe
 @inject SharedRecipeList GlobalRecipes
+@inject NavigationManager navigationManager;
 
 <PageTitle>Recipes</PageTitle>
 
@@ -18,34 +19,41 @@
     {
         <p>Loading recipes...</p>
     }*@
-
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @if (GlobalRecipes.Recipes.Count != 0)
-        {
-            @foreach (var recipe in GlobalRecipes.Recipes)
+    @if (CurrentUser.GetUserId() == 0)
+    {
+        <p>Sign in to see your recipes.</p>
+    }
+    else
+    {
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
+            @if (GlobalRecipes.Recipes.Count != 0)
             {
-                <div class="col" style="padding: 10px">
-                    <div class="card h-100 border-layout">
-                        <a href="">
-                            <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..." class="card-img"
-                                 id="home-recipe-image" @onclick="() => NavigateToDetails(recipe)"/>
-                        </a>
-                        <div class="card-header">
-                            <h4>@recipe.RecipeId. @recipe.Name</h4>
-                        </div>
-                        <div class="card-body border-primary">
-                            <p class="card-text">
-                                - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
-                                - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
-                                - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
-                                - Protein: @recipe.TotalMacros.Protein.ToString("0")
-                            </p>
+                @foreach (var recipe in GlobalRecipes.Recipes)
+                {
+                    <div class="col" style="padding: 10px">
+                        <div class="card h-100 border-layout">
+                            <a href="">
+                                <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..." class="card-img"
+                                     id="home-recipe-image" @onclick="() => NavigateToDetails(recipe)"/>
+                            </a>
+                            <div class="card-header">
+                                <h4>@recipe.RecipeId. @recipe.Name</h4>
+                            </div>
+                            <div class="card-body border-primary">
+                                <p class="card-text">
+                                    - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
+                                    - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
+                                    - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
+                                    - Protein: @recipe.TotalMacros.Protein.ToString("0")
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
             }
-        }
-    </div>
+        </div>
+    }
+
 
 </div>
 
@@ -55,7 +63,7 @@
 
     bool gettingRecipes = false;
     StatusMessageToast? StatusMessageToaster;
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         Console.WriteLine("__Rendering Home__");
@@ -85,7 +93,7 @@
                     if (StatusMessageToaster != null)
                         await StatusMessageToaster.ShowToastAsync(ex.Message);
                 }
-                
+
                 gettingRecipes = false;
                 return;
             }
@@ -96,7 +104,7 @@
 
         if (GlobalRecipes.Recipes.Any())
             Console.WriteLine("Recipes are full.");
-        
+
         gettingRecipes = false;
     }
 
