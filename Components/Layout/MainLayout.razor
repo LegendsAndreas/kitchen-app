@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-@inject User CurrentUser
+@using WebKitchen.Components.Pages.SharedComponents
 
 <div class="page">
     <div class="sidebar">
@@ -22,17 +22,6 @@
                 <NavLink href="about" id="about-link">
                     <span class="btn btn-outline-light">About</span>
                 </NavLink>
-                
-                @if (CurrentUser.GetUserId() == 0)
-                {
-                    @* <button type="button" class="btn btn-primary" >Login</button> *@
-                    <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#login-modal">Login</a>
-                }
-                else
-                {
-                    <a type="button" class="btn btn-danger">Logout</a>
-                }
-                
             </div>
         </div>
 
@@ -42,42 +31,9 @@
     </main>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="login-modal-label" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="login-modal-label">Log in gamer!</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                    <label class="form-label fw-bold">Username</label>
-                    <InputText @bind-Value="username" class="form-control"/>
-
-                    <label class="form-label fw-bold">Password</label>
-                    <InputText @bind-Value="password" class="form-control"/>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" @onclick="HandleLogIn">Log on</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div id="blazor-error-ui">
     An unhandled error has occurred.
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
 
-@code{
-
-    string username = "";
-    string password = "";
-
-    private void HandleLogIn()
-    {
-        Console.WriteLine("Tester");
-    }
-
-}

@@ -1,0 +1,63 @@
+﻿@rendermode InteractiveServer
+@inject User CurrentUser
+@inject DBService DbService
+
+@if (CurrentUser.GetUserId() == 0)
+{
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#login-modal">Login</button>
+}
+else
+{
+    <a type="button" class="btn btn-danger">Logout</a>
+}
+
+@* <button type="button" @onclick="PrintId">Print id</button> *@
+
+<!-- Modal -->
+<div class="modal fade" id="login-modal" tabindex="-1" aria-labelledby="login-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="login-modal-label">Log in gamer!</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label fw-bold">Username</label>
+                <InputText @bind-Value="username" class="form-control"/>
+
+                <label class="form-label fw-bold">Password</label>
+                <InputText @bind-Value="password" class="form-control"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" @onclick="HandleLogIn">Log on</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code{
+
+    string username = "";
+    string password = "";
+    
+    private async Task HandleLogIn()
+    {
+        var result = await DbService.GetUserByUsernameAndPassword(username, password);
+        if (result.User == null)
+        {
+            Console.WriteLine(result.Message);
+            return;
+        }
+
+        // CurrentUser = result.User.TransferUser(result.User);
+        CurrentUser.SetUser(result.User.GetUserId(), result.User.Username, result.User.GetEmail(), result.User.GetPassword(), result.User.Recipes);
+        Console.WriteLine(CurrentUser.GetUserId());
+        StateHasChanged();
+    }
+
+    private void PrintId()
+    {
+        Console.WriteLine(CurrentUser.GetUserId());
+    }
+
+}

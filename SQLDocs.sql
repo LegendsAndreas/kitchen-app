@@ -36,6 +36,44 @@ CREATE TABLE users
     recipe_ids INT[]
 );
 
+-- "WHERE 2 = ANY(recipe_ids)" checks if the value "2" is an element in recipe_ids.
+SELECT *
+FROM users
+WHERE 2 = ANY(recipe_ids);
+
+INSERT INTO users (username, email, password, recipe_ids)
+VALUES ('Tommy21', 'mike@gmail.com', 'passy', ARRAY [1,7,3,8,2]);
+
+SELECT recipe_ids
+FROM users;
+
+SELECT unnest(recipe_ids) AS recipe_id
+FROM users;
+
+-- Allows us to select everything from users, based on the recipe id they have stored in their recipe_ids array.
+SELECT *
+FROM users,
+     unnest(
+                 (SELECT recipe_ids FROM users)
+     ) AS recipe_id
+WHERE recipe_id = 1;
+
+-- Inserts element with the value 2.
+UPDATE users
+SET recipe_ids = array_append(recipe_ids, 2)
+WHERE id = 1;
+
+-- Will remove element with the value 7.
+UPDATE users
+SET recipe_ids = array_remove(recipe_ids, 7)
+WHERE id = 1;
+
+SELECT *
+FROM unnest(
+                 (SELECT recipe_ids FROM users)
+     ) AS recipe_id
+WHERE recipe_id = 1;
+
 DROP TABLE recipes;
 
 INSERT INTO recipes (meal_type, name, image, ingredients, macros)

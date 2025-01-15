@@ -692,7 +692,7 @@ public class DBService
         {
             await using var conn = await GetConnection();
             const string query = "UPDATE recipes " +
-                                 "SET ingredients = array[]::ingredient[] "+
+                                 "SET ingredients = array[]::ingredient[] " +
                                  "WHERE id = @recipe_id";
             await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@recipe_id", recipeId);
@@ -711,7 +711,7 @@ public class DBService
         Console.WriteLine("Updating ingredients...");
 
         await EmptyRecipeIngredientsByRecipeId(recipeId);
-        
+
         try
         {
             await using var conn = await GetConnection();
@@ -987,13 +987,59 @@ public class DBService
         return statusMessage;
     }
 
-    public User GetUserByUsernameAndPassword(string username, string password)
+    public async Task<(User? User, string Message)> GetUserByUsernameAndPassword(string username, string password)
     {
-        var tempUser = new User();
+        Console.WriteLine("Getting user by username and password...");
+        var user = new User();
+        var statusMessage = "User found; no errors";
+        List<int> recipeIds = [];
+
+        const string query = "SELECT id, username, email, password, recipe_ids " +
+                             "FROM users " +
+                             "WHERE username = @username " +
+                             "AND password = @password";
+
+        try
+        {
+            await using var conn = await GetConnection();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@username", username);
+            cmd.Parameters.AddWithValue("@password", password);
+
+            await using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                user.SetId(reader.GetInt32(0));
+                user.Username = reader.GetString(1);
+                user.SetEmail(reader.GetString(2));
+                user.SetPassword(reader.GetString(3));
+                var recipeIdArray = reader.GetFieldValue<int[]>(4);
+                recipeIds = recipeIdArray?.ToList() ?? [];
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting user by username ({username}) and password ({password}): " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, statusMessage = "Error getting user by username and password");
+        }
+
+        if (recipeIds.Count != 0)
+        {
+            foreach (var recipeId in recipeIds)
+            {
+                user.Recipes.Add(await GetRecipeById(recipeId));
+            }
+        }
         
-        const string query = "SELECT id, na FROM users WHERE username = @username AND password = @password";
-        
-        return tempUser;
+        Console.WriteLine(user.GetUserId());
+
+        foreach (var recipe in user.Recipes)
+        {
+            recipe.PrintRecipe();
+        }
+
+        return (user, statusMessage);
     }
 
     private bool isIngredientIdZero(Ingredient ingredient)

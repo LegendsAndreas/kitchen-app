@@ -1,9 +1,10 @@
 @page "/create-recipe"
 @rendermode InteractiveServer
 @using WebKitchen.Components.Pages.RealTimeSearchBarElement
+@inject User CurrentUser;
 @inject DBService DbService;
-@inject SharedIngredientList GlobalIngredients;
 @inject SharedIngredient SharedDbIngredient
+@inject SharedIngredientList GlobalIngredients;
 
 <PageTitle>Create Recipe</PageTitle>
 
@@ -17,131 +18,138 @@ in the child components, the parent component (CreateRecipe) does not get the me
 StateHasChanged(). Right now, we just have this button as a temporary solution. *@
 <button type="button" class="btn btn-primary" @onclick="UpdatePage">Update Page Real Quick</button>
 
-<div class="card center-content border-layout">
-    <div class="card-body">
-        <EditForm Model="@CurrentRecipe" OnValidSubmit="HandleRecipe">
-            <DataAnnotationsValidator/>
+@if (CurrentUser.GetUserId() != 0)
+{
+    <div class="card center-content border-layout">
+        <div class="card-body">
+            <EditForm Model="@CurrentRecipe" OnValidSubmit="HandleRecipe">
+                <DataAnnotationsValidator/>
 
-            <div class="container text-center border-layout paddage">
-                <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
-                    <div class="col">
-                        <label class="form-label">Meal Type:</label>
-                        <InputText id="meal-type" @bind-Value="CurrentRecipe.MealType"/>
+                <div class="container text-center border-layout paddage">
+                    <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
+                        <div class="col">
+                            <label class="form-label">Meal Type:</label>
+                            <InputText id="meal-type" @bind-Value="CurrentRecipe.MealType"/>
+                        </div>
+
+                        <div class="col">
+                            <label>Recipe Name:</label>
+                            <InputText id="name" @bind-Value="CurrentRecipe.Name"/>
+                        </div>
+
+                        <label class="file-label" for="fileInput">Choose Image</label>
+                        <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
+                        <button type="submit" class="btn btn-primary col">Create Recipe</button>
                     </div>
-
-                    <div class="col">
-                        <label>Recipe Name:</label>
-                        <InputText id="name" @bind-Value="CurrentRecipe.Name"/>
-                    </div>
-
-                    <label class="file-label" for="fileInput">Choose Image</label>
-                    <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
-                    <button type="submit" class="btn btn-primary col">Create Recipe</button>
                 </div>
-            </div>
-        </EditForm>
+            </EditForm>
 
-        <EditForm Model="@CurrentIngredient" OnValidSubmit="HandleIngredient">
-            <DataAnnotationsValidator/>
-            <div class="container text-center border-layout paddage">
-                <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
-                    <div class="col">
-                        <label>Ingredient Name:</label>
-                        <InputText id="ingredient-name" @bind-Value="CurrentIngredient.Name"/>
-                    </div>
+            <EditForm Model="@CurrentIngredient" OnValidSubmit="HandleIngredient">
+                <DataAnnotationsValidator/>
+                <div class="container text-center border-layout paddage">
+                    <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
+                        <div class="col">
+                            <label>Ingredient Name:</label>
+                            <InputText id="ingredient-name" @bind-Value="CurrentIngredient.Name"/>
+                        </div>
 
-                    <div class="col">
-                        <label>Grams:</label>
-                        <InputNumber id="kg" @bind-Value="CurrentIngredient.Grams"/>
-                    </div>
+                        <div class="col">
+                            <label>Grams:</label>
+                            <InputNumber id="kg" @bind-Value="CurrentIngredient.Grams"/>
+                        </div>
 
-                    <div class="col">
-                        <label>Calories (pr. 100g):</label>
-                        <InputNumber id="calories" @bind-Value="CurrentIngredient.CaloriesPer100g"/>
-                    </div>
+                        <div class="col">
+                            <label>Calories (pr. 100g):</label>
+                            <InputNumber id="calories" @bind-Value="CurrentIngredient.CaloriesPer100g"/>
+                        </div>
 
-                    <div class="col">
-                        <label>Carbs (pr. 100g):</label>
-                        <InputNumber id="carbs" @bind-Value="CurrentIngredient.CarbsPer100g"/>
-                    </div>
+                        <div class="col">
+                            <label>Carbs (pr. 100g):</label>
+                            <InputNumber id="carbs" @bind-Value="CurrentIngredient.CarbsPer100g"/>
+                        </div>
 
-                    <div class="col">
-                        <label>Fats (pr. 100g):</label>
-                        <InputNumber id="fats" @bind-Value="CurrentIngredient.FatsPer100g"/>
-                    </div>
+                        <div class="col">
+                            <label>Fats (pr. 100g):</label>
+                            <InputNumber id="fats" @bind-Value="CurrentIngredient.FatsPer100g"/>
+                        </div>
 
-                    <div class="col">
-                        <label>Protein (pr. 100g):</label>
-                        <InputNumber id="protein" @bind-Value="CurrentIngredient.ProteinPer100g"/>
+                        <div class="col">
+                            <label>Protein (pr. 100g):</label>
+                            <InputNumber id="protein" @bind-Value="CurrentIngredient.ProteinPer100g"/>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add Ingredient</button>
                     </div>
-                    <button type="submit" class="btn btn-primary">Add Ingredient</button>
                 </div>
-            </div>
-        </EditForm>
-        
-        <EditForm Model="@currentIngredientGrams" OnSubmit="HandleDbIngredient">
-            <DataAnnotationsValidator/>
-            <div class="container text-center border-layout paddage">
-                <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
+            </EditForm>
 
-                    <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"/>
+            <EditForm Model="@currentIngredientGrams" OnSubmit="HandleDbIngredient">
+                <DataAnnotationsValidator/>
+                <div class="container text-center border-layout paddage">
+                    <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
 
-                    <div class="col">
-                        <label class="form-label">Grams</label>
-                        <InputNumber id="gramser" @bind-Value="currentIngredientGrams"/>
+                        <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"/>
+
+                        <div class="col">
+                            <label class="form-label">Grams</label>
+                            <InputNumber id="gramser" @bind-Value="currentIngredientGrams"/>
+                        </div>
+
+                        <div class="col">
+                            <p>Current Ingredient: @SharedDbIngredient.SelectedIngredient.Name</p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Add Existing Database Ingredient</button>
                     </div>
-                    
-                    <div class="col">
-                        <p>Current Ingredient: @SharedDbIngredient.SelectedIngredient.Name</p>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Add Existing Database Ingredient</button>
                 </div>
-            </div>
-        </EditForm>
+            </EditForm>
+        </div>
     </div>
-</div>
 
-@* The current ingredients *@
-<div class="accordion border-layout" id="accordionExample" style="margin-top: 10px;">
-    <div class="accordion-item">
-        <h2 class="accordion-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapseOne"
-                    aria-expanded="true" aria-controls="collapseOne">
-                Added Ingredients
-            </button>
-        </h2>
-        <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-            <div class="accordion-body">
-                @if (currentIngredients.Count == 0)
-                {
-                    <p>No ingredients added</p>
-                }
-                @foreach (var ingredient in currentIngredients)
-                {
-                    <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                            @ingredient.Name
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li class="dropdown-item">Calories: @ingredient.CaloriesPer100g.ToString("0")</li>
-                            <li class="dropdown-item">Grams: @ingredient.Grams.ToString("0")</li>
-                            <li class="dropdown-item">Protein: @ingredient.ProteinPer100g.ToString("0")</li>
-                            <li class="dropdown-item">Fat: @ingredient.FatsPer100g.ToString("0")</li>
-                            <li class="dropdown-item">Carbs: @ingredient.CarbsPer100g.ToString("0")</li>
-                        </ul>
-                        <button type="submit" class="btn btn-danger"
-                                @onclick="() => DeleteIngredient(currentIngredients.IndexOf(ingredient))">
-                            <strong>X</strong>
-                        </button>
-                    </div>
-                }
+    @* The current ingredients *@
+    <div class="accordion border-layout" id="accordionExample" style="margin-top: 10px;">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne"
+                        aria-expanded="true" aria-controls="collapseOne">
+                    Added Ingredients
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    @if (currentIngredients.Count == 0)
+                    {
+                        <p>No ingredients added</p>
+                    }
+                    @foreach (var ingredient in currentIngredients)
+                    {
+                        <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                @ingredient.Name
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li class="dropdown-item">Calories: @ingredient.CaloriesPer100g.ToString("0")</li>
+                                <li class="dropdown-item">Grams: @ingredient.Grams.ToString("0")</li>
+                                <li class="dropdown-item">Protein: @ingredient.ProteinPer100g.ToString("0")</li>
+                                <li class="dropdown-item">Fat: @ingredient.FatsPer100g.ToString("0")</li>
+                                <li class="dropdown-item">Carbs: @ingredient.CarbsPer100g.ToString("0")</li>
+                            </ul>
+                            <button type="submit" class="btn btn-danger"
+                                    @onclick="() => DeleteIngredient(currentIngredients.IndexOf(ingredient))">
+                                <strong>X</strong>
+                            </button>
+                        </div>
+                    }
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
+else
+{
+    <p>Log in to create recipe.</p>
+}
 
 @code {
     private Ingredient CurrentIngredient = new();

@@ -1,6 +1,7 @@
 @page "/edit"
 @rendermode InteractiveServer
 @using WebKitchen.Components.Pages.EditForms;
+@inject User CurrentUser;
 
 <PageTitle>Edit</PageTitle>
 
@@ -38,7 +39,8 @@
             <hr class="dropdown-divider"/>
         </li>
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("deleteIngredient"))">Delete
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("delete-db-ingredient"))">
+                Delete
                 Database Ingredient
             </button>
         </li>
@@ -87,20 +89,39 @@
                         <DeleteRecipeForm/>
                     </div>
                     break;
-                case "deleteIngredient":
-                    <div class="edit-recipes-form">
-                        <DeleteDbIngredientForm/>
-                    </div>
+                case "delete-db-ingredient":
+                    @if (CurrentUser.IsOwner())
+                    {
+                        <div class="edit-recipes-form">
+                            <DeleteDbIngredientForm/>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>You dont have the right to delete ingredients.</p>
+                    }
+
                     break;
                 case "ingredientImage":
-                    <div class="edit-recipes-form">
-                        <EditDbIngredientImageForm/>
-                    </div>
+
+                        <div class="edit-recipes-form">
+                            <EditDbIngredientImageForm/>
+                        </div>
+
+
                     break;
                 case "database-ingredient":
+                    @if (CurrentUser.IsOwner())
+                    {
+                        
                     <div class="edit-recipes-form">
                         <EditDatabaseIngredient/>
                     </div>
+                    }
+                    else
+                    {
+                        <p>You dont have the right to edit database ingredients.</p>
+                    }
                     break;
             }
         </div>

@@ -9,6 +9,10 @@
 
 <PageTitle>Recipes</PageTitle>
 
+<LoginModal/>
+
+@* <LoginModal/> *@
+
 <div class="container">
     @* Uncomment to access the developer page. *@
     @*<button class="btn btn-primary" onclick="@(() => navigationManager.NavigateTo("/developer"))">Go To developer
@@ -52,9 +56,9 @@
             }
         </div>
     }
-
-
 </div>
+
+@* <button type="button" @onclick="StateUpdate">Update State</button> *@
 
 <StatusMessageToast @ref="StatusMessageToaster"/>
 
@@ -63,11 +67,27 @@
     bool gettingRecipes = false;
     StatusMessageToast? StatusMessageToaster;
 
+    private void StateUpdate()
+    {
+        Console.WriteLine(CurrentUser.GetUserId());
+        StateHasChanged();
+    }
+    
+    protected override void OnInitialized()
+    {
+        CurrentUser.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        CurrentUser.OnChange -= StateHasChanged;
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         Console.WriteLine("__Rendering Home__");
 
-        if (firstRender && !CurrentUser.Recipes.Any())
+        /*if (firstRender && !CurrentUser.Recipes.Any())
         {
             gettingRecipes = true;
             try
@@ -102,7 +122,7 @@
             Console.WriteLine("Not first render.");
 
         if (CurrentUser.Recipes.Any())
-            Console.WriteLine("Recipes are full.");
+            Console.WriteLine("Recipes are full.");*/
 
         gettingRecipes = false;
     }

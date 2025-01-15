@@ -17,6 +17,8 @@ __Function setup__
 When a function is called, there has to be a console message that says that it is being activated.
 Example: GetRecipeById(), has to have the console message at the start: Console.Writeline("Getting recipe by id...").
 The only time, where this is not the case, is when you are calling a function whose job is to print in the console anyway.
+Also, generally speaking, the function should return its value (if any), along with a status message, which tells the user
+and us what went wrong. There will be times where you dont have to do so, but those are the exceptions to the rule.
 
 Be specific in how you call something.
 For example, don't call a function "GetIngredientsById", rather call it "GetIngredientsByRecipeId". This helps to reduce
@@ -28,7 +30,9 @@ Example: UpdateRecipeNameByRecipeId(string updatedName, int recipeId).
 
 __Exception guide__
 Exceptions are called "ex". In a try-catch clause, the error message has to display the message, along with a user defined 
-message that says what action went wrong, along with the stacktrace.
+message that says what action went wrong, along with the stacktrace. The message also has to include the parameters that
+where in use.
+Moreover, we also return a status message, which we can use to display to the user.
 Example:
 try
 {
@@ -36,8 +40,9 @@ try
 }
 catch (Exception ex)
 {
-    Console.Writeline("Error getting recipe by id: " + ex.Message);
-    Console.Writeline("StackTrace: " + ex.StackTrace)
+    Console.Writeline($"Error getting recipe by id ({Id}): " + ex.Message);
+    Console.Writeline("StackTrace: " + ex.StackTrace);
+    return (null, statusMessage);
 }
 
 __general lexicon__

@@ -1,5 +1,6 @@
 ﻿@page "/ingredients"
 @rendermode InteractiveServer
+@inject User CurrentUser;
 @inject DBService DbService;
 @inject SharedIngredientList GlobalIngredients;
 
@@ -18,64 +19,76 @@
 
 <PageTitle>Ingredients</PageTitle>
 
-@* Ingredient form *@
-<EditForm Model="@currentIngredient" OnValidSubmit="ValidIngredientAsync">
-    <DataAnnotationsValidator/>
+@if (CurrentUser.GetUserId() != 0)
+{
+    @if (CurrentUser.IsOwner())
+    {
+        @* Ingredient form *@
+        <EditForm Model="@currentIngredient" OnValidSubmit="ValidIngredientAsync">
+            <DataAnnotationsValidator/>
 
-    <div class="container ingredient-form">
-        <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-1">
-            <div class="col">
-                <label class="form-label">
-                    Name
-                </label>
-                <InputText id="name" @bind-Value="currentIngredient.Name"/>
-                <ValidationMessage For="@(() => currentIngredient.Name)"/>
+            <div class="container ingredient-form">
+                <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-1">
+                    <div class="col">
+                        <label class="form-label">
+                            Name
+                        </label>
+                        <InputText id="name" @bind-Value="currentIngredient.Name"/>
+                        <ValidationMessage For="@(() => currentIngredient.Name)"/>
+                    </div>
+
+                    <div class="col">
+                        <label class="form-label">
+                            <strong>Calories</strong>
+                        </label>
+                        <InputNumber id="cals" @bind-Value="currentIngredient.CaloriesPer100g"/>
+                        <ValidationMessage For="@(() => currentIngredient.CaloriesPer100g)"/>
+                    </div>
+
+                    <div class="col">
+                        <label class="form-label">
+                            <strong>Fats</strong>
+                        </label>
+                        <InputNumber id="fats" @bind-Value="currentIngredient.FatsPer100g"/>
+                        <ValidationMessage For="@(() => currentIngredient.FatsPer100g)"/>
+                    </div>
+
+                    <div class="col">
+                        <label class="form-label">
+                            <strong>Carbs</strong>
+                        </label>
+                        <InputNumber id="carbs" @bind-Value="currentIngredient.CarbsPer100g"/>
+                        <ValidationMessage For="@(() => currentIngredient.CarbsPer100g)"/>
+                    </div>
+
+                    <div class="col">
+                        <label class="form-label">
+                            <strong>Protein</strong>
+                        </label>
+                        <InputNumber id="protein" @bind-Value="currentIngredient.ProteinPer100g"/>
+                        <ValidationMessage For="@(() => currentIngredient.ProteinPer100g)"/>
+                    </div>
+
+                    <div class="col">
+                        <label class="file-label btn btn-primary" for="fileInput">Choose Image</label>
+                        <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
+                    </div>
+
+
+                </div>
+                <button type="submit" class="btn btn-primary" style="margin: 5px">Add Ingredient</button>
             </div>
-
-            <div class="col">
-                    <label class="form-label">
-                        <strong>Calories</strong>
-                    </label>
-                    <InputNumber id="cals" @bind-Value="currentIngredient.CaloriesPer100g"/>
-                    <ValidationMessage For="@(() => currentIngredient.CaloriesPer100g)"/>
-            </div>
-
-            <div class="col">
-                    <label class="form-label">
-                        <strong>Fats</strong>
-                    </label>
-                    <InputNumber id="fats" @bind-Value="currentIngredient.FatsPer100g"/>
-                    <ValidationMessage For="@(() => currentIngredient.FatsPer100g)"/>
-            </div>
-
-            <div class="col">
-                    <label class="form-label">
-                        <strong>Carbs</strong>
-                    </label>
-                    <InputNumber id="carbs" @bind-Value="currentIngredient.CarbsPer100g"/>
-                    <ValidationMessage For="@(() => currentIngredient.CarbsPer100g)"/>
-            </div>
-
-            <div class="col">
-                    <label class="form-label">
-                        <strong>Protein</strong>
-                    </label>
-                    <InputNumber id="protein" @bind-Value="currentIngredient.ProteinPer100g"/>
-                    <ValidationMessage For="@(() => currentIngredient.ProteinPer100g)"/>
-            </div>
-
-            <div class="col">
-                <label class="file-label btn btn-primary" for="fileInput">Choose Image</label>
-                <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
-            </div>
-
-            
-
-        </div>
-        <button type="submit" class="btn btn-primary" style="margin: 5px">Add Ingredient</button>
-    </div>
-</EditForm>
-
+        </EditForm>
+    }
+    else
+    {
+        <p>You dont have the privilege to add ingredients.</p>
+    }
+}
+else
+{
+    <p>Sign in to add ingredients.</p>
+}
 
 @* Ingredients list *@
 <div class="container">
@@ -137,7 +150,7 @@
         if (GlobalIngredients.Ingredients.Any())
             Console.WriteLine("Ingredients are full.");
     }
-    
+
     private Task HandleImage(InputFileChangeEventArgs imageFiles)
     {
         foreach (var image in imageFiles.GetMultipleFiles())
@@ -171,7 +184,7 @@
             Console.WriteLine("No image selected.");
             return;
         }
-        
+
         await currentIngredient.SetIngredientImage(loadedIngredientImage);
         var tempIngredient = currentIngredient.TransferIngredient(currentIngredient);
         await DbService.AddIngredientToDb(tempIngredient);
