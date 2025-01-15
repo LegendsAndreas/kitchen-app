@@ -21,7 +21,7 @@ public class DBService
 
     /// Asynchronously creates and returns an open database connection using the configured connection string.
     /// <returns>An instance of NpgsqlConnection that is open and ready for database operations.</returns>
-    public async Task<NpgsqlConnection> GetConnection()
+    private async Task<NpgsqlConnection> GetConnection()
     {
         Console.WriteLine("Getting connection...");
         NpgsqlConnection connection = new(_connectionString);
@@ -37,12 +37,13 @@ public class DBService
         return base64PlaceHolderPic;
     }
 
-    private async Task<List<Recipe>> GetDinnerRecipes()
+    private async Task<(List<Recipe> Recipes, string Message)> GetDinnerRecipes()
     {
         Console.WriteLine("Getting dinner recipes...");
 
         var base64PlaceHolderPic = await GetPlaceHolderPic();
         List<Recipe> recipes = [];
+        string statusMessage = "Recipes successfully retrieved.";
         await using var conn = await GetConnection();
 
         const string query =
@@ -71,20 +72,21 @@ public class DBService
             recipes.Add(recipe);
         }
 
-        return recipes;
+        return (recipes, statusMessage);
     }
 
-    public async Task<Recipe?> GetRecipeById(int recipeId)
+    public async Task<(Recipe? Recipe, string Message)> GetRecipeById(int recipeId)
     {
         Console.WriteLine("Getting recipe by id...");
 
         if (recipeId < 1)
         {
             Console.WriteLine("Recipe ID is less than 1.");
-            return null;
+            return (null, "Recipe ID is less than 1.");
         }
 
         Recipe recipe;
+        string statusMessage = "Recipe successfully retrieved.";
 
         const string query = "SELECT id, name, image, meal_type," +
                              "(macros).total_calories," +
@@ -108,17 +110,17 @@ public class DBService
             else
             {
                 Console.WriteLine("Recipe not found.");
-                return null;
+                return (null, "Recipe not found.");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error getting recipe by id: " + ex.Message);
+            Console.WriteLine($"Error getting recipe by id ({recipeId}): " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            throw;
+            return (null, $"Error getting recipe by id ({recipeId}): {ex.Message}.");
         }
 
-        return recipe;
+        return (recipe, statusMessage);
     }
 
     private async Task<Recipe> BuildRecipe(NpgsqlDataReader reader)
@@ -210,15 +212,16 @@ public class DBService
     public async Task<Recipe> GetRandomRecipe()
     {
         Console.WriteLine("Getting random recipe...");
-        var recipes = await GetDinnerRecipes();
-        var randomRecipe = recipes[new Random().Next(0, recipes.Count - 1)];
+        var result = await GetDinnerRecipes();
+        var randomRecipe = result.Recipes[new Random().Next(0, result.Recipes.Count - 1)];
         return randomRecipe;
     }
 
-    public async Task<List<RecipeInstructionRecord>> GetAllRecipeInstructions()
+    public async Task<(List<RecipeInstructionRecord>? Instructions, string Message)> GetAllRecipeInstructions()
     {
         Console.WriteLine("Getting all recipe instructions...");
         var recipeInstructionsRecords = new List<RecipeInstructionRecord>();
+        string statusMessage = "Recipe instructions successfully retrieved.";
 
         const string query = "SELECT id, instructions, recipe_id FROM recipe_instructions";
 
@@ -239,6 +242,12 @@ public class DBService
                 // Deserialize JSON data into RecipeInstructions class
                 var instructions = JsonSerializer.Deserialize<RecipeInstructions>(jsonData);
 
+                if (instructions == null)
+                {
+                    Console.WriteLine("Error deserializing instructions.");
+                    return (null, "Error deserializing instructions; instructions are null.");
+                }
+
                 // Map everything into a RecipeInstructionRecord object
                 var recipeRecord = new RecipeInstructionRecord { Instructions = instructions };
                 recipeRecord.SetId(id);
@@ -251,19 +260,19 @@ public class DBService
         {
             Console.WriteLine("Error getting all recipe instructions: " + ex.Message);
             Console.WriteLine("StackTrace:  " + ex.StackTrace);
-            throw;
+            return (null, $"Error getting all recipe instructions: {ex.Message}.");
         }
 
-        return recipeInstructionsRecords;
+        return (recipeInstructionsRecords, statusMessage);
     }
 
-    public async Task<List<Recipe>> GetAllRecipes()
+    public async Task<(List<Recipe>? Recipes, string Message)> GetAllRecipes()
     {
         Console.WriteLine("Getting recipes...");
 
         // var base64PlaceHolderPic = await GetPlaceHolderPic();
         List<Recipe> recipes = new();
-        await using var conn = await GetConnection();
+        string statusMessage = "Recipes successfully retrieved.";
 
         const string query = "SELECT id, name, image, meal_type," +
                              "(macros).total_calories," +
@@ -272,15 +281,26 @@ public class DBService
                              "(macros).total_protein " +
                              "FROM recipes " +
                              "ORDER BY id";
-        await using var cmd = new NpgsqlCommand(query, conn);
-        await using var reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
+
+        try
         {
-            var tempRecipe = await BuildRecipe(reader);
-            recipes.Add(tempRecipe);
+            await using var conn = await GetConnection();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var tempRecipe = await BuildRecipe(reader);
+                recipes.Add(tempRecipe);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting all recipes: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting all recipes: {ex.Message}.");
         }
 
-        return recipes;
+        return (recipes, statusMessage);
     }
 
     public async Task<List<Recipe>> GetRecipesByCategory(string category)
@@ -371,37 +391,48 @@ public class DBService
     /// Each ingredient includes its name, nutritional values, and associated image.
     /// If the image is a placeholder, it returns the base64-encoded placeholder image.
     /// <returns>A list of Ingredient objects retrieved from the database.</returns>
-    public async Task<List<Ingredient>> GetAllDbIngredients()
+    public async Task<(List<Ingredient>? DbIngredients, string Message)> GetAllDbIngredients()
     {
         Console.WriteLine("Getting all database ingredients...");
 
         var base64PlaceHolderPic = await GetPlaceHolderPic();
 
         List<Ingredient> ingredients = [];
-        await using var conn = await GetConnection();
+        string statusMessage = "Ingredients successfully retrieved.";
 
         const string query = "SELECT id, name, cals, fats, carbs, protein, image FROM ingredients ORDER BY id";
-        await using var cmd = new NpgsqlCommand(query, conn);
-        await using var reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
+
+        try
         {
-            Ingredient tempIngredient = new()
+            await using var conn = await GetConnection();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
             {
-                Name = reader.GetString(1),
-                CaloriesPer100g = reader.GetFloat(2),
-                FatsPer100g = reader.GetFloat(3),
-                CarbsPer100g = reader.GetFloat(4),
-                ProteinPer100g = reader.GetFloat(5),
-                Base64Image = reader.GetString(6) != "PlaceHolderPic.jpg"
-                    ? reader.GetString(6)
-                    : base64PlaceHolderPic
-            };
-            var uintValue = unchecked((uint)reader.GetInt32(0));
-            tempIngredient.SetId(uintValue);
-            ingredients.Add(tempIngredient);
+                Ingredient tempIngredient = new()
+                {
+                    Name = reader.GetString(1),
+                    CaloriesPer100g = reader.GetFloat(2),
+                    FatsPer100g = reader.GetFloat(3),
+                    CarbsPer100g = reader.GetFloat(4),
+                    ProteinPer100g = reader.GetFloat(5),
+                    Base64Image = reader.GetString(6) != "PlaceHolderPic.jpg"
+                        ? reader.GetString(6)
+                        : base64PlaceHolderPic
+                };
+                var uintValue = unchecked((uint)reader.GetInt32(0));
+                tempIngredient.SetId(uintValue);
+                ingredients.Add(tempIngredient);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting all database ingredients: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting all database ingredients: {ex.Message}.");
         }
 
-        return ingredients;
+        return (ingredients, statusMessage);
     }
 
     /// Asynchronously retrieves the ID of a recipe by its name from the database.
@@ -468,24 +499,27 @@ public class DBService
     /// Asynchronously adds a recipe to the database by inserting its details, including meal type, name, image, macros, and ingredients.
     /// <param name="recipe">The recipe object containing all the required details to be added to the database.</param>
     /// <return>A task representing the asynchronous operation.</return>
-    public async Task AddRecipeToDb(Recipe recipe)
+    public async Task<(bool Status, string Message)> AddRecipeToDb(Recipe recipe)
     {
         Console.WriteLine("Adding recipe to database...");
+
+        string statusMessage = "Recipe successfully added.";
+        const string query = "INSERT INTO recipes " +
+                             "(meal_type, name, image, macros) " +
+                             "VALUES (" +
+                             "@type," +
+                             "@name," +
+                             "@image," +
+                             "ROW(" +
+                             "@calories," +
+                             "@fats," +
+                             "@carbs," +
+                             "@protein)::recipe_macros)";
+
         recipe.PrintRecipe();
         try
         {
             await using var conn = await GetConnection();
-            const string query = "INSERT INTO recipes " +
-                                 "(meal_type, name, image, macros) " +
-                                 "VALUES (" +
-                                 "@type," +
-                                 "@name," +
-                                 "@image," +
-                                 "ROW(" +
-                                 "@calories," +
-                                 "@fats," +
-                                 "@carbs," +
-                                 "@protein)::recipe_macros)";
             await using NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@type", recipe.MealType);
             cmd.Parameters.AddWithValue("@name", recipe.Name);
@@ -501,14 +535,16 @@ public class DBService
         {
             Console.WriteLine("Error adding recipe to database: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            throw;
+            return (false, $"Error adding recipe to database: {ex.Message}.");
         }
+
+        return (true, statusMessage);
     }
 
     /// Asynchronously adds a recipe's instructions to the database.
     /// <param name="instructions">An object containing the instructions and the associated recipe ID.</param>
     /// <return>A Task representing the asynchronous operation.</return>
-    public async Task<string> AddInstructionToDb(RecipeInstructionRecord instructions)
+    public async Task<(bool Status, string Message)> AddInstructionToDb(RecipeInstructionRecord instructions)
     {
         Console.WriteLine("Adding instructions to database...");
 
@@ -531,39 +567,42 @@ public class DBService
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error adding instructions to database: " + ex.Message);
+            Console.WriteLine($"Error adding instructions ({instructions}) to database: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            throw;
+            return (false, $"Error adding instructions to database: {ex.Message}.");
         }
 
-        return statusMessage;
+        return (true, statusMessage);
     }
 
     /// Adds a list of ingredients to the corresponding row within the recipes database table.
     /// <param name="ingredients">The list of ingredients to add, each represented by an Ingredient object.</param>
     /// <return>A Task that represents the asynchronous operation.</return>
-    private async Task AddIngredientsToRow(List<Ingredient> ingredients)
+    private async Task<(bool Status, string Message)> AddIngredientsToRow(List<Ingredient> ingredients)
     {
         Console.WriteLine("Adding ingredients to row...");
+
+        string statusMessage = "Ingredients successfully added.";
+
+        const string query = "UPDATE recipes " +
+                             "SET ingredients =" +
+                             "array_append(ingredients," +
+                             "ROW(" +
+                             "@name," +
+                             "@grams," +
+                             "@cals," +
+                             "@fats," +
+                             "@carbs," +
+                             "@protein," +
+                             "@multiplier" +
+                             ")::ingredient) " +
+                             "WHERE id IN (SELECT COUNT(*) FROM recipes)"; // Since every new recipe is actually the last one in the table, we can just add all the occurrences of id into one and that will be our recipe id.
 
         try
         {
             await using var conn = await GetConnection();
             foreach (var ingredient in ingredients)
             {
-                const string query = "UPDATE recipes " +
-                                     "SET ingredients =" +
-                                     "array_append(ingredients," +
-                                     "ROW(" +
-                                     "@name," +
-                                     "@grams," +
-                                     "@cals," +
-                                     "@fats," +
-                                     "@carbs," +
-                                     "@protein," +
-                                     "@multiplier" +
-                                     ")::ingredient) " +
-                                     "WHERE id IN (SELECT COUNT(*) FROM recipes)"; // Since every new recipe is actually the last one in the table, we can just add all the occurrences of id into one and that will be our recipe id.
                 await using var cmd = new NpgsqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@name", ingredient.Name);
                 cmd.Parameters.AddWithValue("@grams", ingredient.Grams);
@@ -577,26 +616,31 @@ public class DBService
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error adding ingredients to row: " + ex.Message);
+            Console.WriteLine($"Error adding ingredients ({ingredients}) to row: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            throw;
+            return (false, "Error adding ingredients to row: " + ex.Message);
         }
+
+        return (true, statusMessage);
     }
 
     /// Asynchronously adds an ingredient to the database.
     /// <param name="ingredient">The ingredient object containing details such as name, calories, fats, carbs, protein, and image to be added to the database.</param>
     /// <return>A task representing the asynchronous operation.</return>
-    public async Task AddIngredientToDb(Ingredient ingredient)
+    public async Task<(bool Status, string Message)> AddIngredientToDb(Ingredient ingredient)
     {
         Console.WriteLine("Adding ingredient to database...");
+
+        string statusMessage = "Ingredient successfully added.";
+
+        const string query =
+            "INSERT INTO ingredients " +
+            "(name, cals, fats, carbs, protein, image) " +
+            "VALUES(@name, @cals, @fats, @carbs, @protein, @image)";
 
         try
         {
             await using var conn = await GetConnection();
-            const string query =
-                "INSERT INTO ingredients " +
-                "(name, cals, fats, carbs, protein, image) " +
-                "VALUES(@name, @cals, @fats, @carbs, @protein, @image)";
             await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@name", ingredient.Name);
             cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
@@ -608,17 +652,18 @@ public class DBService
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error adding ingredients to database: " + ex.Message);
+            Console.WriteLine($"Error adding ingredients ({ingredient}) to database: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            throw;
+            return (false, $"Error adding ingredients to database: {ex.Message}.");
         }
+
+        return (true, statusMessage);
     }
 
-
-    /// Updates the meal type of a recipe identified by its ID in the database.
-    /// <param name="mealType">The new meal type to be assigned to the recipe.</param>
-    /// <param name="recipeId">The unique identifier of the recipe to be updated.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
+    /// Updates the meal type of a recipe in the database based on the provided recipe ID.
+    /// <param name="mealType">The new meal type to set for the specified recipe.</param>
+    /// <param name="recipeId">The ID of the recipe to be updated.</param>
+    /// <returns>A status message indicating the success or failure of the operation.</returns>
     public async Task<string> UpdateRecipeMealTypeRecipeId(string mealType, int recipeId)
     {
         Console.WriteLine("Updating recipe meal type by name...");
@@ -650,7 +695,7 @@ public class DBService
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error updating recipe meal type by recipe id: " + ex.Message);
+            Console.WriteLine($"Error updating recipe meal type ({mealType}) by recipe id ({recipeId}): " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             throw;
         }
@@ -692,7 +737,7 @@ public class DBService
         {
             await using var conn = await GetConnection();
             const string query = "UPDATE recipes " +
-                                 "SET ingredients = array[]::ingredient[] "+
+                                 "SET ingredients = array[]::ingredient[] " +
                                  "WHERE id = @recipe_id";
             await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@recipe_id", recipeId);
@@ -711,7 +756,7 @@ public class DBService
         Console.WriteLine("Updating ingredients...");
 
         await EmptyRecipeIngredientsByRecipeId(recipeId);
-        
+
         try
         {
             await using var conn = await GetConnection();
@@ -750,10 +795,10 @@ public class DBService
         }
     }
 
-    /// Updates the image of a recipe based on its name in the database.
-    /// <param name="recipeName">The name of the recipe to update.</param>
-    /// <param name="base64Image">The new image represented as a Base64 string.</param>
-    /// <return>A task that represents the asynchronous update operation.</return>
+    /// Updates the image of a recipe identified by its ID with the provided base64-encoded string representation of the image.
+    /// <param name="base64Image">The base64-encoded string representation of the new image to update.</param>
+    /// <param name="recipeId">The unique identifier of the recipe whose image is being updated. Must be greater than 0.</param>
+    /// <returns>A message indicating whether the image update operation was successful or detailing any error that occurred.</returns>
     public async Task<string> UpdateRecipeImageByRecipeId(string base64Image, int recipeId)
     {
         Console.WriteLine("Updating recipe image by id...");
@@ -782,18 +827,18 @@ public class DBService
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error updating recipe image by recipe id: " + ex.Message);
+            Console.WriteLine($"Error updating recipe image by recipe id ({recipeId}): " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            throw;
+            return $"Error updating recipe image by recipe id ({recipeId}): " + ex.Message;
         }
 
         return statusMessage;
     }
 
-    /// Updates the name of a recipe in the database based on its current name.
-    /// <param name="currentName">The current name of the recipe to be updated.</param>
-    /// <param name="updatedName">The new name to update the recipe to.</param>
-    /// <return>A task representing the asynchronous operation.</return>
+    /// Updates the name of a recipe in the database based on the provided recipe ID.
+    /// <param name="updatedName">The new name to update the recipe with.</param>
+    /// <param name="recipeId">The ID of the recipe to be updated.</param>
+    /// <returns>A string indicating the status of the update operation.</returns>
     public async Task<string> UpdateRecipeNameByRecipeId(string updatedName, int recipeId)
     {
         Console.WriteLine("Updating recipe name by name...");
@@ -824,9 +869,9 @@ public class DBService
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error updating recipe name by recipe id: " + ex.Message);
+            Console.WriteLine($"Error updating recipe name by recipe id ({recipeId}): " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            throw;
+            return $"Error updating recipe name by recipe id ({recipeId}): " + ex.Message;
         }
 
         return statusMessage;
@@ -894,22 +939,24 @@ public class DBService
     /// <return>Task.</return>
     /// <remarks>Remember that this technically updates EVERY value in a database Ingredient. So don't just send an Ingredient
     /// with one active value, while the rest are just null.</remarks>
-    public async Task UpdateDbIngredient(Ingredient ingredient)
+    public async Task<string> UpdateDbIngredient(Ingredient ingredient)
     {
         Console.WriteLine("Updating database ingredient...");
+
+        string statusMessage = "Ingredient got updated.";
+        const string query = "UPDATE ingredients " +
+                             "SET " +
+                             "name = @name," +
+                             "cals = @cals," +
+                             "fats = @fats," +
+                             "carbs = @carbs," +
+                             "protein = @protein," +
+                             "image = @image " +
+                             "WHERE id = @id";
 
         try
         {
             await using var conn = await GetConnection();
-            const string query = "UPDATE ingredients " +
-                                 "SET " +
-                                 "name = @name," +
-                                 "cals = @cals," +
-                                 "fats = @fats," +
-                                 "carbs = @carbs," +
-                                 "protein = @protein," +
-                                 "image = @image " +
-                                 "WHERE id = @id";
             await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@name", ingredient.Name);
             cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
@@ -922,17 +969,24 @@ public class DBService
             if (isIngredientIdZero(ingredient))
             {
                 Console.WriteLine("Ingredient ID is zero. Not updating.");
-                return;
+                return "Ingredient ID is zero. Not updating.";
             }
 
-            await RunAsyncQuery(cmd);
+            var result = await RunAsyncQuery(cmd);
+            if (result == 0)
+            {
+                Console.WriteLine("Ingredient ID is not found in database.");
+                statusMessage = "Ingredient did not get updated; ingredient ID was not found in database.";
+            }
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error updating database ingredient: " + ex.Message);
+            Console.WriteLine($"Error updating database ingredient ({ingredient}): " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            throw;
+            return $"Error updating database ingredient ({ingredient}): " + ex.Message;
         }
+
+        return statusMessage;
     }
 
     /// Asynchronously removes an ingredient with the specified name from the database.
@@ -956,10 +1010,10 @@ public class DBService
 
         return statusMessage;
     }
-
-    /// Asynchronously deletes a recipe by its name from the database.
-    /// <param name="recipeName">The name of the recipe to delete.</param>
-    /// <return>A string indicating the status of the deletion operation, such as success or not found.</return>
+    
+    /// Asynchronously deletes a recipe from the database by its unique identifier.
+    /// <param name="recipeId">The unique identifier of the recipe to be deleted.</param>
+    /// <returns>A string indicating the result of the operation, including success or failure messages.</returns>
     public async Task<string> DeleteRecipeById(int recipeId)
     {
         Console.WriteLine("Deleting recipe by name...");
@@ -987,6 +1041,9 @@ public class DBService
         return statusMessage;
     }
 
+    /// Determines whether the ingredient's ID is zero.
+    /// <param name="ingredient">The ingredient to check.</param>
+    /// <returns>True if the ingredient's ID is zero; otherwise, false.</returns>
     private bool isIngredientIdZero(Ingredient ingredient)
     {
         Console.WriteLine("Checking if ingredient ID is 0...");

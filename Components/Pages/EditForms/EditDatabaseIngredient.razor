@@ -1,3 +1,4 @@
+@using WebKitchen.Components.Pages.SharedComponents
 @inject DBService DbService
 
 <EditForm Model="@ingredientName" OnSubmit="@HandleDatabaseNameSubmit">
@@ -32,20 +33,25 @@
     </EditForm>
 
     <div>
-        <p>Database @ingredient.Name Image</p>
+        <p>Database @ingredient.Name Image</p> 
         <img src="data:image/png;base64,@ingredient.Base64Image" alt="Image" class="img-fluid"/>
     </div>
 }
+
+<StatusMessageToast @ref="StatusMessageToaster"/>
 
 @code{
 
     string ingredientName = string.Empty;
     Ingredient ingredient = new();
+    StatusMessageToast? StatusMessageToaster;
 
     private async Task HandleSubmit()
     {
         ingredient.PrintIngredient();
-        await DbService.UpdateDbIngredient(ingredient);
+        var result = await DbService.UpdateDbIngredient(ingredient);
+        if (StatusMessageToaster != null)
+            await StatusMessageToaster.ShowToastAsync(result);
     }
 
     private async Task HandleDatabaseNameSubmit()

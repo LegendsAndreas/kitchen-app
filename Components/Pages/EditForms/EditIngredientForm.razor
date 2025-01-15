@@ -45,18 +45,29 @@
             }
         }
     </div>
-
-
 </div>
+
+<StatusMessageToast @ref="RecipeStatusToaster"/>
 
 @code{
 
     int recipeId;
     Recipe? currentRecipe;
+    StatusMessageToast? RecipeStatusToaster;
 
     private async Task HandleSubmit()
     {
-        currentRecipe = await DbService.GetRecipeById(recipeId);
+        Console.WriteLine("Handling getting recipe...");
+        var result = await DbService.GetRecipeById(recipeId);
+        if (result.Recipe == null)
+        {
+            if (RecipeStatusToaster != null)
+                await RecipeStatusToaster.ShowToastAsync(result.Message);
+        }
+        else
+        {
+            currentRecipe = result.Recipe;
+        }
     }
 
     private void DeleteIngredient(int index)

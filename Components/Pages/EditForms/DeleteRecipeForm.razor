@@ -62,7 +62,17 @@
 
     private async Task HandleGettingRecipe()
     {
-        currentRecipe = await DbService.GetRecipeById(recipeId);
+        Console.WriteLine("Handling getting recipe...");
+        var result = await DbService.GetRecipeById(recipeId);
+        if (result.Recipe == null)
+        {
+            if (RecipeStatusToaster != null)
+                await RecipeStatusToaster.ShowToastAsync(result.Message);
+        }
+        else
+        {
+            currentRecipe = result.Recipe;
+        }
     }
 
     private async Task HandleSubmit()
@@ -74,7 +84,7 @@
             var statusMessage = await DbService.DeleteRecipeById(recipeId);
             if (RecipeStatusToaster != null)
                 await RecipeStatusToaster.ShowToastAsync(statusMessage);
-            
+
             Console.WriteLine(statusMessage);
         }
 

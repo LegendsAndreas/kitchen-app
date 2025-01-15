@@ -19,7 +19,7 @@
     <PreviewRecipe CurrentPreviewRecipe="@currentRecipe"/>
 }
 
-<StatusMessageToast @ref="Toast"></StatusMessageToast>
+<StatusMessageToast @ref="RecipeStatusToaster"></StatusMessageToast>
 
 @* toaster *@
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -43,12 +43,22 @@
 @code{
     int recipeId;
     string sqlStatusMessage = "<SQL Status Message>";
-    private StatusMessageToast? Toast;
     Recipe? currentRecipe;
+    StatusMessageToast? RecipeStatusToaster;
 
     private async Task HandleGettingId()
     {
-        currentRecipe = await DbService.GetRecipeById(recipeId);
+        Console.WriteLine("Handling getting recipe...");
+        var result = await DbService.GetRecipeById(recipeId);
+        if (result.Recipe == null)
+        {
+            if (RecipeStatusToaster != null)
+                await RecipeStatusToaster.ShowToastAsync(result.Message);
+        }
+        else
+        {
+            currentRecipe = result.Recipe;
+        }
     }
     
     private async Task HandleSubmit()
@@ -57,8 +67,8 @@
         {
             sqlStatusMessage = await DbService.UpdateRecipeNameByRecipeId(currentRecipe.Name, currentRecipe.RecipeId);
 
-            if (Toast != null)
-                await Toast.ShowToastAsync(sqlStatusMessage);
+            if (RecipeStatusToaster != null)
+                await RecipeStatusToaster.ShowToastAsync(sqlStatusMessage);
             
             currentRecipe = null;
         }

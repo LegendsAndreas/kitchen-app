@@ -34,8 +34,6 @@ public class Program
 
         var app = builder.Build();
         
-        // app.Urls.Add("https://0.0.0.0:5001");
-
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {
@@ -55,3 +53,11 @@ public class Program
         app.Run();
     }
 }
+
+/*"Kestrel": {
+    "Endpoints": {
+        "Http": {
+            "Url": "http://192.168.112.169:5001"
+        }
+    }
+},*/

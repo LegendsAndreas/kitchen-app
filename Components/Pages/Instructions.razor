@@ -153,7 +153,7 @@
     </div>
 </div>
 
-<StatusMessageToast @ref="StatusMessageToaster"/>
+<StatusMessageToast @ref="RecipeStatusToaster"/>
 
 @code {
 
@@ -161,15 +161,22 @@
     Step currentStep = new();
     Note currentNote = new();
     Recipe? currentRecipe;
-    StatusMessageToast? StatusMessageToaster;
+    StatusMessageToast? RecipeStatusToaster;
     RecipeInstructionRecord recipeInstructionRecord = new();
 
     private async Task HandleGettingRecipe()
     {
         Console.WriteLine("Handling getting recipe...");
-        currentRecipe = await DbService.GetRecipeById(recipeId);
-        if (currentRecipe == null && StatusMessageToaster != null)
-            await StatusMessageToaster.ShowToastAsync("Recipe not found.");
+        var result = await DbService.GetRecipeById(recipeId);
+        if (result.Recipe == null)
+        {
+            if (RecipeStatusToaster != null)
+                await RecipeStatusToaster.ShowToastAsync(result.Message);
+        }
+        else
+        {
+            currentRecipe = result.Recipe;
+        }
     }
 
     private async Task HandleInstructions()
@@ -190,10 +197,13 @@
         recipeInstructionRecord.SetRecipeId(currentRecipe.RecipeId);
         recipeInstructionRecord.Instructions.Name = currentRecipe.Name;
 
-        var statusMessage = await DbService.AddInstructionToDb(recipeInstructionRecord);
-        if (StatusMessageToaster != null)
-            await StatusMessageToaster.ShowToastAsync(statusMessage);
-        
+        var result = await DbService.AddInstructionToDb(recipeInstructionRecord);
+        if (!result.Status)
+        {
+            if (RecipeStatusToaster != null)
+                await RecipeStatusToaster.ShowToastAsync(result.Message);
+        }
+
         recipeInstructionRecord.Clear();
     }
 

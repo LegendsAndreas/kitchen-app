@@ -55,7 +55,7 @@
 
     bool gettingRecipes = false;
     StatusMessageToast? StatusMessageToaster;
-    
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         Console.WriteLine("__Rendering Home__");
@@ -65,10 +65,18 @@
             gettingRecipes = true;
             try
             {
-                var tempRecipes = await DbService.GetAllRecipes();
-                GlobalRecipes.Recipes = tempRecipes;
-                Console.WriteLine("Acquired Recipes.");
-                StateHasChanged();
+                var result = await DbService.GetAllRecipes();
+                if (result.Recipes == null)
+                {
+                    if (StatusMessageToaster != null)
+                        await StatusMessageToaster.ShowToastAsync(result.Message);
+                }
+                else
+                {
+                    GlobalRecipes.Recipes = result.Recipes;
+                    Console.WriteLine("Acquired Recipes.");
+                    StateHasChanged();
+                }
             }
             catch (Exception ex)
             {
@@ -85,7 +93,7 @@
                     if (StatusMessageToaster != null)
                         await StatusMessageToaster.ShowToastAsync(ex.Message);
                 }
-                
+
                 gettingRecipes = false;
                 return;
             }
@@ -96,7 +104,7 @@
 
         if (GlobalRecipes.Recipes.Any())
             Console.WriteLine("Recipes are full.");
-        
+
         gettingRecipes = false;
     }
 

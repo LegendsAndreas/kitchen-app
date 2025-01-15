@@ -165,16 +165,19 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
     }
 </script>
 
+<StatusMessageToast @ref="StatusMessageToaster"/>
+
 @code{
 
     int currentDay;
     int currentTotalMacrosDay;
     MealPlan mealPlanMacrosAndRecipes = new();
+    StatusMessageToast? StatusMessageToaster;
 
     protected override void OnInitialized()
     {
         Console.WriteLine("__Initializing plan meals__");
-        
+
         if (SharedSelectedRecipe.SelectedRecipe != null)
             SharedSelectedRecipe.SelectedRecipe = null!;
     }
@@ -187,10 +190,18 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
         {
             try
             {
-                var tempRecipes = await DbService.GetAllRecipes();
-                GlobalRecipes.Recipes = tempRecipes;
-                Console.WriteLine("Acquired Recipes.");
-                StateHasChanged();
+                var result = await DbService.GetAllRecipes();
+                if (result.Recipes == null)
+                {
+                    if (StatusMessageToaster != null)
+                        await StatusMessageToaster.ShowToastAsync(result.Message);
+                }
+                else
+                {
+                    GlobalRecipes.Recipes = result.Recipes;
+                    Console.WriteLine("Acquired Recipes.");
+                    StateHasChanged();
+                }
             }
             catch (Exception ex)
             {

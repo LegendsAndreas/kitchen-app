@@ -1,9 +1,14 @@
+@using WebKitchen.Components.Pages.SharedComponents;
 @inject SharedRecipeList SharedRecipes
 @inject DBService DbService
+
+<StatusMessageToast @ref="StatusMessageToaster"/>
 
 @code {
     [Parameter] public List<Recipe> recipesData { get; set; } = [];
     [Parameter] public string renderingComponentNameData { get; set; } = string.Empty;
+    StatusMessageToast? StatusMessageToaster;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         Console.WriteLine($"__Rendering {renderingComponentNameData}__");
@@ -12,10 +17,18 @@
         {
             try
             {
-                var tempRecipes = await DbService.GetAllRecipes();
-                SharedRecipes.Recipes = tempRecipes;
-                Console.WriteLine("Acquired Recipes.");
-                StateHasChanged();
+                var result = await DbService.GetAllRecipes();
+                if (result.Recipes == null)
+                {
+                    if (StatusMessageToaster != null)
+                        await StatusMessageToaster.ShowToastAsync(result.Message);
+                }
+                else
+                {
+                    SharedRecipes.Recipes = result.Recipes;
+                    Console.WriteLine("Acquired Recipes.");
+                    StateHasChanged();
+                }
             }
             catch (Exception ex)
             {
@@ -30,4 +43,5 @@
         if (SharedRecipes.Recipes.Any())
             Console.WriteLine("Recipes are full.");
     }
+
 }

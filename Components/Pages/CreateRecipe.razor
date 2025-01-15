@@ -1,6 +1,7 @@
 @page "/create-recipe"
 @rendermode InteractiveServer
 @using WebKitchen.Components.Pages.RealTimeSearchBarElement
+@using WebKitchen.Components.Pages.SharedComponents
 @inject DBService DbService;
 @inject SharedIngredientList GlobalIngredients;
 @inject SharedIngredient SharedDbIngredient
@@ -78,7 +79,7 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
                 </div>
             </div>
         </EditForm>
-        
+
         <EditForm Model="@currentIngredientGrams" OnSubmit="HandleDbIngredient">
             <DataAnnotationsValidator/>
             <div class="container text-center border-layout paddage">
@@ -90,7 +91,7 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
                         <label class="form-label">Grams</label>
                         <InputNumber id="gramser" @bind-Value="currentIngredientGrams"/>
                     </div>
-                    
+
                     <div class="col">
                         <p>Current Ingredient: @SharedDbIngredient.SelectedIngredient.Name</p>
                     </div>
@@ -143,10 +144,13 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
     </div>
 </div>
 
+<StatusMessageToast @ref="StatusMessageToaster"/>
+
 @code {
-    private Ingredient CurrentIngredient = new();
-    private Recipe CurrentRecipe = new();
-    private int currentIngredientGrams;
+    int currentIngredientGrams;
+    Recipe CurrentRecipe = new();
+    Ingredient CurrentIngredient = new();
+    StatusMessageToast? StatusMessageToaster;
     readonly List<Ingredient> currentIngredients = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -158,10 +162,17 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
         {
             try
             {
-                var tempIngredients = await DbService.GetAllDbIngredients();
-                GlobalIngredients.Ingredients = tempIngredients;
-                Console.WriteLine("Acquired ingredients.");
-                StateHasChanged();
+                var result = await DbService.GetAllDbIngredients();
+                if (result.DbIngredients == null)
+                {
+                    if (StatusMessageToaster != null)
+                        await StatusMessageToaster.ShowToastAsync(result.Message);
+                }
+                else
+                {
+                    GlobalIngredients.Ingredients = result.DbIngredients;
+                    StateHasChanged();
+                }
             }
             catch (Exception ex)
             {
@@ -194,7 +205,12 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
 
         try
         {
-            await DbService.AddRecipeToDb(CurrentRecipe);
+            var result = await DbService.AddRecipeToDb(CurrentRecipe);
+            if (!result.Status)
+            {
+                if (StatusMessageToaster != null)
+                    await StatusMessageToaster.ShowToastAsync(result.Message);
+            }
         }
         catch (Exception e)
         {

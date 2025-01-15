@@ -1,13 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "cdPOpJ6JC8I=",
+  "dgSpecHash": "sYA9HXx2U30=",
   "success": true,
-  "projectFilePath": "C:\\Users\\andre\\Desktop\\deploy\\kitchen-app\\WebKitchen.csproj",
+  "projectFilePath": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\WebKitchen.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\andre\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\8.0.0\\microsoft.extensions.dependencyinjection.abstractions.8.0.0.nupkg.sha512",
     "C:\\Users\\andre\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\8.0.0\\microsoft.extensions.logging.abstractions.8.0.0.nupkg.sha512",
-    "C:\\Users\\andre\\.nuget\\packages\\npgsql\\8.0.5\\npgsql.8.0.5.nupkg.sha512",
-    "C:\\Users\\andre\\.nuget\\packages\\microsoft.netcore.app.host.linux-x64\\8.0.10\\microsoft.netcore.app.host.linux-x64.8.0.10.nupkg.sha512"
+    "C:\\Users\\andre\\.nuget\\packages\\npgsql\\8.0.5\\npgsql.8.0.5.nupkg.sha512"
   ],
   "logs": []
 }

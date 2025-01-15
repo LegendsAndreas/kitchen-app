@@ -1,5 +1,6 @@
 ﻿@page "/ingredients"
 @rendermode InteractiveServer
+@using WebKitchen.Components.Pages.SharedComponents
 @inject DBService DbService;
 @inject SharedIngredientList GlobalIngredients;
 
@@ -33,35 +34,35 @@
             </div>
 
             <div class="col">
-                    <label class="form-label">
-                        <strong>Calories</strong>
-                    </label>
-                    <InputNumber id="cals" @bind-Value="currentIngredient.CaloriesPer100g"/>
-                    <ValidationMessage For="@(() => currentIngredient.CaloriesPer100g)"/>
+                <label class="form-label">
+                    <strong>Calories</strong>
+                </label>
+                <InputNumber id="cals" @bind-Value="currentIngredient.CaloriesPer100g"/>
+                <ValidationMessage For="@(() => currentIngredient.CaloriesPer100g)"/>
             </div>
 
             <div class="col">
-                    <label class="form-label">
-                        <strong>Fats</strong>
-                    </label>
-                    <InputNumber id="fats" @bind-Value="currentIngredient.FatsPer100g"/>
-                    <ValidationMessage For="@(() => currentIngredient.FatsPer100g)"/>
+                <label class="form-label">
+                    <strong>Fats</strong>
+                </label>
+                <InputNumber id="fats" @bind-Value="currentIngredient.FatsPer100g"/>
+                <ValidationMessage For="@(() => currentIngredient.FatsPer100g)"/>
             </div>
 
             <div class="col">
-                    <label class="form-label">
-                        <strong>Carbs</strong>
-                    </label>
-                    <InputNumber id="carbs" @bind-Value="currentIngredient.CarbsPer100g"/>
-                    <ValidationMessage For="@(() => currentIngredient.CarbsPer100g)"/>
+                <label class="form-label">
+                    <strong>Carbs</strong>
+                </label>
+                <InputNumber id="carbs" @bind-Value="currentIngredient.CarbsPer100g"/>
+                <ValidationMessage For="@(() => currentIngredient.CarbsPer100g)"/>
             </div>
 
             <div class="col">
-                    <label class="form-label">
-                        <strong>Protein</strong>
-                    </label>
-                    <InputNumber id="protein" @bind-Value="currentIngredient.ProteinPer100g"/>
-                    <ValidationMessage For="@(() => currentIngredient.ProteinPer100g)"/>
+                <label class="form-label">
+                    <strong>Protein</strong>
+                </label>
+                <InputNumber id="protein" @bind-Value="currentIngredient.ProteinPer100g"/>
+                <ValidationMessage For="@(() => currentIngredient.ProteinPer100g)"/>
             </div>
 
             <div class="col">
@@ -69,13 +70,11 @@
                 <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
             </div>
 
-            
 
         </div>
         <button type="submit" class="btn btn-primary" style="margin: 5px">Add Ingredient</button>
     </div>
 </EditForm>
-
 
 @* Ingredients list *@
 <div class="container">
@@ -106,10 +105,12 @@
 
 </div>
 
+<StatusMessageToast @ref="StatusMessageToaster"/>
 
 @code {
-    private Ingredient currentIngredient = new();
-    private IBrowserFile? loadedIngredientImage;
+    Ingredient currentIngredient = new();
+    IBrowserFile? loadedIngredientImage;
+    StatusMessageToast? StatusMessageToaster;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -119,10 +120,18 @@
         {
             try
             {
-                var tempIngredient = await DbService.GetAllDbIngredients();
-                GlobalIngredients.Ingredients = tempIngredient;
-                Console.WriteLine("Acquired Ingredients.");
-                StateHasChanged();
+                var result = await DbService.GetAllDbIngredients();
+                if (result.DbIngredients == null)
+                {
+                    if (StatusMessageToaster != null)
+                        await StatusMessageToaster.ShowToastAsync(result.Message);
+                }
+                else
+                {
+                    GlobalIngredients.Ingredients = result.DbIngredients;
+                    Console.WriteLine("Acquired Ingredients.");
+                    StateHasChanged();
+                }
             }
             catch (Exception ex)
             {
@@ -137,7 +146,7 @@
         if (GlobalIngredients.Ingredients.Any())
             Console.WriteLine("Ingredients are full.");
     }
-    
+
     private Task HandleImage(InputFileChangeEventArgs imageFiles)
     {
         foreach (var image in imageFiles.GetMultipleFiles())
@@ -171,12 +180,15 @@
             Console.WriteLine("No image selected.");
             return;
         }
-        
+
         await currentIngredient.SetIngredientImage(loadedIngredientImage);
         var tempIngredient = currentIngredient.TransferIngredient(currentIngredient);
-        await DbService.AddIngredientToDb(tempIngredient);
-        currentIngredient.ClearIngredient();
 
+        var result = await DbService.AddIngredientToDb(tempIngredient);
+        if (StatusMessageToaster != null)
+            await StatusMessageToaster.ShowToastAsync(result.Message);
+
+        currentIngredient.ClearIngredient();
         StateHasChanged();
     }
 
