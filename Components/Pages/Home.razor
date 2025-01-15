@@ -14,10 +14,10 @@
     @*<button class="btn btn-primary" onclick="@(() => navigationManager.NavigateTo("/developer"))">Go To developer
     </button>*@
 
-    @*@if (gettingRecipes)
+    @if (GlobalRecipes.Recipes.Count == 0)
     {
-        <p>Loading recipes...</p>
-    }*@
+        <p class="card border-layout center-content" style="padding: 10px"><i>Loading recipes...</i></p>
+    }
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
         @if (GlobalRecipes.Recipes.Count != 0)
@@ -53,7 +53,6 @@
 
 @code{
 
-    bool gettingRecipes = false;
     StatusMessageToast? StatusMessageToaster;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -62,7 +61,6 @@
 
         if (firstRender && !GlobalRecipes.Recipes.Any())
         {
-            gettingRecipes = true;
             try
             {
                 var result = await DbService.GetAllRecipes();
@@ -94,7 +92,6 @@
                         await StatusMessageToaster.ShowToastAsync(ex.Message);
                 }
 
-                gettingRecipes = false;
                 return;
             }
         }
@@ -104,8 +101,6 @@
 
         if (GlobalRecipes.Recipes.Any())
             Console.WriteLine("Recipes are full.");
-
-        gettingRecipes = false;
     }
 
     private void NavigateToDetails(Recipe recipe)

@@ -464,7 +464,7 @@ public class DBService
         const string query = "SELECT * FROM ingredients WHERE name = @name";
         await using var cmd = new NpgsqlCommand(query, conn);
         cmd.Parameters.AddWithValue("@name", ingredientName);
-        var tempIngredient = new Ingredient();
+        var ingredient = new Ingredient();
 
         try
         {
@@ -472,18 +472,18 @@ public class DBService
             if (await reader.ReadAsync())
             {
                 var uintValue = unchecked((uint)reader.GetInt32(0));
-                tempIngredient.Name = reader.GetString(1);
-                tempIngredient.CaloriesPer100g = reader.GetFloat(2);
-                tempIngredient.FatsPer100g = reader.GetFloat(3);
-                tempIngredient.CarbsPer100g = reader.GetFloat(4);
-                tempIngredient.ProteinPer100g = reader.GetFloat(5);
-                tempIngredient.Base64Image = reader.GetString(6);
-                tempIngredient.SetId(uintValue);
+                ingredient.Name = reader.GetString(1);
+                ingredient.CaloriesPer100g = reader.GetFloat(2);
+                ingredient.FatsPer100g = reader.GetFloat(3);
+                ingredient.CarbsPer100g = reader.GetFloat(4);
+                ingredient.ProteinPer100g = reader.GetFloat(5);
+                ingredient.Base64Image = reader.GetString(6);
+                ingredient.SetId(uintValue);
             }
             else
             {
                 Console.WriteLine("Ingredient not found.");
-                return tempIngredient;
+                return ingredient;
             }
         }
         catch (Exception ex)
@@ -493,7 +493,7 @@ public class DBService
             throw;
         }
 
-        return tempIngredient;
+        return ingredient;
     }
 
     /// Asynchronously adds a recipe to the database by inserting its details, including meal type, name, image, macros, and ingredients.
