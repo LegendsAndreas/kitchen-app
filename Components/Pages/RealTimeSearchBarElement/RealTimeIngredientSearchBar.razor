@@ -1,3 +1,4 @@
+@rendermode InteractiveServer
 @inject DBService DbService
 @inject SharedIngredient sharedDbIngredient;
 
@@ -11,13 +12,13 @@
     {
         <div class="dropdown">
             <ul class="dropdown-menu show"> @* "show" is vital, since it automatically shows the items. *@
-                @if (FilteredIngredients.Count != 0)
+                @if (filteredIngredients.Count != 0)
                 {
-                    @foreach (var ingredient in FilteredIngredients)
+                    @foreach (var ingredient in filteredIngredients)
                     {
                         <li>
                             <a class="dropdown-item"
-                                    onclick="@(() => HandleIngredientItem(ingredient))">@ingredient.Name</a>
+                               onclick="@(() => HandleIngredientItem(ingredient))">@ingredient.Name</a>
                         </li>
                     }
                 }
@@ -37,16 +38,9 @@
     private bool isSearchBarActive = false;
     [Parameter] public List<Ingredient> IngredientsData { get; set; } = [];
 
-    private List<Ingredient> FilteredIngredients => IngredientsData
+    private List<Ingredient> filteredIngredients => IngredientsData
         .Where(r => string.IsNullOrEmpty(searchBarInput) || r.Name.Contains(searchBarInput, StringComparison.OrdinalIgnoreCase))
         .ToList();
-
-    private void OnInputChange(ChangeEventArgs e)
-    {
-        // Console.WriteLine("Input has changed...");
-        searchBarInput = e.Value?.ToString() ?? string.Empty; // "??" checks what value is not null and chooses the non-null value.
-        Console.WriteLine($"Input changed: {searchBarInput}");
-    }
 
     private void HandleIngredientItem(Ingredient ingredient)
     {
@@ -56,6 +50,14 @@
         // Console.WriteLine("Db ingredient:");
         // sharedDbIngredient.SelectedIngredient.PrintIngredient();
     }
+
+    private void OnInputChange(ChangeEventArgs e)
+    {
+        // Console.WriteLine("Input has changed...");
+        searchBarInput = e.Value?.ToString() ?? string.Empty; // "??" checks what value is not null and chooses the non-null value.
+        Console.WriteLine($"Input changed: {searchBarInput}");
+    }
+
 
     private void OnSearchBarFocus()
     {

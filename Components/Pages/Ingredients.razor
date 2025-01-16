@@ -45,8 +45,8 @@
                 <label class="form-label">
                     <strong>Fats</strong>
                 </label>
-                <InputNumber id="fats" @bind-Value="currentIngredient.FatsPer100g"/>
-                <ValidationMessage For="@(() => currentIngredient.FatsPer100g)"/>
+                <InputNumber id="fats" @bind-Value="currentIngredient.FatPer100g"/>
+                <ValidationMessage For="@(() => currentIngredient.FatPer100g)"/>
             </div>
 
             <div class="col">
@@ -93,7 +93,7 @@
                         <p class="card-text">
                             - Calories: @ingredient.CaloriesPer100g.ToString("0") <br>
                             - Carbs: @ingredient.CarbsPer100g.ToString("0.0") <br>
-                            - Fats: @ingredient.FatsPer100g.ToString("0.0") <br>
+                            - Fats: @ingredient.FatPer100g.ToString("0.0") <br>
                             - Protein: @ingredient.ProteinPer100g.ToString("0.0")
                         </p>
                     </div>

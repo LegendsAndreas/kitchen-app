@@ -59,15 +59,19 @@ WHERE id = 2;
 
 /* SELECT statements */
 SELECT *
-FROM ingredients ORDER BY id;
+FROM ingredients
+ORDER BY id;
 
-SELECT id, name, cals, fats, carbs, protein, image FROM ingredients ORDER BY id;
+SELECT id, name, cals, fats, carbs, protein, image
+FROM ingredients
+ORDER BY id;
 
 SELECT COUNT(*)
 FROM recipes;
 
 SELECT *
-FROM recipes ORDER BY id;
+FROM recipes
+ORDER BY id;
 
 SELECT *
 FROM recipes;
@@ -93,7 +97,8 @@ SELECT id,
        (macros).total_fats,
        (macros).total_carbs,
        (macros).total_calories
-FROM recipes ORDER BY id;
+FROM recipes
+ORDER BY id;
 
 SELECT id,
        meal_type,
@@ -242,6 +247,16 @@ SET id = temp_recipes.new_id
 FROM temp_recipes
 WHERE recipes.id = temp_recipes.id;
 SELECT setval('recipes_id_seq', (SELECT MAX(id) FROM recipes));
+DROP TABLE temp_recipes;
+
+CREATE TEMP TABLE temp_instructions AS
+SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id
+FROM recipe_instructions;
+UPDATE recipe_instructions
+SET id = temp_instructions.new_id
+FROM temp_instructions
+WHERE recipe_instructions.id = temp_instructions.id;
+SELECT setval('recipes_id_seq', (SELECT MAX(id) FROM recipe_instructions));
 
 DROP TABLE temp_recipes;
 
@@ -252,6 +267,13 @@ CREATE TABLE recipe_instructions
     instructions JSON,
     CONSTRAINT FK_recipe_id FOREIGN KEY (recipe_id) REFERENCES recipes (id)
 );
+
+ALTER TABLE recipe_instructions
+    DROP CONSTRAINT fk_recipe_id,
+    ADD CONSTRAINT fk_recipe_id
+        FOREIGN KEY (id)
+            REFERENCES recipes (id)
+            ON DELETE CASCADE;
 
 ALTER TABLE recipe_instructions
     ADD recipe_id INT;
@@ -305,8 +327,13 @@ UPDATE recipe_instructions
 SET recipe_id = 5
 WHERE id = 1;
 
-SELECT
-    count(*) AS total_connections,
-    count(*) FILTER (WHERE state = 'active') AS active_connections,
-    count(*) FILTER (WHERE state = 'idle') AS idle_connections
+SELECT count(*)                                 AS total_connections,
+       count(*) FILTER (WHERE state = 'active') AS active_connections,
+       count(*) FILTER (WHERE state = 'idle')   AS idle_connections
 FROM pg_stat_activity;
+
+SELECT * FROM recipes ORDER BY id;
+DELETE FROM recipe_instructions WHERE recipe_id = 1;
+DELETE FROM recipes WHERE id = 1;
+
+SELECT * FROM recipe_instructions;

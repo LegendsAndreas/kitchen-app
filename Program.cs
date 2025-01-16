@@ -14,11 +14,11 @@ public class Program
             .AddInteractiveServerComponents();
 
         builder.Services.AddScoped<Recipe>();
-        builder.Services.AddScoped<Ingredient>();
-        builder.Services.AddScoped<SharedIngredientList>();
         builder.Services.AddScoped<SharedRecipe>();
         builder.Services.AddScoped<SharedRecipeList>();
+        builder.Services.AddScoped<Ingredient>();
         builder.Services.AddScoped<SharedIngredient>();
+        builder.Services.AddScoped<SharedIngredientList>();
 
         builder.Services.AddSingleton(_ =>
         {

@@ -38,12 +38,13 @@
             <hr class="dropdown-divider"/>
         </li>
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("deleteIngredient"))">Delete
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("database-ingredient"))">
                 Database Ingredient
             </button>
         </li>
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("database-ingredient"))">
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("delete-ingredient"))">
+                Delete
                 Database Ingredient
             </button>
         </li>
@@ -75,7 +76,7 @@
                     </div>
                     break;
                 case "ingredient":
-                    <EditIngredientForm/>
+                    <EditRecipeIngredientForm/>
                     break;
                 case "image":
                     <div class="edit-recipes-form">
@@ -87,19 +88,14 @@
                         <DeleteRecipeForm/>
                     </div>
                     break;
-                case "deleteIngredient":
-                    <div class="edit-recipes-form">
-                        <DeleteDbIngredientForm/>
-                    </div>
-                    break;
-                case "ingredientImage":
-                    <div class="edit-recipes-form">
-                        <EditDbIngredientImageForm/>
-                    </div>
-                    break;
                 case "database-ingredient":
                     <div class="edit-recipes-form">
-                        <EditDatabaseIngredient/>
+                        <EditDbIngredient/>
+                    </div>
+                    break;
+                case "delete-ingredient":
+                    <div class="edit-recipes-form">
+                        <DeleteDbIngredientForm/>
                     </div>
                     break;
             }

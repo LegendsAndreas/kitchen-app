@@ -42,6 +42,14 @@
         .Where(r => string.IsNullOrEmpty(searchBarInput) || r.Name.Contains(searchBarInput, StringComparison.OrdinalIgnoreCase))
         .ToList();
 
+    private void HandleRecipeItem(Recipe recipe)
+    {
+        Console.WriteLine("handling ingredient item...");
+        sharedRecipe.SelectedRecipe = recipe.TransferRecipe(recipe);
+        sharedRecipe.SelectedRecipe.PrintRecipe();
+        StateHasChanged();
+    }
+
     private void OnInputChange(ChangeEventArgs e)
     {
         Console.WriteLine("Input has changed...");
@@ -66,12 +74,5 @@
         StateHasChanged();
     }
 
-    private void HandleRecipeItem(Recipe recipe)
-    {
-        Console.WriteLine("handling ingredient item...");
-        sharedRecipe.SelectedRecipe = recipe;
-        sharedRecipe.SelectedRecipe.PrintRecipe();
-        StateHasChanged();
-    }
 
 }

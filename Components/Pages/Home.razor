@@ -10,7 +10,6 @@
 <PageTitle>Recipes</PageTitle>
 
 @* ToDo: You can add a recipe, as if an ingredient.*@
-@* ToDo: Change edit database ingredient to be done by ID *@
 <div class="container">
     @* Uncomment to access the developer page. *@
     @*<button class="btn btn-primary" onclick="@(() => navigationManager.NavigateTo("/developer"))">Go To developer
@@ -73,6 +72,8 @@
                 }
                 else
                 {
+                    if (StatusMessageToaster != null)
+                        await StatusMessageToaster.ShowToastAsync(result.Message);
                     GlobalRecipes.Recipes = result.Recipes;
                     Console.WriteLine("Acquired Recipes.");
                     StateHasChanged();

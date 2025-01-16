@@ -1,0 +1,50 @@
+﻿<div class="accordion border-layout" id="accordionExample" style="margin-top: 10px;">
+    <div class="accordion-item">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseOne"
+                    aria-expanded="true" aria-controls="collapseOne">
+                Added Ingredients
+            </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+            <div class="accordion-body">
+                @if (currentIngredients.Count == 0)
+                {
+                    <p>No ingredients added</p>
+                }
+                @foreach (var ingredient in currentIngredients)
+                {
+                    <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            @ingredient.Name
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-item">Calories: @ingredient.CaloriesPer100g.ToString("0")</li>
+                            <li class="dropdown-item">Grams: @ingredient.Grams.ToString("0")</li>
+                            <li class="dropdown-item">Protein: @ingredient.ProteinPer100g.ToString("0")</li>
+                            <li class="dropdown-item">Fat: @ingredient.FatPer100g.ToString("0")</li>
+                            <li class="dropdown-item">Carbs: @ingredient.CarbsPer100g.ToString("0")</li>
+                        </ul>
+                        <button type="submit" class="btn btn-danger"
+                                @onclick="() => DeleteIngredient(currentIngredients.IndexOf(ingredient))">
+                            <strong>X</strong>
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code{
+
+    [Parameter] public List<Ingredient> currentIngredients { get; set; } = new();
+    
+    private void DeleteIngredient(int index)
+    {
+        currentIngredients.RemoveAt(index);
+        StateHasChanged();
+    }
+}

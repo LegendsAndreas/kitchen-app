@@ -1,44 +1,50 @@
-@using WebKitchen.Services;
+@using WebKitchen.Components.Pages.SharedComponents;
 @inject IJSRuntime JsRuntime;
 @inject DBService DbService;
 
-<EditForm Model="@_ingredientName" OnValidSubmit="@HandleValidSubmit">
-    <div>
-        <label class="form-label fw-bold">Ingredient Name</label>
-        <InputText id="name" @bind-Value="_ingredientName" class="form-control"/>
-    </div>
-    
-    <button type="submit" class="btn btn-primary">Delete Ingredient</button>
-</EditForm>
-
-@* Status message toaster *@
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="status-message" class="toast header-padding" role="alert" aria-live="assertive" aria-atomic="true"
-         data-bs-delay="5000">
-        <div class="toast-body">
-            @_statusMessage
-        </div>
-    </div>
+<div>
+    <label class="form-label fw-bold">Database Ingredient ID To Delete</label>
+    <InputNumber id="name" @bind-Value="recipeId" class="form-control"/>
 </div>
 
-<script>
-    function showStatusMessage() {
-        const toastLiveExample = document.getElementById('status-message');
-        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-        toastBootstrap.show();
-    }
-</script>
+<button type="submit" class="btn btn-primary" @onclick="HandleGettingDbIngredient">Get Ingredient</button>
+
+@if (currentIngredient != null)
+{
+    <div>
+        <p>@currentIngredient.Name Database Image</p>
+        <img src="data:image/png;base64,@currentIngredient.Base64Image" alt="Image" class="img-fluid"/>
+    </div>
+    
+    <button type="button" class="btn btn-danger" @onclick="DeleteIngredient">Delete Ingredient</button>
+}
+
+<StatusMessageToast @ref="StatusMessageToaster"/>
 
 @code{
-    string _statusMessage = string.Empty;
-    string _ingredientName = string.Empty;
+    int recipeId;
+    Ingredient? currentIngredient;
+    StatusMessageToast? StatusMessageToaster;
 
-    private async Task HandleValidSubmit()
+    private async Task DeleteIngredient()
     {
-        _statusMessage = await DbService.DeleteDbIngredientByName(_ingredientName);
-        _ingredientName = string.Empty;
-        await JsRuntime.InvokeVoidAsync("showStatusMessage");
-        StateHasChanged();
+        var result = await DbService.DeleteDbIngredientById(recipeId);
+        if (StatusMessageToaster != null)
+            await StatusMessageToaster.ShowToastAsync(result);
+    }
+
+    private async Task HandleGettingDbIngredient()
+    {
+        var result = await DbService.GetDbIngredientById(recipeId);
+        if (result.Ingredient == null)
+        {
+            if (StatusMessageToaster != null)
+                await StatusMessageToaster.ShowToastAsync(result.Message);
+        }
+        else
+        {
+            currentIngredient = result.Ingredient;
+        }
     }
 
 }

@@ -30,12 +30,16 @@ public class Macros
         }
         else
         {
+            Calories = 0f;
+            Fat = 0f;
+            Carbs = 0f;
+            Protein = 0f;
             foreach (var ingredient in ingredients)
             {
                 Console.WriteLine("Printing ingredient at Macros");
                 ingredient.PrintIngredient();
                 Calories += ingredient.CaloriesPer100g * ingredient.GetMultiplier();
-                Fat += ingredient.FatsPer100g * ingredient.GetMultiplier();
+                Fat += ingredient.FatPer100g * ingredient.GetMultiplier();
                 Carbs += ingredient.CarbsPer100g * ingredient.GetMultiplier();
                 Protein += ingredient.ProteinPer100g * ingredient.GetMultiplier();
             }
@@ -65,7 +69,7 @@ public class Ingredient
     public float CaloriesPer100g { get; set; }
     public float CarbsPer100g { get; set; }
     public float ProteinPer100g { get; set; }
-    public float FatsPer100g { get; set; }
+    public float FatPer100g { get; set; }
     private float Multiplier { get; set; }
     public string Base64Image { get; set; } = string.Empty;
 
@@ -134,7 +138,7 @@ public class Ingredient
         CaloriesPer100g = 0f;
         CarbsPer100g = 0f;
         ProteinPer100g = 0f;
-        FatsPer100g = 0f;
+        FatPer100g = 0f;
         Multiplier = 0f;
         Base64Image = string.Empty;
     }
@@ -148,7 +152,7 @@ public class Ingredient
         Console.WriteLine("Calories: " + CaloriesPer100g);
         Console.WriteLine("Carbs: " + CarbsPer100g);
         Console.WriteLine("Protein: " + ProteinPer100g);
-        Console.WriteLine("Fats: " + FatsPer100g);
+        Console.WriteLine("Fats: " + FatPer100g);
         Console.WriteLine("Multiplier: " + Multiplier);
     }
 
@@ -164,7 +168,7 @@ public class Ingredient
             Grams = ing.Grams,
             CaloriesPer100g = ing.CaloriesPer100g,
             CarbsPer100g = ing.CarbsPer100g,
-            FatsPer100g = ing.FatsPer100g,
+            FatPer100g = ing.FatPer100g,
             ProteinPer100g = ing.ProteinPer100g,
             Base64Image = ing.Base64Image
         };

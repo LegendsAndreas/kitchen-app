@@ -1,30 +1,28 @@
 @using WebKitchen.Components.Pages.SharedComponents
 @inject DBService DbService
 
-<EditForm Model="@ingredientName" OnSubmit="@HandleDatabaseNameSubmit">
-    <label class="form-label fw-bold">Ingredient Name</label>
-    <InputText id="name" @bind-Value="ingredientName" class="form-control"/>
+    <label class="form-label fw-bold">Database Ingredient Id To Edit</label>
+    <InputNumber id="name" @bind-Value="recipeId" class="form-control"/>
 
-    <button type="submit" class="btn btn-primary">Get Database Ingredient</button>
-</EditForm>
+    <button type="submit" class="btn btn-primary" @onclick="HandleGettingDbIngredient">Get Database Ingredient</button>
 
-@if (ingredientName != string.Empty)
+@if (currentIngredient != null)
 {
-    <EditForm Model="@ingredient" OnSubmit="@HandleSubmit">
+    <EditForm Model="@currentIngredient" OnSubmit="@HandleSubmit">
         <label class="form-label fw-bold">Ingredient Name</label>
-        <InputText @bind-Value="ingredient.Name" class="form-control"/>
+        <InputText @bind-Value="currentIngredient.Name" class="form-control"/>
 
         <label class="form-label fw-bold">Ingredient Calories</label>
-        <InputNumber @bind-Value="ingredient.CaloriesPer100g" class="form-control"/>
+        <InputNumber @bind-Value="currentIngredient.CaloriesPer100g" class="form-control"/>
 
         <label class="form-label fw-bold">Ingredient Carbs</label>
-        <InputNumber @bind-Value="ingredient.CarbsPer100g" class="form-control"/>
+        <InputNumber @bind-Value="currentIngredient.CarbsPer100g" class="form-control"/>
 
         <label class="form-label fw-bold">Ingredient Protein</label>
-        <InputNumber @bind-Value="ingredient.ProteinPer100g" class="form-control"/>
+        <InputNumber @bind-Value="currentIngredient.ProteinPer100g" class="form-control"/>
 
         <label class="form-label fw-bold">Ingredient Fats</label>
-        <InputNumber @bind-Value="ingredient.FatsPer100g" class="form-control"/>
+        <InputNumber @bind-Value="currentIngredient.FatPer100g" class="form-control"/>
 
         <label class="file-label" for="fileInput">Choose Image</label>
         <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
@@ -33,8 +31,8 @@
     </EditForm>
 
     <div>
-        <p>Database @ingredient.Name Image</p> 
-        <img src="data:image/png;base64,@ingredient.Base64Image" alt="Image" class="img-fluid"/>
+        <p>Database @currentIngredient.Name Image</p> 
+        <img src="data:image/png;base64,@currentIngredient.Base64Image" alt="Image" class="img-fluid"/>
     </div>
 }
 
@@ -42,25 +40,29 @@
 
 @code{
 
-    string ingredientName = string.Empty;
-    Ingredient ingredient = new();
+    int recipeId;
+    Ingredient? currentIngredient;
     StatusMessageToast? StatusMessageToaster;
 
     private async Task HandleSubmit()
     {
-        ingredient.PrintIngredient();
-        var result = await DbService.UpdateDbIngredient(ingredient);
+        currentIngredient.PrintIngredient();
+        var result = await DbService.UpdateDbIngredient(currentIngredient);
         if (StatusMessageToaster != null)
             await StatusMessageToaster.ShowToastAsync(result);
     }
 
-    private async Task HandleDatabaseNameSubmit()
+    private async Task HandleGettingDbIngredient()
     {
-        ingredient = await DbService.GetIngredientByName(ingredientName);
-        if (ingredient.GetId() == 0)
+        var result = await DbService.GetDbIngredientById(recipeId);
+        if (result.Ingredient == null)
         {
-            // Popup saying so.
-            Console.WriteLine("Ingredient not found.");
+            if (StatusMessageToaster != null)
+                await StatusMessageToaster.ShowToastAsync(result.Message);
+        }
+        else
+        {
+            currentIngredient = result.Ingredient;
         }
     }
 
@@ -77,7 +79,7 @@
 
             try
             {
-                await ingredient.SetIngredientImage(image);
+                await currentIngredient.SetIngredientImage(image);
             }
             catch (Exception ex)
             {
