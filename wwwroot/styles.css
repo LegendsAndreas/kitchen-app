@@ -136,3 +136,10 @@
     flex-direction: column;
     align-items: center;
 }
+
+/* Has to be used in a div, where the div has the element that you want to center. */
+.center-element {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

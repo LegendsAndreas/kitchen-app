@@ -41,6 +41,10 @@
       "PackagePath": "staticwebassets\\pics\\choko.webp"
     },
     {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\heinx.webp",
+      "PackagePath": "staticwebassets\\pics\\heinx.webp"
+    },
+    {
       "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\icons8-categories.png",
       "PackagePath": "staticwebassets\\pics\\icons8-categories.png"
     },
@@ -79,6 +83,10 @@
     {
       "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\skyr.webp",
       "PackagePath": "staticwebassets\\pics\\skyr.webp"
+    },
+    {
+      "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\sovs.webp",
+      "PackagePath": "staticwebassets\\pics\\sovs.webp"
     },
     {
       "Id": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\vanilje.webp",

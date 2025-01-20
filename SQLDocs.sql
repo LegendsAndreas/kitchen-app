@@ -332,7 +332,9 @@ SELECT count(*)                                 AS total_connections,
        count(*) FILTER (WHERE state = 'idle')   AS idle_connections
 FROM pg_stat_activity;
 
-SELECT * FROM recipes ORDER BY id;
+SELECT * FROM recipes WHERE id > 5 AND id < 10 ORDER BY id;
+SELECT * FROM recipes WHERE (macros).total_protein > 20 AND (macros).total_protein < 40 ORDER BY (macros).total_protein;
+SELECT * FROM recipes WHERE (macros).total_calories > 300 AND (macros).total_calories < 700 ORDER BY (macros).total_calories;
 DELETE FROM recipe_instructions WHERE recipe_id = 1;
 DELETE FROM recipes WHERE id = 1;
 

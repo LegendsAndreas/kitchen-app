@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.VisualBasic;
 using Npgsql;
 
 // jdbc:postgresql://[HOST]/[DATABASE_NAME]?password=[PASSWORD]&sslmode=require&user=[USERNAME]
@@ -134,6 +135,63 @@ public class DBService
         }
 
         return (recipe, statusMessage);
+    }
+
+    public async Task<(List<Recipe>? recipes, string message)> GetRecipesByCategory(string category, string sortingDirection)
+    {
+        Console.WriteLine("Getting recipes by category...");
+        
+        List<Recipe> recipes = new();
+        string statusMessage = "Recipes successfully retrieved.";
+        string query = "SELECT id, name, image, meal_type," +
+                       "(macros).total_calories," +
+                       "(macros).total_fats," +
+                       "(macros).total_carbs," +
+                       "(macros).total_protein " +
+                       "FROM recipes";
+
+        if (category == "name")
+            query += " ORDER BY name";
+        else if (category == "meal_type")
+            query += " ORDER BY meal_type";
+        else if (category == "calories")
+            query += " ORDER BY (macros).total_calories";
+        else if (category == "carbs")
+            query += " ORDER BY (macros).total_carbs";
+        else if (category == "fats")
+            query += " ORDER BY (macros).total_fats";
+        else if (category == "protein")
+            query += " ORDER BY (macros).total_protein";
+        else
+            return (null, $"Invalid category ({category}).");
+
+        if (!string.IsNullOrEmpty(sortingDirection))
+        {
+            if (sortingDirection != "asc" && sortingDirection != "desc")
+                return (null, $"Invalid sorting direction ({sortingDirection}).");
+            query += $" {sortingDirection.ToUpper()}";
+        }
+
+        try
+        {
+            Console.WriteLine("Query: "+query);
+            await using var conn = await GetConnection();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var tempRecipe = await BuildRecipe(reader);
+                recipes.Add(tempRecipe);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting recipes by category ({category})"+ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting recipes by category ({category}): {ex.Message}.");
+        }
+        
+        return (recipes, statusMessage);
     }
 
     /// Constructs and returns a Recipe object populated with data from the given database reader,

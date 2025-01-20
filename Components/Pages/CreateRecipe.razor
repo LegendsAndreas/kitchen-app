@@ -1,7 +1,6 @@
 @page "/create-recipe"
 @rendermode InteractiveServer
-@using WebKitchen.Components.Pages.RealTimeSearchBarElement
-@using WebKitchen.Components.Pages.SharedComponents
+@using WebKitchen.Components.SharedComponents
 @inject DBService DbService;
 @inject SharedRecipe SharedDbRecipe;
 @inject SharedRecipeList GlobalRecipes;
@@ -134,8 +133,8 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
     Recipe currentRecipe = new();
     Recipe currentIngredientRecipe = new();
     Ingredient currentIngredient = new();
-    readonly List<Ingredient> currentIngredients = new();
     StatusMessageToast? statusMessageToaster;
+    readonly List<Ingredient> currentIngredients = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -281,13 +280,24 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
         currentIngredientRecipe.ClearRecipe();
     }
 
-    public void HandleDbIngredient()
+    public async Task HandleDbIngredient()
     {
         Console.WriteLine("Handling db ingredient...");
+
+        if (string.IsNullOrEmpty(SharedDbIngredient.SelectedIngredient.Name))
+        {
+            Console.WriteLine("No db ingredient selected");
+            if (statusMessageToaster != null)
+                await statusMessageToaster.ShowToastAsync("No database ingredient selected");
+            
+            return;
+        }
         
         if (currentIngredientGrams == 0)
         {
             Console.WriteLine("No grams specified.");
+            if (statusMessageToaster != null)
+                await statusMessageToaster.ShowToastAsync("No grams selected.");
             return;
         }
 

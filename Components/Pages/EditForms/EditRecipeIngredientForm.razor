@@ -1,6 +1,5 @@
 @rendermode InteractiveServer
-@using WebKitchen.Components.Pages.SharedComponents
-@using WebKitchen.Components.Pages.RealTimeSearchBarElement
+@using WebKitchen.Components.SharedComponents
 @inject DBService DbService
 @inject SharedIngredient SharedDbIngredient
 @inject SharedIngredientList GlobalIngredients
@@ -24,9 +23,23 @@
         @if (currentRecipe != null)
         {
             <button type="button" class="btn btn-primary" @onclick="UpdateIngredients"> Update ingredients</button>
-            
-            <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"/>
-            
+
+            <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
+                <div class="col">
+                    <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"/>
+                </div>
+
+                <div class="col">
+                    <InputNumber id="name" @bind-Value="currentIngredientGrams" class="form-control"/>
+                </div>
+
+                <div class="col">
+                    <p>Current ingredient: @(SharedDbIngredient?.SelectedIngredient?.Name ?? "")</p>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary" @onclick="HandleDbIngredient">Add New Ingredient To Recipe
+            </button>
+
             <AddedIngredients currentIngredients="@currentRecipe.Ingredients"/>
         }
     </div>
@@ -39,7 +52,7 @@
     int recipeId;
     int currentIngredientGrams;
     Recipe? currentRecipe;
-    Ingredient currentIngredient;
+    Ingredient currentIngredient = new();
     StatusMessageToast? RecipeStatusToaster;
 
     private async Task HandleSubmit()
@@ -74,25 +87,28 @@
             Console.WriteLine("Recipe is not selected.");
             return;
         }
-        
+
         currentRecipe.SetTotalMacros();
 
         var result = await DbService.UpdateRecipeMacrosAndIngredientsById(currentRecipe, currentRecipe.RecipeId);
         if (RecipeStatusToaster != null)
             await RecipeStatusToaster.ShowToastAsync(result);
-        
+
         currentRecipe = null;
     }
-    
-    public void HandleDbIngredient()
+
+    private void HandleDbIngredient()
     {
         Console.WriteLine("Handling db ingredient...");
-        
+
         if (currentIngredientGrams == 0)
         {
             Console.WriteLine("No grams specified.");
             return;
         }
+
+        Console.WriteLine("SharedDbIngredient:");
+        SharedDbIngredient.SelectedIngredient.PrintIngredient();
 
         currentIngredient.Name = SharedDbIngredient.SelectedIngredient.Name;
         currentIngredient.Grams = currentIngredientGrams;
@@ -103,16 +119,16 @@
 
         HandleIngredient();
     }
-    
-    public void HandleIngredient()
+
+    private void HandleIngredient()
     {
         Console.WriteLine("Handling ingredient...");
         var tempIngredient = currentIngredient.TransferIngredient(currentIngredient);
         tempIngredient.PrintIngredient();
 
-        if (currentRecipe != null) 
+        if (currentRecipe != null)
             currentRecipe.Ingredients.Add(tempIngredient);
-            currentIngredient.ClearIngredient();
+        currentIngredient.ClearIngredient();
     }
 
 }

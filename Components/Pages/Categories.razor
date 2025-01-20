@@ -1,64 +1,101 @@
 @page "/categories"
 @rendermode InteractiveServer
-@using WebKitchen.Services;
+@using WebKitchen.Components.SharedComponents;
 @inject DBService DbService;
 
 <PageTitle>Categories</PageTitle>
 
-<h2>!!!UNDER CONSTRUCTION!!!</h2>
-<p>Move along!</p>
-
-@*<div class="dropdown">
-    <a class="btn btn-secondary custom-layout dropdown-toggle btn-lg" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-        Sort Ascending by...
+<div class="dropdown center-element">
+    <a class="btn btn-primary custom-layout dropdown-toggle btn-lg" href="#" role="button" data-bs-toggle="dropdown"
+       aria-expanded="false">
+        Search by...
     </a>
 
     <ul class="dropdown-menu">
-        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("id"))">Recipe Id</button></li>
-        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("meal_type"))">Recipe Meal Type</button></li>
-        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("name"))">Recipe Name</button></li>
-        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("(macros).total_calories"))">Total Calories</button></li>
-        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("(macros).total_carbs"))">Total Carbs</button></li>
-        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("(macros).total_fats"))">Total Fats</button></li>
-        <li><button class="dropdown-item" type="submit" onclick="@(() => SortRecipesByCategory("(macros).total_protein"))">Total Protein</button></li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleSearchOption("name", ""))">Name</button>
+        </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleSearchOption("meal_type", ""))">Meal
+                type
+            </button>
+        </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleSearchOption("calories", ""))">Calories
+            </button>
+        </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleSearchOption("carbs", ""))">Carbs
+            </button>
+        </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleSearchOption("fats", ""))">Fat</button>
+        </li>
+        <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleSearchOption("protein", ""))">Protein
+            </button>
+        </li>
     </ul>
 </div>
 
-<div class="container">
-
+@if (sortedRecipes != null)
+{
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @foreach (var recipe in recipes)
+        @if (sortedRecipes.Count != 0)
         {
-            <div class="col" style="padding: 10px">
-                <div class="card h-100"> 
-                    <img src="@recipe.Base64Image" alt="ops..." class="card-img"/> $1$ card-img helps the look of the cards. #1#
-                    <div class="card-header">
-                        <h4>@recipe.Name</h4>
-                    </div>
-                    <div class="card-body border-primary">
-                        <p class="card-text">
-                            - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
-                            - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
-                            - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
-                            - Protein: @recipe.TotalMacros.Protein.ToString("0")
-                        </p>
+            @foreach (var recipe in sortedRecipes)
+            {
+                <div class="col" style="padding: 10px">
+                    <div class="card h-100 border-layout">
+                        <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..." class="card-img"/>
+                        <div class="card-header">
+                            <h4>@recipe.RecipeId. @recipe.Name</h4>
+                        </div>
+                        <div class="card-body border-primary">
+                            <p class="card-text">
+                                - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
+                                - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
+                                - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
+                                - Protein: @recipe.TotalMacros.Protein.ToString("0")
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
         }
     </div>
-    
+}
+else
+{
+    <p>sorted recipes = null</p>
+}
 
-</div>
+<StatusMessageToast @ref="statusMessageToaster"/>
 
 @code{
+    List<Recipe>? sortedRecipes;
+    StatusMessageToast? statusMessageToaster;
 
-    List<Recipe> recipes = new();
-
-    private async Task SortRecipesByCategory(string category)
+    private async Task HandleSearchOption(string searchOption, string sortingDirection)
     {
-        recipes = await DbService.GetRecipesByCategory(category);
-        StateHasChanged();
+        var result = await DbService.GetRecipesByCategory(searchOption, sortingDirection);
+        if (result.recipes == null)
+        {
+            if (statusMessageToaster != null)
+                await statusMessageToaster.ShowToastAsync("Getting recipes failed; " + result.message);
+        }
+        else
+        {
+            sortedRecipes = result.recipes;
+            if (statusMessageToaster != null)
+                await statusMessageToaster.ShowToastAsync("Successfully retrieved sorted recipes.");
+            foreach (var recipe in sortedRecipes)
+            {
+                Console.WriteLine(recipe.Name);
+            }
+
+            StateHasChanged();
+        }
     }
 
-}*@
+}
