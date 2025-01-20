@@ -5,7 +5,7 @@
 
 <PageTitle>Categories</PageTitle>
 
-<div class="dropdown center-element">
+@*<div class="dropdown center-element">
     <a class="btn btn-primary custom-layout dropdown-toggle btn-lg" href="#" role="button" data-bs-toggle="dropdown"
        aria-expanded="false">
         Search by...
@@ -36,7 +36,112 @@
             </button>
         </li>
     </ul>
+</div>*@
+
+<div class="container" style="background-color: #2b3035; padding: 10px; border-radius: 5px;">
+
+    <div class="row row-cols-5">
+        <div class="col">
+            <input type="text" class="form-control" placeholder="Order by..." aria-label="Search by name"
+                   @bind="baseCategory" @onfocus="OnBaseSearchBarFocus" @onblur="OnBaseSearchBarBlur">
+            @if (isBaseSearchBarActive)
+            {
+                <div class="dropdown">
+                    <ul class="dropdown-menu show"> @* "show" is vital, since it automatically shows the items. *@
+                        <li>
+                            <a class="dropdown-item"
+                               onclick="@(() => HandleBaseCategory("Meal Type"))">Meal Type</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               onclick="@(() => HandleBaseCategory("Name"))">Name</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item"
+                               onclick="@(() => HandleBaseCategory("Macros"))">Macros</a>
+                        </li>
+                    </ul>
+                </div>
+            }
+        </div>
+        <div class="col">
+            @if (baseCategory != "")
+            {
+                if (baseCategory == "Meal Type")
+                {
+                    <input type="text" class="form-control" placeholder="Order by meal type..."
+                           aria-label="Search by name"
+                           @bind="secondaryCategory" @onfocus="OnSecondarySearchBarFocus"
+                           @onblur="OnSecondarySearchBarBlur">
+                    @if (isSecondarySearchBarActive)
+                    {
+                        <div class="dropdown">
+                            <ul class="dropdown-menu show"> @* "show" is vital, since it automatically shows the items. *@
+                                <li>
+                                    <a class="dropdown-item"
+                                       onclick="@(() => HandleSecondaryCategory("B"))">B</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                       onclick="@(() => HandleSecondaryCategory("L"))">L</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                       onclick="@(() => HandleSecondaryCategory("D"))">D</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                       onclick="@(() => HandleSecondaryCategory("S"))">S</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                       onclick="@(() => HandleSecondaryCategory("K"))">K</a>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                }
+                else if (baseCategory == "Name")
+                {
+                    <input type="text" class="form-control" placeholder="Order by name..." aria-label="Search by name"
+                           @bind="secondaryCategory" @onfocus="OnSecondarySearchBarFocus"
+                           @onblur="OnSecondarySearchBarBlur">
+                }
+                else if (baseCategory == "Macros")
+                {
+                    <select class="form-select" @bind="secondaryCategory"> @* aria-label="Default select example" *@
+                        <option selected value="">Macro type</option>
+                        <option value="calories">Calories</option>
+                        <option value="fat">Fat</option>
+                        <option value="carbs">Carbs</option>
+                        <option value="protein">Protein</option>
+                    </select>
+                }
+            }
+        </div>
+        <div class="col">
+            @if (secondaryCategory != "")
+            {
+                <select class="form-select" @bind="orderDirection"> @* aria-label="Default select example" *@
+                    <option selected value="">Order direction</option>
+                    <option value="ASC">Asc</option>
+                    <option value="DESC">Desc</option>
+                </select>
+            }
+            @if (orderDirection != "")
+            {
+                <p>@orderDirection</p>
+            }
+        </div>
+        <div class="col">
+            @if (orderDirection != "")
+            {
+                <p>x =&lt 7000</p>
+            }
+        </div>
+    </div>
 </div>
+
 
 @if (sortedRecipes != null)
 {
@@ -65,37 +170,57 @@
         }
     </div>
 }
-else
-{
-    <p>sorted recipes = null</p>
-}
 
 <StatusMessageToast @ref="statusMessageToaster"/>
 
 @code{
+    bool isBaseSearchBarActive = false;
+    bool isSecondarySearchBarActive = false;
+    string baseCategory = "";
+    string secondaryCategory = "";
+    string orderDirection = "";
     List<Recipe>? sortedRecipes;
     StatusMessageToast? statusMessageToaster;
 
-    private async Task HandleSearchOption(string searchOption, string sortingDirection)
+    private void HandleBaseCategory(string category)
     {
-        var result = await DbService.GetRecipesByCategory(searchOption, sortingDirection);
-        if (result.recipes == null)
-        {
-            if (statusMessageToaster != null)
-                await statusMessageToaster.ShowToastAsync("Getting recipes failed; " + result.message);
-        }
-        else
-        {
-            sortedRecipes = result.recipes;
-            if (statusMessageToaster != null)
-                await statusMessageToaster.ShowToastAsync("Successfully retrieved sorted recipes.");
-            foreach (var recipe in sortedRecipes)
-            {
-                Console.WriteLine(recipe.Name);
-            }
+        secondaryCategory = "";
+        baseCategory = category;
+        StateHasChanged();
+    }
 
-            StateHasChanged();
-        }
+    private void HandleSecondaryCategory(string category)
+    {
+        secondaryCategory = category;
+        StateHasChanged();
+    }
+
+    private void OnBaseSearchBarFocus()
+    {
+        Console.WriteLine("Search bar is active...");
+        isBaseSearchBarActive = true;
+        StateHasChanged();
+    }
+
+    private async Task OnBaseSearchBarBlur()
+    {
+        await Task.Delay(200);
+        isBaseSearchBarActive = false;
+        StateHasChanged();
+    }
+
+    private void OnSecondarySearchBarFocus()
+    {
+        Console.WriteLine("Search bar is active...");
+        isSecondarySearchBarActive = true;
+        StateHasChanged();
+    }
+
+    private async Task OnSecondarySearchBarBlur()
+    {
+        await Task.Delay(200);
+        isSecondarySearchBarActive = false;
+        StateHasChanged();
     }
 
 }
