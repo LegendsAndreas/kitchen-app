@@ -238,7 +238,7 @@ public class DBService
     /// Retrieves a record of recipe instructions associated with the specified recipe ID from the database.
     /// <param name="recipeId">The unique identifier of the recipe for which instructions are to be retrieved.</param>
     /// <returns>A RecipeInstructionRecord containing the instructions if found, or null if not found.</returns>
-    public async Task<(RecipeInstructionRecord? instructions, string message)> GetRecipeInstructionByRecipeId(
+    public async Task<(RecipeInstructionRecord? instructions, string message)> GetRecipeInstructionsByRecipeId(
         int recipeId)
     {
         Console.WriteLine("Getting recipe instructions by id...");
@@ -588,6 +588,7 @@ public class DBService
                              "VALUES (" +
                              "@json_data," +
                              "@recipe_id)";
+        
         try
         {
             await using var conn = await GetConnection();
@@ -1120,6 +1121,36 @@ public class DBService
             return $"Error updating instructions recipe name by recipe id ({recipeId})";
         }
 
+        return statusMessage;
+    }
+
+    public async Task<string> UpdateInstructionsByInstructionsId(RecipeInstructionRecord instructions, int instructionsId)
+    {
+        Console.WriteLine($"Updating instructions by instructions id ({instructionsId})...");
+        
+        var statusMessage = $"Instructions ({instructionsId}) has been updated.";
+        var serializedJsonData = JsonSerializer.Serialize(instructions.Instructions);
+        const string query = "UPDATE recipe_instructions " +
+                             "SET instructions = @json_data "+
+                             "WHERE id = @instructions_id";
+
+        try
+        {
+            await using var conn = await GetConnection();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@json_data", NpgsqlTypes.NpgsqlDbType.Json, serializedJsonData);
+            cmd.Parameters.AddWithValue("@instructions_id", instructionsId);
+            var result = await RunAsyncQuery(cmd);
+            if (result < 1)
+                statusMessage = $"Instructions ({instructionsId}) was not found.";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating instructions by instructions id ({instructionsId}): "+ex.Message);
+            Console.WriteLine("StackTrace: "+ex.StackTrace);
+            return $"Error updating instructions by instructions id ({instructionsId})" + ex.Message;
+        }
+        
         return statusMessage;
     }
 

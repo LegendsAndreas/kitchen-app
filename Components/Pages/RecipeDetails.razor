@@ -119,7 +119,7 @@
 
             if (sharedRecipe.RecipeId > 0)
             {
-                var result = await DbService.GetRecipeInstructionByRecipeId(sharedRecipe.RecipeId);
+                var result = await DbService.GetRecipeInstructionsByRecipeId(sharedRecipe.RecipeId);
                 if (result.instructions == null)
                 {
                     if (statusMessageToaster != null)

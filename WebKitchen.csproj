@@ -10,18 +10,15 @@
       <PackageReference Include="Npgsql" Version="8.0.5" />
     </ItemGroup>
 
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Components\Pages\SharedComponents\AddedIngredients.razor" />
-      <_ContentIncludedByDefault Remove="Components\Pages\SharedComponents\NoImageSelectedToast.razor" />
-      <_ContentIncludedByDefault Remove="Components\Pages\SharedComponents\PreviewRecipe.razor" />
-      <_ContentIncludedByDefault Remove="Components\Pages\SharedComponents\StatusMessageToast.razor" />
-    </ItemGroup>
-
-    <ItemGroup>
+<!--    <ItemGroup>
       <AdditionalFiles Include="Components\SharedComponents\AddedIngredients.razor" />
       <AdditionalFiles Include="Components\SharedComponents\NoImageSelectedToast.razor" />
+      <AdditionalFiles Include="Components\SharedComponents\OnAfterRenderAsyncIngredientsComponent.razor" />
+      <AdditionalFiles Include="Components\SharedComponents\OnAfterRenderAsyncRecipesComponent.razor" />
       <AdditionalFiles Include="Components\SharedComponents\PreviewRecipe.razor" />
+      <AdditionalFiles Include="Components\SharedComponents\RealTimeIngredientSearchBar.razor" />
+      <AdditionalFiles Include="Components\SharedComponents\RealTimeRecipeSearchBar.razor" />
       <AdditionalFiles Include="Components\SharedComponents\StatusMessageToast.razor" />
-    </ItemGroup>
+    </ItemGroup>-->
 
 </Project>

@@ -195,6 +195,11 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
             if (!result.Status)
             {
                 if (statusMessageToaster != null)
+                    await statusMessageToaster.ShowToastAsync("Error adding recipe to database; "+result.Message);
+            }
+            else
+            {
+                if (statusMessageToaster != null)
                     await statusMessageToaster.ShowToastAsync(result.Message);
             }
         }

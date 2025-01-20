@@ -385,3 +385,5 @@ WHERE id = 2;
 UPDATE recipe_instructions 
 SET instructions = jsonb_set(instructions::jsonb, '{name}', '"Kartoffelmos"'::jsonb) 
 WHERE id = 2;
+
+SELECT * FROM recipe_instructions;
