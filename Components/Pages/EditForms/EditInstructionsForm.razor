@@ -1,0 +1,37 @@
+﻿@using WebKitchen.Components.SharedComponents;
+@inject DBService DbService
+
+<label class="form-label fw-bold">Recipe Id</label>
+<InputNumber id="name" @bind-Value="recipeId" class="form-control"/>
+
+<button type="submit" class="btn btn-primary" @onclick="HandleGettingInstructions">Get Recipe Instructions</button>
+
+@if (instructions != null)
+{
+    
+}
+
+<StatusMessageToast @ref="statusMessageToaster"/>
+
+@code{
+
+    public int recipeId;
+    StatusMessageToast? statusMessageToaster;
+    RecipeInstructionRecord? instructions;
+    
+    private async Task HandleGettingInstructions()
+    {
+        Console.WriteLine("Handling getting instructions...");
+        var result = await DbService.GetRecipeInstructionByRecipeId(recipeId);
+        if (result.instructions == null)
+        {
+            if (statusMessageToaster != null)
+                await statusMessageToaster.ShowToastAsync(result.message);
+        }
+        else
+        {
+            instructions = result.instructions;
+        }
+    }
+
+}

@@ -137,10 +137,11 @@ public class DBService
         return (recipe, statusMessage);
     }
 
-    public async Task<(List<Recipe>? recipes, string message)> GetRecipesByCategory(string category, string sortingDirection)
+    public async Task<(List<Recipe>? recipes, string message)> GetRecipesByCategory(string category,
+        string sortingDirection)
     {
         Console.WriteLine("Getting recipes by category...");
-        
+
         List<Recipe> recipes = new();
         string statusMessage = "Recipes successfully retrieved.";
         string query = "SELECT id, name, image, meal_type," +
@@ -174,7 +175,7 @@ public class DBService
 
         try
         {
-            Console.WriteLine("Query: "+query);
+            Console.WriteLine("Query: " + query);
             await using var conn = await GetConnection();
             await using var cmd = new NpgsqlCommand(query, conn);
             await using var reader = await cmd.ExecuteReaderAsync();
@@ -186,11 +187,11 @@ public class DBService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error getting recipes by category ({category})"+ex.Message);
+            Console.WriteLine($"Error getting recipes by category ({category})" + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             return (null, $"Error getting recipes by category ({category}): {ex.Message}.");
         }
-        
+
         return (recipes, statusMessage);
     }
 
@@ -235,19 +236,22 @@ public class DBService
     }
 
     /// Retrieves a record of recipe instructions associated with the specified recipe ID from the database.
-    /// <param name="RecipeId">The unique identifier of the recipe for which instructions are to be retrieved.</param>
+    /// <param name="recipeId">The unique identifier of the recipe for which instructions are to be retrieved.</param>
     /// <returns>A RecipeInstructionRecord containing the instructions if found, or null if not found.</returns>
-    public async Task<RecipeInstructionRecord?> GetRecipeInstructionByRecipeId(int RecipeId)
+    public async Task<(RecipeInstructionRecord? instructions, string message)> GetRecipeInstructionByRecipeId(
+        int recipeId)
     {
         Console.WriteLine("Getting recipe instructions by id...");
         RecipeInstructionRecord instructionsRecord;
-        const string query = "SELECT id, instructions, recipe_id FROM recipe_instructions WHERE recipe_id = @recipeId;";
+        const string query =
+            "SELECT id, instructions, recipe_id FROM recipe_instructions WHERE recipe_id = @recipe_Id;";
+        var statusMessage = "Recipe instructions successfully retrieved.";
 
         try
         {
             await using var conn = await GetConnection();
             await using var cmd = new NpgsqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@recipeId", RecipeId);
+            cmd.Parameters.AddWithValue("@recipe_Id", recipeId);
 
             await using var reader = await cmd.ExecuteReaderAsync();
 
@@ -255,36 +259,36 @@ public class DBService
             {
                 var id = reader.GetInt32(0);
                 var jsonData = reader.GetString(1);
-                var recipeId = reader.GetInt32(2);
+                var currentRecipeId = reader.GetInt32(2);
 
                 var instructions = JsonSerializer.Deserialize<RecipeInstructions>(jsonData);
 
                 if (instructions == null)
                 {
                     Console.WriteLine("Error deserializing instructions.");
-                    return null;
+                    return (null, "Error deserializing instructions; instructions are null.");
                 }
 
                 var tempInstructionsRecord = new RecipeInstructionRecord { Instructions = instructions };
                 tempInstructionsRecord.SetId(id);
-                tempInstructionsRecord.SetRecipeId(recipeId);
+                tempInstructionsRecord.SetRecipeId(currentRecipeId);
 
                 instructionsRecord = tempInstructionsRecord;
             }
             else
             {
                 Console.WriteLine("Recipe instructions not found.");
-                return null;
+                return (null, "Recipe instructions not found.");
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error getting recipe instructions by id: " + ex.Message);
+            Console.WriteLine($"Error getting recipe instructions by id ({recipeId}): " + ex.Message);
             Console.WriteLine("Stacktrace: " + ex.StackTrace);
-            throw;
+            return (null, $"Error getting recipe instructions by id ({recipeId}): {ex.Message}.");
         }
 
-        return instructionsRecord;
+        return (instructionsRecord, statusMessage);
     }
 
     /// Asynchronously retrieves a random recipe from the collection of dinner recipes available in the database.
@@ -1084,6 +1088,65 @@ public class DBService
         {
             await UpdateTableIds("recipes");
             await UpdateTableIds("recipe_instructions");
+        }
+
+        return statusMessage;
+    }
+
+    public async Task<string> UpdateInstructionsRecipeNameByRecipeId(int recipeId, string recipeName)
+    {
+        Console.WriteLine("Updating instructions recipe name by name...");
+        var statusMessage = $"Instructions recipe name {recipeId} has been updated.";
+        var query = "UPDATE recipe_instructions " +
+                    "SET instructions = jsonb_set(instructions::jsonb, '{name}', '\"" +
+                    $"{recipeName}" +
+                    "\"'::jsonb) " +
+                    "WHERE recipe_id = @recipe_id";
+
+        try
+        {
+            await using var conn = await GetConnection();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@recipe_id", recipeId);
+
+            var result = await RunAsyncQuery(cmd);
+            if (result < 1)
+                statusMessage = $"Instructions recipe name {recipeId} was not found.";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating instructions recipe name by recipe id ({recipeId}): " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return $"Error updating instructions recipe name by recipe id ({recipeId})";
+        }
+
+        return statusMessage;
+    }
+
+    private async Task<string> updateInstructionsRecipeId()
+    {
+        Console.WriteLine("Updating instructions recipe id...");
+        var statusMessage = "Instructions got updated.";
+
+        // The "->>" operator looks in a JSON file for a specific variable name. In this case, "name".
+        string query = "UPDATE recipe_instructions " +
+                       "SET recipe_id =" +
+                       "(SELECT id FROM recipes WHERE name = instructions ->> 'name')";
+
+        try
+        {
+            await using var conn = await GetConnection();
+            await using var cmd = new NpgsqlCommand(query, conn);
+
+            var result = await RunAsyncQuery(cmd);
+            if (result < 1)
+                return "Instructions did not get updated";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error updating instructions recipe IDs:" + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return "Error updating instructions recipe IDs:" + ex.Message;
         }
 
         return statusMessage;

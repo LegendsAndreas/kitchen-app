@@ -52,7 +52,7 @@
             <hr class="dropdown-divider"/>
         </li>
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("instruction"))">
+            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("instructions"))">
                 Instructions
             </button>
         </li>
@@ -96,6 +96,11 @@
                 case "delete-ingredient":
                     <div class="edit-recipes-form">
                         <DeleteDbIngredientForm/>
+                    </div>
+                    break;
+                case "instructions":
+                    <div class="edit-recipes-form">
+                        <EditInstructionsForm/>
                     </div>
                     break;
             }

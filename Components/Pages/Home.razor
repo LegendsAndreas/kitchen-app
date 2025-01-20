@@ -1,6 +1,5 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@* @using WebKitchen.Components.Pages.OnRender *@
 @using WebKitchen.Components.SharedComponents
 @inject NavigationManager navigationManager;
 @inject DBService DbService;
@@ -10,7 +9,6 @@
 
 <PageTitle>Recipes</PageTitle>
 
-@* ToDo: You can add a recipe, as if an ingredient.*@
 <div class="container">
     @* Uncomment to access the developer page. *@
     @*<button class="btn btn-primary" onclick="@(() => navigationManager.NavigateTo("/developer"))">Go To developer
@@ -48,7 +46,6 @@
             }
         }
     </div>
-
 </div>
 
 <StatusMessageToast @ref="statusMessageToaster"/>

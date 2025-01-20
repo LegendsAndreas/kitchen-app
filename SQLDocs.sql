@@ -332,10 +332,56 @@ SELECT count(*)                                 AS total_connections,
        count(*) FILTER (WHERE state = 'idle')   AS idle_connections
 FROM pg_stat_activity;
 
-SELECT * FROM recipes WHERE id > 5 AND id < 10 ORDER BY id;
-SELECT * FROM recipes WHERE (macros).total_protein > 20 AND (macros).total_protein < 40 ORDER BY (macros).total_protein;
-SELECT * FROM recipes WHERE (macros).total_calories > 300 AND (macros).total_calories < 700 ORDER BY (macros).total_calories;
-DELETE FROM recipe_instructions WHERE recipe_id = 1;
-DELETE FROM recipes WHERE id = 1;
+SELECT *
+FROM recipes
+WHERE id > 5
+  AND id < 10
+ORDER BY id;
+SELECT *
+FROM recipes
+WHERE (macros).total_protein > 20
+  AND (macros).total_protein < 40
+ORDER BY (macros).total_protein;
+SELECT *
+FROM recipes
+WHERE (macros).total_calories > 300
+  AND (macros).total_calories < 700
+ORDER BY (macros).total_calories;
+DELETE
+FROM recipe_instructions
+WHERE recipe_id = 1;
+DELETE
+FROM recipes
+WHERE id = 1;
 
-SELECT * FROM recipe_instructions;
+SELECT *
+FROM recipe_instructions;
+
+SELECT instructions ->> 'name' AS instruction_name
+FROM recipe_instructions;
+
+SELECT id
+FROM recipes
+WHERE id IN (SELECT recipe_instructions.recipe_id FROM recipe_instructions);
+SELECT instructions ->> 'name' AS recipe_name
+FROM recipe_instructions
+WHERE recipe_id IN (SELECT id FROM recipes);
+SELECT id
+FROM recipes
+WHERE name IN (SELECT instructions ->> 'name' AS recipe_name FROM recipe_instructions);
+
+-- The good one.
+UPDATE recipe_instructions
+SET recipe_id =
+            (SELECT id FROM recipes WHERE name = instructions ->> 'name');
+
+UPDATE recipe_instructions
+SET recipe_id = 10
+WHERE id = 1;
+UPDATE recipe_instructions
+SET recipe_id = 11
+WHERE id = 2;
+
+UPDATE recipe_instructions 
+SET instructions = jsonb_set(instructions::jsonb, '{name}', '"Kartoffelmos"'::jsonb) 
+WHERE id = 2;

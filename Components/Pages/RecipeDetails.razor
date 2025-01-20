@@ -1,4 +1,5 @@
 @page "/recipe-details"
+@using WebKitchen.Components.SharedComponents
 @rendermode InteractiveServer
 @inject DBService DbService
 @inject SharedRecipe SharedDetailedRecipe
@@ -102,9 +103,12 @@
     </div>
 }
 
+<StatusMessageToast @ref="statusMessageToaster"/>
+
 @code {
     Recipe sharedRecipe = new();
     RecipeInstructionRecord? recipeInstructionRecord = new();
+    StatusMessageToast? statusMessageToaster;
 
     protected override async Task OnInitializedAsync()
     {
@@ -115,7 +119,16 @@
 
             if (sharedRecipe.RecipeId > 0)
             {
-                recipeInstructionRecord = await DbService.GetRecipeInstructionByRecipeId(sharedRecipe.RecipeId);
+                var result = await DbService.GetRecipeInstructionByRecipeId(sharedRecipe.RecipeId);
+                if (result.instructions == null)
+                {
+                    if (statusMessageToaster != null)
+                        await statusMessageToaster.ShowToastAsync(result.message);
+                }
+                else
+                {
+                    recipeInstructionRecord = result.instructions;
+                }
             }
         }
     }
