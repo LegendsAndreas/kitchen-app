@@ -382,8 +382,26 @@ UPDATE recipe_instructions
 SET recipe_id = 11
 WHERE id = 2;
 
-UPDATE recipe_instructions 
-SET instructions = jsonb_set(instructions::jsonb, '{name}', '"Kartoffelmos"'::jsonb) 
+UPDATE recipe_instructions
+SET instructions = jsonb_set(instructions::jsonb, '{name}', '"Kartoffelmos"'::jsonb)
 WHERE id = 2;
 
-SELECT * FROM recipe_instructions;
+SELECT *
+FROM recipe_instructions;
+
+SELECT *
+FROM recipes
+ORDER BY id DESC;
+
+SELECT id,
+       name,
+       image,
+       meal_type,
+       (macros).total_calories,
+       (macros).total_fats,
+       (macros).total_carbs,
+       (macros).total_protein
+FROM recipes
+WHERE (macros).total_protein >= 20
+  AND (macros).total_protein <= 40
+ORDER BY (macros).total_protein DESC;

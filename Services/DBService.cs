@@ -137,45 +137,70 @@ public class DBService
         return (recipe, statusMessage);
     }
 
-    public async Task<(List<Recipe>? recipes, string message)> GetRecipesByCategory(string category,
-        string sortingDirection)
+    public async Task<(List<Recipe>? Recipes, string Message)> GetRecipesByCategory(string baseCategory,
+        string secondaryCategory, string sortingDirection, int? minNum, int? maxNum)
     {
         Console.WriteLine("Getting recipes by category...");
 
         List<Recipe> recipes = new();
-        string statusMessage = "Recipes successfully retrieved.";
-        string query = "SELECT id, name, image, meal_type," +
-                       "(macros).total_calories," +
-                       "(macros).total_fats," +
-                       "(macros).total_carbs," +
-                       "(macros).total_protein " +
-                       "FROM recipes";
+        var statusMessage = "Recipes successfully retrieved with query: ";
+        var query = "SELECT id, name, image, meal_type," +
+                    "(macros).total_calories," +
+                    "(macros).total_fats," +
+                    "(macros).total_carbs," +
+                    "(macros).total_protein " +
+                    "FROM recipes";
 
-        if (category == "name")
+        if (minNum != null || maxNum != null)
+        {
+            if (minNum > maxNum)
+                return (null,
+                    $"Invalid sorting parameters; The minimum value ({minNum}) is more than the maximum value ({maxNum}).");
+
+            if (minNum == null)
+            {
+                query += $" WHERE (macros).total_{secondaryCategory} <= {maxNum}";
+            }
+            else if (maxNum == null)
+            {
+                query += $" WHERE (macros).total_{secondaryCategory} >= {minNum}";
+            }
+            else
+                query +=
+                    $" WHERE (macros).total_{secondaryCategory} >= {minNum} AND (macros).total_{secondaryCategory} <= {maxNum}";
+        }
+
+        if (baseCategory == "name")
             query += " ORDER BY name";
-        else if (category == "meal_type")
+        else if (baseCategory == "meal_type")
             query += " ORDER BY meal_type";
-        else if (category == "calories")
-            query += " ORDER BY (macros).total_calories";
-        else if (category == "carbs")
-            query += " ORDER BY (macros).total_carbs";
-        else if (category == "fats")
-            query += " ORDER BY (macros).total_fats";
-        else if (category == "protein")
-            query += " ORDER BY (macros).total_protein";
+        else if (baseCategory == "macros")
+        {
+            if (secondaryCategory == "calories")
+                query += " ORDER BY (macros).total_calories";
+            else if (secondaryCategory == "carbs")
+                query += " ORDER BY (macros).total_carbs";
+            else if (secondaryCategory == "fats")
+                query += " ORDER BY (macros).total_fats";
+            else if (secondaryCategory == "protein")
+                query += " ORDER BY (macros).total_protein";
+            else
+                return (null, $"Invalid category \"{secondaryCategory}\".");
+        }
         else
-            return (null, $"Invalid category ({category}).");
+            return (null, $"Invalid category \"{baseCategory}\".");
 
         if (!string.IsNullOrEmpty(sortingDirection))
         {
             if (sortingDirection != "asc" && sortingDirection != "desc")
-                return (null, $"Invalid sorting direction ({sortingDirection}).");
+                return (null,
+                    $"Invalid sorting direction ({sortingDirection}); direction can only be 'asc' or 'desc'.");
+
             query += $" {sortingDirection.ToUpper()}";
         }
 
         try
         {
-            Console.WriteLine("Query: " + query);
             await using var conn = await GetConnection();
             await using var cmd = new NpgsqlCommand(query, conn);
             await using var reader = await cmd.ExecuteReaderAsync();
@@ -187,12 +212,14 @@ public class DBService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error getting recipes by category ({category})" + ex.Message);
+            Console.WriteLine(
+                $"Error getting recipes by category \"{baseCategory}\" and query \"{query}\": " +
+                ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            return (null, $"Error getting recipes by category ({category}): {ex.Message}.");
+            return (null, $"Error getting recipes by category ({baseCategory}): {ex.Message}.");
         }
 
-        return (recipes, statusMessage);
+        return (recipes, statusMessage + query);
     }
 
     /// Constructs and returns a Recipe object populated with data from the given database reader,
@@ -588,7 +615,7 @@ public class DBService
                              "VALUES (" +
                              "@json_data," +
                              "@recipe_id)";
-        
+
         try
         {
             await using var conn = await GetConnection();
@@ -1124,14 +1151,15 @@ public class DBService
         return statusMessage;
     }
 
-    public async Task<string> UpdateInstructionsByInstructionsId(RecipeInstructionRecord instructions, int instructionsId)
+    public async Task<string> UpdateInstructionsByInstructionsId(RecipeInstructionRecord instructions,
+        int instructionsId)
     {
         Console.WriteLine($"Updating instructions by instructions id ({instructionsId})...");
-        
+
         var statusMessage = $"Instructions ({instructionsId}) has been updated.";
         var serializedJsonData = JsonSerializer.Serialize(instructions.Instructions);
         const string query = "UPDATE recipe_instructions " +
-                             "SET instructions = @json_data "+
+                             "SET instructions = @json_data " +
                              "WHERE id = @instructions_id";
 
         try
@@ -1146,11 +1174,11 @@ public class DBService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error updating instructions by instructions id ({instructionsId}): "+ex.Message);
-            Console.WriteLine("StackTrace: "+ex.StackTrace);
+            Console.WriteLine($"Error updating instructions by instructions id ({instructionsId}): " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
             return $"Error updating instructions by instructions id ({instructionsId})" + ex.Message;
         }
-        
+
         return statusMessage;
     }
 

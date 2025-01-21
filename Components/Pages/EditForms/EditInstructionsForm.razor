@@ -33,30 +33,40 @@
                 <p>@note.NoteText</p>
             }
         </div>
+        
+        @* By turning the element into a d-flex flex-column, we display them as a column, instead of displaying each element
+        next to each other.
+        Then, we space them between each other, to get the forms to display at the top and the button at the bottom. *@
+        <div class="col d-flex flex-column justify-content-between">
+            @* We encapsulate the forms and buttons into two divs, so that the lowest button gets displayed in the bottom
+            right corner. *@
+            <div>
+                <EditForm Model="@currentStep">
+                    <label class="form-label fw-bold">New step text</label>
+                    <InputText @bind-Value="stepText" class="form-control"/>
 
-        <div class="col">
-            <EditForm Model="@currentStep">
-                <label class="form-label fw-bold">New step text</label>
-                <InputText @bind-Value="stepText" class="form-control"/>
+                    <button type="submit" class="btn btn-primary" @onclick="HandleNewStep">Set New Step</button>
+                </EditForm>
 
-                <button type="submit" class="btn btn-primary" @onclick="HandleNewStep">Set New Step</button>
-            </EditForm>
+                <EditForm Model="@currentNote">
+                    <label class="form-label fw-bold">New note text</label>
+                    <InputText @bind-Value="noteText" class="form-control"/>
 
-            <EditForm Model="@currentNote">
-                <label class="form-label fw-bold">New note text</label>
-                <InputText @bind-Value="noteText" class="form-control"/>
+                    <button type="submit" class="btn btn-primary" @onclick="HandleNewNote">Set New Note</button>
+                </EditForm>
 
-                <button type="submit" class="btn btn-primary" @onclick="HandleNewNote">Set New Note</button>
-            </EditForm>
+                <p>New step: @currentStep.StepText</p>
 
-            <p>New step: @currentStep.StepText</p>
+                <p>New note: @currentNote.NoteText</p>
+            </div>
 
-            <p>New note: @currentNote.NoteText</p>
-
+            @* "d-flex" - activates the flexbox layout, fot the content inside the div. *@
+            @* "justify-content-end" - aligns the content to the right side. *@
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-primary" @onclick="HandleUpdatingInstructions">Update Instructions</button>
+            </div>
         </div>
     </div>
-
-    <button type="button" class="btn btn-primary" @onclick="HandleUpdatingInstructions">Update Instructions</button>
 }
 
 <StatusMessageToast @ref="statusMessageToaster"/>

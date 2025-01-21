@@ -5,42 +5,12 @@
 
 <PageTitle>Categories</PageTitle>
 
-@*<div class="dropdown center-element">
-    <a class="btn btn-primary custom-layout dropdown-toggle btn-lg" href="#" role="button" data-bs-toggle="dropdown"
-       aria-expanded="false">
-        Search by...
-    </a>
-
-    <ul class="dropdown-menu">
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleSearchOption("name", ""))">Name</button>
-        </li>
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleSearchOption("meal_type", ""))">Meal
-                type
-            </button>
-        </li>
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleSearchOption("calories", ""))">Calories
-            </button>
-        </li>
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleSearchOption("carbs", ""))">Carbs
-            </button>
-        </li>
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleSearchOption("fats", ""))">Fat</button>
-        </li>
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleSearchOption("protein", ""))">Protein
-            </button>
-        </li>
-    </ul>
-</div>*@
+<p>DEVELOPERS NOTE: Not the best sort by category page. I should just make one big card where you can set all the
+    elements that you want to search by.</p>
 
 <div class="container" style="background-color: #2b3035; padding: 10px; border-radius: 5px;">
-
     <div class="row row-cols-5">
+        @* Base *@
         <div class="col">
             <input type="text" class="form-control" placeholder="Order by..." aria-label="Search by name"
                    @bind="baseCategory" @onfocus="OnBaseSearchBarFocus" @onblur="OnBaseSearchBarBlur">
@@ -50,93 +20,84 @@
                     <ul class="dropdown-menu show"> @* "show" is vital, since it automatically shows the items. *@
                         <li>
                             <a class="dropdown-item"
-                               onclick="@(() => HandleBaseCategory("Meal Type"))">Meal Type</a>
+                               onclick="@(() => HandleBaseCategory("meal Type"))">Meal Type</a>
                         </li>
                         <li>
                             <a class="dropdown-item"
-                               onclick="@(() => HandleBaseCategory("Name"))">Name</a>
+                               onclick="@(() => HandleBaseCategory("name"))">Name</a>
                         </li>
                         <li>
                             <a class="dropdown-item"
-                               onclick="@(() => HandleBaseCategory("Macros"))">Macros</a>
+                               onclick="@(() => HandleBaseCategory("macros"))">Macros</a>
                         </li>
                     </ul>
                 </div>
             }
         </div>
+        @* Secondary *@
         <div class="col">
             @if (baseCategory != "")
             {
-                if (baseCategory == "Meal Type")
+                if (baseCategory == "meal Type")
                 {
-                    <input type="text" class="form-control" placeholder="Order by meal type..."
-                           aria-label="Search by name"
-                           @bind="secondaryCategory" @onfocus="OnSecondarySearchBarFocus"
-                           @onblur="OnSecondarySearchBarBlur">
-                    @if (isSecondarySearchBarActive)
-                    {
-                        <div class="dropdown">
-                            <ul class="dropdown-menu show"> @* "show" is vital, since it automatically shows the items. *@
-                                <li>
-                                    <a class="dropdown-item"
-                                       onclick="@(() => HandleSecondaryCategory("B"))">B</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item"
-                                       onclick="@(() => HandleSecondaryCategory("L"))">L</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item"
-                                       onclick="@(() => HandleSecondaryCategory("D"))">D</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item"
-                                       onclick="@(() => HandleSecondaryCategory("S"))">S</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item"
-                                       onclick="@(() => HandleSecondaryCategory("K"))">K</a>
-                                </li>
-                            </ul>
-                        </div>
-                    }
+                    <select class="form-select" @bind="secondaryCategory"> @* aria-label="Default select example" *@
+                        <option selected value="">Meal type</option>
+                        <option value="B">B</option>
+                        <option value="L">L</option>
+                        <option value="D">D</option>
+                        <option value="S">S</option>
+                        <option value="K">K</option>
+                    </select>
                 }
-                else if (baseCategory == "Name")
+                else if (baseCategory == "name")
                 {
-                    <input type="text" class="form-control" placeholder="Order by name..." aria-label="Search by name"
-                           @bind="secondaryCategory" @onfocus="OnSecondarySearchBarFocus"
-                           @onblur="OnSecondarySearchBarBlur">
+                    @*<input type="text" class="form-control" placeholder="Order by name..." aria-label="Search by name"
+                           
+                    
+
+                    @bind="secondaryCategory" @onfocus="OnSecondarySearchBarFocus"
+                           
+                    
+
+                    @onblur="OnSecondarySearchBarBlur">*@
                 }
-                else if (baseCategory == "Macros")
+                else if (baseCategory == "macros")
                 {
                     <select class="form-select" @bind="secondaryCategory"> @* aria-label="Default select example" *@
                         <option selected value="">Macro type</option>
                         <option value="calories">Calories</option>
-                        <option value="fat">Fat</option>
+                        <option value="fats">Fat</option>
                         <option value="carbs">Carbs</option>
                         <option value="protein">Protein</option>
                     </select>
                 }
             }
         </div>
+        @* Direction *@
         <div class="col">
             @if (secondaryCategory != "")
             {
                 <select class="form-select" @bind="orderDirection"> @* aria-label="Default select example" *@
                     <option selected value="">Order direction</option>
-                    <option value="ASC">Asc</option>
-                    <option value="DESC">Desc</option>
+                    <option value="asc">Asc</option>
+                    <option value="desc">Desc</option>
                 </select>
             }
-            @if (orderDirection != "")
+        </div>
+        <div class="col">
+            @if (orderDirection != "" && baseCategory == "macros")
             {
-                <p>@orderDirection</p>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Min" aria-label="minimum" @bind="minNum">
+                    <span class="input-group-text">=&lt X =&lt</span>
+                    <input type="text" class="form-control" placeholder="Max" aria-label="maximum" @bind="maxNum">
+                </div>
             }
         </div>
         <div class="col">
             @if (orderDirection != "")
             {
-                <p>x =&lt 7000</p>
+                <button class="btn btn-primary" @onclick="HandleGettingRecipes">Search</button>
             }
         </div>
     </div>
@@ -174,8 +135,9 @@
 <StatusMessageToast @ref="statusMessageToaster"/>
 
 @code{
+    int? minNum;
+    int? maxNum;
     bool isBaseSearchBarActive = false;
-    bool isSecondarySearchBarActive = false;
     string baseCategory = "";
     string secondaryCategory = "";
     string orderDirection = "";
@@ -185,13 +147,8 @@
     private void HandleBaseCategory(string category)
     {
         secondaryCategory = "";
+        orderDirection = "";
         baseCategory = category;
-        StateHasChanged();
-    }
-
-    private void HandleSecondaryCategory(string category)
-    {
-        secondaryCategory = category;
         StateHasChanged();
     }
 
@@ -209,18 +166,27 @@
         StateHasChanged();
     }
 
-    private void OnSecondarySearchBarFocus()
+    private async Task HandleGettingRecipes()
     {
-        Console.WriteLine("Search bar is active...");
-        isSecondarySearchBarActive = true;
-        StateHasChanged();
-    }
-
-    private async Task OnSecondarySearchBarBlur()
-    {
-        await Task.Delay(200);
-        isSecondarySearchBarActive = false;
-        StateHasChanged();
+        try
+        {
+            var result = await DbService.GetRecipesByCategory(baseCategory, secondaryCategory, orderDirection, minNum, maxNum);
+            if (result.Recipes == null)
+            {
+                if (statusMessageToaster != null)
+                    await statusMessageToaster.ShowToastAsync(result.Message);
+            }
+            else
+            {
+                sortedRecipes = result.Recipes;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error handling getting recipes: " + ex.Message);
+            Console.WriteLine("Error handling getting recipes: " + ex.StackTrace);
+            return;
+        }
     }
 
 }
