@@ -54,7 +54,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" @onclick="HandleInstructions" class="btn btn-primary instructions-button">
+            <button type="button" @onclick="HandleAddingInstructions" class="btn btn-primary instructions-button">
                 Create Instructions
             </button>
         </div>
@@ -179,7 +179,7 @@
         }
     }
 
-    private async Task HandleInstructions()
+    private async Task HandleAddingInstructions()
     {
         Console.WriteLine("Handling instructions...");
         if (currentRecipe == null)
@@ -198,10 +198,15 @@
         recipeInstructionRecord.Instructions.Name = currentRecipe.Name;
 
         var result = await DbService.AddInstructionToDb(recipeInstructionRecord);
-        if (!result.Status)
+        if (result.Status)
         {
             if (RecipeStatusToaster != null)
                 await RecipeStatusToaster.ShowToastAsync(result.Message);
+        }
+        else
+        {
+            if (RecipeStatusToaster != null)
+                await RecipeStatusToaster.ShowToastAsync("Error adding instructions: " + result.Message);
         }
 
         recipeInstructionRecord.Clear();

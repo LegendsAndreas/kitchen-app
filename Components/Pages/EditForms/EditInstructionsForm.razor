@@ -26,7 +26,7 @@
             @foreach (var note in instructions.Instructions.Notes)
             {
                 <p>@note.NoteNumber <button type="submit" class="btn btn-danger"
-                                            @onclick="() => DeleteNote(note.NoteNumber - 1)">
+                                            @onclick="() => DeleteNote(instructions.Instructions.Notes.IndexOf(note))">
                         <strong>X</strong>
                     </button>
                 </p>

@@ -608,7 +608,7 @@ public class DBService
     {
         Console.WriteLine("Adding instructions to database...");
 
-        var statusMessage = "Instructions successfully added.";
+        var statusMessage = $"Instructions successfully added to recipe {instructions.GetRecipeId()}.";
         var serializedJsonData = JsonSerializer.Serialize(instructions.Instructions);
         const string query = "INSERT INTO recipe_instructions " +
                              "(instructions, recipe_id) " +
@@ -624,7 +624,7 @@ public class DBService
             cmd.Parameters.AddWithValue("@recipe_id", instructions.GetRecipeId());
             var result = await RunAsyncQuery(cmd);
             if (result < 1)
-                statusMessage = "Instructions did not get added to database; recipe ID was not found in database.";
+                return (false, "Instructions did not get added to database; recipe ID was not found in database.");
         }
         catch (Exception ex)
         {
@@ -1156,7 +1156,7 @@ public class DBService
     {
         Console.WriteLine($"Updating instructions by instructions id ({instructionsId})...");
 
-        var statusMessage = $"Instructions ({instructionsId}) has been updated.";
+        var statusMessage = $"Recipe ({instructions.GetRecipeId()}) instructions has been updated.";
         var serializedJsonData = JsonSerializer.Serialize(instructions.Instructions);
         const string query = "UPDATE recipe_instructions " +
                              "SET instructions = @json_data " +

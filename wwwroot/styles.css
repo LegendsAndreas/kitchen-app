@@ -79,7 +79,16 @@
     border-radius: 5px;
     background-color: #212529;
     font-size: 125%;
+/*    word-wrap: break-word;    !* Breaks long words to fit within a column *!
+    word-break: break-word;   !* Ensures long words break correctly *!
+    overflow-wrap: break-word; !* Provides additional compatibility *!*/
 }
+
+/*#recipe-details ul li {
+    word-wrap: break-word;    !* Breaks long words to fit within a column *!
+    word-break: break-word;   !* Ensures long words break correctly *!
+    overflow-wrap: break-word; !* Provides additional compatibility *!
+}*/
 
 /*Edit recipes forms*/
 .custom-button-margin button {
