@@ -55,7 +55,7 @@ public class DBService
             var recipe = new Recipe
             {
                 RecipeId = reader.GetInt32(0),
-                MealType = reader.GetString(1),
+                MealType = Convert.ToChar(reader.GetString(1)),
                 Name = reader.GetString(2),
                 Base64Image = reader.GetString(3) != "PlaceHolderPic.jpg"
                     ? reader.GetString(3)
@@ -133,7 +133,7 @@ public class DBService
             Base64Image = reader.GetString(2) != "PlaceHolderPic.jpg"
                 ? reader.GetString(2)
                 : base64PlaceHolderPic,
-            MealType = reader.GetString(3),
+            MealType = Convert.ToChar(reader.GetString(3)),
             TotalMacros = new Macros
             {
                 Calories = reader.GetFloat(4),
@@ -302,7 +302,7 @@ public class DBService
                     RecipeId = reader.GetInt32(0),
                     Name = reader.GetString(1),
                     Base64Image = $"pics/{reader.GetString(2)}",
-                    MealType = reader.GetString(3),
+                    MealType = Convert.ToChar(reader.GetString(3)),
                     Ingredients = await GetIngredientByRecipeIdAsync(recipeIdTracker),
                     TotalMacros = new Macros
                     {
@@ -619,7 +619,7 @@ public class DBService
     /// <param name="mealType">The new meal type to be assigned to the recipe.</param>
     /// <param name="recipeId">The unique identifier of the recipe to be updated.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    public async Task<string> UpdateRecipeMealTypeRecipeId(string mealType, int recipeId)
+    public async Task<string> UpdateRecipeMealTypeRecipeId(char mealType, int recipeId)
     {
         Console.WriteLine("Updating recipe meal type by name...");
 
@@ -1009,7 +1009,7 @@ public class DBService
             await using var reader = cmd.ExecuteReader();
             if (reader.Read())
             {
-                user.SetId(reader.GetInt32(0));
+                user.SetId((uint)reader.GetInt32(0));
                 user.Username = reader.GetString(1);
                 user.SetEmail(reader.GetString(2));
                 user.SetPassword(reader.GetString(3));

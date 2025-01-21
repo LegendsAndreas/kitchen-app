@@ -1,9 +1,0 @@
-﻿@startuml
-'https://plantuml.com/sequence-diagram
-:User wants to edit object;
-:User selects object to edit;
-:User gets confirmation of selected object;
-:User edits elements of object;
-:User applies edits;
-:Finally, user gets confirmation of edit;
-@enduml

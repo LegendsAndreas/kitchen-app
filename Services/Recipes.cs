@@ -186,7 +186,7 @@ public class Recipe
 
     [Required]
     [StringLength(1, ErrorMessage = "Meal type must be one character long.")]
-    public string MealType { get; set; } = string.Empty;
+    public char MealType { get; set; }
 
     [Required] public string Name { get; set; } = string.Empty;
     [Required] public string Base64Image { get; set; } = string.Empty;
@@ -281,7 +281,7 @@ public class Recipe
     {
         Console.WriteLine("Clearing recipe...");
         RecipeId = 0;
-        MealType = string.Empty;
+        MealType = '\0';
         Name = string.Empty;
         Base64Image = string.Empty;
         Ingredients = [];

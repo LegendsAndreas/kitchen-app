@@ -3,13 +3,13 @@
 public class User
 {
     public event Action? OnChange;
-    private int Id { get; set; }
+    private uint Id { get; set; }
     public string Username { get; set; }
     private string Email { get; set; }
     private string Password { get; set; }
     public List<Recipe> Recipes { get; set; } = [];
 
-    public int GetUserId()
+    public uint GetUserId()
     {
         return Id;
     }
@@ -24,7 +24,7 @@ public class User
         return Password;
     }
 
-    public void SetId(int id)
+    public void SetId(uint id)
     {
         Id = id;
         NotifyStateChanged();
@@ -54,13 +54,28 @@ public class User
         NotifyStateChanged();
     }
 
-    public void SetUser(int id, string name, string email, string password, List<Recipe> recipes)
+    public void SetUser(uint id, string name, string email, string password, List<Recipe> recipes)
     {
         SetId(id);
         SetUsername(name);
         SetEmail(email);
         SetPassword(password);
         SetRecipes(recipes);
+    }
+
+    /// <summary>
+    /// Converts a signed integer to an unsigned integer.
+    /// </summary>
+    /// <param name="i">The signed integer to convert.</param>
+    /// <returns>The unsigned integer equivalent of the input value. Returns 0 if the input is less than 1.</returns>
+    public uint IntToUint(int i)
+    {
+        Console.WriteLine("Converting int to uint...");
+
+        if (i < 1)
+            return 0;
+        
+        return (uint)i;
     }
 
     public User TransferUser(User user)

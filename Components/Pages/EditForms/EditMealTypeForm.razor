@@ -1,4 +1,4 @@
-﻿@using WebKitchen.Components.Pages.SharedComponents;
+﻿@using WebKitchen.Components.SharedComponents;
 @inject DBService DbService;
 @inject IJSRuntime JsRuntime;
 
@@ -15,7 +15,7 @@
 {
     <EditForm Model="@currentRecipe" OnSubmit="@HandleSubmit">
         <label class="form-label fw-bold">Updated Meal Type</label>
-        <InputText id="mealType" @bind-Value="currentRecipe.MealType" class="form-control"/>
+        <InputNumber id="mealType" @bind-Value="currentRecipe.MealType" class="form-control"/>
         <button type="submit" class="btn btn-primary">Update Meal Type</button>
     </EditForm>
 

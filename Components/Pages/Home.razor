@@ -1,7 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @* @using WebKitchen.Components.Pages.OnRender *@
-@using WebKitchen.Components.Pages.SharedComponents
+@using WebKitchen.Components.SharedComponents
 @inject User CurrentUser;
 @inject DBService DbService;
 @inject SharedRecipe SharedDetailRecipe
@@ -9,19 +9,7 @@
 
 <PageTitle>Recipes</PageTitle>
 
-<LoginModal/>
-
-@* <LoginModal/> *@
-
 <div class="container">
-    @* Uncomment to access the developer page. *@
-    @*<button class="btn btn-primary" onclick="@(() => navigationManager.NavigateTo("/developer"))">Go To developer
-    </button>*@
-
-    @*@if (gettingRecipes)
-    {
-        <p>Loading recipes...</p>
-    }*@
     @if (CurrentUser.GetUserId() == 0)
     {
         <p>Sign in to see your recipes.</p>

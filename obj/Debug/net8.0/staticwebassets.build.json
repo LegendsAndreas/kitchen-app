@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "R1Xa40l8+pPXMjmfyW4uh16fKYHU6ROnFhyTXzHSuls=",
+  "Hash": "Qr7cZ3PIzkrKXjHNvZBmB5zFT5D5e3xvHE0fFu3RnNU=",
   "Source": "WebKitchen",
   "BasePath": "_content/WebKitchen",
   "Mode": "Default",
@@ -205,6 +205,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\pics\\DatabaseDiagram.png"
+    },
+    {
+      "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\heinx.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/heinx.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\heinx.webp"
     },
     {
       "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\icons8-categories.png",
@@ -414,6 +433,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\pics\\skyr.webp"
+    },
+    {
+      "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\sovs.webp",
+      "SourceId": "WebKitchen",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\",
+      "BasePath": "_content/WebKitchen",
+      "RelativePath": "pics/sovs.webp",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\pics\\sovs.webp"
     },
     {
       "Identity": "C:\\Users\\andre\\Desktop\\Pog grammering\\C#\\kitchen-app\\wwwroot\\pics\\vanilje.webp",

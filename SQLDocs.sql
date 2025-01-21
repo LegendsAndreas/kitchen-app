@@ -1,20 +1,30 @@
 CREATE TYPE ingredient AS
 (
     name                  TEXT,
-    grams                 INT,
-    calories_pr_hectogram INT,
-    fats_pr_hectogram     INT,
-    carbs_pr_hectogram    INT,
-    protein_pr_hectogram  INT,
-    multiplier            FLOAT
+    grams                 FLOAT,
+    calories_pr_hectogram FLOAT,
+    fat_pr_hectogram      FLOAT,
+    carbs_pr_hectogram    FLOAT,
+    protein_pr_hectogram  FLOAT
 );
 
 CREATE TYPE recipe_macros AS
 (
     total_calories FLOAT,
-    total_fats     FLOAT,
+    total_fat      FLOAT,
     total_carbs    FLOAT,
     total_protein  FLOAT
+);
+
+CREATE TABLE ingredients
+(
+    id                    SERIAL PRIMARY KEY,
+    name                  TEXT,
+    calories_pr_hectogram FLOAT,
+    fat_pr_hectogram      FLOAT,
+    carbs_pr_hectogram    FLOAT,
+    protein_pr_hectogram  FLOAT,
+    base64_image          TEXT
 );
 
 CREATE TABLE recipes
@@ -24,22 +34,26 @@ CREATE TABLE recipes
     name        TEXT,
     image       TEXT,
     ingredients ingredient[],
-    macros      recipe_macros
+    macros      recipe_macros,
+    user_id     INT,
+    CONSTRAINT FK_user_id FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TABLE users
 (
-    id         SERIAL PRIMARY KEY,
-    username   TEXT,
-    email      TEXT,
-    password   TEXT,
-    recipe_ids INT[]
+    id       SERIAL PRIMARY KEY,
+    username TEXT,
+    email    TEXT,
+    password TEXT
 );
+
+DROP TABLE users;
+DROP TABLE recipes;
 
 -- "WHERE 2 = ANY(recipe_ids)" checks if the value "2" is an element in recipe_ids.
 SELECT *
 FROM users
-WHERE 2 = ANY(recipe_ids);
+WHERE 2 = ANY (recipe_ids);
 
 INSERT INTO users (username, email, password, recipe_ids)
 VALUES ('Tommy21', 'mike@gmail.com', 'passy', ARRAY [1,7,3,8,2]);
