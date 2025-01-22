@@ -74,6 +74,15 @@ public class DBService
         return recipes;
     }
 
+    public async Task<(bool Status, string Message)> AddUser(string username, string password, string email)
+    {
+        Console.WriteLine("Adding user...");
+        var status = true;
+        var statusMessage = "User successfully added.";
+        
+        return (status, statusMessage);
+    }
+
     public async Task<Recipe?> GetRecipeById(int recipeId)
     {
         Console.WriteLine("Getting recipe by id...");

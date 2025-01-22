@@ -1,4 +1,6 @@
 ﻿@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using WebKitchen.Components.SharedComponents
 @inject User CurrentUser
 @inject DBService DbService
 
@@ -29,17 +31,46 @@ else
                 <InputText @bind-Value="password" class="form-control"/>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" @onclick="ToggleSignIn">Signup</button>
                 <button type="button" class="btn btn-primary" @onclick="HandleLogIn">Log on</button>
+
             </div>
+            @if (signUp)
+            {
+                <div class="modal-body">
+                    <label class="form-label fw-bold">Username</label>
+                    <InputText @bind-Value="signUpUsername" class="form-control"/>
+
+                    <label class="form-label fw-bold">Email</label>
+                    <InputText @bind-Value="signUpEmail" class="form-control"/>
+
+                    <label class="form-label fw-bold">Password</label>
+                    <InputText @bind-Value="signUpPassword" class="form-control"/>
+
+                    <label class="form-label fw-bold">Retype Password</label>
+                    <InputText @bind-Value="signUpRetypedPassword" class="form-control"/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="HandleSigningUp">Sign User Up</button>
+                </div>
+            }
         </div>
     </div>
 </div>
 
+<StatusMessageToast @ref="statusMessageToaster"/>
+
 @code{
 
+    bool signUp = false;
     string username = "";
     string password = "";
-    
+    string signUpEmail = "";
+    string signUpUsername = "";
+    string signUpPassword = "";
+    string signUpRetypedPassword = "";
+    [Required] StatusMessageToast statusMessageToaster;
+
     private async Task HandleLogIn()
     {
         var result = await DbService.GetUserByUsernameAndPassword(username, password);
@@ -55,9 +86,34 @@ else
         StateHasChanged();
     }
 
+    private void ToggleSignIn()
+    {
+        signUp = signUp == false;
+
+        StateHasChanged();
+    }
+
     private void PrintId()
     {
         Console.WriteLine(CurrentUser.GetUserId());
+    }
+
+    private async Task HandleSigningUp()
+    {
+        if (signUpPassword != signUpRetypedPassword)
+        {
+            await statusMessageToaster.ShowToastAsync("Passwords are not the same");
+            return;
+        }
+        var result = await DbService.AddUser(signUpUsername, signUpEmail, signUpPassword);
+        if (result.Status != null)
+        {
+            await statusMessageToaster.ShowToastAsync("Error adding user; "+result.Message);
+        }
+        else
+        {
+            await statusMessageToaster.ShowToastAsync(result.Message);
+        }
     }
 
 }
