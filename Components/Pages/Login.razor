@@ -1,11 +1,75 @@
 ﻿@page "/login"
 @rendermode InteractiveServer
 @using WebKitchen.Components.SharedComponents
+@inject User CurrentUser
 
-<LoginModal/>
+<div class="card border-layout">
+    <div class="card-body">
+        <LoginModal/>
+
+        @if (CurrentUser.Username != null)
+        {
+            <p>@CurrentUser.Username</p>
+            @*<div class="navbar navbar-expand-lg"
+                 style="border: 1px solid #111111; border-radius: 5px; margin-top: 10px;">
+                <img src="pics/PlaceHolderPic.jpg" class="card-img-top" alt="..." style="width: 100px;"/>
+                <p>@CurrentUser.Username</p>
+                <p>@CurrentUser.GetEmail()</p>
+            </div>*@
+        }
+        else
+        {
+            // Example
+            @*<div class="navbar navbar-expand-lg"
+                 style="border: 1px solid #111111; border-radius: 5px; margin-top: 10px;">
+                <p>__Username__</p>
+                <p>__Email__</p>
+            </div>*@
+        }
+
+        @if (CurrentUser.Recipes.Count > 0)
+        {
+            @foreach (var recipe in CurrentUser.Recipes)
+            {
+                <div class="navbar navbar-expand-lg"
+                     style="border: 1px solid #111111; border-radius: 5px; margin-top: 10px;">
+                    <div class="container-fluid">
+                        <img src="data:image/png;base64,@recipe.Base64Image" class="card-img-top" alt="..."
+                             style="width: 100px;">
+                        <p>@recipe.Name</p>
+                        <p>Calories - @recipe.TotalMacros.Calories.ToString(".00")</p>
+                        <p>Fat - @recipe.TotalMacros.Fat.ToString(".00")</p>
+                        <p>Carbs - @recipe.TotalMacros.Carbs.ToString(".00")</p>
+                        <p>Protein - @recipe.TotalMacros.Protein.ToString(".00")</p>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            // Example
+            <div class="navbar navbar-expand-lg"
+                 style="border: 1px solid #111111; border-radius: 5px; margin-top: 10px;">
+                <div class="container-fluid">
+                    <img src="pics/PlaceHolderPic.jpg" class="card-img-top" alt="..." style="width: 100px;">
+                    <p>Amatriciana</p>
+                    <p>Calories - 781.83</p>
+                    <p>Fat - 22.2</p>
+                    <p>Carbs - 110.21</p>
+                    <p>Protein - 32.9</p>
+                    <a href="/edit">
+                        <img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADoAAAA6CAYAAADhu0ooAAAACXBIWXMAAAsTAAALEwEAmpwYAAADK0lEQVR4nO2aSWgUQRSGJ8Y9bngQYUwQI4iggttFT0oQVwQvgqAYRHG7CF68i3oQdSQoehA8xA1xQREFL2ZmAiJ6MIoboiCYRAiKgsRA/KSghMmzqrsz00v1OD/0qf6qro9XXVX9qjIZIWAv6dH0TLmiBuqkahH1VW3oRqtB4B5wANgMbAfagO5qGrpdwAJLX8YDR4DfaQftACYG6NP+NIN2ABOG0a/baQTNmyCBrcB14CQwTZQtTRtoXkICdUBO+J4DI4XnS1pA85ZIHrf4FwrfkzSA5m0TD7AR+CX8aqZtEr4XroMW/GZXA+xpUd4A9LsMWpCQ+nvLesBeBEaIsm2Gtp0BLVggT+mJZZ7h/UsMkFOAD66CFiyQaun4q14TrKgzBnhgeUfioEXTNwkcM3hVZOdb+jLaslFwArRggSyNpFTOEsm7Pu9KDLRogTzqUedK6cYgYCQTBS0Ck2KETAS0WAbk1QohYwftDBHy1jDfHRtoZ4KQsYF2WiBtG3SldqC+wuEaK2gXMNVQV6U94ohkLKA9ln2qVyQvhRzJyEEHgZUBdzxRQ0YKmjP4d3v4rxmG6yjgZgiQkYF2G1Igq3WUTbpsiWQl32QsoPuEbzLwKaFIRgbaC4wVvrOWl5+PCTIS0MPCMxMYEB41hA8Z2osKMhLQucJzRpS/BZZbIG9EBBk66EvDhPK1ZE09qM5IDO006IMj0gLaJspXAfeBVhOg9jQCjyOGDB10iyiv86m/wZBRTwXoooD1mvSPdJwKFTTr45+tks2G5HLqQFsNniywE3josTNKHegAcEH/TKsjvfe4o8TzunGpBuqrWkSrfOi+AtYCzcAsB5/6sECXZapVDAVtzvwnoO3qVCtTjeLfdfQH8FSfUjca/Cf0JiLJ55m+vjOjEtBS9amjd8NRvCvqAxaHAar0TmUORJ2PuKM3MmdVLqhSi6gTZgozDK0IAronQEO7RB216XdJO4KAbgrQ0HpRR/3VuKQ1QUDVnZ5vHo30yFwR8Bp39BkY5wtacp3U9EOtbnWtE945uKP+QNEUAC3AI+An8F1fhRmytGjfuaTpdP/ueC0tfwClSSCQcb4rggAAAABJRU5ErkJggg=="
+                            class="card-img-top" alt="..." style="width: 20px;"/>
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+
+</div>
 
 @code{
 
-    
 
 }

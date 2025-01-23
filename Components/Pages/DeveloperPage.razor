@@ -3,27 +3,16 @@
 @using WebKitchen.Components.Pages.RealTimeSearchBarElement;
 @inject DBService DbService
 
-<button type="button" @onclick="GetUser">Get User</button>
-@if(user != null)
-{
-    <h1>@user.Username</h1>
-    foreach (var recipe in user.Recipes)
-    {
-        <p>@recipe.Name</p>
-    }
-}
-<h1>@message</h1>
+<button type="button" class="btn btn-primary" @onclick="HandlePath6">Get path 6</button>
 
 @code{
 
-    User? user = new User();
-    string message = "";
-
-    private async Task GetUser()
+    ErrorService.Logger logger = new();
+    
+    private void HandlePath6()
     {
-        var result = await DbService.GetUserByUsernameAndPassword("Tommy21", "passy");
-        user = result.User;
-        message = result.Message;
+        logger.SetPath("TestFolder", "TestLog");
+        logger.Log("TEST","Test message");
     }
 
 }

@@ -47,6 +47,20 @@ CREATE TABLE users
     password TEXT
 );
 
+SELECT EXISTS (
+    SELECT 1
+    FROM recipes
+    WHERE id = 1
+);
+
+SELECT EXISTS (
+    SELECT 1
+    FROM users
+    WHERE username = 'Test'
+);
+
+SELECT * FROM users;
+
 DROP TABLE users;
 DROP TABLE recipes;
 

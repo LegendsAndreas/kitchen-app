@@ -4,7 +4,7 @@ public class User
 {
     public event Action? OnChange;
     private uint Id { get; set; }
-    public string Username { get; set; }
+    public string? Username { get; set; }
     private string Email { get; set; }
     private string Password { get; set; }
     public List<Recipe> Recipes { get; set; } = [];

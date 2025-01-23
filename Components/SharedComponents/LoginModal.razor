@@ -105,14 +105,14 @@ else
             await statusMessageToaster.ShowToastAsync("Passwords are not the same");
             return;
         }
-        var result = await DbService.AddUser(signUpUsername, signUpEmail, signUpPassword);
-        if (result.Status != null)
+        var result = await DbService.AddUser(signUpUsername, signUpPassword, signUpEmail);
+        if (result.Status)
         {
-            await statusMessageToaster.ShowToastAsync("Error adding user; "+result.Message);
+            await statusMessageToaster.ShowToastAsync(result.Message);
         }
         else
         {
-            await statusMessageToaster.ShowToastAsync(result.Message);
+            await statusMessageToaster.ShowToastAsync("Error adding user; "+result.Message);
         }
     }
 

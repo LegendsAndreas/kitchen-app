@@ -77,8 +77,76 @@ public class DBService
     public async Task<(bool Status, string Message)> AddUser(string username, string password, string email)
     {
         Console.WriteLine("Adding user...");
-        var status = true;
+        
+        var checkResult = await isNewUserVariablesValid(username, email);
+        if (!checkResult.status)
+            return (false, "Error adding user; "+checkResult.message);
+        
         var statusMessage = "User successfully added.";
+        const string query = "INSERT INTO users (username, password, email) VALUES (@username, @password, @email)";
+
+        try
+        {
+            await using var conn = await GetConnection();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@username", username);
+            cmd.Parameters.AddWithValue("@password", password);
+            cmd.Parameters.AddWithValue("@email", email);
+            var result = await RunAsyncQuery(cmd);
+            if (result < 1)
+                return (false, "Error adding user; no rows affected.");
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding user ({username} {password} {email}): "+ex.Message);
+            Console.WriteLine("StackTrace: "+ex.StackTrace);
+            return (false, $"Error adding user ({username} {password} {email}): "+ex.Message);
+        }
+        
+        return (true, statusMessage);
+    }
+
+    private async Task<(bool status, string message)> isNewUserVariablesValid(string username, string email)
+    {
+        Console.WriteLine("Checking if new user variables are valid...");
+        var statusMessage = "New user variables are valid.";
+        var status = true;
+        const string usernameQuery = "SELECT EXISTS (SELECT 1 FROM users WHERE username = @username)";
+        const string emailQuery = "SELECT EXISTS (SELECT 1 FROM users WHERE email = @email)";
+        
+        try
+        {
+            await using var conn = await GetConnection();
+            await using var cmd = new NpgsqlCommand(usernameQuery, conn);
+            cmd.Parameters.AddWithValue("@username", username);
+            
+            var result = await cmd.ExecuteScalarAsync();
+            if (result == null)
+                return (false, "returned username is null.");
+            
+            if ((bool)result)
+                return (false, "username already exists.");
+            
+            await using var cmd2 = new NpgsqlCommand(emailQuery, conn);
+            cmd2.Parameters.AddWithValue("@email", email);
+            
+            var result2 = await cmd2.ExecuteScalarAsync();
+            if (result2 == null)
+                return (false, "returned email is null.");
+            
+            if ((bool)result2)
+                return (false, "email already exists.");
+            
+            Console.WriteLine("We good");
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error checking new user variables ({username}, {email}): "+ex.Message);
+            Console.WriteLine("StackTrace: "+ex.StackTrace);
+            return (false, $"Error checking new user variables ({username}, {email}): "+ex.Message);
+        }
         
         return (status, statusMessage);
     }
@@ -1003,7 +1071,7 @@ public class DBService
         var statusMessage = "User found; no errors";
         List<int> recipeIds = [];
 
-        const string query = "SELECT id, username, email, password, recipe_ids " +
+        const string query = "SELECT id, username, email, password " +
                              "FROM users " +
                              "WHERE username = @username " +
                              "AND password = @password";
@@ -1022,8 +1090,6 @@ public class DBService
                 user.Username = reader.GetString(1);
                 user.SetEmail(reader.GetString(2));
                 user.SetPassword(reader.GetString(3));
-                var recipeIdArray = reader.GetFieldValue<int[]>(4);
-                recipeIds = recipeIdArray?.ToList() ?? [];
             }
         }
         catch (Exception ex)
@@ -1033,13 +1099,13 @@ public class DBService
             return (null, statusMessage = "Error getting user by username and password");
         }
 
-        if (recipeIds.Count != 0)
+        /*if (recipeIds.Count != 0)
         {
             foreach (var recipeId in recipeIds)
             {
                 user.Recipes.Add(await GetRecipeById(recipeId));
             }
-        }
+        }*/
         
         Console.WriteLine(user.GetUserId());
 
