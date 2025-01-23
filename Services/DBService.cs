@@ -206,17 +206,18 @@ public class DBService
         var recipe = new Recipe
         {
             RecipeId = reader.GetInt32(0),
-            Name = reader.GetString(1),
-            Base64Image = reader.GetString(2) != "PlaceHolderPic.jpg"
-                ? reader.GetString(2)
+            UserId = reader.GetInt32(1),
+            Name = reader.GetString(2),
+            Base64Image = reader.GetString(3) != "PlaceHolderPic.jpg"
+                ? reader.GetString(3)
                 : base64PlaceHolderPic,
-            MealType = Convert.ToChar(reader.GetString(3)),
+            MealType = Convert.ToChar(reader.GetString(4)),
             TotalMacros = new Macros
             {
-                Calories = reader.GetFloat(4),
-                Fat = reader.GetFloat(5),
-                Carbs = reader.GetFloat(6),
-                Protein = reader.GetFloat(7)
+                Calories = reader.GetFloat(5),
+                Fat = reader.GetFloat(6),
+                Carbs = reader.GetFloat(7),
+                Protein = reader.GetFloat(8)
             }
         };
 
@@ -334,30 +335,41 @@ public class DBService
         return recipeInstructionsRecords;
     }
 
-    public async Task<List<Recipe>> GetAllRecipes()
+    public async Task<(List<Recipe>? Recipes, string Message)> GetAllRecipes()
     {
         Console.WriteLine("Getting recipes...");
 
         // var base64PlaceHolderPic = await GetPlaceHolderPic();
         List<Recipe> recipes = new();
-        await using var conn = await GetConnection();
+        string statusMessage = "Recipes successfully retrieved.";
 
-        const string query = "SELECT id, name, image, meal_type," +
+        const string query = "SELECT id, user_id, name, image, meal_type," +
                              "(macros).total_calories," +
-                             "(macros).total_fats," +
+                             "(macros).total_fat," +
                              "(macros).total_carbs," +
                              "(macros).total_protein " +
                              "FROM recipes " +
                              "ORDER BY id";
-        await using var cmd = new NpgsqlCommand(query, conn);
-        await using var reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
+
+        try
         {
-            var tempRecipe = await BuildRecipe(reader);
-            recipes.Add(tempRecipe);
+            await using var conn = await GetConnection();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var tempRecipe = await BuildRecipe(reader);
+                recipes.Add(tempRecipe);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting all recipes: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting all recipes: {ex.Message}.");
         }
 
-        return recipes;
+        return (recipes, statusMessage);
     }
 
     public async Task<List<Recipe>> GetRecipesByCategory(string category)

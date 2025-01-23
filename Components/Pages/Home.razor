@@ -5,66 +5,53 @@
 @inject User CurrentUser;
 @inject DBService DbService;
 @inject SharedRecipe SharedDetailRecipe
+@inject SharedRecipeList GlobalRecipes;
 @inject NavigationManager navigationManager;
 
 <PageTitle>Recipes</PageTitle>
 
 <div class="container">
-    @if (CurrentUser.GetUserId() == 0)
-    {
-        <p>Sign in to see your recipes.</p>
-    }
-    else
-    {
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-            @if (CurrentUser.Recipes.Count != 0)
-            {
-                @foreach (var recipe in CurrentUser.Recipes)
-                {
-                    <div class="col" style="padding: 10px">
-                        <div class="card h-100 border-layout">
-                            <a href="">
-                                <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..." class="card-img"
-                                     id="home-recipe-image" @onclick="() => NavigateToDetails(recipe)"/>
-                            </a>
-                            <div class="card-header">
-                                <h4>@recipe.RecipeId. @recipe.Name</h4>
-                            </div>
-                            <div class="card-body border-primary">
-                                <p class="card-text">
-                                    - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
-                                    - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
-                                    - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
-                                    - Protein: @recipe.TotalMacros.Protein.ToString("0")
-                                </p>
-                            </div>
-                        </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
+        @foreach (var recipe in CurrentUser.Recipes)
+        {
+            <div class="col" style="padding: 10px">
+                <div class="card h-100 border-layout">
+                    <a href="">
+                        <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..." class="card-img"
+                             id="home-recipe-image" @onclick="() => NavigateToDetails(recipe)"/>
+                    </a>
+                    <div class="card-header">
+                        <h4>@recipe.RecipeId. @recipe.Name</h4>
                     </div>
-                }
-            }
-            else
-            {
-                <p>No recipes added</p>
-            }
-        </div>
-    }
+                    <div class="card-body border-primary">
+                        <p class="card-text">
+                            - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
+                            - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
+                            - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
+                            - Protein: @recipe.TotalMacros.Protein.ToString("0")
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
 
 @* <button type="button" @onclick="StateUpdate">Update State</button> *@
 
-<StatusMessageToast @ref="StatusMessageToaster"/>
+<StatusMessageToast @ref="statusMessageToaster"/>
 
 @code{
 
     bool gettingRecipes = false;
-    StatusMessageToast? StatusMessageToaster;
+    StatusMessageToast? statusMessageToaster;
 
     private void StateUpdate()
     {
         Console.WriteLine(CurrentUser.GetUserId());
         StateHasChanged();
     }
-    
+
     protected override void OnInitialized()
     {
         CurrentUser.OnChange += StateHasChanged;
@@ -79,15 +66,24 @@
     {
         Console.WriteLine("__Rendering Home__");
 
-        /*if (firstRender && !CurrentUser.Recipes.Any())
+        if (firstRender && !GlobalRecipes.Recipes.Any())
         {
-            gettingRecipes = true;
             try
             {
-                var tempRecipes = await DbService.GetAllRecipes();
-                CurrentUser.Recipes = tempRecipes;
-                Console.WriteLine("Acquired Recipes.");
-                StateHasChanged();
+                var result = await DbService.GetAllRecipes();
+                if (result.Recipes == null)
+                {
+                    if (statusMessageToaster != null)
+                        await statusMessageToaster.ShowToastAsync(result.Message);
+                }
+                else
+                {
+                    if (statusMessageToaster != null)
+                        await statusMessageToaster.ShowToastAsync(result.Message);
+                    GlobalRecipes.Recipes = result.Recipes;
+                    Console.WriteLine("Acquired Recipes.");
+                    StateHasChanged();
+                }
             }
             catch (Exception ex)
             {
@@ -96,27 +92,26 @@
 
                 if (ex.Message.Contains("Failed to connect"))
                 {
-                    if (StatusMessageToaster != null)
-                        await StatusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
+                    if (statusMessageToaster != null)
+                        await statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
                 }
                 else
                 {
-                    if (StatusMessageToaster != null)
-                        await StatusMessageToaster.ShowToastAsync(ex.Message);
+                    if (statusMessageToaster != null)
+                        await statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
                 }
 
-                gettingRecipes = false;
                 return;
             }
+
+            if (!firstRender)
+                Console.WriteLine("Not first render.");
+
+            if (CurrentUser.Recipes.Any())
+                Console.WriteLine("Recipes are full.");
+
+            gettingRecipes = false;
         }
-
-        if (!firstRender)
-            Console.WriteLine("Not first render.");
-
-        if (CurrentUser.Recipes.Any())
-            Console.WriteLine("Recipes are full.");*/
-
-        gettingRecipes = false;
     }
 
     private void NavigateToDetails(Recipe recipe)

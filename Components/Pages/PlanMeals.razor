@@ -1,5 +1,6 @@
 @page "/plan-meals"
 @rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
 @using WebKitchen.Components.Pages.RealTimeSearchBarElement
 @using WebKitchen.Components.SharedComponents
 @inject SharedRecipeList GlobalRecipes;
@@ -165,16 +166,19 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
     }
 </script>
 
+<StatusMessageToast @ref="statusMessageToaster"/>
+
 @code{
 
     int currentDay;
     int currentTotalMacrosDay;
     MealPlan mealPlanMacrosAndRecipes = new();
+    [Required] StatusMessageToast statusMessageToaster;
 
     protected override void OnInitialized()
     {
         Console.WriteLine("__Initializing plan meals__");
-        
+
         if (SharedSelectedRecipe.SelectedRecipe != null)
             SharedSelectedRecipe.SelectedRecipe = null!;
     }
@@ -187,23 +191,42 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
         {
             try
             {
-                var tempRecipes = await DbService.GetAllRecipes();
-                GlobalRecipes.Recipes = tempRecipes;
-                Console.WriteLine("Acquired Recipes.");
-                StateHasChanged();
+                var result = await DbService.GetAllRecipes();
+                if (result.Recipes == null)
+                    await statusMessageToaster.ShowToastAsync(result.Message);
+                else
+                {
+                    await statusMessageToaster.ShowToastAsync(result.Message);
+                    GlobalRecipes.Recipes = result.Recipes;
+                    Console.WriteLine("Acquired Recipes.");
+                    StateHasChanged();
+                }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error getting recipes" + ex);
-                throw;
+                Console.WriteLine("Error getting recipes: " + ex.Message);
+                Console.WriteLine("StackTrace: " + ex.StackTrace);
+
+                if (ex.Message.Contains("Failed to connect"))
+                {
+                    if (statusMessageToaster != null)
+                        await statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
+                }
+                else
+                {
+                    if (statusMessageToaster != null)
+                        await statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
+                }
+
+                return;
             }
+
+            if (!firstRender)
+                Console.WriteLine("Not first render.");
+
+            if (GlobalRecipes.Recipes.Any())
+                Console.WriteLine("Recipes are full.");
         }
-
-        if (!firstRender)
-            Console.WriteLine("Not first render.");
-
-        if (GlobalRecipes.Recipes.Any())
-            Console.WriteLine("Recipes are full.");
     }
 
     private void AddRecipeToWeek()

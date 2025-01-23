@@ -183,6 +183,7 @@ public class SharedIngredient
 public class Recipe
 {
     public int RecipeId;
+    public int UserId;
 
     [Required]
     [StringLength(1, ErrorMessage = "Meal type must be one character long.")]
@@ -199,6 +200,7 @@ public class Recipe
         try
         {
             Console.WriteLine("Recipe Number: " + RecipeId);
+            Console.WriteLine("User ID: " + UserId);
             Console.WriteLine("MealType: " + MealType);
             Console.WriteLine("Name: " + Name);
             // Console.WriteLine("Image: " + Base64Image);
@@ -230,6 +232,7 @@ public class Recipe
         Recipe tempRecipe = new()
         {
             RecipeId = recipe.RecipeId,
+            UserId = recipe.UserId,
             MealType = recipe.MealType,
             Name = recipe.Name,
             Base64Image = recipe.Base64Image,
@@ -281,6 +284,7 @@ public class Recipe
     {
         Console.WriteLine("Clearing recipe...");
         RecipeId = 0;
+        UserId = 0;
         MealType = '\0';
         Name = string.Empty;
         Base64Image = string.Empty;

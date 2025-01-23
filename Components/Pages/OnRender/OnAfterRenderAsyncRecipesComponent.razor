@@ -13,7 +13,7 @@
             try
             {
                 var tempRecipes = await DbService.GetAllRecipes();
-                SharedRecipes.Recipes = tempRecipes;
+                SharedRecipes.Recipes = tempRecipes.Recipes;
                 Console.WriteLine("Acquired Recipes.");
                 StateHasChanged();
             }
