@@ -43,7 +43,7 @@
         if (currentRecipe != null)
         {
             Console.WriteLine("Current recipe not null.");
-            sqlStatusMessage = await DbService.UpdateRecipeMealTypeRecipeId(currentRecipe.MealType, currentRecipe.RecipeId);
+            sqlStatusMessage = await DbService.UpdateRecipeMealTypeRecipeId(currentRecipe.MealType[0], currentRecipe.RecipeId);
 
             if (Toast != null)
                 await Toast.ShowToastAsync(sqlStatusMessage);

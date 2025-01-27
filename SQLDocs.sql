@@ -138,6 +138,11 @@ FROM recipes,
      unnest(ingredients) as ingredient
 WHERE recipes.id = 1;
 
+-- Gives the information of column names and types.
+SELECT column_name, data_type
+FROM information_schema.columns
+WHERE table_name = 'your_table_name';
+
 -- Return true or false, depending on if something exists.
 SELECT EXISTS (SELECT 1
                FROM users
@@ -213,3 +218,9 @@ SELECT count(*)                                 AS total_connections,
        count(*) FILTER (WHERE state = 'active') AS active_connections,
        count(*) FILTER (WHERE state = 'idle')   AS idle_connections
 FROM pg_stat_activity;
+
+-- Grants permissions on table to user.
+GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE users TO guestgres;
+GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE ingredients TO guestgres;
+GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE recipes TO guestgres;
+GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE recipe_instructions TO guestgres;

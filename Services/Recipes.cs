@@ -34,10 +34,10 @@ public class Macros
             {
                 Console.WriteLine("Printing ingredient at Macros");
                 ingredient.PrintIngredient();
-                Calories += ingredient.CaloriesPer100g * ingredient.GetMultiplier();
-                Fat += ingredient.FatsPer100g * ingredient.GetMultiplier();
-                Carbs += ingredient.CarbsPer100g * ingredient.GetMultiplier();
-                Protein += ingredient.ProteinPer100g * ingredient.GetMultiplier();
+                Calories += ingredient.CaloriesPer100g * (ingredient.Grams / 100);
+                Fat += ingredient.FatsPer100g * (ingredient.Grams / 100);
+                Carbs += ingredient.CarbsPer100g * (ingredient.Grams / 100);
+                Protein += ingredient.ProteinPer100g * (ingredient.Grams / 100);
             }
         }
 
@@ -66,7 +66,6 @@ public class Ingredient
     public float CarbsPer100g { get; set; }
     public float ProteinPer100g { get; set; }
     public float FatsPer100g { get; set; }
-    private float Multiplier { get; set; }
     public string Base64Image { get; set; } = string.Empty;
 
     public uint GetId()
@@ -81,12 +80,6 @@ public class Ingredient
         return (int)Id;
     }
 
-    public float GetMultiplier()
-    {
-        Console.WriteLine("Getting multiplier...");
-        return Multiplier;
-    }
-
     public string GetIngredientImage()
     {
         Console.WriteLine("Getting ingredient image...");
@@ -97,13 +90,6 @@ public class Ingredient
     {
         Console.WriteLine("Setting ID...");
         Id = id;
-    }
-
-
-    public void SetMultiplier()
-    {
-        Console.WriteLine("Setting multiplier...");
-        Multiplier = Grams / 100;
     }
 
     public async Task SetIngredientImage(IBrowserFile image, long allowedFileSize = 10)
@@ -135,7 +121,6 @@ public class Ingredient
         CarbsPer100g = 0f;
         ProteinPer100g = 0f;
         FatsPer100g = 0f;
-        Multiplier = 0f;
         Base64Image = string.Empty;
     }
 
@@ -149,7 +134,6 @@ public class Ingredient
         Console.WriteLine("Carbs: " + CarbsPer100g);
         Console.WriteLine("Protein: " + ProteinPer100g);
         Console.WriteLine("Fats: " + FatsPer100g);
-        Console.WriteLine("Multiplier: " + Multiplier);
     }
 
     public Ingredient TransferIngredient(Ingredient ing)
@@ -169,7 +153,6 @@ public class Ingredient
             Base64Image = ing.Base64Image
         };
         transferIngredient.SetId(ing.GetId());
-        transferIngredient.SetMultiplier();
 
         return transferIngredient;
     }
@@ -187,7 +170,7 @@ public class Recipe
 
     [Required]
     [StringLength(1, ErrorMessage = "Meal type must be one character long.")]
-    public char MealType { get; set; }
+    public string MealType { get; set; } = "";
 
     [Required] public string Name { get; set; } = string.Empty;
     [Required] public string Base64Image { get; set; } = string.Empty;
@@ -285,7 +268,7 @@ public class Recipe
         Console.WriteLine("Clearing recipe...");
         RecipeId = 0;
         UserId = 0;
-        MealType = '\0';
+        MealType = "";
         Name = string.Empty;
         Base64Image = string.Empty;
         Ingredients = [];
