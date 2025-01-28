@@ -122,8 +122,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xSb3V0ZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/SharedComponents/LoginModal.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRDb21wb25lbnRzXExvZ2luTW9kYWwucmF6b3I=
+[C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/SharedComponents/LoginButtonModal.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xTaGFyZWRDb21wb25lbnRzXExvZ2luQnV0dG9uTW9kYWwucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/andre/Desktop/Pog grammering/C\#/kitchen-app/Components/SharedComponents/NoImageSelectedToast.razor]

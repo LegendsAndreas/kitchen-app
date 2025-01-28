@@ -70,6 +70,8 @@ else
     string signUpPassword = "";
     string signUpRetypedPassword = "";
     [Required] StatusMessageToast statusMessageToaster;
+    [Parameter] public required List<Recipe> UserRecipesData { get; set; }
+    [Parameter] public EventCallback<List<Recipe>> UserRecipesDataChanged { get; set; }
 
     private async Task HandleLogIn()
     {
@@ -81,9 +83,26 @@ else
         }
 
         // CurrentUser = result.User.TransferUser(result.User);
-        CurrentUser.SetUser(result.User.GetUserId(), result.User.Username, result.User.GetEmail(), result.User.GetPassword(), result.User.Recipes);
-        Console.WriteLine(CurrentUser.GetUserId());
+        CurrentUser.SetUser(result.User.GetUserId(), result.User.Username, result.User.GetEmail(), result.User.GetPassword());
+        await GetUserRecipes((int)result.User.GetUserId());
+        await UserRecipesDataChanged.InvokeAsync(UserRecipesData);
         StateHasChanged();
+    }
+
+    private async Task GetUserRecipes(int userId)
+    {
+        var result = await DbService.GetUserRecipesById(userId);
+        if (result.recipes != null)
+        {
+            await statusMessageToaster.ShowToastAsync("User recipes successfully retrieved");
+            UserRecipesData = result.recipes;
+            foreach (var recipe in UserRecipesData)
+            {
+                Console.WriteLine(recipe.Name);
+            }
+        }
+        else
+            await statusMessageToaster.ShowToastAsync("User recipes not retrieved; " + result.message);
     }
 
     private void ToggleSignIn()
@@ -105,6 +124,7 @@ else
             await statusMessageToaster.ShowToastAsync("Passwords are not the same");
             return;
         }
+
         var result = await DbService.AddUser(signUpUsername, signUpPassword, signUpEmail);
         if (result.Status)
         {
@@ -112,7 +132,7 @@ else
         }
         else
         {
-            await statusMessageToaster.ShowToastAsync("Error adding user; "+result.Message);
+            await statusMessageToaster.ShowToastAsync("Error adding user; " + result.Message);
         }
     }
 

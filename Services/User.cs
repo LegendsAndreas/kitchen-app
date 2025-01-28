@@ -7,7 +7,6 @@ public class User
     public string? Username { get; set; }
     private string Email { get; set; }
     private string Password { get; set; }
-    public List<Recipe> Recipes { get; set; } = [];
 
     public uint GetUserId()
     {
@@ -48,19 +47,12 @@ public class User
         NotifyStateChanged();
     }
 
-    public void SetRecipes(List<Recipe> recipes)
-    {
-        Recipes = recipes;
-        NotifyStateChanged();
-    }
-
-    public void SetUser(uint id, string name, string email, string password, List<Recipe> recipes)
+    public void SetUser(uint id, string name, string email, string password)
     {
         SetId(id);
         SetUsername(name);
         SetEmail(email);
         SetPassword(password);
-        SetRecipes(recipes);
     }
 
     /// <summary>
@@ -88,7 +80,6 @@ public class User
         transUser.SetId(user.GetUserId());
         transUser.SetEmail(user.GetEmail());
         transUser.SetPassword(user.GetPassword());
-        transUser.Recipes = user.Recipes;
         
         return transUser;
     }

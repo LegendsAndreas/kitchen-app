@@ -411,6 +411,33 @@ public class DBService
 
         return recipes;
     }
+    
+    public async Task<(bool status, string message)> GetUsernameById(int userId)
+    {
+        Console.WriteLine("Getting username by id...");
+        
+        string statusMessage = "Username successfully retrieved.";
+        const string query = "SELECT username FROM users WHERE id = @id";
+
+        try
+        {
+            await using var conn = await GetConnection();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@id", userId);
+            var result = await RunAsyncQuery(cmd);
+            if (result < 1)
+                return (false, "Username not found.");
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting username by id ({userId}): " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (false, $"Error getting username by id ({userId}): {ex.Message}.");
+        }
+        
+        return (true, statusMessage);
+    }
 
     private async Task<List<Ingredient>> GetIngredientByRecipeIdAsync(int id)
     {
@@ -552,33 +579,39 @@ public class DBService
         return tempIngredient;
     }
 
-    /// Asynchronously adds a recipe to the database by inserting its details, including meal type, name, image, macros, and ingredients.
-    /// <param name="recipe">The recipe object containing all the required details to be added to the database.</param>
-    /// <return>A task representing the asynchronous operation.</return>
-    public async Task AddRecipeToDb(Recipe recipe, uint userId)
+    /// Adds a recipe to the database for a specified user.
+    /// <param name="recipe">The recipe object containing all relevant details.</param>
+    /// <param name="userId">The ID of the user for whom the recipe is being added.</param>
+    /// <returns>
+    /// A tuple containing: <br/>
+    /// - A boolean status, which indicates success or failure, and <br/>
+    /// - A string, which is the message that provides additional information about the operation.
+    /// </returns>
+    public async Task<(bool Status, string Message)> AddRecipeToDb(Recipe recipe, uint userId)
     {
         Console.WriteLine("Adding recipe to database...");
-        recipe.PrintRecipe();
+
+        string statusMessage = "Recipe successfully added.";
+        const string query = "INSERT INTO recipes " +
+                             "(meal_type, name, image, user_id, macros) " +
+                             "VALUES (" +
+                             "@type," +
+                             "@name," +
+                             "@image," +
+                             "@user_id, " +
+                             "ROW(" +
+                             "@calories," +
+                             "@fats," +
+                             "@carbs," +
+                             "@protein)::recipe_macros)";
         try
         {
             await using var conn = await GetConnection();
-            const string query = "INSERT INTO recipes " +
-                                 "(meal_type, name, image, user_id, macros) " +
-                                 "VALUES (" +
-                                 "@type," +
-                                 "@name," +
-                                 "@image," +
-                                 "@user_id, "+
-                                 "ROW(" +
-                                 "@calories," +
-                                 "@fats," +
-                                 "@carbs," +
-                                 "@protein)::recipe_macros)";
             await using NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@type", recipe.MealType);
             cmd.Parameters.AddWithValue("@name", recipe.Name);
             cmd.Parameters.AddWithValue("@image", recipe.Base64Image);
-            cmd.Parameters.AddWithValue("@user_id", userId);
+            cmd.Parameters.AddWithValue("@user_id", (int)userId);
             cmd.Parameters.AddWithValue("@calories", recipe.TotalMacros.Calories);
             cmd.Parameters.AddWithValue("@fats", recipe.TotalMacros.Fat);
             cmd.Parameters.AddWithValue("@carbs", recipe.TotalMacros.Carbs);
@@ -590,8 +623,10 @@ public class DBService
         {
             Console.WriteLine("Error adding recipe to database: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            throw;
+            return (false, $"Error adding recipe to database: {ex.Message}.");
         }
+
+        return (true, statusMessage);
     }
 
     /// Asynchronously adds a recipe's instructions to the database.
@@ -649,8 +684,7 @@ public class DBService
                                      "@cals," +
                                      "@fats," +
                                      "@carbs," +
-                                     "@protein," +
-                                     "@multiplier" +
+                                     "@protein " +
                                      ")::ingredient) " +
                                      "WHERE id IN (SELECT COUNT(*) FROM recipes)"; // Since every new recipe is actually the last one in the table, we can just add all the occurrences of id into one and that will be our recipe id.
                 await using var cmd = new NpgsqlCommand(query, conn);
@@ -1074,12 +1108,51 @@ public class DBService
         return statusMessage;
     }
 
+    public async Task<(List<Recipe>? recipes, string message)> GetUserRecipesById(int userId)
+    {
+        Console.WriteLine("Getting user recipes by id...");
+        string statusMessage = "Recipes successfully retrieved.";
+        List<Recipe> recipes = new();
+        
+        const string query = "SELECT id, user_id, name, image, meal_type,"+
+                             "(macros).total_calories,"+
+                             "(macros).total_fat,"+
+                             "(macros).total_carbs,"+
+                             "(macros).total_protein "+
+                             "FROM recipes WHERE user_id = @user_id";
+        
+        try
+        {
+            await using var conn = await GetConnection();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@user_id", userId);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var tempRecipe = await BuildRecipe(reader);
+                recipes.Add(tempRecipe);
+            }
+            
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting user recipes by id ({userId})"+ex.Message);
+            Console.WriteLine("StackTrace: "+ex.StackTrace);
+            return (null, "Error getting user recipes by id");
+        }
+
+        if (recipes.Count == 0)
+            return (null, "No recipes found.");
+        else
+            return (recipes, statusMessage);
+        
+    }
+
     public async Task<(User? User, string Message)> GetUserByUsernameAndPassword(string username, string password)
     {
         Console.WriteLine("Getting user by username and password...");
         var user = new User();
         var statusMessage = "User found; no errors";
-        List<int> recipeIds = [];
 
         const string query = "SELECT id, username, email, password " +
                              "FROM users " +
@@ -1109,20 +1182,7 @@ public class DBService
             return (null, statusMessage = "Error getting user by username and password");
         }
 
-        /*if (recipeIds.Count != 0)
-        {
-            foreach (var recipeId in recipeIds)
-            {
-                user.Recipes.Add(await GetRecipeById(recipeId));
-            }
-        }*/
-
         Console.WriteLine(user.GetUserId());
-
-        foreach (var recipe in user.Recipes)
-        {
-            recipe.PrintRecipe();
-        }
 
         return (user, statusMessage);
     }

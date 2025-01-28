@@ -12,7 +12,7 @@
 
 <div class="container">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @foreach (var recipe in CurrentUser.Recipes)
+        @foreach (var recipe in GlobalRecipes.Recipes)
         {
             <div class="col" style="padding: 10px">
                 <div class="card h-100 border-layout">
@@ -29,6 +29,11 @@
                             - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
                             - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
                             - Protein: @recipe.TotalMacros.Protein.ToString("0")
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <p class="card-text">
+                            Created by user: @recipe.UserId
                         </p>
                     </div>
                 </div>
@@ -106,9 +111,6 @@
 
             if (!firstRender)
                 Console.WriteLine("Not first render.");
-
-            if (CurrentUser.Recipes.Any())
-                Console.WriteLine("Recipes are full.");
 
             gettingRecipes = false;
         }

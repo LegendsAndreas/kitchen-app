@@ -3,33 +3,20 @@
 @using WebKitchen.Components.SharedComponents
 @inject User CurrentUser
 
+<button type="button" @onclick="ChangeState">Change</button>
+
 <div class="card border-layout">
     <div class="card-body">
-        <LoginModal/>
+        <LoginButtonModal UserRecipesData="userRecipes" UserRecipesDataChanged="@(value => userRecipes = value)"/>
 
         @if (CurrentUser.Username != null)
         {
             <p>@CurrentUser.Username</p>
-            @*<div class="navbar navbar-expand-lg"
-                 style="border: 1px solid #111111; border-radius: 5px; margin-top: 10px;">
-                <img src="pics/PlaceHolderPic.jpg" class="card-img-top" alt="..." style="width: 100px;"/>
-                <p>@CurrentUser.Username</p>
-                <p>@CurrentUser.GetEmail()</p>
-            </div>*@
         }
-        else
+        
+        @if (userRecipes.Count > 0)
         {
-            // Example
-            @*<div class="navbar navbar-expand-lg"
-                 style="border: 1px solid #111111; border-radius: 5px; margin-top: 10px;">
-                <p>__Username__</p>
-                <p>__Email__</p>
-            </div>*@
-        }
-
-        @if (CurrentUser.Recipes.Count > 0)
-        {
-            @foreach (var recipe in CurrentUser.Recipes)
+            @foreach (var recipe in userRecipes)
             {
                 <div class="navbar navbar-expand-lg"
                      style="border: 1px solid #111111; border-radius: 5px; margin-top: 10px;">
@@ -45,7 +32,7 @@
                 </div>
             }
         }
-        else
+        @*else
         {
             // Example
             <div class="navbar navbar-expand-lg"
@@ -64,12 +51,19 @@
                     </a>
                 </div>
             </div>
-        }
+        }*@
     </div>
 
 </div>
 
 @code{
 
+    List<Recipe> userRecipes = new();
+    private void ChangeState()
+    {
+        Console.WriteLine(userRecipes.Count);
+        Console.WriteLine(CurrentUser.Username);
+        StateHasChanged();
+    }
 
 }

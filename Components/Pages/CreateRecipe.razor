@@ -1,6 +1,8 @@
 @page "/create-recipe"
 @rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
 @using WebKitchen.Components.Pages.RealTimeSearchBarElement
+@using WebKitchen.Components.SharedComponents;
 @inject User CurrentUser;
 @inject DBService DbService;
 @inject SharedIngredient SharedDbIngredient
@@ -22,19 +24,19 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
 {
     <div class="card center-content border-layout">
         <div class="card-body">
-            <EditForm Model="@CurrentRecipe" OnValidSubmit="HandleRecipe">
+            <EditForm Model="@currentRecipe" OnValidSubmit="HandleRecipe">
                 <DataAnnotationsValidator/>
 
                 <div class="container text-center border-layout paddage">
                     <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
                         <div class="col">
                             <label class="form-label">Meal Type:</label>
-                            <InputText id="meal-type" @bind-Value="CurrentRecipe.MealType"/>
+                            <InputText id="meal-type" @bind-Value="currentRecipe.MealType"/>
                         </div>
 
                         <div class="col">
                             <label>Recipe Name:</label>
-                            <InputText id="name" @bind-Value="CurrentRecipe.Name"/>
+                            <InputText id="name" @bind-Value="currentRecipe.Name"/>
                         </div>
 
                         <label class="file-label" for="fileInput">Choose Image</label>
@@ -44,38 +46,38 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
                 </div>
             </EditForm>
 
-            <EditForm Model="@CurrentIngredient" OnValidSubmit="HandleIngredient">
+            <EditForm Model="@currentIngredient" OnValidSubmit="HandleIngredient">
                 <DataAnnotationsValidator/>
                 <div class="container text-center border-layout paddage">
                     <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
                         <div class="col">
                             <label>Ingredient Name:</label>
-                            <InputText id="ingredient-name" @bind-Value="CurrentIngredient.Name"/>
+                            <InputText id="ingredient-name" @bind-Value="currentIngredient.Name"/>
                         </div>
 
                         <div class="col">
                             <label>Grams:</label>
-                            <InputNumber id="kg" @bind-Value="CurrentIngredient.Grams"/>
+                            <InputNumber id="kg" @bind-Value="currentIngredient.Grams"/>
                         </div>
 
                         <div class="col">
                             <label>Calories (pr. 100g):</label>
-                            <InputNumber id="calories" @bind-Value="CurrentIngredient.CaloriesPer100g"/>
+                            <InputNumber id="calories" @bind-Value="currentIngredient.CaloriesPer100g"/>
                         </div>
 
                         <div class="col">
                             <label>Carbs (pr. 100g):</label>
-                            <InputNumber id="carbs" @bind-Value="CurrentIngredient.CarbsPer100g"/>
+                            <InputNumber id="carbs" @bind-Value="currentIngredient.CarbsPer100g"/>
                         </div>
 
                         <div class="col">
                             <label>Fats (pr. 100g):</label>
-                            <InputNumber id="fats" @bind-Value="CurrentIngredient.FatsPer100g"/>
+                            <InputNumber id="fats" @bind-Value="currentIngredient.FatsPer100g"/>
                         </div>
 
                         <div class="col">
                             <label>Protein (pr. 100g):</label>
-                            <InputNumber id="protein" @bind-Value="CurrentIngredient.ProteinPer100g"/>
+                            <InputNumber id="protein" @bind-Value="currentIngredient.ProteinPer100g"/>
                         </div>
                         <button type="submit" class="btn btn-primary">Add Ingredient</button>
                     </div>
@@ -151,11 +153,14 @@ else
     <p>Log in to create recipe.</p>
 }
 
+<StatusMessageToast @ref="statusMessageToaster"/>
+
 @code {
-    private Ingredient CurrentIngredient = new();
-    private Recipe CurrentRecipe = new();
-    private int currentIngredientGrams;
+    Ingredient currentIngredient = new();
+    Recipe currentRecipe = new();
+    int currentIngredientGrams;
     readonly List<Ingredient> currentIngredients = new();
+    [Required]StatusMessageToast statusMessageToaster;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -194,24 +199,34 @@ else
             return;
         }
 
-        CurrentRecipe.Ingredients = currentIngredients;
-        CurrentRecipe.SetTotalMacros();
+        currentRecipe.Ingredients = currentIngredients;
+        currentRecipe.SetTotalMacros();
 
         Console.WriteLine("Print current recipe");
-        CurrentRecipe.PrintRecipe();
+        currentRecipe.PrintRecipe();
 
         try
         {
-            await DbService.AddRecipeToDb(CurrentRecipe,CurrentUser.GetUserId());
+            var result = await DbService.AddRecipeToDb(currentRecipe,CurrentUser.GetUserId());
+            if (!result.Status)
+            {
+                await statusMessageToaster.ShowToastAsync("Failed adding recipe to database; "+result.Message);
+            }
+            else
+            {
+                await statusMessageToaster.ShowToastAsync(result.Message);
+            }
         }
         catch (Exception e)
         {
             Console.WriteLine("Error sending recipe to database: " + e.Message);
-            throw;
+            Console.WriteLine("StackTrace: " + e.StackTrace);
+            await statusMessageToaster.ShowToastAsync("Error adding recipe to database; "+e.Message);
+            return;
         }
 
-        CurrentRecipe.ClearRecipe();
-        CurrentIngredient.ClearIngredient();
+        currentRecipe.ClearRecipe();
+        currentIngredient.ClearIngredient();
         currentIngredients.Clear();
     }
 
@@ -228,7 +243,7 @@ else
 
             try
             {
-                await CurrentRecipe.SetRecipeImage(image);
+                await currentRecipe.SetRecipeImage(image);
             }
             catch (Exception ex)
             {
@@ -241,11 +256,11 @@ else
     public void HandleIngredient()
     {
         Console.WriteLine("Handling ingredient...");
-        var tempIngredient = CurrentIngredient.TransferIngredient(CurrentIngredient);
+        var tempIngredient = currentIngredient.TransferIngredient(currentIngredient);
         tempIngredient.PrintIngredient();
 
         currentIngredients.Add(tempIngredient);
-        CurrentIngredient.ClearIngredient();
+        currentIngredient.ClearIngredient();
     }
 
     public void HandleDbIngredient()
@@ -257,12 +272,12 @@ else
             return;
         }
 
-        CurrentIngredient.Name = SharedDbIngredient.SelectedIngredient.Name;
-        CurrentIngredient.Grams = currentIngredientGrams;
-        CurrentIngredient.CaloriesPer100g = SharedDbIngredient.SelectedIngredient.CaloriesPer100g;
-        CurrentIngredient.FatsPer100g = SharedDbIngredient.SelectedIngredient.FatsPer100g;
-        CurrentIngredient.CarbsPer100g = SharedDbIngredient.SelectedIngredient.CarbsPer100g;
-        CurrentIngredient.ProteinPer100g = SharedDbIngredient.SelectedIngredient.ProteinPer100g;
+        currentIngredient.Name = SharedDbIngredient.SelectedIngredient.Name;
+        currentIngredient.Grams = currentIngredientGrams;
+        currentIngredient.CaloriesPer100g = SharedDbIngredient.SelectedIngredient.CaloriesPer100g;
+        currentIngredient.FatsPer100g = SharedDbIngredient.SelectedIngredient.FatsPer100g;
+        currentIngredient.CarbsPer100g = SharedDbIngredient.SelectedIngredient.CarbsPer100g;
+        currentIngredient.ProteinPer100g = SharedDbIngredient.SelectedIngredient.ProteinPer100g;
 
         HandleIngredient();
     }
