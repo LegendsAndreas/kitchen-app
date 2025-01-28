@@ -36,10 +36,6 @@
 
 </style>
 
-@* !!!PROBLEM!!!
-Since we are using child components (PreviewRecipe and RealTimeRecipeSearchBar), when we StateHasChanged()
-in the child components, the parent component (PlanMeals) does not get the memo. Therefore, we have to find a way to tell the parent
-StateHasChanged(). Right now, we just have this button as a temporary solution. *@
 <button type="button" class="btn btn-primary" @onclick="DisplayWeek">Change State</button>
 
 @* Total macros for a day *@
@@ -70,7 +66,7 @@ StateHasChanged(). Right now, we just have this button as a temporary solution. 
     </div>
 
     <div class="col alignment">
-        @if (SharedSelectedRecipe.SelectedRecipe != null) @* Dont fucking listen to this warning, it is a fake and a fraud and for some reason we only get it on Rider. *@
+        @if (SharedSelectedRecipe.SelectedRecipe != null)
         {
             <div style="width: 15%">
                 <PreviewRecipe CurrentPreviewRecipe="@SharedSelectedRecipe.SelectedRecipe"/>

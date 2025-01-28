@@ -1,6 +1,5 @@
 @rendermode InteractiveServer
 @inject DBService DbService
-@inject SharedIngredient sharedDbIngredient;
 
 <div class="row mb-3">
     <div class="col">
@@ -37,6 +36,8 @@
     private string searchBarInput = string.Empty;
     private bool isSearchBarActive = false;
     [Parameter] public List<Ingredient> IngredientsData { get; set; } = [];
+    [Parameter] public required Ingredient CurrentIngredientData { get; set; }
+    [Parameter] public EventCallback<Ingredient> CurrentIngredientDataHasChanged { get; set; }
 
     private List<Ingredient> filteredIngredients => IngredientsData
         .Where(r => string.IsNullOrEmpty(searchBarInput) || r.Name.Contains(searchBarInput, StringComparison.OrdinalIgnoreCase))
@@ -45,8 +46,10 @@
     private void HandleIngredientItem(Ingredient ingredient)
     {
         Console.WriteLine("handling ingredient item...:");
-        sharedDbIngredient.SelectedIngredient = ingredient.TransferIngredient(ingredient);
-        sharedDbIngredient.SelectedIngredient.PrintIngredient();
+        // sharedDbIngredient.SelectedIngredient = ingredient.TransferIngredient(ingredient);
+        // sharedDbIngredient.SelectedIngredient.PrintIngredient();
+        CurrentIngredientData = ingredient.TransferIngredient(ingredient);
+        CurrentIngredientDataHasChanged.InvokeAsync(CurrentIngredientData);
         StateHasChanged();
     }
 
