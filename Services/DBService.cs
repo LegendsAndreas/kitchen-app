@@ -10,13 +10,6 @@ using Npgsql;
 
 namespace WebKitchen.Services;
 
-public enum TableName
-{
-    recipes,
-    ingredients,
-    recipe_instructions
-}
-
 public class DBService
 {
     private readonly string _connectionString;
@@ -344,14 +337,12 @@ public class DBService
             await using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
-                // Extract columns
-                var id = reader.GetInt32(0); // Get 'id' column
-                var jsonData = reader.GetString(1); // Get 'instructions' JSON column
-                var recipeId = reader.GetInt32(2); // Get 'recipe_id' column
+                var id = reader.GetInt32(0);
+                var jsonData = reader.GetString(1);
+                var recipeId = reader.GetInt32(2);
 
                 Console.WriteLine("JsonData: " + jsonData);
 
-                // Deserialize JSON data into RecipeInstructions class
                 var instructions = JsonSerializer.Deserialize<RecipeInstructions>(jsonData);
 
                 if (instructions == null)
@@ -379,12 +370,13 @@ public class DBService
     }
 
     /// Asynchronously retrieves all recipes from the database and returns them along with a status message.
-    /// <returns>A tuple containing a list of Recipe objects (nullable) and a status message as a string. If an error occurs, the list will be null, and the status message will indicate the error.</returns>
+    /// <returns>A tuple containing a list of Recipe objects (nullable) and a status message as a string. If an error
+    /// occurs, the list will be null, and the status message will indicate the error.
+    /// </returns>
     public async Task<(List<Recipe>? Recipes, string Message)> GetAllRecipes()
     {
         Console.WriteLine("Getting recipes...");
 
-        // var base64PlaceHolderPic = await GetPlaceHolderPic();
         List<Recipe> recipes = new();
         string statusMessage = "Recipes successfully retrieved.";
 
@@ -513,7 +505,9 @@ public class DBService
 
     /// Retrieves an ingredient from the database by its unique identifier.
     /// <param name="id">The unique identifier of the ingredient to retrieve.</param>
-    /// <returns>A tuple containing the retrieved Ingredient object and a status message. If the ingredient is not found or an error occurs, the Ingredient object will be null and the message will describe the outcome.</returns>
+    /// <returns>A tuple containing the retrieved Ingredient object and a status message. If the ingredient is not
+    /// found or an error occurs, the Ingredient object will be null and the message will describe the outcome.
+    /// </returns>
     public async Task<(Ingredient? Ingredient, string Message)> GetDbIngredientById(int id)
     {
         Console.WriteLine("Getting ingredient by id...");
@@ -589,7 +583,9 @@ public class DBService
             cmd.Parameters.AddWithValue("@carbs", recipe.TotalMacros.Carbs);
             cmd.Parameters.AddWithValue("@protein", recipe.TotalMacros.Protein);
             await RunAsyncQuery(cmd);
-            await AddIngredientsToRow(recipe.Ingredients);
+            var result = await AddIngredientsToRow(recipe.Ingredients);
+            if (result.Status == false)
+                return (false, "Error adding ingredients to row; " + result.Message);
         }
         catch (Exception ex)
         {
@@ -657,7 +653,8 @@ public class DBService
                              "@protein," +
                              "@multiplier" +
                              ")::ingredient) " +
-                             "WHERE id IN (SELECT COUNT(*) FROM recipes)"; // Since every new recipe is actually the last one in the table, we can just add all the occurrences of id into one and that will be our recipe id.
+                             "WHERE id IN (SELECT COUNT(*) FROM recipes)"; // Since every new recipe is actually the last
+        // one in the table, we can just add all the occurrences of id into one and that will be our recipe id.
 
         try
         {
@@ -959,6 +956,14 @@ public class DBService
                 Console.WriteLine("Recipe ID is not found in database.");
                 statusMessage = "Recipe name did not get updated; recipe ID was not found in database.";
             }
+
+            var recipeHasInstructions = await doesRecipeHaveInstructions(recipeId);
+            if (recipeHasInstructions)
+            {
+                var instructionsRecipeNameResult = await updateInstructionsRecipeNameByRecipeId(recipeId, updatedName);
+                if (!instructionsRecipeNameResult.status)
+                    return $"instructions recipe name did not get updated; {instructionsRecipeNameResult.message}";
+            }
         }
         catch (Exception ex)
         {
@@ -968,6 +973,40 @@ public class DBService
         }
 
         return statusMessage;
+    }
+
+    /// Determines if a specified recipe has associated instructions in the database.
+    /// <param name="recipeId">The unique identifier of the recipe to check for associated instructions.</param>
+    /// <returns>A boolean value indicating whether the specified recipe has instructions in the database.</returns>
+    private async Task<bool> doesRecipeHaveInstructions(int recipeId)
+    {
+        Console.WriteLine("does recipe have instructions...");
+        const string query = "SELECT EXISTS (" +
+                             "    SELECT 1 " +
+                             "    FROM recipe_instructions " +
+                             "    WHERE recipe_id = @recipe_id);";
+
+        try
+        {
+            await using var conn = await GetConnection();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@recipe_id", recipeId);
+            var result = await cmd.ExecuteReaderAsync();
+            if (result.Read())
+            {
+                var exists = result.GetBoolean(0);
+                if (exists)
+                    return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error checking if recipe has instructions: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            throw;
+        }
+
+        return false;
     }
 
     /// Asynchronously updates the ID sequence values for a specified database table to ensure sequential numbering.
@@ -1109,19 +1148,36 @@ public class DBService
         await using var cmd = new NpgsqlCommand(query, conn);
         cmd.Parameters.AddWithValue("@recipe_id", recipeId);
 
-        var result = await RunAsyncQuery(cmd);
-        if (result < 1)
-            statusMessage = $"Recipe {recipeId} was not found.";
-        else
+        try
         {
-            await UpdateTableIds("recipes");
-            await UpdateTableIds("recipe_instructions");
+            var result = await RunAsyncQuery(cmd);
+            if (result < 1)
+                statusMessage = $"Recipe {recipeId} was not found.";
+            else
+            {
+                await UpdateTableIds("recipes");
+                await UpdateTableIds("recipe_instructions");
+                var instructionsResult = await updateInstructionsRecipeId();
+                if (!instructionsResult.status)
+                    return instructionsResult.message;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting recipe by id ({recipeId}): " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return statusMessage;
         }
 
         return statusMessage;
     }
 
-    public async Task<string> UpdateInstructionsRecipeNameByRecipeId(int recipeId, string recipeName)
+    /// Updates the name field of recipe instructions in the database for a specified recipe ID.
+    /// <param name="recipeId">The unique identifier for the recipe whose associated instructions need to be updated.</param>
+    /// <param name="recipeName">The new name to be updated in the recipe instructions.</param>
+    /// <returns>A tuple containing a boolean indicating success or failure, and a message providing the status of the operation.</returns>
+    private async Task<(bool status, string message)> updateInstructionsRecipeNameByRecipeId(int recipeId,
+        string recipeName)
     {
         Console.WriteLine("Updating instructions recipe name by name...");
         var statusMessage = $"Instructions recipe name {recipeId} has been updated.";
@@ -1139,18 +1195,22 @@ public class DBService
 
             var result = await RunAsyncQuery(cmd);
             if (result < 1)
-                statusMessage = $"Instructions recipe name {recipeId} was not found.";
+                return (false, statusMessage = $"Instructions recipe name {recipeId} was not found.");
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error updating instructions recipe name by recipe id ({recipeId}): " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            return $"Error updating instructions recipe name by recipe id ({recipeId})";
+            return (false, $"Error updating instructions recipe name by recipe id ({recipeId})");
         }
 
-        return statusMessage;
+        return (true, statusMessage);
     }
 
+    /// Updates the instructions for a given instructions ID in the database.
+    /// <param name="instructions">An object containing the updated recipe instructions.</param>
+    /// <param name="instructionsId">The unique identifier of the instructions to be updated.</param>
+    /// <returns>A status message indicating the success or failure of the operation.</returns>
     public async Task<string> UpdateInstructionsByInstructionsId(RecipeInstructionRecord instructions,
         int instructionsId)
     {
@@ -1182,7 +1242,10 @@ public class DBService
         return statusMessage;
     }
 
-    private async Task<string> updateInstructionsRecipeId()
+    /// Updates the recipe_id field in the recipe_instructions table by linking it to the corresponding
+    /// entry in the recipes table based on the name field in the instructions JSON object.
+    /// <returns>A tuple containing a boolean indicating the success status and a string message detailing the outcome.</returns>
+    private async Task<(bool status, string message)> updateInstructionsRecipeId()
     {
         Console.WriteLine("Updating instructions recipe id...");
         var statusMessage = "Instructions got updated.";
@@ -1191,6 +1254,7 @@ public class DBService
         string query = "UPDATE recipe_instructions " +
                        "SET recipe_id =" +
                        "(SELECT id FROM recipes WHERE name = instructions ->> 'name')";
+        bool status = true;
 
         try
         {
@@ -1199,16 +1263,16 @@ public class DBService
 
             var result = await RunAsyncQuery(cmd);
             if (result < 1)
-                return "Instructions did not get updated";
+                return (false, "Instructions did not get updated");
         }
         catch (Exception ex)
         {
             Console.WriteLine("Error updating instructions recipe IDs:" + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            return "Error updating instructions recipe IDs:" + ex.Message;
+            return (false, "Error updating instructions recipe IDs:" + ex.Message);
         }
 
-        return statusMessage;
+        return (true, statusMessage);
     }
 
     /// Determines whether the ingredient's ID is zero.

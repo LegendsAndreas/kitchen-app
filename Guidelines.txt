@@ -26,6 +26,10 @@ The order of parameters should, when it comes to what should be changed and by h
 parameter that is changing something and then the parameters that is going by how something should be changed.
 Example: UpdateRecipeNameByRecipeId(string updatedName, int recipeId).
 
+Generally speaking with any function in DbService, they should return a tuple that contains either a nullable value, or
+a bool value, together with a string message. The function should determine what message will be printed, which is why it
+returns a value in the first place.
+
 __Exception guide__
 Exceptions are called "ex". In a try-catch clause, the error message has to display the message, along with a user defined 
 message that says what action went wrong, along with the stacktrace.

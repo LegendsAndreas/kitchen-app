@@ -200,8 +200,11 @@
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error getting recipes" + ex);
-                throw;
+                Console.WriteLine("Error getting recipes: " + ex.Message);
+                Console.WriteLine("StackTrace: " + ex.StackTrace);
+                if (StatusMessageToaster != null) 
+                    await StatusMessageToaster.ShowToastAsync($"Error getting recipes: ({ex.Message})");
+                return;
             }
         }
 

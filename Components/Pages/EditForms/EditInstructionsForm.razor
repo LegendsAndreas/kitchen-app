@@ -16,7 +16,7 @@
             @foreach (var step in instructions.Instructions.Steps)
             {
                 <p>@step.StepNumber <button type="submit" class="btn btn-danger"
-                                            @onclick="() => DeleteStep(step.StepNumber - 1)">
+                                            @onclick="() => DeleteStep(instructions.Instructions.Steps.IndexOf(step))">
                         <strong>X</strong>
                     </button>
                 </p>

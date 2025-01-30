@@ -196,6 +196,8 @@
 
         recipeInstructionRecord.SetRecipeId(currentRecipe.RecipeId);
         recipeInstructionRecord.Instructions.Name = currentRecipe.Name;
+        recipeInstructionRecord.Instructions.Steps.Sort((x, y) => x.StepNumber.CompareTo(y.StepNumber));
+        recipeInstructionRecord.Instructions.Notes.Sort((x, y) => x.NoteNumber.CompareTo(y.NoteNumber));
 
         var result = await DbService.AddInstructionToDb(recipeInstructionRecord);
         if (result.Status)
