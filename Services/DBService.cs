@@ -12,12 +12,12 @@ namespace WebKitchen.Services;
 
 public class DBService
 {
-    private readonly string _connectionString;
+    private readonly string connectionString;
 
     public DBService(string connectionString)
     {
         Console.WriteLine("Connecting DBService:" + connectionString);
-        _connectionString = connectionString;
+        this.connectionString = connectionString;
     }
 
     /// Asynchronously creates and returns an open database connection using the configured connection string.
@@ -25,7 +25,7 @@ public class DBService
     private async Task<NpgsqlConnection> GetConnection()
     {
         Console.WriteLine("Getting connection...");
-        NpgsqlConnection connection = new(_connectionString);
+        NpgsqlConnection connection = new(connectionString);
         await connection.OpenAsync();
         return connection;
     }
