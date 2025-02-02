@@ -1,7 +1,6 @@
 @rendermode InteractiveServer
 @using WebKitchen.Components.SharedComponents
 @inject DBService DbService
-@inject SharedIngredient SharedDbIngredient
 @inject SharedIngredientList GlobalIngredients
 
 <div class="row">
@@ -26,7 +25,7 @@
 
             <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
                 <div class="col">
-                    <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"/>
+                    <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients" CurrentIngredientDataHasChanged="@(ing => crossIngredient = ing)"/>
                 </div>
 
                 <div class="col">
@@ -34,7 +33,7 @@
                 </div>
 
                 <div class="col">
-                    <p>Current ingredient: @(SharedDbIngredient?.SelectedIngredient?.Name ?? "")</p>
+                    <p>Current ingredient: @crossIngredient.Name</p>
                 </div>
             </div>
             <button type="button" class="btn btn-primary" @onclick="HandleDbIngredient">Add New Ingredient To Recipe
@@ -52,7 +51,7 @@
     int recipeId;
     int currentIngredientGrams;
     Recipe? currentRecipe;
-    Ingredient currentIngredient = new();
+    Ingredient crossIngredient = new();
     StatusMessageToast? RecipeStatusToaster;
 
     private async Task HandleSubmit()
@@ -108,14 +107,8 @@
         }
 
         Console.WriteLine("SharedDbIngredient:");
-        SharedDbIngredient.SelectedIngredient.PrintIngredient();
-
-        currentIngredient.Name = SharedDbIngredient.SelectedIngredient.Name;
-        currentIngredient.Grams = currentIngredientGrams;
-        currentIngredient.CaloriesPer100g = SharedDbIngredient.SelectedIngredient.CaloriesPer100g;
-        currentIngredient.FatPer100g = SharedDbIngredient.SelectedIngredient.FatPer100g;
-        currentIngredient.CarbsPer100g = SharedDbIngredient.SelectedIngredient.CarbsPer100g;
-        currentIngredient.ProteinPer100g = SharedDbIngredient.SelectedIngredient.ProteinPer100g;
+        crossIngredient.Grams = currentIngredientGrams;
+        crossIngredient.PrintIngredient();
 
         HandleIngredient();
     }
@@ -123,12 +116,12 @@
     private void HandleIngredient()
     {
         Console.WriteLine("Handling ingredient...");
-        var tempIngredient = currentIngredient.TransferIngredient(currentIngredient);
+        var tempIngredient = crossIngredient.TransferIngredient(crossIngredient);
         tempIngredient.PrintIngredient();
 
         if (currentRecipe != null)
             currentRecipe.Ingredients.Add(tempIngredient);
-        currentIngredient.ClearIngredient();
+        crossIngredient.ClearIngredient();
     }
 
 }
