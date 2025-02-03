@@ -14,10 +14,9 @@ public class Program
             .AddInteractiveServerComponents();
 
         builder.Services.AddScoped<Recipe>();
+        builder.Services.AddScoped<Ingredient>();
         builder.Services.AddScoped<SharedRecipe>();
         builder.Services.AddScoped<SharedRecipeList>();
-        builder.Services.AddScoped<Ingredient>();
-        builder.Services.AddScoped<SharedIngredient>();
         builder.Services.AddScoped<SharedIngredientList>();
 
         builder.Services.AddSingleton(_ =>
@@ -33,7 +32,7 @@ public class Program
         });
 
         var app = builder.Build();
-        
+
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {

@@ -1,5 +1,7 @@
 @page "/random-meal"
 @rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using WebKitchen.Components.SharedComponents
 @inject DBService DbService;
 <PageTitle>Random Meal</PageTitle>
 
@@ -33,10 +35,13 @@
     </div>
 </div>
 
+<StatusMessageToast @ref="_statusMessageToaster"/>
+
 @code {
 
-    Recipe randomRecipe = new();
     string cardBorderLayoutClass = "";
+    Recipe randomRecipe = new();
+    StatusMessageToast _statusMessageToaster = null!;
 
     private async Task RandomRecipe()
     {
@@ -47,10 +52,12 @@
             randomRecipe.PrintRecipe();
             cardBorderLayoutClass = "border-layout";
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine("Error at Random Recipe: "+e.Message);
-            throw;
+            Console.WriteLine("Error at Random Recipe: "+ex.Message);
+            Console.WriteLine("StackTrace: "+ex.StackTrace);
+            await _statusMessageToaster.ShowToastAsync("Error at \"RandomRecipe\": " + ex.Message);
+            return;
         }
         StateHasChanged();
     }

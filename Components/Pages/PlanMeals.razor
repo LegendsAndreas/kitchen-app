@@ -160,14 +160,14 @@
     }
 </script>
 
-<StatusMessageToast @ref="StatusMessageToaster"/>
+<StatusMessageToast @ref="statusMessageToaster"/>
 
 @code{
 
     int currentDay;
     int currentTotalMacrosDay;
     MealPlan mealPlanMacrosAndRecipes = new();
-    StatusMessageToast? StatusMessageToaster;
+    StatusMessageToast? statusMessageToaster;
 
     protected override void OnInitialized()
     {
@@ -188,8 +188,8 @@
                 var result = await DbService.GetAllRecipes();
                 if (result.Recipes == null)
                 {
-                    if (StatusMessageToaster != null)
-                        await StatusMessageToaster.ShowToastAsync(result.Message);
+                    if (statusMessageToaster != null)
+                        await statusMessageToaster.ShowToastAsync(result.Message);
                 }
                 else
                 {
@@ -202,8 +202,8 @@
             {
                 Console.WriteLine("Error getting recipes: " + ex.Message);
                 Console.WriteLine("StackTrace: " + ex.StackTrace);
-                if (StatusMessageToaster != null) 
-                    await StatusMessageToaster.ShowToastAsync($"Error getting recipes: ({ex.Message})");
+                if (statusMessageToaster != null) 
+                    await statusMessageToaster.ShowToastAsync($"Error getting recipes: ({ex.Message})");
                 return;
             }
         }

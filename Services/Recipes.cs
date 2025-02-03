@@ -179,11 +179,6 @@ public class Ingredient
     }
 }
 
-public class SharedIngredient
-{
-    public Ingredient SelectedIngredient { get; set; } = new();
-}
-
 public class Recipe
 {
     public int RecipeId;

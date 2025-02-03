@@ -147,9 +147,10 @@
             Console.WriteLine("Ingredients are full.");
     }
 
-    private Task HandleImage(InputFileChangeEventArgs imageFiles)
+    private Task HandleImage(InputFileChangeEventArgs imageFile)
     {
-        foreach (var image in imageFiles.GetMultipleFiles())
+        // Despite the fact that we iterate over "imageFile", there should always only be one.
+        foreach (var image in imageFile.GetMultipleFiles())
         {
             if (!image.ContentType.Contains("image"))
             {

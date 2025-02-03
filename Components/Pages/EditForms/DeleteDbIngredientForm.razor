@@ -19,32 +19,26 @@
     <button type="button" class="btn btn-danger" @onclick="DeleteIngredient">Delete Ingredient</button>
 }
 
-<StatusMessageToast @ref="StatusMessageToaster"/>
+<StatusMessageToast @ref="_statusMessageToaster"/>
 
 @code{
     int recipeId;
     Ingredient? currentIngredient;
-    StatusMessageToast? StatusMessageToaster;
+    StatusMessageToast _statusMessageToaster = null!;
 
     private async Task DeleteIngredient()
     {
-        var result = await DbService.DeleteDbIngredientById(recipeId);
-        if (StatusMessageToaster != null)
-            await StatusMessageToaster.ShowToastAsync(result);
+        var result = await DbService.DeleteDbIngredientById(recipeId); 
+        await _statusMessageToaster.ShowToastAsync(result);
     }
 
     private async Task HandleGettingDbIngredient()
     {
         var result = await DbService.GetDbIngredientById(recipeId);
-        if (result.Ingredient == null)
-        {
-            if (StatusMessageToaster != null)
-                await StatusMessageToaster.ShowToastAsync(result.Message);
-        }
+        if (result.Ingredient == null) 
+            await _statusMessageToaster.ShowToastAsync(result.Message);
         else
-        {
             currentIngredient = result.Ingredient;
-        }
     }
 
 }

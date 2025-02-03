@@ -7,7 +7,7 @@
     <div class="col-6">
         <EditForm Model="@recipeId">
             <label class="form-label fw-bold">Recipe Id</label>
-            <InputNumber id="name" @bind-Value="recipeId" class="form-control"/>
+            <InputNumber @bind-Value="recipeId" class="form-control"/>
 
             <button type="submit" class="btn btn-primary" @onclick="HandleSubmit">Get Recipe</button>
         </EditForm>
@@ -25,7 +25,7 @@
 
             <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
                 <div class="col">
-                    <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients" CurrentIngredientDataHasChanged="@(ing => crossIngredient = ing)"/>
+                    <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients" CurrentIngredientDataHasChanged="@(ing => currentCrossIngredient = ing)"/>
                 </div>
 
                 <div class="col">
@@ -33,26 +33,26 @@
                 </div>
 
                 <div class="col">
-                    <p>Current ingredient: @crossIngredient.Name</p>
+                    <p>Current ingredient: @currentCrossIngredient.Name</p>
                 </div>
             </div>
             <button type="button" class="btn btn-primary" @onclick="HandleDbIngredient">Add New Ingredient To Recipe
             </button>
 
-            <AddedIngredients currentIngredients="@currentRecipe.Ingredients"/>
+            <AddedIngredients CurrentAddedIngredients="@currentRecipe.Ingredients"/>
         }
     </div>
 </div>
 
-<StatusMessageToast @ref="RecipeStatusToaster"/>
+<StatusMessageToast @ref="recipeStatusToaster"/>
 
 @code{
 
     int recipeId;
     int currentIngredientGrams;
     Recipe? currentRecipe;
-    Ingredient crossIngredient = new();
-    StatusMessageToast? RecipeStatusToaster;
+    Ingredient currentCrossIngredient = new();
+    StatusMessageToast? recipeStatusToaster;
 
     private async Task HandleSubmit()
     {
@@ -60,8 +60,8 @@
         var result = await DbService.GetRecipeById(recipeId);
         if (result.Recipe == null)
         {
-            if (RecipeStatusToaster != null)
-                await RecipeStatusToaster.ShowToastAsync(result.Message);
+            if (recipeStatusToaster != null)
+                await recipeStatusToaster.ShowToastAsync(result.Message);
         }
         else
         {
@@ -72,9 +72,7 @@
     private void DeleteIngredient(int index)
     {
         if (currentRecipe != null)
-        {
             currentRecipe.Ingredients.RemoveAt(index);
-        }
 
         StateHasChanged();
     }
@@ -90,8 +88,8 @@
         currentRecipe.SetTotalMacros();
 
         var result = await DbService.UpdateRecipeMacrosAndIngredientsById(currentRecipe, currentRecipe.RecipeId);
-        if (RecipeStatusToaster != null)
-            await RecipeStatusToaster.ShowToastAsync(result);
+        if (recipeStatusToaster != null)
+            await recipeStatusToaster.ShowToastAsync(result);
 
         currentRecipe = null;
     }
@@ -106,9 +104,15 @@
             return;
         }
 
+        if (currentIngredientGrams < 0)
+        {
+            Console.WriteLine("Grams cant be negative");
+            return;
+        }
+
         Console.WriteLine("SharedDbIngredient:");
-        crossIngredient.Grams = currentIngredientGrams;
-        crossIngredient.PrintIngredient();
+        currentCrossIngredient.Grams = currentIngredientGrams;
+        currentCrossIngredient.PrintIngredient();
 
         HandleIngredient();
     }
@@ -116,12 +120,12 @@
     private void HandleIngredient()
     {
         Console.WriteLine("Handling ingredient...");
-        var tempIngredient = crossIngredient.TransferIngredient(crossIngredient);
+        var tempIngredient = currentCrossIngredient.TransferIngredient(currentCrossIngredient);
         tempIngredient.PrintIngredient();
 
         if (currentRecipe != null)
             currentRecipe.Ingredients.Add(tempIngredient);
-        crossIngredient.ClearIngredient();
+        currentCrossIngredient.ClearIngredient();
     }
 
 }
