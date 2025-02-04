@@ -6,108 +6,108 @@
 <PageTitle>Recipe Details</PageTitle>
 
 
-    <div class="container border-layout" id="recipe-details">
-        @* In case we come a across a string, that is clonger than the column it is in, "text-break" breaks it into smaller strings, so that it does not fuckup the layout *@
-        <div class="row text-break">
-            <div class="col-8">
-                <img src="data:image/png;base64,@sharedRecipe.Base64Image" alt="Recipe Image is gone..."
-                     id="recipe-image-style"/>
-                <div>
-                    <h4>Ingredients</h4>
-                    <ul class="food-list">
-                        @foreach (var ingredient in sharedRecipe.Ingredients)
-                        {
-                            <li>
-                                <span class="label">@ingredient.Name&nbsp;</span>
-                                <span class="dots"></span>
-                                <span class="value">&nbsp;@ingredient.Grams.ToString(".00")g</span>
-                            </li>
-                        }
-                    </ul>
-                </div>
-
-                <div>
-                    <h4>Macros</h4>
-                    <ul class="food-list">
+<div class="container border-layout" id="recipe-details">
+    @* In case we come a across a string, that is clonger than the column it is in, "text-break" breaks it into smaller strings, so that it does not fuckup the layout *@
+    <div class="row text-break">
+        <div class="col-8">
+            <img src="data:image/png;base64,@sharedRecipe.Base64Image" alt="Recipe Image is gone..."
+                 id="recipe-image-style"/>
+            <div>
+                <h4>Ingredients</h4>
+                <ul class="food-list">
+                    @foreach (var ingredient in sharedRecipe.Ingredients)
+                    {
                         <li>
-                            <span class="label">Calories&nbsp;</span>
+                            <span class="label">@ingredient.Name&nbsp;</span>
                             <span class="dots"></span>
-                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Calories.ToString(".00")</span>
+                            <span class="value">&nbsp;@ingredient.Grams.ToString(".00")g</span>
                         </li>
-                        <li>
-                            <span class="label">Protein&nbsp;</span>
-                            <span class="dots"></span>
-                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Protein.ToString(".00")g</span>
-                        </li>
-                        <li>
-                            <span class="label">Fat&nbsp;</span>
-                            <span class="dots"></span>
-                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Fat.ToString(".00")g</span>
-                        </li>
-                        <li>
-                            <span class="label">Carbs&nbsp;</span>
-                            <span class="dots"></span>
-                            <span class="value">&nbsp;@sharedRecipe.TotalMacros.Carbs.ToString(".00")g</span>
-                        </li>
-                    </ul>
-                </div>
+                    }
+                </ul>
             </div>
 
-            <div class="col">
-                <h1>@sharedRecipe.Name</h1>
-                <div>
-                    <ol>
-                        @if (recipeInstructionRecord != null)
+            <div>
+                <h4>Macros</h4>
+                <ul class="food-list">
+                    <li>
+                        <span class="label">Calories&nbsp;</span>
+                        <span class="dots"></span>
+                        <span class="value">&nbsp;@sharedRecipe.TotalMacros.Calories.ToString(".00")</span>
+                    </li>
+                    <li>
+                        <span class="label">Protein&nbsp;</span>
+                        <span class="dots"></span>
+                        <span class="value">&nbsp;@sharedRecipe.TotalMacros.Protein.ToString(".00")g</span>
+                    </li>
+                    <li>
+                        <span class="label">Fat&nbsp;</span>
+                        <span class="dots"></span>
+                        <span class="value">&nbsp;@sharedRecipe.TotalMacros.Fat.ToString(".00")g</span>
+                    </li>
+                    <li>
+                        <span class="label">Carbs&nbsp;</span>
+                        <span class="dots"></span>
+                        <span class="value">&nbsp;@sharedRecipe.TotalMacros.Carbs.ToString(".00")g</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col">
+            <h1>@sharedRecipe.Name</h1>
+            <div>
+                <ol>
+                    @if (recipeInstructionRecord != null)
+                    {
+                        @if (recipeInstructionRecord.Instructions.Steps.Count > 0)
                         {
-                            @if (recipeInstructionRecord.Instructions.Steps.Count > 0)
+                            @foreach (var instruction in recipeInstructionRecord.Instructions.Steps)
                             {
-                                @foreach (var instruction in recipeInstructionRecord.Instructions.Steps)
-                                {
-                                    <li>@instruction.StepText</li>
-                                }
+                                <li>@instruction.StepText</li>
                             }
                         }
-                        else
-                        {
-                            <p>No steps added.</p>
-                        }
-                    </ol>
+                    }
+                    else
+                    {
+                        <p>No steps added.</p>
+                    }
+                </ol>
 
-                </div>
+            </div>
 
-                <div>
-                    <h5>Notes</h5>
-                    <ul>
-                        @if (recipeInstructionRecord != null)
+            <div>
+                <h5>Notes</h5>
+                <ul>
+                    @if (recipeInstructionRecord != null)
+                    {
+                        if (recipeInstructionRecord.Instructions.Notes.Count > 0)
                         {
-                            if (recipeInstructionRecord.Instructions.Notes.Count > 0)
+                            foreach (var note in recipeInstructionRecord.Instructions.Notes)
                             {
-                                foreach (var note in recipeInstructionRecord.Instructions.Notes)
-                                {
-                                    <li>@note.NoteText</li>
-                                }
-                            }
-                            else
-                            {
-                                <p>No notes added.</p>
+                                <li>@note.NoteText</li>
                             }
                         }
                         else
                         {
                             <p>No notes added.</p>
                         }
-                    </ul>
-                </div>
+                    }
+                    else
+                    {
+                        <p>No notes added.</p>
+                    }
+                </ul>
             </div>
         </div>
     </div>
+</div>
 
 <StatusMessageToast @ref="statusMessageToaster"/>
 
 @code {
     Recipe sharedRecipe = new();
     RecipeInstructionRecord? recipeInstructionRecord = new();
-    StatusMessageToast? statusMessageToaster;
+    StatusMessageToast statusMessageToaster = null!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -120,14 +120,9 @@
             {
                 var result = await DbService.GetRecipeInstructionsByRecipeId(sharedRecipe.RecipeId);
                 if (result.instructions == null)
-                {
-                    if (statusMessageToaster != null)
-                        await statusMessageToaster.ShowToastAsync(result.message);
-                }
+                    await statusMessageToaster.ShowToastAsync(result.message);
                 else
-                {
                     recipeInstructionRecord = result.instructions;
-                }
             }
         }
     }

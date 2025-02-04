@@ -1,10 +1,10 @@
 @using WebKitchen.Components.SharedComponents
 @inject DBService DbService
 
-    <label class="form-label fw-bold">Database Ingredient Id To Edit</label>
-    <InputNumber id="name" @bind-Value="recipeId" class="form-control"/>
+<label class="form-label fw-bold">Database Ingredient Id To Edit</label>
+<InputNumber id="name" @bind-Value="recipeId" class="form-control"/>
 
-    <button type="submit" class="btn btn-primary" @onclick="HandleGettingDbIngredient">Get Database Ingredient</button>
+<button type="submit" class="btn btn-primary" @onclick="HandleGettingDbIngredient">Get Database Ingredient</button>
 
 @if (currentIngredient != null)
 {
@@ -31,7 +31,7 @@
     </EditForm>
 
     <div>
-        <p>Database @currentIngredient.Name Image</p> 
+        <p>Database @currentIngredient.Name Image</p>
         <img src="data:image/png;base64,@currentIngredient.Base64Image" alt="Image" class="img-fluid"/>
     </div>
 }
@@ -42,28 +42,22 @@
 
     int recipeId;
     Ingredient? currentIngredient;
-    StatusMessageToast? StatusMessageToaster;
+    StatusMessageToast StatusMessageToaster = null!;
 
     private async Task HandleSubmit()
     {
         currentIngredient.PrintIngredient();
         var result = await DbService.UpdateDbIngredient(currentIngredient);
-        if (StatusMessageToaster != null)
-            await StatusMessageToaster.ShowToastAsync(result);
+        await StatusMessageToaster.ShowToastAsync(result);
     }
 
     private async Task HandleGettingDbIngredient()
     {
         var result = await DbService.GetDbIngredientById(recipeId);
         if (result.Ingredient == null)
-        {
-            if (StatusMessageToaster != null)
-                await StatusMessageToaster.ShowToastAsync(result.Message);
-        }
+            await StatusMessageToaster.ShowToastAsync(result.Message);
         else
-        {
             currentIngredient = result.Ingredient;
-        }
     }
 
     private async Task HandleImage(InputFileChangeEventArgs imageFile)

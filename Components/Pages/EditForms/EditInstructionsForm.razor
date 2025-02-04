@@ -33,7 +33,7 @@
                 <p>@note.NoteText</p>
             }
         </div>
-        
+
         @* By turning the element into a d-flex flex-column, we display them as a column, instead of displaying each element
         next to each other.
         Then, we space them between each other, to get the forms to display at the top and the button at the bottom. *@
@@ -63,7 +63,9 @@
             @* "d-flex" - activates the flexbox layout, fot the content inside the div. *@
             @* "justify-content-end" - aligns the content to the right side. *@
             <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-primary" @onclick="HandleUpdatingInstructions">Update Instructions</button>
+                <button type="button" class="btn btn-primary" @onclick="HandleUpdatingInstructions">Update
+                    Instructions
+                </button>
             </div>
         </div>
     </div>
@@ -78,7 +80,7 @@
     string noteText = "";
     Step currentStep = new();
     Note currentNote = new();
-    StatusMessageToast? statusMessageToaster;
+    StatusMessageToast statusMessageToaster = null!;
     RecipeInstructionRecord? instructions;
 
     private async Task HandleGettingInstructions()
@@ -86,14 +88,9 @@
         Console.WriteLine("Handling getting instructions...");
         var result = await DbService.GetRecipeInstructionsByRecipeId(recipeId);
         if (result.instructions == null)
-        {
-            if (statusMessageToaster != null)
-                await statusMessageToaster.ShowToastAsync(result.message);
-        }
+            await statusMessageToaster.ShowToastAsync(result.message);
         else
-        {
             instructions = result.instructions;
-        }
     }
 
     private void HandleNewStep()
@@ -120,8 +117,7 @@
                 instructions.Instructions.Notes.Add(currentNote);
 
             var result = await DbService.UpdateInstructionsByInstructionsId(instructions, instructions.GetId());
-            if (statusMessageToaster != null)
-                await statusMessageToaster.ShowToastAsync(result);
+            await statusMessageToaster.ShowToastAsync(result);
         }
         else
         {

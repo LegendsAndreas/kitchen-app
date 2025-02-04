@@ -28,9 +28,10 @@
                         <InputText id="name" @bind-Value="currentRecipe.Name"/>
                     </div>
 
-                    <label class="file-label" for="fileInput">@(string.IsNullOrEmpty(currentRecipe.Base64Image) ? "Choose Image" : "Image Selected")</label>
+                    <label class="file-label"
+                           for="fileInput">@(string.IsNullOrEmpty(currentRecipe.Base64Image) ? "Choose Image" : "Image Selected")</label>
                     <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
-                    
+
                     <button type="submit" class="btn btn-primary col">Create Recipe</button>
                 </div>
             </div>
@@ -69,7 +70,7 @@
                         <label>Protein (pr. 100g):</label>
                         <InputNumber id="protein" @bind-Value="currentIngredient.ProteinPer100g"/>
                     </div>
-                    
+
                     <button type="submit" class="btn btn-primary">Add Ingredient</button>
                 </div>
             </div>
@@ -89,17 +90,20 @@
                         <p>Current Recipe: @(SharedDbRecipe?.SelectedRecipe?.Name ?? "")</p>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" @onclick="AddRecipeAsIngredient">Add Recipe As Ingredient</button>
+                    <button type="submit" class="btn btn-primary" @onclick="AddRecipeAsIngredient">Add Recipe As
+                        Ingredient
+                    </button>
                 </div>
             </div>
         </EditForm>
-        
+
         <EditForm Model="@currentIngredientGrams" OnSubmit="HandleDbIngredient">
             <DataAnnotationsValidator/>
             <div class="container text-center border-layout paddage">
                 <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
 
-                    <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients" CurrentIngredientDataHasChanged="@(value => crossIngredient = value)"/>
+                    <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"
+                                                 CurrentIngredientDataHasChanged="@(value => crossIngredient = value)"/>
 
                     <div class="col">
                         <label class="form-label">Grams</label>
@@ -127,7 +131,7 @@
     Recipe currentIngredientRecipe = new();
     Ingredient currentIngredient = new();
     Ingredient crossIngredient = new();
-    StatusMessageToast? statusMessageToaster;
+    StatusMessageToast statusMessageToaster = null!;
     readonly List<Ingredient> currentIngredients = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -140,14 +144,10 @@
             {
                 var result = await DbService.GetAllDbIngredients();
                 if (result.DbIngredients == null)
-                {
-                    if (statusMessageToaster != null)
-                        await statusMessageToaster.ShowToastAsync(result.Message);
-                }
+                    await statusMessageToaster.ShowToastAsync(result.Message);
                 else
                 {
-                    if (statusMessageToaster != null)
-                        await statusMessageToaster.ShowToastAsync(result.Message);
+                    await statusMessageToaster.ShowToastAsync(result.Message);
                     Console.WriteLine(result.Message);
                     GlobalIngredients.Ingredients = result.DbIngredients;
                     StateHasChanged();
@@ -187,20 +187,15 @@
         {
             var result = await DbService.AddRecipeToDb(currentRecipe);
             if (!result.Status)
-            {
-                if (statusMessageToaster != null)
-                    await statusMessageToaster.ShowToastAsync("Error adding recipe to database; "+result.Message);
-            }
+                await statusMessageToaster.ShowToastAsync("Error adding recipe to database; " + result.Message);
             else
-            {
-                if (statusMessageToaster != null)
-                    await statusMessageToaster.ShowToastAsync(result.Message);
-            }
+                await statusMessageToaster.ShowToastAsync(result.Message);
         }
         catch (Exception e)
         {
             Console.WriteLine("Error sending recipe to database: " + e.Message);
-            throw;
+            Console.WriteLine("StackTrace: " + e.StackTrace);
+            return;
         }
 
         currentRecipe.ClearRecipe();
@@ -251,21 +246,19 @@
         if (string.IsNullOrEmpty(currentIngredientRecipe.Name))
         {
             Console.WriteLine("Current ingredient recipe is not selected");
-            if (statusMessageToaster != null) 
-                await statusMessageToaster.ShowToastAsync("Ingredient recipe is not selected");
+            await statusMessageToaster.ShowToastAsync("Ingredient recipe is not selected");
             return;
         }
-        
+
         if (currentIngredientRecipeParts < 1)
         {
             Console.WriteLine("Parts are below 1");
-            if (statusMessageToaster != null) 
-                await statusMessageToaster.ShowToastAsync("Parts cant be less than 1");
+            await statusMessageToaster.ShowToastAsync("Parts cant be less than 1");
             return;
         }
-        
+
         Ingredient tempIngredient = new();
-        
+
         currentIngredientRecipe.PrintRecipe();
 
         tempIngredient.Name = currentIngredientRecipe.Name;
@@ -275,7 +268,7 @@
         tempIngredient.ProteinPer100g = currentIngredientRecipe.TotalMacros.Protein;
         // ReSharper disable once PossibleLossOfFraction
         tempIngredient.Grams = 100 / currentIngredientRecipeParts;
-        
+
         currentIngredients.Add(tempIngredient);
         currentIngredientRecipe.ClearRecipe();
     }
@@ -287,16 +280,14 @@
         if (string.IsNullOrEmpty(crossIngredient.Name))
         {
             Console.WriteLine("No db ingredient selected");
-            if (statusMessageToaster != null)
-                await statusMessageToaster.ShowToastAsync("No database ingredient selected");
+            await statusMessageToaster.ShowToastAsync("No database ingredient selected");
             return;
         }
-        
+
         if (currentIngredientGrams == 0)
         {
             Console.WriteLine("No grams specified.");
-            if (statusMessageToaster != null)
-                await statusMessageToaster.ShowToastAsync("No grams selected.");
+            await statusMessageToaster.ShowToastAsync("No grams selected.");
             return;
         }
 

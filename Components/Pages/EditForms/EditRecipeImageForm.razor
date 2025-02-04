@@ -47,7 +47,7 @@
     string base64Image = "";
     string sqlStatusMessage = "";
     Recipe? currentRecipe;
-    StatusMessageToast? RecipeStatusToaster;
+    StatusMessageToast RecipeStatusToaster = null!;
     NoImageSelectedToast? NoImageToaster;
 
     private async Task HandleGettingRecipe()
@@ -55,14 +55,9 @@
         Console.WriteLine("Handling getting recipe...");
         var result = await DbService.GetRecipeById(recipeId);
         if (result.Recipe == null)
-        {
-            if (RecipeStatusToaster != null)
-                await RecipeStatusToaster.ShowToastAsync(result.Message);
-        }
+            await RecipeStatusToaster.ShowToastAsync(result.Message);
         else
-        {
             currentRecipe = result.Recipe;
-        }
     }
 
     private async Task HandleSubmit()
@@ -78,8 +73,7 @@
         if (currentRecipe != null)
         {
             sqlStatusMessage = await DbService.UpdateRecipeImageByRecipeId(base64Image, currentRecipe.RecipeId);
-            if (RecipeStatusToaster != null)
-                await RecipeStatusToaster.ShowToastAsync(sqlStatusMessage);
+            await RecipeStatusToaster.ShowToastAsync(sqlStatusMessage);
             currentRecipe.ClearRecipe();
         }
     }

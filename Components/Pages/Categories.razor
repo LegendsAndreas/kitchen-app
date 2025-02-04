@@ -55,9 +55,17 @@
                            
                     
 
+                    
+
+
+
                     @bind="secondaryCategory" @onfocus="OnSecondarySearchBarFocus"
                            
                     
+
+                    
+
+
 
                     @onblur="OnSecondarySearchBarBlur">*@
                 }
@@ -142,7 +150,7 @@
     string secondaryCategory = "";
     string orderDirection = "";
     List<Recipe>? sortedRecipes;
-    StatusMessageToast? statusMessageToaster;
+    StatusMessageToast statusMessageToaster = null!;
 
     private void HandleBaseCategory(string category)
     {
@@ -172,14 +180,9 @@
         {
             var result = await DbService.GetRecipesByCategory(baseCategory, secondaryCategory, orderDirection, minNum, maxNum);
             if (result.Recipes == null)
-            {
-                if (statusMessageToaster != null)
-                    await statusMessageToaster.ShowToastAsync(result.Message);
-            }
+                await statusMessageToaster.ShowToastAsync(result.Message);
             else
-            {
                 sortedRecipes = result.Recipes;
-            }
         }
         catch (Exception ex)
         {

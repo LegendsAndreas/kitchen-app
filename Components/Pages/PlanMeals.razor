@@ -167,7 +167,7 @@
     int currentDay;
     int currentTotalMacrosDay;
     MealPlan mealPlanMacrosAndRecipes = new();
-    StatusMessageToast? statusMessageToaster;
+    StatusMessageToast statusMessageToaster = null!;
 
     protected override void OnInitialized()
     {
@@ -188,8 +188,7 @@
                 var result = await DbService.GetAllRecipes();
                 if (result.Recipes == null)
                 {
-                    if (statusMessageToaster != null)
-                        await statusMessageToaster.ShowToastAsync(result.Message);
+                    await statusMessageToaster.ShowToastAsync(result.Message);
                 }
                 else
                 {
@@ -202,8 +201,7 @@
             {
                 Console.WriteLine("Error getting recipes: " + ex.Message);
                 Console.WriteLine("StackTrace: " + ex.StackTrace);
-                if (statusMessageToaster != null) 
-                    await statusMessageToaster.ShowToastAsync($"Error getting recipes: ({ex.Message})");
+                await statusMessageToaster.ShowToastAsync($"Error getting recipes: ({ex.Message})");
                 return;
             }
         }

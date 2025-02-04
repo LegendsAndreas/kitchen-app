@@ -2,8 +2,8 @@
 @inject DBService DbService;
 
 <EditForm Model="@recipeId" OnSubmit="@HandleGettingId">
-        <label class="form-label fw-bold">Recipe ID</label>
-        <InputNumber id="recipe-name" @bind-Value="recipeId" class="form-control"/>
+    <label class="form-label fw-bold">Recipe ID</label>
+    <InputNumber id="recipe-name" @bind-Value="recipeId" class="form-control"/>
     <button type="submit" class="btn btn-primary">Get Recipe</button>
 </EditForm>
 
@@ -14,7 +14,7 @@
         <InputText id="name" @bind-Value="currentRecipe.Name" class="form-control"/>
         <button type="submit" class="btn btn-primary">Update Recipe Name</button>
     </EditForm>
-    
+
     <p>Preview</p>
     <PreviewRecipe CurrentPreviewRecipe="@currentRecipe"/>
 }
@@ -44,32 +44,26 @@
     int recipeId;
     string sqlStatusMessage = "<SQL Status Message>";
     Recipe? currentRecipe;
-    StatusMessageToast? RecipeStatusToaster;
+    StatusMessageToast RecipeStatusToaster = null!;
 
     private async Task HandleGettingId()
     {
         Console.WriteLine("Handling getting recipe...");
         var result = await DbService.GetRecipeById(recipeId);
         if (result.Recipe == null)
-        {
-            if (RecipeStatusToaster != null)
-                await RecipeStatusToaster.ShowToastAsync(result.Message);
-        }
+            await RecipeStatusToaster.ShowToastAsync(result.Message);
         else
-        {
             currentRecipe = result.Recipe;
-        }
     }
-    
+
     private async Task HandleSubmit()
     {
         if (currentRecipe != null)
         {
             sqlStatusMessage = await DbService.UpdateRecipeNameByRecipeId(currentRecipe.Name, currentRecipe.RecipeId);
 
-            if (RecipeStatusToaster != null)
-                await RecipeStatusToaster.ShowToastAsync(sqlStatusMessage);
-            
+            await RecipeStatusToaster.ShowToastAsync(sqlStatusMessage);
+
             currentRecipe = null;
         }
     }

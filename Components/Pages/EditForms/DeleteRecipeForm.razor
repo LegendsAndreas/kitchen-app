@@ -58,21 +58,16 @@
 
     int recipeId;
     Recipe? currentRecipe;
-    StatusMessageToast? RecipeStatusToaster;
+    StatusMessageToast RecipeStatusToaster = null!;
 
     private async Task HandleGettingRecipe()
     {
         Console.WriteLine("Handling getting recipe...");
         var result = await DbService.GetRecipeById(recipeId);
         if (result.Recipe == null)
-        {
-            if (RecipeStatusToaster != null)
-                await RecipeStatusToaster.ShowToastAsync(result.Message);
-        }
+            await RecipeStatusToaster.ShowToastAsync(result.Message);
         else
-        {
             currentRecipe = result.Recipe;
-        }
     }
 
     private async Task HandleSubmit()
@@ -82,8 +77,7 @@
         if (await AreYouSure())
         {
             var statusMessage = await DbService.DeleteRecipeById(recipeId);
-            if (RecipeStatusToaster != null)
-                await RecipeStatusToaster.ShowToastAsync(statusMessage);
+            await RecipeStatusToaster.ShowToastAsync(statusMessage);
 
             Console.WriteLine(statusMessage);
         }

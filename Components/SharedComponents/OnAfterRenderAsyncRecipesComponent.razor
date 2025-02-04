@@ -6,7 +6,7 @@
 @code {
     [Parameter] public List<Recipe> recipesData { get; set; } = [];
     [Parameter] public string renderingComponentNameData { get; set; } = string.Empty;
-    StatusMessageToast? StatusMessageToaster;
+    StatusMessageToast StatusMessageToaster = null!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -19,8 +19,7 @@
                 var result = await DbService.GetAllRecipes();
                 if (result.Recipes == null)
                 {
-                    if (StatusMessageToaster != null)
-                        await StatusMessageToaster.ShowToastAsync(result.Message);
+                    await StatusMessageToaster.ShowToastAsync(result.Message);
                 }
                 else
                 {

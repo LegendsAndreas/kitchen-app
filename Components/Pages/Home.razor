@@ -46,14 +46,14 @@
             }
         }
     </div>
-    
+
 </div>
 
 <StatusMessageToast @ref="statusMessageToaster"/>
 
 @code{
 
-    StatusMessageToast? statusMessageToaster;
+    StatusMessageToast statusMessageToaster = null!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -66,13 +66,11 @@
                 var result = await DbService.GetAllRecipes();
                 if (result.Recipes == null)
                 {
-                    if (statusMessageToaster != null)
-                        await statusMessageToaster.ShowToastAsync(result.Message);
+                    await statusMessageToaster.ShowToastAsync(result.Message);
                 }
                 else
                 {
-                    if (statusMessageToaster != null)
-                        await statusMessageToaster.ShowToastAsync(result.Message);
+                    await statusMessageToaster.ShowToastAsync(result.Message);
                     GlobalRecipes.Recipes = result.Recipes;
                     Console.WriteLine("Acquired Recipes.");
                     StateHasChanged();
@@ -84,15 +82,9 @@
                 Console.WriteLine("StackTrace: " + ex.StackTrace);
 
                 if (ex.Message.Contains("Failed to connect"))
-                {
-                    if (statusMessageToaster != null)
-                        await statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
-                }
+                    await statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
                 else
-                {
-                    if (statusMessageToaster != null)
-                        await statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
-                }
+                    await statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
 
                 return;
             }
@@ -102,13 +94,11 @@
                 var result = await DbService.GetAllDbIngredients();
                 if (result.DbIngredients == null)
                 {
-                    if (statusMessageToaster != null)
-                        await statusMessageToaster.ShowToastAsync(result.Message);
+                    await statusMessageToaster.ShowToastAsync(result.Message);
                 }
                 else
                 {
-                    if (statusMessageToaster != null)
-                        await statusMessageToaster.ShowToastAsync(result.Message);
+                    await statusMessageToaster.ShowToastAsync(result.Message);
                     Console.WriteLine(result.Message);
                     GlobalIngredients.Ingredients = result.DbIngredients;
                     StateHasChanged();
@@ -120,15 +110,9 @@
                 Console.WriteLine("StackTrace: " + ex.StackTrace);
 
                 if (ex.Message.Contains("Failed to connect"))
-                {
-                    if (statusMessageToaster != null)
-                        await statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
-                }
+                    await statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
                 else
-                {
-                    if (statusMessageToaster != null)
-                        await statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
-                }
+                    await statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
 
                 return;
             }

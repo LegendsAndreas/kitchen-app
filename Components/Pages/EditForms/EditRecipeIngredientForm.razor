@@ -25,7 +25,8 @@
 
             <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
                 <div class="col">
-                    <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients" CurrentIngredientDataHasChanged="@(ing => currentCrossIngredient = ing)"/>
+                    <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"
+                                                 CurrentIngredientDataHasChanged="@(ing => currentCrossIngredient = ing)"/>
                 </div>
 
                 <div class="col">
@@ -52,21 +53,16 @@
     int currentIngredientGrams;
     Recipe? currentRecipe;
     Ingredient currentCrossIngredient = new();
-    StatusMessageToast? recipeStatusToaster;
+    StatusMessageToast recipeStatusToaster = null!;
 
     private async Task HandleSubmit()
     {
         Console.WriteLine("Handling getting recipe...");
         var result = await DbService.GetRecipeById(recipeId);
         if (result.Recipe == null)
-        {
-            if (recipeStatusToaster != null)
-                await recipeStatusToaster.ShowToastAsync(result.Message);
-        }
+            await recipeStatusToaster.ShowToastAsync(result.Message);
         else
-        {
             currentRecipe = result.Recipe;
-        }
     }
 
     private void DeleteIngredient(int index)
@@ -88,8 +84,7 @@
         currentRecipe.SetTotalMacros();
 
         var result = await DbService.UpdateRecipeMacrosAndIngredientsById(currentRecipe, currentRecipe.RecipeId);
-        if (recipeStatusToaster != null)
-            await recipeStatusToaster.ShowToastAsync(result);
+        await recipeStatusToaster.ShowToastAsync(result);
 
         currentRecipe = null;
     }

@@ -110,7 +110,7 @@
 @code {
     Ingredient currentIngredient = new();
     IBrowserFile? loadedIngredientImage;
-    StatusMessageToast? StatusMessageToaster;
+    StatusMessageToast StatusMessageToaster = null!;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -123,8 +123,7 @@
                 var result = await DbService.GetAllDbIngredients();
                 if (result.DbIngredients == null)
                 {
-                    if (StatusMessageToaster != null)
-                        await StatusMessageToaster.ShowToastAsync(result.Message);
+                    await StatusMessageToaster.ShowToastAsync(result.Message);
                 }
                 else
                 {
@@ -135,8 +134,9 @@
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Error getting Ingredients" + ex);
-                throw;
+                Console.WriteLine("Error getting Ingredients: " + ex.Message);
+                Console.WriteLine("StackTrace: " + ex.StackTrace);
+                return;
             }
         }
 
@@ -186,8 +186,7 @@
         var tempIngredient = currentIngredient.TransferIngredient(currentIngredient);
 
         var result = await DbService.AddIngredientToDb(tempIngredient);
-        if (StatusMessageToaster != null)
-            await StatusMessageToaster.ShowToastAsync(result.Message);
+        await StatusMessageToaster.ShowToastAsync(result.Message);
 
         currentIngredient.ClearIngredient();
         StateHasChanged();

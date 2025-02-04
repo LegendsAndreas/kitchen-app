@@ -29,21 +29,16 @@
     int recipeId = 0;
     string sqlStatusMessage = "<SQL Status Message>";
     Recipe? currentRecipe;
-    StatusMessageToast? RecipeStatusToaster;
+    StatusMessageToast RecipeStatusToaster = null!;
 
     private async Task HandleGettingRecipe()
     {
         Console.WriteLine("Handling getting recipe...");
         var result = await DbService.GetRecipeById(recipeId);
         if (result.Recipe == null)
-        {
-            if (RecipeStatusToaster != null)
-                await RecipeStatusToaster.ShowToastAsync(result.Message);
-        }
+            await RecipeStatusToaster.ShowToastAsync(result.Message);
         else
-        {
             currentRecipe = result.Recipe;
-        }
     }
 
     private async Task HandleSubmit()
@@ -54,9 +49,8 @@
             Console.WriteLine("Current recipe not null.");
             sqlStatusMessage = await DbService.UpdateRecipeMealTypeRecipeId(currentRecipe.MealType, currentRecipe.RecipeId);
 
-            if (RecipeStatusToaster != null)
-                await RecipeStatusToaster.ShowToastAsync(sqlStatusMessage);
-            
+            await RecipeStatusToaster.ShowToastAsync(sqlStatusMessage);
+
             currentRecipe = null;
         }
     }
