@@ -2,36 +2,57 @@
 @inject DBService DbService
 
 <label class="form-label fw-bold">Recipe Id</label>
-<InputNumber id="name" @bind-Value="recipeId" class="form-control"/>
+<InputNumber id="name" @bind-Value="_recipeId" class="form-control"/>
 
-<button type="submit" class="btn btn-primary" @onclick="HandleGettingInstructions">Get Recipe Instructidons</button>
+<button type="submit" class="btn btn-primary" @onclick="HandleGettingInstructions">Get Recipe Instructidons
+</button>
 
-@if (instructions != null)
+@if (_instructions != null)
 {
+    <h1 class="fw-bold" style="border-bottom: 3px solid #dee2e6;">@_instructions.Instructions.Name Selected</h1>
     <div class="row row-cols-2">
         <div class="col">
+            <h5 style="padding: 5px"><i><u>Steps</u></i></h5>
+            <div class="card" style="background-color: #272b2f">
+                @foreach (var step in _instructions.Instructions.Steps)
+                {
+                    <p style="padding-left: 10px">@step.StepNumber. @step.StepText <button type="submit"
+                                                                                           class="btn btn-danger"
+                                                                                           @onclick="() => DeleteStep(_instructions.Instructions.Steps.IndexOf(step))">
+                            <strong>X</strong>
+                        </button>
+                        <button type="button" class="btn btn-secondary"
+                                @onclick="() => DecrementStep(_instructions.Instructions.Steps.IndexOf(step))">
+                            -
+                        </button>
+                        <button type="button" class="btn btn-secondary"
+                                @onclick="() => IncrementStep(_instructions.Instructions.Steps.IndexOf(step))">
+                            +
+                        </button>
+                    </p>
+                }
+            </div>
 
-            <p>@instructions.Instructions.Name</p>
-
-            @foreach (var step in instructions.Instructions.Steps)
-            {
-                <p>@step.StepNumber <button type="submit" class="btn btn-danger"
-                                            @onclick="() => DeleteStep(instructions.Instructions.Steps.IndexOf(step))">
-                        <strong>X</strong>
-                    </button>
-                </p>
-                <p>@step.StepText</p>
-            }
-
-            @foreach (var note in instructions.Instructions.Notes)
-            {
-                <p>@note.NoteNumber <button type="submit" class="btn btn-danger"
-                                            @onclick="() => DeleteNote(instructions.Instructions.Notes.IndexOf(note))">
-                        <strong>X</strong>
-                    </button>
-                </p>
-                <p>@note.NoteText</p>
-            }
+            <h5 style="padding: 5px"><i><u>Notes</u></i></h5>
+            <div class="card" style="background-color: #272b2f">
+                @foreach (var note in _instructions.Instructions.Notes)
+                {
+                    <p style="padding-left: 10px">@note.NoteNumber. @note.NoteText <button type="submit"
+                                                                                           class="btn btn-danger"
+                                                                                           @onclick="() => DeleteNote(_instructions.Instructions.Notes.IndexOf(note))">
+                            <strong>X</strong>
+                        </button>
+                        <button type="button" class="btn btn-secondary"
+                                @onclick="() => DecrementNote(_instructions.Instructions.Notes.IndexOf(note))">
+                            -
+                        </button>
+                        <button type="button" class="btn btn-secondary"
+                                @onclick="() => IncrementNote(_instructions.Instructions.Notes.IndexOf(note))">
+                            +
+                        </button>
+                    </p>
+                }
+            </div>
         </div>
 
         @* By turning the element into a d-flex flex-column, we display them as a column, instead of displaying each element
@@ -41,23 +62,23 @@
             @* We encapsulate the forms and buttons into two divs, so that the lowest button gets displayed in the bottom
             right corner. *@
             <div>
-                <EditForm Model="@currentStep">
+                <EditForm Model="@_currentStep">
                     <label class="form-label fw-bold">New step text</label>
-                    <InputText @bind-Value="stepText" class="form-control"/>
+                    <InputText @bind-Value="_stepText" class="form-control"/>
 
                     <button type="submit" class="btn btn-primary" @onclick="HandleNewStep">Set New Step</button>
                 </EditForm>
 
-                <EditForm Model="@currentNote">
+                <EditForm Model="@_currentNote">
                     <label class="form-label fw-bold">New note text</label>
-                    <InputText @bind-Value="noteText" class="form-control"/>
+                    <InputText @bind-Value="_noteText" class="form-control"/>
 
                     <button type="submit" class="btn btn-primary" @onclick="HandleNewNote">Set New Note</button>
                 </EditForm>
 
-                <p>New step: @currentStep.StepText</p>
+                <p>New step: @_currentStep.StepText</p>
 
-                <p>New note: @currentNote.NoteText</p>
+                <p>New note: @_currentNote.NoteText</p>
             </div>
 
             @* "d-flex" - activates the flexbox layout, fot the content inside the div. *@
@@ -71,53 +92,53 @@
     </div>
 }
 
-<StatusMessageToast @ref="statusMessageToaster"/>
+<StatusMessageToast @ref="_statusMessageToaster"/>
 
 @code{
 
-    public int recipeId;
-    string stepText = "";
-    string noteText = "";
-    Step currentStep = new();
-    Note currentNote = new();
-    StatusMessageToast statusMessageToaster = null!;
-    RecipeInstructionRecord? instructions;
+    public int _recipeId;
+    string _stepText = "";
+    string _noteText = "";
+    Step _currentStep = new();
+    Note _currentNote = new();
+    StatusMessageToast _statusMessageToaster = null!;
+    RecipeInstructionRecord? _instructions;
 
     private async Task HandleGettingInstructions()
     {
         Console.WriteLine("Handling getting instructions...");
-        var result = await DbService.GetRecipeInstructionsByRecipeId(recipeId);
+        var result = await DbService.GetRecipeInstructionsByRecipeId(_recipeId);
         if (result.instructions == null)
-            await statusMessageToaster.ShowToastAsync(result.message);
+            await _statusMessageToaster.ShowToastAsync(result.message);
         else
-            instructions = result.instructions;
+            _instructions = result.instructions;
     }
 
     private void HandleNewStep()
     {
-        currentStep.StepText = stepText;
+        _currentStep.StepText = _stepText;
     }
 
     private void HandleNewNote()
     {
-        currentNote.NoteText = noteText;
+        _currentNote.NoteText = _noteText;
     }
 
     private async Task HandleUpdatingInstructions()
     {
-        if (instructions != null)
+        if (_instructions != null)
         {
-            currentStep.StepNumber = instructions.Instructions.Steps.Count + 1;
-            currentNote.NoteNumber = instructions.Instructions.Notes.Count + 1;
+            _currentStep.StepNumber = _instructions.Instructions.Steps.Count + 1;
+            _currentNote.NoteNumber = _instructions.Instructions.Notes.Count + 1;
 
-            if (currentStep.StepText != "")
-                instructions.Instructions.Steps.Add(currentStep);
+            if (_currentStep.StepText != "")
+                _instructions.Instructions.Steps.Add(_currentStep);
 
-            if (currentNote.NoteText != "")
-                instructions.Instructions.Notes.Add(currentNote);
+            if (_currentNote.NoteText != "")
+                _instructions.Instructions.Notes.Add(_currentNote);
 
-            var result = await DbService.UpdateInstructionsByInstructionsId(instructions, instructions.GetId());
-            await statusMessageToaster.ShowToastAsync(result);
+            var result = await DbService.UpdateInstructionsByInstructionsId(_instructions, _instructions.GetId());
+            await _statusMessageToaster.ShowToastAsync(result);
         }
         else
         {
@@ -127,18 +148,70 @@
 
     private void DeleteStep(int index)
     {
-        if (instructions != null)
-            instructions.Instructions.Steps.RemoveAt(index);
+        if (_instructions != null)
+            _instructions.Instructions.Steps.RemoveAt(index);
 
         StateHasChanged();
     }
 
     private void DeleteNote(int index)
     {
-        if (instructions != null)
-            instructions.Instructions.Notes.RemoveAt(index);
+        if (_instructions != null)
+            _instructions.Instructions.Notes.RemoveAt(index);
 
         StateHasChanged();
+    }
+
+    private void IncrementStep(int stepNum)
+    {
+        if (stepNum == _instructions.Instructions.Steps.Count - 1)
+        {
+            Console.WriteLine("");
+            _ = _statusMessageToaster.ShowToastAsync("Cant increment step any further");
+            return;
+        }
+
+        // Just swapping stepNum with stepNum+1.
+        (_instructions.Instructions.Steps[stepNum].StepText, _instructions.Instructions.Steps[stepNum + 1].StepText) = (_instructions.Instructions.Steps[stepNum + 1].StepText, _instructions.Instructions.Steps[stepNum].StepText);
+    }
+
+    private void DecrementStep(int stepNum)
+    {
+        if (stepNum == 0)
+        {
+            Console.WriteLine("");
+            _ = _statusMessageToaster.ShowToastAsync("Cant decrement step any further");
+            return;
+        }
+
+        // Just swapping stepNum with stepNum-1.
+        (_instructions.Instructions.Steps[stepNum].StepText, _instructions.Instructions.Steps[stepNum - 1].StepText) = (_instructions.Instructions.Steps[stepNum - 1].StepText, _instructions.Instructions.Steps[stepNum].StepText);
+    }
+
+    private void IncrementNote(int noteNum)
+    {
+        if (noteNum == _instructions.Instructions.Notes.Count - 1)
+        {
+            Console.WriteLine("");
+            _ = _statusMessageToaster.ShowToastAsync("Cant increment step any further");
+            return;
+        }
+
+        // Just swapping stepNum with stepNum+1.
+        (_instructions.Instructions.Notes[noteNum].NoteText, _instructions.Instructions.Notes[noteNum + 1].NoteText) = (_instructions.Instructions.Notes[noteNum + 1].NoteText, _instructions.Instructions.Notes[noteNum].NoteText);
+    }
+
+    private void DecrementNote(int noteNum)
+    {
+        if (noteNum == 0)
+        {
+            Console.WriteLine("");
+            _ = _statusMessageToaster.ShowToastAsync("Cant decrement step any further");
+            return;
+        }
+
+        // Just swapping stepNum with stepNum-1.
+        (_instructions.Instructions.Notes[noteNum].NoteText, _instructions.Instructions.Notes[noteNum - 1].NoteText) = (_instructions.Instructions.Notes[noteNum - 1].NoteText, _instructions.Instructions.Notes[noteNum].NoteText);
     }
 
 }
