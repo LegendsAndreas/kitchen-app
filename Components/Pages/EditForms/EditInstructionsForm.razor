@@ -21,14 +21,17 @@
                                                                                            @onclick="() => DeleteStep(_instructions.Instructions.Steps.IndexOf(step))">
                             <strong>X</strong>
                         </button>
+                    <div>
+                            
                         <button type="button" class="btn btn-secondary"
                                 @onclick="() => DecrementStep(_instructions.Instructions.Steps.IndexOf(step))">
-                            -
+                            ↑
                         </button>
                         <button type="button" class="btn btn-secondary"
                                 @onclick="() => IncrementStep(_instructions.Instructions.Steps.IndexOf(step))">
-                            +
+                            ↓
                         </button>
+                    </div>
                     </p>
                 }
             </div>
@@ -44,11 +47,11 @@
                         </button>
                         <button type="button" class="btn btn-secondary"
                                 @onclick="() => DecrementNote(_instructions.Instructions.Notes.IndexOf(note))">
-                            -
+                            ↑
                         </button>
                         <button type="button" class="btn btn-secondary"
                                 @onclick="() => IncrementNote(_instructions.Instructions.Notes.IndexOf(note))">
-                            +
+                            ↓
                         </button>
                     </p>
                 }
@@ -116,27 +119,54 @@
 
     private void HandleNewStep()
     {
-        _currentStep.StepText = _stepText;
+        if (_instructions != null)
+        {
+            _currentStep.StepText = _stepText;
+            _currentStep.StepNumber = _instructions.Instructions.Steps.Count + 1;
+
+            if (_currentStep.StepText == "")
+            {
+                Console.WriteLine("No text for step");
+                _ = _statusMessageToaster.ShowToastAsync("No text added for the step");
+                return;
+            }
+
+            _instructions.Instructions.Steps.Add(_currentStep);
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Instructions = null");
+        }
     }
 
     private void HandleNewNote()
     {
-        _currentNote.NoteText = _noteText;
+        if (_instructions != null)
+        {
+            _currentNote.NoteText = _noteText;
+            _currentNote.NoteNumber = _instructions.Instructions.Notes.Count + 1;
+
+            if (_currentNote.NoteText == "")
+            {
+                Console.WriteLine("No text for note");
+                _ = _statusMessageToaster.ShowToastAsync("No text added for the note");
+                return;
+            }
+
+            _instructions.Instructions.Notes.Add(_currentNote);
+            StateHasChanged();
+        }
+        else
+        {
+            Console.WriteLine("Instructions = null");
+        }
     }
 
     private async Task HandleUpdatingInstructions()
     {
         if (_instructions != null)
         {
-            _currentStep.StepNumber = _instructions.Instructions.Steps.Count + 1;
-            _currentNote.NoteNumber = _instructions.Instructions.Notes.Count + 1;
-
-            if (_currentStep.StepText != "")
-                _instructions.Instructions.Steps.Add(_currentStep);
-
-            if (_currentNote.NoteText != "")
-                _instructions.Instructions.Notes.Add(_currentNote);
-
             var result = await DbService.UpdateInstructionsByInstructionsId(_instructions, _instructions.GetId());
             await _statusMessageToaster.ShowToastAsync(result);
         }
