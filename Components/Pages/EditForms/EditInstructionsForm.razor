@@ -22,7 +22,7 @@
                             <strong>X</strong>
                         </button>
                     <div>
-                            
+
                         <button type="button" class="btn btn-secondary"
                                 @onclick="() => DecrementStep(_instructions.Instructions.Steps.IndexOf(step))">
                             ↑
@@ -40,15 +40,20 @@
             <div class="card" style="background-color: #272b2f">
                 @foreach (var note in _instructions.Instructions.Notes)
                 {
-                    <p style="padding-left: 10px">@note.NoteNumber. @note.NoteText <button type="submit"
-                                                                                           class="btn btn-danger"
-                                                                                           @onclick="() => DeleteNote(_instructions.Instructions.Notes.IndexOf(note))">
+                    <p style="padding-left: 10px">
+                        @note.NoteNumber. @note.NoteText
+                        
+                        <button type="submit"
+                                class="btn btn-danger"
+                                @onclick="() => DeleteNote(_instructions.Instructions.Notes.IndexOf(note))">
                             <strong>X</strong>
                         </button>
+                        
                         <button type="button" class="btn btn-secondary"
                                 @onclick="() => DecrementNote(_instructions.Instructions.Notes.IndexOf(note))">
                             ↑
                         </button>
+                        
                         <button type="button" class="btn btn-secondary"
                                 @onclick="() => IncrementNote(_instructions.Instructions.Notes.IndexOf(note))">
                             ↓
@@ -99,7 +104,7 @@
 
 @code{
 
-    public int _recipeId;
+    int _recipeId;
     string _stepText = "";
     string _noteText = "";
     Step _currentStep = new();
@@ -132,7 +137,7 @@
             }
 
             // Pointers and Heap. We cant just say "Add _currentStep to steps".
-            Step tempCurrentStep = _currentStep.TransferStepValues(_currentStep);
+            var tempCurrentStep = _currentStep.TransferStepValues(_currentStep);
 
             _instructions.Instructions.Steps.Add(tempCurrentStep);
             StateHasChanged();
@@ -157,7 +162,10 @@
                 return;
             }
 
-            _instructions.Instructions.Notes.Add(_currentNote);
+            // Pointers and Heap.
+            var tempCurrentNote = _currentNote.TransferNoteValues(_currentNote);
+
+            _instructions.Instructions.Notes.Add(tempCurrentNote);
             StateHasChanged();
         }
         else
@@ -203,17 +211,17 @@
 
     private void orderStepNumbers(RecipeInstructionRecord instructionRecord)
     {
-        int i = 1;
+        var i = 1;
         foreach (var step in instructionRecord.Instructions.Steps)
         {
             step.StepNumber = i;
             i++;
         }
     }
-    
+
     private void orderNoteNumbers(RecipeInstructionRecord instructionRecord)
     {
-        int i = 1;
+        var i = 1;
         foreach (var note in instructionRecord.Instructions.Notes)
         {
             note.NoteNumber = i;
@@ -236,7 +244,7 @@
 
     private void DecrementStep(int stepNum)
     {
-        if (stepNum == 0)
+        if (stepNum <= 0)
         {
             Console.WriteLine("");
             _ = _statusMessageToaster.ShowToastAsync("Cant decrement step any further");
