@@ -36,7 +36,7 @@
 
 </style>
 
-<button type="button" class="btn btn-primary" @onclick="DisplayWeek">Change State</button>
+@* <button type="button" class="btn btn-primary" @onclick="DisplayWeek">Change State</button> *@
 
 @* Total macros for a day *@
 <div class="container ingredient-form">
@@ -65,14 +65,6 @@
         </div>
     </div>
 
-    <div class="col alignment">
-        @if (SharedSelectedRecipe.SelectedRecipe != null)
-        {
-            <div style="width: 15%">
-                <PreviewRecipe CurrentPreviewRecipe="@SharedSelectedRecipe.SelectedRecipe"/>
-            </div>
-        }
-    </div>
 
     @* Current day total macros *@
     <div class="border-style" style="margin-top: 25px">

@@ -79,9 +79,9 @@
                     <button type="submit" class="btn btn-primary" @onclick="HandleNewNote">Set New Note</button>
                 </EditForm>
 
-                <p>New step: @_currentStep.StepText</p>
+                @*<p>New step: @_currentStep.StepText</p>
 
-                <p>New note: @_currentNote.NoteText</p>
+                <p>New note: @_currentNote.NoteText</p>*@
             </div>
 
             @* "d-flex" - activates the flexbox layout, fot the content inside the div. *@
@@ -131,7 +131,10 @@
                 return;
             }
 
-            _instructions.Instructions.Steps.Add(_currentStep);
+            // Pointers and Heap. We cant just say "Add _currentStep to steps".
+            Step tempCurrentStep = _currentStep.TransferStepValues(_currentStep);
+
+            _instructions.Instructions.Steps.Add(tempCurrentStep);
             StateHasChanged();
         }
         else
@@ -179,7 +182,10 @@
     private void DeleteStep(int index)
     {
         if (_instructions != null)
+        {
             _instructions.Instructions.Steps.RemoveAt(index);
+            orderStepNumbers(_instructions);
+        }
 
         StateHasChanged();
     }
@@ -187,9 +193,32 @@
     private void DeleteNote(int index)
     {
         if (_instructions != null)
+        {
             _instructions.Instructions.Notes.RemoveAt(index);
+            orderNoteNumbers(_instructions);
+        }
 
         StateHasChanged();
+    }
+
+    private void orderStepNumbers(RecipeInstructionRecord instructionRecord)
+    {
+        int i = 1;
+        foreach (var step in instructionRecord.Instructions.Steps)
+        {
+            step.StepNumber = i;
+            i++;
+        }
+    }
+    
+    private void orderNoteNumbers(RecipeInstructionRecord instructionRecord)
+    {
+        int i = 1;
+        foreach (var note in instructionRecord.Instructions.Notes)
+        {
+            note.NoteNumber = i;
+            i++;
+        }
     }
 
     private void IncrementStep(int stepNum)
