@@ -1,10 +1,15 @@
 @page "/recipe-details"
+@using QuestPDF.Companion
+@using QuestPDF.Fluent;
+@using QuestPDF.Helpers;
+@using QuestPDF.Infrastructure;
 @using WebKitchen.Components.SharedComponents
 @rendermode InteractiveServer
 @inject DBService DbService
 @inject SharedRecipe SharedDetailedRecipe
 <PageTitle>Recipe Details</PageTitle>
 
+<button type="button" class="btn btn-primary" @onclick="HandleMakingPDF">Create PDF</button>
 
 <div class="container border-layout" id="recipe-details">
     @* In case we come a across a string, that is clonger than the column it is in, "text-break" breaks it into smaller strings, so that it does not fuckup the layout *@
@@ -125,6 +130,72 @@
                     recipeInstructionRecord = result.instructions;
             }
         }
+    }
+
+    // Use async, otherwise it wont show up in the companion app.
+    private async Task HandleMakingPDF()
+    {
+        Console.WriteLine("Handling making pdf...");
+        QuestPDF.Settings.License = LicenseType.Community;
+        try
+        {
+            var pdfDoc = Document.Create(container =>
+                {
+                    container.Page(page =>
+                    {
+                        page.Size(PageSizes.A4);
+                        page.Margin(2, Unit.Centimetre);
+                        page.PageColor(Colors.White);
+                        page.DefaultTextStyle(x => x.FontSize(20));
+
+                        page.Header()
+                            .Text($"{sharedRecipe.Name}")
+                            .SemiBold().FontSize(36).FontColor(Colors.Blue.Medium);
+
+                        page.Content().Column(column =>
+                        {
+                            // Our ingredients and image of the recipe will be on the same row.
+                            column.Item().Row(row =>
+                            {
+                                row.RelativeItem().Column(ingredients =>
+                                {
+                                    ingredients.Item().Text("Ingredients").Bold().FontSize(20);
+                                    foreach (var ingredient in sharedRecipe.Ingredients)
+                                    {
+                                        ingredients.Item().Text($"{ingredient.Name} - {ingredient.Grams:F2}g").FontSize(14);
+                                    }
+                                });
+                                row.RelativeItem().Column(image =>
+                                {
+                                    var recipeImage = Convert.FromBase64String(sharedRecipe.Base64Image);
+                                    image.Item().ScaleToFit().Image(recipeImage);
+                                });
+                            });
+                            
+                            column.Item().Text("Steps").Bold().FontSize(20);
+                            foreach (var step in recipeInstructionRecord.Instructions.Steps)
+                            {
+                                column.Item().Text($"{step.StepNumber}. {step.StepText}").FontSize(14);
+                            }
+                            
+                            column.Item().Text("Notes").Bold().FontSize(20);
+                            foreach (var note in recipeInstructionRecord.Instructions.Notes)
+                            {
+                                column.Item().Text($"{note.NoteNumber}. {note.NoteText}").FontSize(14);
+                            }
+                        });
+                    });
+                });
+            pdfDoc.GeneratePdf("wwwroot/QuestPDF/hello.pdf");
+            await pdfDoc.ShowInCompanionAsync(); // Delete of comment out this line, when the final product is finished.
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error handling making pdf: " + ex.Message);
+            return;
+        }
+
+        _ = statusMessageToaster.ShowToastAsync("PDF created successfully: ");
     }
 
 }

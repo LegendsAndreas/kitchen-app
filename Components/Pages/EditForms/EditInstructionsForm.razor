@@ -42,18 +42,18 @@
                 {
                     <p style="padding-left: 10px">
                         @note.NoteNumber. @note.NoteText
-                        
+
                         <button type="submit"
                                 class="btn btn-danger"
                                 @onclick="() => DeleteNote(_instructions.Instructions.Notes.IndexOf(note))">
                             <strong>X</strong>
                         </button>
-                        
+
                         <button type="button" class="btn btn-secondary"
                                 @onclick="() => DecrementNote(_instructions.Instructions.Notes.IndexOf(note))">
                             ↑
                         </button>
-                        
+
                         <button type="button" class="btn btn-secondary"
                                 @onclick="() => IncrementNote(_instructions.Instructions.Notes.IndexOf(note))">
                             ↓
