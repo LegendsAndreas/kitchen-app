@@ -1,4 +1,6 @@
 @page "/recipe-details"
+@using System.Net.Mime
+@using Microsoft.AspNetCore.Mvc
 @using QuestPDF.Companion
 @using QuestPDF.Fluent;
 @using QuestPDF.Helpers;
@@ -7,9 +9,11 @@
 @rendermode InteractiveServer
 @inject DBService DbService
 @inject SharedRecipe SharedDetailedRecipe
+@inject IJSRuntime JS
+
 <PageTitle>Recipe Details</PageTitle>
 
-<button type="button" class="btn btn-primary" @onclick="HandleMakingPDF">Create PDF</button>
+<button type="button" class="btn btn-primary" @onclick="HandleDownloadingPdf">Download PDF</button>
 
 <div class="container border-layout" id="recipe-details">
     @* In case we come a across a string, that is clonger than the column it is in, "text-break" breaks it into smaller strings, so that it does not fuckup the layout *@
@@ -109,9 +113,24 @@
 
 <StatusMessageToast @ref="statusMessageToaster"/>
 
+@* The download function from https://learn.microsoft.com/en-us/aspnet/core/blazor/file-downloads?view=aspnetcore-9.0 *@
+<script>
+    window.downloadFileFromStream = async (fileName, contentStreamReference) => {
+        const arrayBuffer = await contentStreamReference.arrayBuffer();
+        const blob = new Blob([arrayBuffer]);
+        const url = URL.createObjectURL(blob);
+        const anchorElement = document.createElement('a');
+        anchorElement.href = url;
+        anchorElement.download = fileName ?? '';
+        anchorElement.click();
+        anchorElement.remove();
+        URL.revokeObjectURL(url);
+    }
+</script>
+
 @code {
     Recipe sharedRecipe = new();
-    RecipeInstructionRecord? recipeInstructionRecord = new();
+    RecipeInstructionRecord? recipeInstructionRecord;
     StatusMessageToast statusMessageToaster = null!;
 
     protected override async Task OnInitializedAsync()
@@ -132,70 +151,105 @@
         }
     }
 
-    // Use async, otherwise it wont show up in the companion app.
-    private async Task HandleMakingPDF()
+    // Use async, otherwise it won't show up in the companion app.
+    private async Task HandleDownloadingPdf()
     {
         Console.WriteLine("Handling making pdf...");
-        QuestPDF.Settings.License = LicenseType.Community;
         try
         {
+            using var pdfStream = new MemoryStream();
+            QuestPDF.Settings.License = LicenseType.Community;
+
             var pdfDoc = Document.Create(container =>
+            {
+                container.Page(page =>
                 {
-                    container.Page(page =>
+                    page.Size(PageSizes.A4);
+                    page.Margin(2, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+                    page.DefaultTextStyle(x => x.FontSize(20));
+
+                    page.Header().Text($"{sharedRecipe.Name}").SemiBold().FontSize(36).FontColor(Colors.Blue.Medium);
+
+                    page.Content().Column(column =>
                     {
-                        page.Size(PageSizes.A4);
-                        page.Margin(2, Unit.Centimetre);
-                        page.PageColor(Colors.White);
-                        page.DefaultTextStyle(x => x.FontSize(20));
-
-                        page.Header()
-                            .Text($"{sharedRecipe.Name}")
-                            .SemiBold().FontSize(36).FontColor(Colors.Blue.Medium);
-
-                        page.Content().Column(column =>
+                        // Our ingredients and image of the recipe will be on the same row.
+                        column.Item().Row(row =>
                         {
-                            // Our ingredients and image of the recipe will be on the same row.
-                            column.Item().Row(row =>
+                            row.RelativeItem().Column(ingredients =>
                             {
-                                row.RelativeItem().Column(ingredients =>
+                                ingredients.Item().Text("Ingredients").Bold().FontSize(20);
+                                foreach (var ingredient in sharedRecipe.Ingredients)
                                 {
-                                    ingredients.Item().Text("Ingredients").Bold().FontSize(20);
-                                    foreach (var ingredient in sharedRecipe.Ingredients)
-                                    {
-                                        ingredients.Item().Text($"{ingredient.Name} - {ingredient.Grams:F2}g").FontSize(14);
-                                    }
-                                });
-                                row.RelativeItem().Column(image =>
-                                {
-                                    var recipeImage = Convert.FromBase64String(sharedRecipe.Base64Image);
-                                    image.Item().ScaleToFit().Image(recipeImage);
-                                });
+                                    ingredients.Item().Text($"{ingredient.Name} - {ingredient.Grams:F2}g").FontSize(14);
+                                }
                             });
-                            
+                            row.RelativeItem().Column(image =>
+                            {
+                                var recipeImage = Convert.FromBase64String(sharedRecipe.Base64Image);
+                                image.Item().Image(recipeImage); // .ScaleToFit()
+                            });
+                        });
+
+                        if (recipeInstructionRecord == null)
+                        {
+                            column.Item().Text("Steps").Bold().FontSize(20);
+                            column.Item().Text("- No steps added -").FontSize(14);
+                            column.Item().Text("Notes").Bold().FontSize(20);
+                            column.Item().Text("- No notes added -").FontSize(14);
+                        }
+                        else
+                        {
                             column.Item().Text("Steps").Bold().FontSize(20);
                             foreach (var step in recipeInstructionRecord.Instructions.Steps)
                             {
-                                column.Item().Text($"{step.StepNumber}. {step.StepText}").FontSize(14);
+                                column.Item().Text($"{step.StepNumber}. {step.StepText}").FontSize(14).Justify();
                             }
-                            
+
                             column.Item().Text("Notes").Bold().FontSize(20);
-                            foreach (var note in recipeInstructionRecord.Instructions.Notes)
+                            if (recipeInstructionRecord.Instructions.Notes.Count == 0)
                             {
-                                column.Item().Text($"{note.NoteNumber}. {note.NoteText}").FontSize(14);
+                                column.Item().Text("- No notes added -").FontSize(14);
                             }
-                        });
+                            else
+                            {
+                                foreach (var note in recipeInstructionRecord.Instructions.Notes)
+                                {
+                                    column.Item().Text($"{note.NoteNumber}. {note.NoteText}").FontSize(14).Justify();
+                                }
+                            }
+                        }
                     });
                 });
-            pdfDoc.GeneratePdf("wwwroot/QuestPDF/hello.pdf");
-            await pdfDoc.ShowInCompanionAsync(); // Delete of comment out this line, when the final product is finished.
+            });
+            pdfDoc.GeneratePdf(pdfStream);
+            // await pdfDoc.ShowInCompanionAsync(); // Delete of comment out this line, when the final product is finished.
+
+            // We reset the position of the stream, so that when we download it, it gets read from the starts.
+            pdfStream.Position = 0;
+
+            try
+            {
+                var fileName = $"{sharedRecipe.Name}.pdf";
+                using var streamRef = new DotNetStreamReference(stream: pdfStream);
+
+                // We cant simply pass pdfStream as the stream, because the type is too complex for JavaScript.
+                // DotNetStreamReference is a type that allows you to communicate from C# to JavaScript.
+                await JS.InvokeVoidAsync("downloadFileFromStream", fileName, streamRef);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error downloading PDF: " + ex.Message);
+                _ = statusMessageToaster.ShowToastAsync("Error downloading PDF");
+                return;
+            }
         }
         catch (Exception ex)
         {
             Console.WriteLine("Error handling making pdf: " + ex.Message);
+            _ = statusMessageToaster.ShowToastAsync("Error creating PDF");
             return;
         }
-
-        _ = statusMessageToaster.ShowToastAsync("PDF created successfully: ");
     }
 
 }
