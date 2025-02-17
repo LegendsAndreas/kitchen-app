@@ -1,0 +1,153 @@
+﻿@page "/tray-converter"
+@rendermode InteractiveServer
+
+<PageTitle>Tray Converter</PageTitle>
+
+<div class="card border-layout">
+    <div class="card-body">
+        <div class="row row-cols-2">
+            <div class="col">
+                <h5><u>Tray to be converted</u></h5>
+                <EditForm Model="@this">
+                    @switch (_currentShape)
+                    {
+                        case Shape.Rectangle:
+                            <label class="form-label">Height/Width</label>
+                            break;
+                        case Shape.Circle:
+                            <label class="form-label">Height/Diameter</label>
+                            break;
+                    }
+                    <div>
+                        <InputNumber @bind-Value="_trayHeight"/>
+                        <span>x</span>
+                        <InputNumber @bind-Value="_trayWidth"/>
+                    </div>
+
+                    <div style="margin-top: 1rem">
+                        @*<button type="button" class="btn btn-secondary" @onclick="HandleChangingMeasurement">Change
+                            Measurement
+                        </button>*@
+                        <button type="button" class="btn btn-secondary" @onclick="HandleChangingShape">Change
+                            Shape
+                        </button>
+                        <button type="button" class="btn btn-primary" @onclick="HandleConvertingTray">Convert Tray</button>
+                    </div>
+                </EditForm>
+            </div>
+
+            <div class="col">
+                <h5><u>Converted Tray</u></h5>
+                <div>
+                    <label class="form-label">Convert Measurements to: </label>
+                    <InputSelect @bind-Value="_measurementOption">
+                        @foreach (var measurement in Enum.GetValues<Measurement>())
+                        {
+                            <option value="@measurement">@measurement</option>
+                        }
+                    </InputSelect>
+
+                    <label class="form-label">Convert Shape to: </label>
+                    <InputSelect @bind-Value="_shapeOption">
+                        @foreach (var shape in Enum.GetValues<Shape>())
+                        {
+                            <option value="@shape">@shape</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div>
+                    @if (_convertedTrayHeight != 0)
+                    {
+                        <p>You'd want to use a @_convertedTrayHeight x @_convertedTrayWidth to @(_convertedTrayHeight + 1) x @(_convertedTrayWidth + 1)</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div>
+            @*<p>
+                Current Measurement: @_currentMeasurement
+            </p>*@
+            <p>
+                Current Shape: @_currentShape
+            </p>
+        </div>
+    </div>
+</div>
+
+@code{
+
+    int _trayHeight;
+    int _trayWidth;
+    int _convertedTrayHeight;
+    int _convertedTrayWidth;
+    Shape _currentShape = Shape.Rectangle;
+    Shape _shapeOption = Shape.Rectangle;
+    Measurement _currentMeasurement = Measurement.Inch;
+    Measurement _measurementOption = Measurement.Metric;
+    
+    enum Measurement
+    {
+        Metric,
+        Inch
+    }
+
+    enum Shape
+    {
+        Rectangle,
+        Circle
+    }
+
+    private void HandleChangingMeasurement()
+    {
+        // By converting the enum to an int and getting the remainder of it with Enum Measurement, we always change the measurement correctly.
+        _currentMeasurement = (Measurement)(((int)_currentMeasurement + 1) % Enum.GetValues<Measurement>().Length);
+        StateHasChanged();
+    }
+
+    private void HandleChangingShape()
+    {
+        _currentShape = (Shape)(((int)_currentShape + 1) % Enum.GetValues<Shape>().Length);
+        StateHasChanged();
+    }
+
+    private void HandleConvertingTray()
+    {
+        if (_shapeOption == Shape.Rectangle)
+            calculateRectangle();
+        else if (_shapeOption == Shape.Circle)
+            calculateCircle();
+        
+        StateHasChanged();
+    }
+
+    private void calculateRectangle()
+    {
+        if (_measurementOption == Measurement.Metric)
+        {
+            _convertedTrayHeight = (int)Math.Floor(_trayHeight * 2.54);
+            _convertedTrayWidth = (int)Math.Floor(_trayWidth * 2.54);
+        }
+        else
+        {
+            _convertedTrayHeight = (int)Math.Floor(_trayWidth / 2.54);
+            _convertedTrayWidth = (int)Math.Floor(_trayWidth / 2.54);
+        }
+    }
+
+    private void calculateCircle()
+    {
+        if (_measurementOption == Measurement.Metric)
+        {
+            _convertedTrayHeight = (int)Math.Floor(_trayHeight * 2.54);
+            _convertedTrayWidth = (int)Math.Floor(_trayWidth * 2.54);
+        }
+        else
+        {
+            _convertedTrayHeight = (int)Math.Floor(_trayWidth / 2.54);
+            _convertedTrayWidth = (int)Math.Floor(_trayWidth / 2.54);
+        }
+    }
+
+}
