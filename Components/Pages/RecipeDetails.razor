@@ -13,7 +13,6 @@
 
 <PageTitle>Recipe Details</PageTitle>
 
-<button type="button" class="btn btn-primary" @onclick="HandleDownloadingPdf">Download PDF</button>
 
 <div class="container border-layout" id="recipe-details">
     @* In case we come a across a string, that is clonger than the column it is in, "text-break" breaks it into smaller strings, so that it does not fuckup the layout *@
@@ -58,8 +57,49 @@
                         <span class="dots"></span>
                         <span class="value">&nbsp;@sharedRecipe.TotalMacros.Carbs.ToString(".00")g</span>
                     </li>
+                    <li>
+                        <div>
+                            <div class="accordion border-layout" id="accordionExample" style="margin-top: 10px;">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#collapseOne"
+                                                aria-expanded="true" aria-controls="collapseOne">
+                                            Macros Breakdown
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                            @* If we dont set calories to zero, everytime we load this part, the total amount will not be accurate. *@
+                                            @if (totalCalories != 0)
+                                            {
+                                                SetTotalCaloriesToZero();
+                                            }
+                                            @foreach (var ingredient in sharedRecipe.Ingredients)
+                                            {
+                                                <h5>@ingredient.Name</h5>
+                                                <h6>Calories: @ingredient.CaloriesPer100g * @ingredient.Grams.ToString("")g
+                                                    = @CalculateCaloriesAndGrams(ingredient.CaloriesPer100g, ingredient.Grams).ToString(".00")</h6>
+                                                <h6>Fat: @ingredient.FatPer100g * @ingredient.Grams.ToString("")g
+                                                    = @CalculateMacroAndGrams(ingredient.FatPer100g, ingredient.Grams).ToString(".00")</h6>
+                                                <h6>Carbs: @ingredient.CarbsPer100g * @ingredient.Grams.ToString("")g
+                                                    = @CalculateMacroAndGrams(ingredient.CarbsPer100g, ingredient.Grams).ToString(".00")</h6>
+                                                <h6>Protein: @ingredient.ProteinPer100g * @ingredient.Grams.ToString("")g
+                                                    = @CalculateMacroAndGrams(ingredient.ProteinPer100g, ingredient.Grams).ToString(".00")</h6>
+                                                <h6>Total calories: @totalCalories.ToString(".00")</h6>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
                 </ul>
             </div>
+
+            <button type="button" class="btn btn-primary" @onclick="HandleDownloadingPdf" style="margin: 1rem">Download
+                PDF
+            </button>
         </div>
 
         <div class="col">
@@ -81,7 +121,6 @@
                         <p>No steps added.</p>
                     }
                 </ol>
-
             </div>
 
             <div>
@@ -129,6 +168,7 @@
 </script>
 
 @code {
+    float totalCalories;
     Recipe sharedRecipe = new();
     RecipeInstructionRecord? recipeInstructionRecord;
     StatusMessageToast statusMessageToaster = null!;
@@ -151,10 +191,27 @@
         }
     }
 
+    private void SetTotalCaloriesToZero()
+    {
+        totalCalories = 0;
+    }
+
+    private float CalculateCaloriesAndGrams(float calories, float grams)
+    {
+        var calsAndGrams = calories * (grams / 100);
+        totalCalories += calsAndGrams;
+        return calsAndGrams;
+    }
+
+    private float CalculateMacroAndGrams(float macro, float grams)
+    {
+        return macro * (grams / 100);
+    }
+
     // Use async, otherwise it won't show up in the companion app.
     private async Task HandleDownloadingPdf()
     {
-        Console.WriteLine("Handling making pdf...");
+        Console.WriteLine("Handling downloading pdf...");
         try
         {
             using var pdfStream = new MemoryStream();
@@ -246,7 +303,7 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error handling making pdf: " + ex.Message);
+            Console.WriteLine("Error creating pdf: " + ex.Message);
             _ = statusMessageToaster.ShowToastAsync("Error creating PDF");
             return;
         }
