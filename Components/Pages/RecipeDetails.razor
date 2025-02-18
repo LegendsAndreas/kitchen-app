@@ -77,7 +77,7 @@
                                             }
                                             @foreach (var ingredient in sharedRecipe.Ingredients)
                                             {
-                                                <h5>@ingredient.Name</h5>
+                                                <h5><strong>@ingredient.Name</strong></h5>
                                                 <h6>Calories: @ingredient.CaloriesPer100g * @ingredient.Grams.ToString("")g
                                                     = @CalculateCaloriesAndGrams(ingredient.CaloriesPer100g, ingredient.Grams).ToString(".00")</h6>
                                                 <h6>Fat: @ingredient.FatPer100g * @ingredient.Grams.ToString("")g
@@ -226,7 +226,7 @@
                     page.PageColor(Colors.White);
                     page.DefaultTextStyle(x => x.FontSize(20));
 
-                    page.Header().Text($"{sharedRecipe.Name}").SemiBold().FontSize(36).FontColor(Colors.Blue.Medium);
+                    page.Header().PaddingBottom(5).Text($"{sharedRecipe.Name}").SemiBold().FontSize(36).FontColor(Colors.Blue.Medium);
 
                     page.Content().Column(column =>
                     {
