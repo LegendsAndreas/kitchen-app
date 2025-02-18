@@ -62,30 +62,35 @@
                             <div class="accordion border-layout" id="accordionExample" style="margin-top: 10px;">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        <button class="accordion-button collapsed" type="button"
+                                                data-bs-toggle="collapse"
                                                 data-bs-target="#collapseOne"
                                                 aria-expanded="true" aria-controls="collapseOne">
                                             Macros Breakdown
                                         </button>
                                     </h2>
-                                    <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                    <div id="collapseOne" class="accordion-collapse collapse"
+                                         data-bs-parent="#accordionExample">
                                         <div class="accordion-body">
                                             @* If we dont set calories to zero, everytime we load this part, the total amount will not be accurate. *@
+                                            @* Dont fucking listen to the warning, it is a liar *@
                                             @if (totalCalories != 0)
                                             {
-                                                SetTotalCaloriesToZero();
+                                                totalCalories = 0;
                                             }
                                             @foreach (var ingredient in sharedRecipe.Ingredients)
                                             {
                                                 <h5><strong>@ingredient.Name</strong></h5>
-                                                <h6>Calories: @ingredient.CaloriesPer100g * @ingredient.Grams.ToString("")g
+                                                <h6>
+                                                    Calories: @ingredient.CaloriesPer100g * @ingredient.Grams.ToString("")g
                                                     = @CalculateCaloriesAndGrams(ingredient.CaloriesPer100g, ingredient.Grams).ToString(".00")</h6>
+                                                <h6>
+                                                    Protein: @ingredient.ProteinPer100g * @ingredient.Grams.ToString("")g
+                                                    = @CalculateMacroAndGrams(ingredient.ProteinPer100g, ingredient.Grams).ToString(".00")</h6>
                                                 <h6>Fat: @ingredient.FatPer100g * @ingredient.Grams.ToString("")g
                                                     = @CalculateMacroAndGrams(ingredient.FatPer100g, ingredient.Grams).ToString(".00")</h6>
                                                 <h6>Carbs: @ingredient.CarbsPer100g * @ingredient.Grams.ToString("")g
                                                     = @CalculateMacroAndGrams(ingredient.CarbsPer100g, ingredient.Grams).ToString(".00")</h6>
-                                                <h6>Protein: @ingredient.ProteinPer100g * @ingredient.Grams.ToString("")g
-                                                    = @CalculateMacroAndGrams(ingredient.ProteinPer100g, ingredient.Grams).ToString(".00")</h6>
                                                 <h6>Total calories: @totalCalories.ToString(".00")</h6>
                                             }
                                         </div>
@@ -189,11 +194,6 @@
                     recipeInstructionRecord = result.instructions;
             }
         }
-    }
-
-    private void SetTotalCaloriesToZero()
-    {
-        totalCalories = 0;
     }
 
     private float CalculateCaloriesAndGrams(float calories, float grams)
