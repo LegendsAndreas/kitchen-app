@@ -265,20 +265,15 @@
             return;
         }
 
-        Ingredient tempIngredient = new();
-
-        currentIngredientRecipe.PrintRecipe();
-
-        tempIngredient.Name = currentIngredientRecipe.Name;
-        tempIngredient.CaloriesPer100g = currentIngredientRecipe.TotalMacros.Calories;
-        tempIngredient.FatPer100g = currentIngredientRecipe.TotalMacros.Fat;
-        tempIngredient.CarbsPer100g = currentIngredientRecipe.TotalMacros.Carbs;
-        tempIngredient.ProteinPer100g = currentIngredientRecipe.TotalMacros.Protein;
+        currentIngredient.Name = currentIngredientRecipe.Name;
         // ReSharper disable once PossibleLossOfFraction
-        tempIngredient.Grams = 100 / currentIngredientRecipeParts;
-
-        currentIngredients.Add(tempIngredient);
-        currentIngredientRecipe.ClearRecipe();
+        currentIngredient.Grams = 100 / currentIngredientRecipeParts;
+        currentIngredient.CaloriesPer100g = currentIngredientRecipe.TotalMacros.Calories;
+        currentIngredient.FatPer100g = currentIngredientRecipe.TotalMacros.Fat;
+        currentIngredient.CarbsPer100g = currentIngredientRecipe.TotalMacros.Carbs;
+        currentIngredient.ProteinPer100g = currentIngredientRecipe.TotalMacros.Protein;
+        
+        HandleIngredient();
     }
 
     public async Task HandleDbIngredient()

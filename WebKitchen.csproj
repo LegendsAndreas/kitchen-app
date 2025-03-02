@@ -17,6 +17,7 @@
 
     <ItemGroup>
       <Content Remove="wwwroot\pics\proteinbars.webp" />
+      <Content Remove="wwwroot\pics\flæskestegburger.webp" />
     </ItemGroup>
 
 <!--    <ItemGroup>
