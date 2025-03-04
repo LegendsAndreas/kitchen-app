@@ -79,9 +79,9 @@
     border-radius: 5px;
     background-color: #212529;
     font-size: 125%;
-/*    word-wrap: break-word;    !* Breaks long words to fit within a column *!
-    word-break: break-word;   !* Ensures long words break correctly *!
-    overflow-wrap: break-word; !* Provides additional compatibility *!*/
+    /*    word-wrap: break-word;    !* Breaks long words to fit within a column *!
+        word-break: break-word;   !* Ensures long words break correctly *!
+        overflow-wrap: break-word; !* Provides additional compatibility *!*/
 }
 
 /*#recipe-details ul li {
@@ -97,9 +97,19 @@
     margin-right: 10px;
 }
 
-.edit-recipes-form {
-    width: 25%;
+/* These 2 media tags controls the width of the content of the "Edit" pages */
+@media (max-width: 768px) {
+    .edit-recipes-form {
+        width: 100%;
+    }
 }
+
+@media (min-width: 769px) {
+    .edit-recipes-form {
+        width: 25%;
+    }
+}
+
 
 .toast-form {
     background-color: #272B2F;
