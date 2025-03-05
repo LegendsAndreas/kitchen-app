@@ -1184,7 +1184,7 @@ public class DBService
         var query = "UPDATE recipe_instructions " +
                     "SET instructions = jsonb_set(instructions::jsonb, '{name}', '\"" +
                     $"{recipeName}" +
-                    "\"'::jsonb) " +
+                    "\"'::jsonb, false) " +
                     "WHERE recipe_id = @recipe_id";
 
         try
