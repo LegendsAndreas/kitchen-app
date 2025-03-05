@@ -1254,7 +1254,6 @@ public class DBService
         string query = "UPDATE recipe_instructions " +
                        "SET recipe_id =" +
                        "(SELECT id FROM recipes WHERE name = instructions ->> 'name')";
-        bool status = true;
 
         try
         {
