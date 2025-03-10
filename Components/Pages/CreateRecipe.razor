@@ -76,48 +76,62 @@
             </div>
         </EditForm>
 
-        <EditForm Model="@currentIngredientRecipe">
-            <div class="container text-center border-layout paddage">
-                <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
-                    <RealTimeRecipeSearchBar RecipesData="@GlobalRecipes.Recipes"/>
+        @if (GlobalRecipes.Recipes.Count == 0)
+        {
+            <Loading LoadingParameter="recipes"/>
+        }
+        else
+        {
+            <EditForm Model="@currentIngredientRecipe">
+                <div class="container text-center border-layout paddage">
+                    <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
+                        <RealTimeRecipeSearchBar RecipesData="@GlobalRecipes.Recipes"/>
 
-                    <div class="col">
-                        <label class="form-label">Parts: 1/</label>
-                        <InputNumber @bind-Value="currentIngredientRecipeParts"/>
+                        <div class="col">
+                            <label class="form-label">Parts: 1/</label>
+                            <InputNumber @bind-Value="currentIngredientRecipeParts"/>
+                        </div>
+
+                        <div class="col">
+                            <p>Current Recipe: @(SharedDbRecipe?.SelectedRecipe?.Name ?? "")</p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" @onclick="AddRecipeAsIngredient">Add Recipe As
+                            Ingredient
+                        </button>
                     </div>
-
-                    <div class="col">
-                        <p>Current Recipe: @(SharedDbRecipe?.SelectedRecipe?.Name ?? "")</p>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" @onclick="AddRecipeAsIngredient">Add Recipe As
-                        Ingredient
-                    </button>
                 </div>
-            </div>
-        </EditForm>
+            </EditForm>
+        }
 
-        <EditForm Model="@currentIngredientGrams" OnSubmit="HandleDbIngredient">
-            <DataAnnotationsValidator/>
-            <div class="container text-center border-layout paddage">
-                <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
+        @if (GlobalIngredients.Ingredients.Count == 0)
+        {
+            <Loading LoadingParameter="ingredients"/>
+        }
+        else
+        {
+            <EditForm Model="@currentIngredientGrams" OnSubmit="HandleDbIngredient">
+                <DataAnnotationsValidator/>
+                <div class="container text-center border-layout paddage">
+                    <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
 
-                    <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"
-                                                 CurrentIngredientDataHasChanged="@(value => crossIngredient = value)"/>
+                        <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"
+                                                     CurrentIngredientDataHasChanged="@(value => crossIngredient = value)"/>
 
-                    <div class="col">
-                        <label class="form-label">Grams</label>
-                        <InputNumber id="gramser" @bind-Value="currentIngredientGrams"/>
+                        <div class="col">
+                            <label class="form-label">Grams</label>
+                            <InputNumber id="gramser" @bind-Value="currentIngredientGrams"/>
+                        </div>
+
+                        <div class="col">
+                            <p>Current Ingredient: @crossIngredient.Name</p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Add Existing Database Ingredient</button>
                     </div>
-
-                    <div class="col">
-                        <p>Current Ingredient: @crossIngredient.Name</p>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Add Existing Database Ingredient</button>
                 </div>
-            </div>
-        </EditForm>
+            </EditForm>
+        }
     </div>
 </div>
 
@@ -137,6 +151,37 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         // Console.WriteLine("Rendering Create Recipe...");
+
+        if (firstRender && !GlobalRecipes.Recipes.Any())
+        {
+            try
+            {
+                var result = await DbService.GetAllRecipes();
+                if (result.Recipes == null)
+                {
+                    await statusMessageToaster.ShowToastAsync(result.Message);
+                }
+                else
+                {
+                    await statusMessageToaster.ShowToastAsync(result.Message);
+                    GlobalRecipes.Recipes = result.Recipes;
+                    Console.WriteLine("Acquired Recipes.");
+                    StateHasChanged();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error getting recipes: " + ex.Message);
+                Console.WriteLine("StackTrace: " + ex.StackTrace);
+
+                if (ex.Message.Contains("Failed to connect"))
+                    await statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
+                else
+                    await statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
+
+                return;
+            }
+        }
 
         if (firstRender && !GlobalIngredients.Ingredients.Any())
         {
@@ -272,7 +317,7 @@
         currentIngredient.FatPer100g = currentIngredientRecipe.TotalMacros.Fat;
         currentIngredient.CarbsPer100g = currentIngredientRecipe.TotalMacros.Carbs;
         currentIngredient.ProteinPer100g = currentIngredientRecipe.TotalMacros.Protein;
-        
+
         HandleIngredient();
     }
 

@@ -1,9 +1,11 @@
 @page "/developer"
 @rendermode InteractiveServer
-@using WebKitchen.Components.SharedComponents;
-@inject DBService DbService;
 
-<div class="card border-layout">
+<div class="spinner-border" role="status">
+    <span class="visually-hidden">Loading...</span>
+</div>
+
+@*<div class="card border-layout">
     <div class="card-body custom-button-margin">
         <label class="form-label fw-bold">Recipe Id</label>
         <InputNumber id="name" @bind-Value="_recipeId" class="form-control"/>
@@ -59,12 +61,12 @@
                     </div>
                 </div>
 
-                @* By turning the element into a d-flex flex-column, we display them as a column, instead of displaying each element
+                $1$ By turning the element into a d-flex flex-column, we display them as a column, instead of displaying each element
         next to each other.
-        Then, we space them between each other, to get the forms to display at the top and the button at the bottom. *@
+        Then, we space them between each other, to get the forms to display at the top and the button at the bottom. #1#
                 <div class="col d-flex flex-column justify-content-between">
-                    @* We encapsulate the forms and buttons into two divs, so that the lowest button gets displayed in the bottom
-            right corner. *@
+                    $1$ We encapsulate the forms and buttons into two divs, so that the lowest button gets displayed in the bottom
+            right corner. #1#
                     <div>
                         <EditForm Model="@_currentStep">
                             <label class="form-label fw-bold">New step text</label>
@@ -85,8 +87,8 @@
                         <p>New note: @_currentNote.NoteText</p>
                     </div>
 
-                    @* "d-flex" - activates the flexbox layout, fot the content inside the div. *@
-                    @* "justify-content-end" - aligns the content to the right side. *@
+                    $1$ "d-flex" - activates the flexbox layout, fot the content inside the div. #1#
+                    $1$ "justify-content-end" - aligns the content to the right side. #1#
                     <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-primary" @onclick="HandleUpdatingInstructions">Update
                             Instructions
@@ -98,11 +100,11 @@
     </div>
 </div>
 
-<StatusMessageToast @ref="_statusMessageToaster"/>
+<StatusMessageToast @ref="_statusMessageToaster"/>*@
 
 @code{
 
-    public int _recipeId;
+    /*public int _recipeId;
     string _stepText = "";
     string _noteText = "";
     Step _currentStep = new();
@@ -218,6 +220,6 @@
 
         // Just swapping stepNum with stepNum-1.
         (_instructions.Instructions.Notes[noteNum].NoteText, _instructions.Instructions.Notes[noteNum - 1].NoteText) = (_instructions.Instructions.Notes[noteNum - 1].NoteText, _instructions.Instructions.Notes[noteNum].NoteText);
-    }
+    }*/
 
 }

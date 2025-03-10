@@ -15,7 +15,7 @@
 
     @if (GlobalRecipes.Recipes.Count == 0)
     {
-        <p class="card border-layout center-content" style="padding: 10px"><i>Loading recipes...</i></p>
+        <Loading LoadingParameter="recipes"/>
     }
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
@@ -56,7 +56,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Console.WriteLine("__Rendering Home__");
+        // Console.WriteLine("__Rendering Home__");
 
         if (firstRender && !GlobalRecipes.Recipes.Any())
         {

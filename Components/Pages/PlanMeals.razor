@@ -163,7 +163,7 @@
 
     protected override void OnInitialized()
     {
-        Console.WriteLine("__Initializing plan meals__");
+        // Console.WriteLine("__Initializing plan meals__");
 
         if (SharedSelectedRecipe.SelectedRecipe != null)
             SharedSelectedRecipe.SelectedRecipe = null!;
@@ -171,7 +171,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Console.WriteLine("__Rendering Plan Meals__");
+        // Console.WriteLine("__Rendering Plan Meals__");
 
         if (firstRender && !GlobalRecipes.Recipes.Any())
         {
