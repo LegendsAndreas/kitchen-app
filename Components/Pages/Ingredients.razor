@@ -81,9 +81,11 @@
 
     @if (GlobalIngredients.Ingredients.Count == 0)
     {
-        <Loading LoadingParameter="ingredients"/>
+        <div class="p-2">
+            <Loading LoadingParameter="ingredients"/>
+        </div>
     }
-    
+
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
         @foreach (var ingredient in GlobalIngredients.Ingredients)
         {
