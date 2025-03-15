@@ -1,9 +1,90 @@
 @page "/developer"
 @rendermode InteractiveServer
+@using WebKitchen.Components.SharedComponents;
+@inject DBService DbService;
 
-<div class="spinner-border" role="status">
-    <span class="visually-hidden">Loading...</span>
+<div class="container">
+    <div class="row">
+
+        @foreach (var profile in _profiles)
+        {
+            <div class="col text-center">
+                <a>
+                    <img src="data:image/png;base64,@profile.Image" alt="ops..." class="card-img image__round image__transition @(profile.Id == _activeId + 1 ? "image__enlarged" : "image__transparent image__unlarged")"
+                         id="home-recipe-image"
+                         @onclick="() => HandleChangingId(profile.Id)"/>
+                </a>
+            </div>
+        }
+    </div>
+    <div>
+        @if (_profiles.Count != 0)
+        {
+            <div class="text-center fade-in-text">
+                <span>@_profiles[_activeId].Name</span> <br/>
+                <span>"@_profiles[_activeId].Text"</span>
+            </div>
+        }
+    </div>
 </div>
+
+@code{
+
+    public int _activeId = 1;
+    public List<Profiles> _profiles = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        _profiles.Add(new Profiles
+        {
+            Id = 1,
+            Image = await SetImage(),
+            Name = "Tom",
+            Text = "Hello, i am Tom!"
+        });
+        _profiles.Add(new Profiles
+        {
+            Id = 2,
+            Image = await SetImage(),
+            Name = "David",
+            Text = "Hello, i am david!"
+        });
+        _profiles.Add(new Profiles
+        {
+            Id = 3,
+            Image = await SetImage(),
+            Name = "Josh",
+            Text = "Hello, i am Josh!"
+        });
+        _profiles.Add(new Profiles
+        {
+            Id = 4,
+            Image = await SetImage(),
+            Name = "Darius",
+            Text = "Hello, i am Darius!"
+        });
+        _profiles.Add(new Profiles
+        {
+            Id = 5,
+            Image = await SetImage(),
+            Name = "Jesus",
+            Text = "Hello, i am Jesus!"
+        });
+    }
+
+    public void HandleChangingId(int id)
+    {
+        _activeId = id - 1;
+    }
+
+    public async Task<string> SetImage()
+    {
+        var img = await File.ReadAllBytesAsync("wwwroot/pics/PlaceHolderPic.jpg");
+        var base64PlaceHolderPic = Convert.ToBase64String(img);
+        return base64PlaceHolderPic;
+    }
+
+}
 
 @*<div class="card border-layout">
     <div class="card-body custom-button-margin">
@@ -100,11 +181,11 @@
     </div>
 </div>
 
-<StatusMessageToast @ref="_statusMessageToaster"/>*@
+<StatusMessageToast @ref="_statusMessageToaster"/>
 
 @code{
 
-    /*public int _recipeId;
+    public int _recipeId;
     string _stepText = "";
     string _noteText = "";
     Step _currentStep = new();
@@ -220,6 +301,6 @@
 
         // Just swapping stepNum with stepNum-1.
         (_instructions.Instructions.Notes[noteNum].NoteText, _instructions.Instructions.Notes[noteNum - 1].NoteText) = (_instructions.Instructions.Notes[noteNum - 1].NoteText, _instructions.Instructions.Notes[noteNum].NoteText);
-    }*/
+    }
 
-}
+}*@

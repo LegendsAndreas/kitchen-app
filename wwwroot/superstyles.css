@@ -1,12 +1,19 @@
-.test {
-  color: green;
-}
-.test__other-test {
-  color: blue;
-}
-
 .image__transparent {
   opacity: 0.5;
 }
+.image__enlarged {
+  width: 75px;
+  height: 75px;
+}
+.image__round {
+  border-radius: 50%;
+}
+.image__unlarged {
+  width: 50px;
+  height: 50px;
+}
+.image__transition {
+  transition: all 0.3s ease-in-out;
+}
 
-/*# sourceMappingURL=testsheet.css.map */
+/*# sourceMappingURL=superstyles.css.map */
