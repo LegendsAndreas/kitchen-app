@@ -1,0 +1,12 @@
+.test {
+  color: green;
+}
+.test__other-test {
+  color: blue;
+}
+
+.image__transparent {
+  opacity: 0.5;
+}
+
+/*# sourceMappingURL=testsheet.css.map */

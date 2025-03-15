@@ -1,8 +1,10 @@
 
 namespace WebKitchen.Services;
 
-public class SharedTestService
+public class Profiles
 {
-    public string TestString = "";
-    public int TestInt = 0;
+    public int Id;
+    public string Image = "";
+    public string Name = "";
+    public string Text = "";
 }

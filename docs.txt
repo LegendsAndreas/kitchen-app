@@ -128,3 +128,11 @@ The problem being that we forgot a parenthises, in the onclick value.
             </button>
             ...
         }
+        
+-- SCSS.
+Compile the SCSS file with the command: sass LOCATION/SCSS_SHEET.scss SCSS_SHEET.css. This will store the output in
+the underlying css file.
+Inside your regular stylesheet, you want to reference the new .css file, created from the .scss file, as such:
+@import "SCSS_FILE_NAME.css";
+Example: sass .\testsheet.scss testsheet.css
+Example: @import "testsheet.css";

@@ -1,3 +1,5 @@
+@import "superstyles.css";
+
 /* General Layouts */
 .border-layout {
     border-radius: 5px;
@@ -109,7 +111,6 @@
         width: 25%;
     }
 }
-
 
 .toast-form {
     background-color: #272B2F;

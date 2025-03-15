@@ -1,0 +1,12 @@
+.test{
+  color: green;
+  &__other-test{
+    color: blue;
+  }
+}
+
+.image {
+  &__transparent {
+    opacity: 0.5;
+  }
+}
