@@ -8,15 +8,15 @@
 
 <PageTitle>Create Recipe</PageTitle>
 
-<h1 class="toast-header header-padding font-layout border-layout" id="create-recipe-header">
+<h1 class="toast-header p-2 font-layout generel__border-layout d-inline-block">
     Create a new recipe!
 </h1>
 
-<div class="card center-content border-layout">
+<div class="card center-content generel__border-layout">
     <div class="card-body">
         <EditForm Model="@currentRecipe" OnValidSubmit="HandleRecipe">
             <DataAnnotationsValidator/>
-            <div class="container text-center border-layout paddage">
+            <div class="container text-center generel__border-layout m-2 p-4">
                 <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
                     <div class="col">
                         <label class="form-label">Meal Type:</label>
@@ -30,7 +30,7 @@
 
                     <label class="file-label"
                            for="fileInput">@(string.IsNullOrEmpty(currentRecipe.Base64Image) ? "Choose Image" : "Image Selected")</label>
-                    <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
+                    <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
 
                     <button type="submit" class="btn btn-primary col">Create Recipe</button>
                 </div>
@@ -39,7 +39,7 @@
 
         <EditForm Model="@currentIngredient" OnValidSubmit="HandleIngredient">
             <DataAnnotationsValidator/>
-            <div class="container text-center border-layout paddage">
+            <div class="container text-center generel__border-layout m-2 p-4">
                 <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
                     <div class="col">
                         <label>Ingredient Name:</label>
@@ -83,7 +83,7 @@
         else
         {
             <EditForm Model="@currentIngredientRecipe">
-                <div class="container text-center border-layout paddage">
+                <div class="container text-center generel__border-layout m-2 p-4">
                     <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
                         <RealTimeRecipeSearchBar RecipesData="@GlobalRecipes.Recipes"/>
 
@@ -112,7 +112,7 @@
         {
             <EditForm Model="@currentIngredientGrams" OnSubmit="HandleDbIngredient">
                 <DataAnnotationsValidator/>
-                <div class="container text-center border-layout paddage">
+                <div class="container text-center generel__border-layout m-2 p-4">
                     <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
 
                         <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"
@@ -120,7 +120,7 @@
 
                         <div class="col">
                             <label class="form-label">Grams</label>
-                            <InputNumber id="gramser" @bind-Value="currentIngredientGrams"/>
+                            <InputNumber @bind-Value="currentIngredientGrams"/>
                         </div>
 
                         <div class="col">

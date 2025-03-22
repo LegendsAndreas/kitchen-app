@@ -1,11 +1,9 @@
 @import "superstyles.css";
+@import "superstyles/Generel.css";
+@import "superstyles/ingredients.css";
+@import "superstyles/StatusMessageToast.css";
 
 /* General Layouts */
-.border-layout {
-    border-radius: 5px;
-    border: 2px solid #48d7ff;
-}
-
 .font-layout {
     background-color: #212529;
     color: #48d7ff;
@@ -14,31 +12,10 @@
     font-weight: bold;
 }
 
-.header-padding {
-    padding: 10px;
-}
-
-.forms-layout {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-}
-
-.paddage {
-    padding: 25px;
-    margin: 10px;
-}
-
 /* Random Meal */
 #random-meal-header {
     width: fit-content; /* Automatically fits the block of its content to fit it. */
     margin: 0 auto;
-}
-
-/* Create Recipe */
-#create-recipe-header {
-    display: inline-block;
 }
 
 /* Home */
@@ -64,11 +41,6 @@
     flex: 2; /* Dots take up adjustable space */
     border-bottom: 0.2em dotted white; /* Create a line of dots */
     height: 1.1em; /* Align dots with text */
-}
-
-/* Instructions */
-.instructions-button {
-    margin: 10px;
 }
 
 #recipe-image-style {
@@ -112,31 +84,13 @@
     }
 }
 
-.toast-form {
-    background-color: #272B2F;
-    padding: 25px;
-    border-radius: 10px;
-    border: 3px solid #48d7ff;
-    color: #48d7ff;
-    font-family: "Calibri Light", sans-serif;
-    font-style: italic;
-    font-weight: bold;
-}
-
 /* For image inputs */
-.hidden-file-input {
-    display: none;
-}
-
 .file-label {
     padding: 0.5em 1em;
     border-radius: 4px;
     background-color: #007bff;
     color: white;
     cursor: pointer;
-}
-
-#top-row-buttons {
 }
 
 #top-row-buttons a:hover {
@@ -154,13 +108,6 @@
     display: flex;
     justify-content: center;
     flex-direction: column;
-    align-items: center;
-}
-
-/* Has to be used in a div, where the div has the element that you want to center. */
-.center-element {
-    display: flex;
-    justify-content: center;
     align-items: center;
 }
 

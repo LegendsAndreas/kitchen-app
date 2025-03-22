@@ -12,10 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="wwwroot\QuestPDF\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Content Remove="wwwroot\pics\proteinbars.webp" />
       <Content Remove="wwwroot\pics\flæskestegburger.webp" />
     </ItemGroup>

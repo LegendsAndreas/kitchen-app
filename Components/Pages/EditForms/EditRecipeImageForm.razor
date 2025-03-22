@@ -3,10 +3,6 @@
 @inject DBService DbService;
 
 <style>
-    .hidden-file-input {
-        display: none;
-    }
-
     .file-label {
         padding: 0.5em 1em;
         border-radius: 4px;
@@ -24,7 +20,7 @@
 
 <EditForm Model="@base64Image" OnSubmit="@HandleSubmit">
     <label class="file-label" for="fileInput">Choose Image</label>
-    <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
+    <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
     <button class="btn btn-primary" type="submit">Update Image</button>
 </EditForm>
 

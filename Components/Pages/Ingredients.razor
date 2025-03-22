@@ -4,26 +4,13 @@
 @inject DBService DbService;
 @inject SharedIngredientList GlobalIngredients;
 
-<style>
-    .ingredient-form {
-        background-color: #272B2F;
-        padding: 25px;
-        border-radius: 10px;
-        border: 3px solid #48d7ff;
-        color: #48d7ff;
-        font-family: "Calibri Light", sans-serif;
-        font-style: italic;
-        font-weight: bold;
-    }
-</style>
-
 <PageTitle>Ingredients</PageTitle>
 
 @* Ingredient form *@
 <EditForm Model="@currentIngredient" OnValidSubmit="ValidIngredientAsync">
     <DataAnnotationsValidator/>
 
-    <div class="container ingredient-form">
+    <div class="container ingredients__form">
         <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-1">
             <div class="col">
                 <label class="form-label">
@@ -67,12 +54,12 @@
 
             <div class="col">
                 <label class="file-label btn btn-primary" for="fileInput">Choose Image</label>
-                <InputFile id="fileInput" OnChange="HandleImage" class="hidden-file-input"></InputFile>
+                <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
             </div>
 
 
         </div>
-        <button type="submit" class="btn btn-primary" style="margin: 5px">Add Ingredient</button>
+        <button type="submit" class="btn btn-primary">Add Ingredient</button>
     </div>
 </EditForm>
 
@@ -89,8 +76,8 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
         @foreach (var ingredient in GlobalIngredients.Ingredients)
         {
-            <div class="col" style="padding: 10px">
-                <div class="card h-100 border-layout">
+            <div class="col p-2" >
+                <div class="card h-100 generel__border-layout">
                     <img src="data:image/png;base64,@ingredient.Base64Image" alt="ops..."
                          class="card-img"/> @* card-img helps the look of the cards. *@
                     <div class="card-header">

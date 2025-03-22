@@ -13,7 +13,7 @@
 
 <PageTitle>Recipe Details</PageTitle>
 
-<div class="container border-layout" id="recipe-details">
+<div class="container generel__border-layout" id="recipe-details">
     @* In case we come a across a string, that is longer than the column it is in, "text-break" breaks it into smaller strings, so that it does not fuckup the layout *@
     <div class="row text-break">
         <div class="col-8">
@@ -58,7 +58,7 @@
                     </li>
                     <li>
                         <div>
-                            <div class="accordion border-layout" id="accordionExample" style="margin-top: 10px;">
+                            <div class="accordion generel__border-layout" id="accordionExample" style="margin-top: 10px;">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
                                         <button class="accordion-button collapsed" type="button"
@@ -72,7 +72,7 @@
                                          data-bs-parent="#accordionExample">
                                         <div class="accordion-body">
                                             @* If we dont set calories to zero, everytime we load this part, the total amount 
-                                            will not be accurate, becuase it would add the total amount too many times. *@
+                                            will not be accurate, because it would add additional unaccurate amounts to the total. *@
                                             @* Dont fucking listen to the warning, it is a liar *@
                                             @if (totalCalories != 0)
                                             {

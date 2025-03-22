@@ -68,3 +68,7 @@ Object-oriented programs are made up of objects. An object packages both data an
 __Updating DB__
 When updating an element in the DB, do it ALWAYS by ID. Since the ID is the only TRUE unique thing about every element,
 to ensure proper updateage, we always do it by ID.
+
+__SCSS__
+First create the file, then when you have added your CSS in the file, use the command: sass .\SCSS_NAME.scss .\SCSS_NAME.css.
+Then, in your stylesheet, import the .css file.
