@@ -6,7 +6,7 @@
 <PageTitle>Instructions</PageTitle>
 
 <div class="card generel__border-layout">
-    <div class="card-body p-2" >
+    <div class="card-body p-2">
         <div class="container-fluid">
             <div class="row justify-content-center">
                 <div class="col">
@@ -41,13 +41,13 @@
                                 @if (currentRecipe != null)
                                 {
                                     <img src="data:image/png;base64,@currentRecipe.Base64Image" alt="ops..."
-                                         class="card-img"
-                                         style="width: 75%"/>
+                                         class="card-img w-75"
+                                    />
                                 }
                                 else
                                 {
-                                    <img src="pics/PlaceHolderPic.jpg" alt="ops..." class="card-img"
-                                         style="width: 75%"/>
+                                    <img src="pics/PlaceHolderPic.jpg" alt="ops..." class="card-img w-75"
+                                    />
                                 }
                             </div>
                         </div>
@@ -62,7 +62,7 @@
 </div>
 
 <div class="card generel__border-layout mt-2">
-    <div class="card-body" style="padding: 10px;">
+    <div class="card-body">
         <EditForm Model="@currentStep" OnSubmit="@HandleSteps">
 
             <label class="form-label fw-bold">Step number:</label>
@@ -76,7 +76,7 @@
     </div>
 </div>
 
-<div class="card generel__border-layout" style="margin-top: 10px;">
+<div class="card generel__border-layout mt-2">
     <div class="card-body">
         <EditForm Model="@currentNote" OnSubmit="@HandleNotes">
 
@@ -90,7 +90,7 @@
     </div>
 </div>
 
-<div class="generel__border-layout" style="margin-top: 10px;">
+<div class="generel__border-layout mt-2">
     @* Steps *@
     <div class="accordion" id="accordion-steps">
         <div class="accordion-item">

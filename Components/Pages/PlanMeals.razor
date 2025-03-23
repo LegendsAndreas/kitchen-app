@@ -67,7 +67,7 @@
 
 
     @* Current day total macros *@
-    <div class="border-style" style="margin-top: 25px">
+    <div class="border-style mt-4">
         <button @onclick="PreviousDay" class="btn btn-primary">
             <strong>&lt;</strong>
         </button>
@@ -96,7 +96,7 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
         @foreach (var recipe in mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].DailyMeals)
         {
-            <div class="col" style="padding: 10px">
+            <div class="col p-2">
                 <div class="card h-100 generel__border-layout">
                     <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..."
                          class="card-img"/> @* card-img helps the look of the cards. *@
