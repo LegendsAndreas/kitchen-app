@@ -125,7 +125,6 @@
 
 @code{
 
-    int currentDay;
     int currentTotalMacrosDay;
     MealPlan mealPlanMacrosAndRecipes = new();
     StatusMessageToast statusMessageToaster = null!;
@@ -177,7 +176,7 @@
     private void AddRecipeToWeek()
     {
         Console.WriteLine("Adding recipe to week...");
-        mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay(SharedSelectedRecipe.SelectedRecipe, currentDay);
+        mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay(SharedSelectedRecipe.SelectedRecipe, currentTotalMacrosDay);
 
         StateHasChanged();
     }
@@ -185,10 +184,7 @@
     private void NextDay()
     {
         if (currentTotalMacrosDay < 6)
-        {
             currentTotalMacrosDay++;
-            currentDay = currentTotalMacrosDay;
-        }
         else
             JsRuntime.InvokeVoidAsync("showInvalidNextDayToast");
 
@@ -198,10 +194,7 @@
     private void PreviousDay()
     {
         if (currentTotalMacrosDay > 0)
-        {
             currentTotalMacrosDay--;
-            currentDay = currentTotalMacrosDay;
-        }
         else
             JsRuntime.InvokeVoidAsync("showInvalidPreviousDayToast");
 
