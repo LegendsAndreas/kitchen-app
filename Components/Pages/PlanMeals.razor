@@ -7,8 +7,6 @@
 @inject IJSRuntime JsRuntime;
 <PageTitle>Plan Meals</PageTitle>
 
-<link rel="stylesheet" href="app.css"/>
-
 <style>
     .ingredient-form {
         background-color: #272B2F;
@@ -20,20 +18,12 @@
         font-style: italic;
         font-weight: bold;
     }
-
-    .border-style {
-        background-color: #272B2F;
-        padding: 25px;
-        border-radius: 10px;
-        border: 3px solid #48d7ff;
-    }
-
 </style>
 
 @* <button type="button" class="btn btn-primary" @onclick="DisplayWeek">Change State</button> *@
 
 @* Total macros for a day *@
-<div class="container ingredient-form">
+<div class="container ingredient-form plan-meals">
     <div class="row g-1">
         <div class="col d-flex justify-content-center">
             <RealTimeRecipeSearchBar RecipesData="@GlobalRecipes.Recipes"/>
@@ -61,7 +51,7 @@
 
 
     @* Current day total macros *@
-    <div class="border-style mt-4">
+    <div class="generel__border-layout p-4 mt-4">
         <button @onclick="PreviousDay" class="btn btn-primary">
             <strong>&lt;</strong>
         </button>
