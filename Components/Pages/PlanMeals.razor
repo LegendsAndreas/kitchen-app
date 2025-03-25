@@ -28,12 +28,6 @@
         border: 3px solid #48d7ff;
     }
 
-    .alignment {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
 </style>
 
 @* <button type="button" class="btn btn-primary" @onclick="DisplayWeek">Change State</button> *@
@@ -41,15 +35,15 @@
 @* Total macros for a day *@
 <div class="container ingredient-form">
     <div class="row g-1">
-        <div class="col alignment">
+        <div class="col d-flex justify-content-center">
             <RealTimeRecipeSearchBar RecipesData="@GlobalRecipes.Recipes"/>
         </div>
 
-        <div class="col alignment">
+        <div class="col d-flex justify-content-center">
             <button type="submit" class="btn btn-primary" @onclick="AddRecipeToWeek">Add Recipe</button>
         </div>
 
-        <div class="col alignment">
+        <div class="col d-flex justify-content-center">
             @if (currentDay < 6)
             {
                 <button type="submit" class="btn btn-primary" @onclick="IncrementCurrentDay">Next Day</button>
@@ -60,7 +54,7 @@
             }
         </div>
 
-        <div class="col alignment">
+        <div class="col d-flex justify-content-center">
             <p>Current day is: @(currentDay + 1)</p>
         </div>
     </div>
@@ -76,14 +70,14 @@
         </button>
 
         <div class="row g-1">
-            <div class="col alignment">Day @(currentTotalMacrosDay + 1)</div>
-            <div class="col alignment">Total
+            <div class="col d-flex justify-content-center">Day @(currentTotalMacrosDay + 1)</div>
+            <div class="col d-flex justify-content-center">Total
                 Calories: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Calories.ToString("0")</div>
-            <div class="col alignment">Total
+            <div class="col d-flex justify-content-center">Total
                 Fat: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Fat.ToString("0")</div>
-            <div class="col alignment">Total
+            <div class="col d-flex justify-content-center">Total
                 Carbs: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Carbs.ToString("0")</div>
-            <div class="col alignment">Total
+            <div class="col d-flex justify-content-center">Total
                 Protein: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Protein.ToString("0")</div>
         </div>
     </div>
