@@ -185,7 +185,10 @@
     private void NextDay()
     {
         if (currentTotalMacrosDay < 6)
+        {
             currentTotalMacrosDay++;
+            currentDay = currentTotalMacrosDay;
+        }
         else
             JsRuntime.InvokeVoidAsync("showInvalidNextDayToast");
 
@@ -195,22 +198,13 @@
     private void PreviousDay()
     {
         if (currentTotalMacrosDay > 0)
+        {
             currentTotalMacrosDay--;
+            currentDay = currentTotalMacrosDay;
+        }
         else
             JsRuntime.InvokeVoidAsync("showInvalidPreviousDayToast");
 
-        StateHasChanged();
-    }
-
-    private void IncrementCurrentDay()
-    {
-        currentDay++;
-        StateHasChanged();
-    }
-
-    private void DisplayWeek()
-    {
-        Console.WriteLine("Displaying week...");
         StateHasChanged();
     }
 
