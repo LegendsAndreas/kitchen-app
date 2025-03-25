@@ -32,21 +32,6 @@
         <div class="col d-flex justify-content-center">
             <button type="submit" class="btn btn-primary" @onclick="AddRecipeToWeek">Add Recipe</button>
         </div>
-
-        <div class="col d-flex justify-content-center">
-            @if (currentDay < 6)
-            {
-                <button type="submit" class="btn btn-primary" @onclick="IncrementCurrentDay">Next Day</button>
-            }
-            else
-            {
-                <button type="submit" class="btn btn-primary" @onclick="DisplayWeek">Finish Week</button>
-            }
-        </div>
-
-        <div class="col d-flex justify-content-center">
-            <p>Current day is: @(currentDay + 1)</p>
-        </div>
     </div>
 
 
