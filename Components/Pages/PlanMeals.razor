@@ -7,8 +7,6 @@
 @inject IJSRuntime JsRuntime;
 <PageTitle>Plan Meals</PageTitle>
 
-<link rel="stylesheet" href="app.css"/>
-
 <style>
     .ingredient-form {
         background-color: #272B2F;
@@ -20,54 +18,25 @@
         font-style: italic;
         font-weight: bold;
     }
-
-    .border-style {
-        background-color: #272B2F;
-        padding: 25px;
-        border-radius: 10px;
-        border: 3px solid #48d7ff;
-    }
-
-    .alignment {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
 </style>
 
 @* <button type="button" class="btn btn-primary" @onclick="DisplayWeek">Change State</button> *@
 
 @* Total macros for a day *@
-<div class="container ingredient-form">
+<div class="container ingredient-form plan-meals">
     <div class="row g-1">
-        <div class="col alignment">
+        <div class="col d-flex justify-content-center">
             <RealTimeRecipeSearchBar RecipesData="@GlobalRecipes.Recipes"/>
         </div>
 
-        <div class="col alignment">
+        <div class="col d-flex justify-content-center">
             <button type="submit" class="btn btn-primary" @onclick="AddRecipeToWeek">Add Recipe</button>
-        </div>
-
-        <div class="col alignment">
-            @if (currentDay < 6)
-            {
-                <button type="submit" class="btn btn-primary" @onclick="IncrementCurrentDay">Next Day</button>
-            }
-            else
-            {
-                <button type="submit" class="btn btn-primary" @onclick="DisplayWeek">Finish Week</button>
-            }
-        </div>
-
-        <div class="col alignment">
-            <p>Current day is: @(currentDay + 1)</p>
         </div>
     </div>
 
 
     @* Current day total macros *@
-    <div class="border-style mt-4">
+    <div class="generel__border-layout p-4 mt-4">
         <button @onclick="PreviousDay" class="btn btn-primary">
             <strong>&lt;</strong>
         </button>
@@ -76,14 +45,14 @@
         </button>
 
         <div class="row g-1">
-            <div class="col alignment">Day @(currentTotalMacrosDay + 1)</div>
-            <div class="col alignment">Total
+            <div class="col d-flex justify-content-center">Day @(currentTotalMacrosDay + 1)</div>
+            <div class="col d-flex justify-content-center">Total
                 Calories: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Calories.ToString("0")</div>
-            <div class="col alignment">Total
+            <div class="col d-flex justify-content-center">Total
                 Fat: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Fat.ToString("0")</div>
-            <div class="col alignment">Total
+            <div class="col d-flex justify-content-center">Total
                 Carbs: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Carbs.ToString("0")</div>
-            <div class="col alignment">Total
+            <div class="col d-flex justify-content-center">Total
                 Protein: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Protein.ToString("0")</div>
         </div>
     </div>
@@ -156,7 +125,6 @@
 
 @code{
 
-    int currentDay;
     int currentTotalMacrosDay;
     MealPlan mealPlanMacrosAndRecipes = new();
     StatusMessageToast statusMessageToaster = null!;
@@ -208,7 +176,7 @@
     private void AddRecipeToWeek()
     {
         Console.WriteLine("Adding recipe to week...");
-        mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay(SharedSelectedRecipe.SelectedRecipe, currentDay);
+        mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay(SharedSelectedRecipe.SelectedRecipe, currentTotalMacrosDay);
 
         StateHasChanged();
     }
@@ -230,18 +198,6 @@
         else
             JsRuntime.InvokeVoidAsync("showInvalidPreviousDayToast");
 
-        StateHasChanged();
-    }
-
-    private void IncrementCurrentDay()
-    {
-        currentDay++;
-        StateHasChanged();
-    }
-
-    private void DisplayWeek()
-    {
-        Console.WriteLine("Displaying week...");
         StateHasChanged();
     }
 
