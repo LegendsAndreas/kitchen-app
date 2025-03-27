@@ -2,16 +2,6 @@
 @inject IJSRuntime JsRuntime
 @inject DBService DbService;
 
-<style>
-    .file-label {
-        padding: 0.5em 1em;
-        border-radius: 4px;
-        background-color: #007bff;
-        color: white;
-        cursor: pointer;
-    }
-</style>
-
 <EditForm Model="@recipeId" OnSubmit="@HandleGettingRecipe">
     <label class="form-label fw-bold">Recipe ID</label>
     <InputNumber class="form-control" id="name" @bind-Value="recipeId"/>
@@ -19,7 +9,7 @@
 </EditForm>
 
 <EditForm Model="@base64Image" OnSubmit="@HandleSubmit">
-    <label class="file-label" for="fileInput">Choose Image</label>
+    <label class="generel__file-label" for="fileInput">Choose Image</label>
     <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
     <button class="btn btn-primary" type="submit">Update Image</button>
 </EditForm>

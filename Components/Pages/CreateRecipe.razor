@@ -28,7 +28,7 @@
                         <InputText id="name" @bind-Value="currentRecipe.Name"/>
                     </div>
 
-                    <label class="file-label"
+                    <label class="generel__file-label"
                            for="fileInput">@(string.IsNullOrEmpty(currentRecipe.Base64Image) ? "Choose Image" : "Image Selected")</label>
                     <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
 

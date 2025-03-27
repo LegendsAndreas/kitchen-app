@@ -19,7 +19,6 @@
 .recipe-details__food-list li {
   display: flex;
   justify-content: space-between; /* Tells the program to add space between the elements */
-  color: red;
 }
 .recipe-details__recipe-image-style {
   width: 50%;

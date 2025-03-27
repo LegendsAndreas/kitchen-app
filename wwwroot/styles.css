@@ -5,14 +5,8 @@
 @import "superstyles/StatusMessageToast.css";
 @import "superstyles/RandomMeal.css";
 @import "superstyles/Home.css";
-/*Edit recipes forms*/
-.custom-button-margin button {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-right: 10px;
-}
+@import "superstyles/Edit.css";
 
-/* These 2 media tags controls the width of the content of the "Edit" pages */
 @media (max-width: 768px) {
     .edit-recipes-form {
         width: 100%;
@@ -23,26 +17,6 @@
     .edit-recipes-form {
         width: 25%;
     }
-}
-
-/* For image inputs */
-.file-label {
-    padding: 0.5em 1em;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-}
-
-#top-row-buttons a:hover {
-    color: white;
-    background-color: #3a0647;
-}
-
-#about-link span:hover {
-    color: white;
-    text-decoration: underline;
-    background-color: #3a0647;
 }
 
 .center-content {
