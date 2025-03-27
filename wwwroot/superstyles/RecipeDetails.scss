@@ -1,0 +1,31 @@
+﻿.recipe-details {
+  background-color: #212529;
+  font-size: 125%;
+  /*    word-wrap: break-word;    !* Breaks long words to fit within a column *!
+    word-break: break-word;   !* Ensures long words break correctly *!
+    overflow-wrap: break-word; !* Provides additional compatibility *!*/
+
+  &__dots {
+    flex: 2; /* Dots take up adjustable space */
+    border-bottom: 0.2em dotted white; /* Create a line of dots */
+    height: 1.1em; /* Align dots with text */
+  }
+
+  &__food-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Adds space between list items */
+    max-width: 300px; /* This add additional space between macros name and number */
+    li {
+      display: flex;
+      justify-content: space-between; /* Tells the program to add space between the elements */
+      color: red;
+    }
+  }
+
+  &__recipe-image-style {
+    width: 50%;
+    border-radius: 5px;
+    margin: 5px;
+  }
+}

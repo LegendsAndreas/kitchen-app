@@ -1,69 +1,10 @@
 @import "superstyles.css";
 @import "superstyles/Generel.css";
+@import "superstyles/RecipeDetails.css";
 @import "superstyles/ingredients.css";
 @import "superstyles/StatusMessageToast.css";
-
-/* General Layouts */
-.font-layout {
-    background-color: #212529;
-    color: #48d7ff;
-    font-family: "Calibri Light", serif;
-    font-style: italic;
-    font-weight: bold;
-}
-
-/* Random Meal */
-#random-meal-header {
-    width: fit-content; /* Automatically fits the block of its content to fit it. */
-    margin: 0 auto;
-}
-
-/* Home */
-#home-recipe-image:hover {
-    opacity: 80%;
-}
-
-/*Recipe Details*/
-/*You can change food-list back to macros-list and ingredients-list, if the time calls for it*/
-.food-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5em; /* Adds space between list items */
-    max-width: 300px; /* This add additional space between macros name and number */
-}
-
-.food-list li {
-    display: flex;
-    justify-content: space-between; /* Tells the program to add space between the elements */
-}
-
-.dots {
-    flex: 2; /* Dots take up adjustable space */
-    border-bottom: 0.2em dotted white; /* Create a line of dots */
-    height: 1.1em; /* Align dots with text */
-}
-
-#recipe-image-style {
-    width: 50%;
-    border-radius: 5px;
-    margin: 5px;
-}
-
-#recipe-details {
-    border-radius: 5px;
-    background-color: #212529;
-    font-size: 125%;
-    /*    word-wrap: break-word;    !* Breaks long words to fit within a column *!
-        word-break: break-word;   !* Ensures long words break correctly *!
-        overflow-wrap: break-word; !* Provides additional compatibility *!*/
-}
-
-/*#recipe-details ul li {
-    word-wrap: break-word;    !* Breaks long words to fit within a column *!
-    word-break: break-word;   !* Ensures long words break correctly *!
-    overflow-wrap: break-word; !* Provides additional compatibility *!
-}*/
-
+@import "superstyles/RandomMeal.css";
+@import "superstyles/Home.css";
 /*Edit recipes forms*/
 .custom-button-margin button {
     margin-top: 10px;

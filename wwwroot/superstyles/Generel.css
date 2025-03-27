@@ -2,5 +2,12 @@
   border-radius: 5px;
   border: 2px solid #48d7ff;
 }
+.generel__font-layout {
+  background-color: #212529;
+  color: #48d7ff;
+  font-family: "Calibri Light", serif;
+  font-style: italic;
+  font-weight: bold;
+}
 
 /*# sourceMappingURL=Generel.css.map */

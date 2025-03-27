@@ -13,20 +13,19 @@
 
 <PageTitle>Recipe Details</PageTitle>
 
-<div class="container generel__border-layout" id="recipe-details">
+<div class="container generel__border-layout recipe-details">
     @* In case we come a across a string, that is longer than the column it is in, "text-break" breaks it into smaller strings, so that it does not fuckup the layout *@
     <div class="row text-break">
         <div class="col-8">
-            <img src="data:image/png;base64,@sharedRecipe.Base64Image" alt="Recipe Image is gone..."
-                 id="recipe-image-style"/>
+            <img src="data:image/png;base64,@sharedRecipe.Base64Image" class="recipe-details__recipe-image-style" alt="Recipe Image is gone..."/>
             <div>
                 <h4>Ingredients</h4>
-                <ul class="food-list">
+                <ul class="recipe-details__food-list">
                     @foreach (var ingredient in sharedRecipe.Ingredients)
                     {
                         <li>
                             <span class="label">@ingredient.Name&nbsp;</span>
-                            <span class="dots"></span>
+                            <span class="recipe-details__dots"></span>
                             <span class="value">&nbsp;@ingredient.Grams.ToString(".00")g</span>
                         </li>
                     }
@@ -35,25 +34,25 @@
 
             <div>
                 <h4>Macros</h4>
-                <ul class="food-list">
+                <ul class="recipe-details__food-list">
                     <li>
                         <span class="label">Calories&nbsp;</span>
-                        <span class="dots"></span>
+                        <span class="recipe-details__dots"></span>
                         <span class="value">&nbsp;@sharedRecipe.TotalMacros.Calories.ToString(".00")</span>
                     </li>
                     <li>
                         <span class="label">Protein&nbsp;</span>
-                        <span class="dots"></span>
+                        <span class="recipe-details__dots"></span>
                         <span class="value">&nbsp;@sharedRecipe.TotalMacros.Protein.ToString(".00")g</span>
                     </li>
                     <li>
                         <span class="label">Fat&nbsp;</span>
-                        <span class="dots"></span>
+                        <span class="recipe-details__dots"></span>
                         <span class="value">&nbsp;@sharedRecipe.TotalMacros.Fat.ToString(".00")g</span>
                     </li>
                     <li>
                         <span class="label">Carbs&nbsp;</span>
-                        <span class="dots"></span>
+                        <span class="recipe-details__dots"></span>
                         <span class="value">&nbsp;@sharedRecipe.TotalMacros.Carbs.ToString(".00")g</span>
                     </li>
                     <li>

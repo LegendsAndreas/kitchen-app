@@ -1,0 +1,8 @@
+.home__recipe-image {
+  transition: all 0.3s;
+}
+.home__recipe-image:hover {
+  filter: brightness(80%);
+}
+
+/*# sourceMappingURL=Home.css.map */

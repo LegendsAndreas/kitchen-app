@@ -1,0 +1,10 @@
+﻿.home {
+
+  &__recipe-image {
+    transition: all 0.3s;
+
+    &:hover {
+      filter: brightness(80%);
+    }
+  }
+}

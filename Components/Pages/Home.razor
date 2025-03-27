@@ -23,10 +23,10 @@
         {
             @foreach (var recipe in GlobalRecipes.Recipes)
             {
-                <div class="col p-2">
+                <div class="col p-2 ">
                     <div class="card h-100 generel__border-layout">
                         <a href="">
-                            <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..." class="card-img"
+                            <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..." class="card-img home home__recipe-image"
                                   @onclick="() => NavigateToDetails(recipe)"/>
                         </a>
                         <div class="card-header">

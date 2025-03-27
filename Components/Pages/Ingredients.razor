@@ -16,7 +16,7 @@
                 <label class="form-label">
                     Name
                 </label>
-                <InputText id="name" @bind-Value="currentIngredient.Name"/>
+                <InputText @bind-Value="currentIngredient.Name"/>
                 <ValidationMessage For="@(() => currentIngredient.Name)"/>
             </div>
 
@@ -24,7 +24,7 @@
                 <label class="form-label">
                     <strong>Calories</strong>
                 </label>
-                <InputNumber id="cals" @bind-Value="currentIngredient.CaloriesPer100g"/>
+                <InputNumber @bind-Value="currentIngredient.CaloriesPer100g"/>
                 <ValidationMessage For="@(() => currentIngredient.CaloriesPer100g)"/>
             </div>
 
@@ -32,7 +32,7 @@
                 <label class="form-label">
                     <strong>Fats</strong>
                 </label>
-                <InputNumber id="fats" @bind-Value="currentIngredient.FatPer100g"/>
+                <InputNumber @bind-Value="currentIngredient.FatPer100g"/>
                 <ValidationMessage For="@(() => currentIngredient.FatPer100g)"/>
             </div>
 
@@ -40,7 +40,7 @@
                 <label class="form-label">
                     <strong>Carbs</strong>
                 </label>
-                <InputNumber id="carbs" @bind-Value="currentIngredient.CarbsPer100g"/>
+                <InputNumber @bind-Value="currentIngredient.CarbsPer100g"/>
                 <ValidationMessage For="@(() => currentIngredient.CarbsPer100g)"/>
             </div>
 
@@ -48,7 +48,7 @@
                 <label class="form-label">
                     <strong>Protein</strong>
                 </label>
-                <InputNumber id="protein" @bind-Value="currentIngredient.ProteinPer100g"/>
+                <InputNumber @bind-Value="currentIngredient.ProteinPer100g"/>
                 <ValidationMessage For="@(() => currentIngredient.ProteinPer100g)"/>
             </div>
 
@@ -76,7 +76,7 @@
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
         @foreach (var ingredient in GlobalIngredients.Ingredients)
         {
-            <div class="col p-2" >
+            <div class="col p-2">
                 <div class="card h-100 generel__border-layout">
                     <img src="data:image/png;base64,@ingredient.Base64Image" alt="ops..."
                          class="card-img"/> @* card-img helps the look of the cards. *@
@@ -109,7 +109,6 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         // Console.WriteLine("__Rendering Ingredients__");
-
         if (firstRender && !GlobalIngredients.Ingredients.Any())
         {
             try
