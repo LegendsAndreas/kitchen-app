@@ -1,3 +1,4 @@
+/* Create */
 CREATE TYPE ingredient AS
 (
     name                  TEXT,
@@ -27,17 +28,118 @@ CREATE TABLE recipes
     macros      recipe_macros
 );
 
-DROP TABLE recipes;
+CREATE TABLE ingredients (
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    cals FLOAT,
+    fats FLOAT,
+    carbs FLOAT,
+    protein FLOAT,
+    image TEXT
+);
+
+CREATE TABLE sought_after_items
+(
+    item_id    INTEGER,
+    name  VARCHAR(256),
+    image TEXT,
+    type VARCHAR(256),
+    price DECIMAL
+);
+
+SELECT * FROM ingredients WHERE id = 1;
+
+SELECT * FROM recipes WHERE id = 1;
+
+INSERT INTO sought_after_items
+
+DROP TABLE sought_after_items;
+
+/*CREATE TABLE sought_after_items
+(
+    id SERIAL PRIMARY KEY,
+    item_id    INTEGER,
+    name  VARCHAR(256),
+    image TEXT,
+    type VARCHAR(256),
+    price INTEGER,
+    CONSTRAINT FK_ingredient_id FOREIGN KEY (item_id) REFERENCES ingredients (id) ON DELETE CASCADE
+);*/
+
+/* Insert */
+INSERT INTO sought_after_items (id, name, image, price) VALUES (1, 'test', 'image', 25);
+INSERT INTO sought_after_items (id, name, image, price) VALUES (111, 'test', 'image', 25);
+INSERT INTO sought_after_items (id, name, image, price) VALUES (112, 'test', 'image', 25);
+
+INSERT INTO ingredients (name) VALUES ('test_ing');
+
+INSERT INTO recipe_instructions (instructions)
+VALUES ('{
+  "name": "Chocolate Chip Cookies",
+  "steps": [
+    {
+      "step_number": 1,
+      "instruction": "Preheat oven to 350°F (175°C)."
+    },
+    {
+      "step_number": 2,
+      "instruction": "In a bowl, mix flour, baking soda, and salt."
+    },
+    {
+      "step_number": 3,
+      "instruction": "In another bowl, cream together butter and sugar."
+    },
+    {
+      "step_number": 4,
+      "instruction": "Add eggs and vanilla extract to the butter mixture."
+    },
+    {
+      "step_number": 5,
+      "instruction": "Gradually add the dry ingredients and chocolate chips."
+    },
+    {
+      "step_number": 6,
+      "instruction": "Scoop dough onto a baking sheet and bake for 10-12 minutes."
+    }
+  ],
+  "notes": [
+    {
+      "note_number": 1,
+      "note": "Remember to..."
+    },
+    {
+      "note_number": 2,
+      "note": "By the way..."
+    }
+  ]
+}');
+
+INSERT INTO recipes (meal_type, name, image, ingredients, macros)
+VALUES ('L',
+        'Testy type',
+        'TestImage2',
+        ARRAY [
+            ROW ('Pineapple', 44, 123, 74, 95, 31, 0.4)::ingredient,
+            ROW ('Grenade', 160, 6, 33, 5, 1, 0.3)::ingredient
+            ],
+        (3072, 97, 33, 77): : recipe_macros);
+
+
+INSERT INTO recipes (meal_type, name, image, macros)
+VALUES ('L',
+        'Other',
+        'TestImage2',
+        (3072, 97, 33, 77): : recipe_macros);
 
 INSERT INTO recipes (meal_type, name, image, ingredients, macros)
 VALUES ('D',
         'Test Meal',
         'TestImage',
         ARRAY [
-            ROW ('banana',60, 11, 33, 55, 12, 0.6)::ingredient,
+            ROW ('banana', 60, 11, 33, 55, 12, 0.6)::ingredient,
             ROW ('apple', 80, 11, 10, 9, 8, 0.9)::ingredient
             ],
-        (647.3, 33.1, 88.9, 22.3)::recipe_macros);
+        (647.3, 33.1, 88.9, 22.3): : recipe_macros);
 
 
 INSERT INTO recipes (meal_type, name, image, ingredients, macros)
@@ -45,10 +147,10 @@ VALUES ('L',
         'Testy type',
         'TestImage2',
         ARRAY [
-            ROW ('Pineapple',44, 123, 74, 95, 31, 0.4)::ingredient,
+            ROW ('Pineapple', 44, 123, 74, 95, 31, 0.4)::ingredient,
             ROW ('Grenade', 160, 6, 33, 5, 1, 0.3)::ingredient
             ],
-        (3072, 97, 33, 77)::recipe_macros);
+        (3072, 97, 33, 77): : recipe_macros);
 
 UPDATE recipes
 SET image = 'TestImage.png'
@@ -58,6 +160,10 @@ SET image = 'TestImage2.jpeg'
 WHERE id = 2;
 
 /* SELECT statements */
+SELECT * FROM sought_after_items;
+
+SELECT * FROM ingredients WHERE id = 111;
+
 SELECT *
 FROM ingredients
 ORDER BY id;
@@ -146,7 +252,8 @@ SET name    = 'test',
     image   = 'fuck'
 WHERE id = 40;
 
-CREATE OR REPLACE FUNCTION get_recipe_with_dynamic_ingredients(recipe_id INT)
+CREATE
+    OR REPLACE FUNCTION get_recipe_with_dynamic_ingredients(recipe_id INT)
     RETURNS TABLE
             (
                 id         INT,
@@ -158,20 +265,25 @@ CREATE OR REPLACE FUNCTION get_recipe_with_dynamic_ingredients(recipe_id INT)
 AS
 $$
 DECLARE
-    recipe        RECORD;
-    ingredients   TEXT[];
-    dynamic_query TEXT;
-    i             INT;
+    recipe RECORD;
+    ingredients
+           TEXT[];
+    dynamic_query
+           TEXT;
+    i
+           INT;
 BEGIN
     SELECT id, meal_type, name, image, ingredients
     INTO recipe
     FROM recipes
     WHERE id = recipe_id;
 
-    ingredients := recipe.ingredients;
+    ingredients
+        := recipe.ingredients;
 
-    dynamic_query := 'SELECT ' || recipe.id || ', ''' || recipe.meal_type || ''', ''' || recipe.name || ''', ''' ||
-                     recipe.image || ''',';
+    dynamic_query
+        := 'SELECT ' || recipe.id || ', ''' || recipe.meal_type || ''', ''' || recipe.name || ''', ''' ||
+           recipe.image || ''',';
 
     FOR i IN 1 .. array_length(ingredients, 1)
         LOOP
@@ -179,37 +291,42 @@ BEGIN
         END LOOP;
 
     -- Remove trailing comma and append FROM clause
-    dynamic_query := left(dynamic_query, length(dynamic_query) - 1) || ' FROM recipes WHERE id = ' || recipe_id;
+    dynamic_query
+        := left(dynamic_query, length(dynamic_query) - 1) || ' FROM recipes WHERE id = ' || recipe_id;
 
     RETURN QUERY EXECUTE dynamic_query;
 END;
-$$ LANGUAGE plpgsql;
+$$
+    LANGUAGE plpgsql;
+
+/* Delete/Drop */
+DELETE FROM ingredients WHERE id = 111;
+
+DELETE
+FROM recipes;
+
+DELETE
+FROM recipes
+WHERE id = 2;
+
+DELETE
+FROM recipe_instructions
+WHERE recipe_id = 1;
+DELETE
+
+FROM recipes
+WHERE id = 1;
+
+DROP TABLE sought_after_items;
+DROP TABLE recipes;
 
 DROP FUNCTION get_recipe_with_dynamic_ingredients;
 
 SELECT *
 FROM get_recipe_with_dynamic_ingredients(1);
 
-
-INSERT INTO recipes (meal_type, name, image, ingredients, macros)
-VALUES ('L',
-        'Testy type',
-        'TestImage2',
-        ARRAY [
-            ROW ('Pineapple',44, 123, 74, 95, 31, 0.4)::ingredient,
-            ROW ('Grenade', 160, 6, 33, 5, 1, 0.3)::ingredient
-            ],
-        (3072, 97, 33, 77)::recipe_macros);
-
-
-INSERT INTO recipes (meal_type, name, image, macros)
-VALUES ('L',
-        'Other',
-        'TestImage2',
-        (3072, 97, 33, 77)::recipe_macros);
-
 UPDATE recipes
-SET ingredients = array_append(ingredients, ROW ('Pineapple',44, 123, 74, 95, 31, 0.4)::ingredient)
+SET ingredients = array_append(ingredients, ROW ('Pineapple', 44, 123, 74, 95, 31, 0.4)::ingredient)
 WHERE id = 3;
 
 UPDATE recipes
@@ -220,8 +337,7 @@ UPDATE recipes
 SET macros = (4, 3, 2, 1)::recipe_macros
 WHERE id = 8;
 
-DELETE
-FROM recipes;
+
 
 ALTER SEQUENCE recipes_id_seq RESTART WITH 1;
 
@@ -230,16 +346,14 @@ FROM information_schema.recipes
 WHERE table_name = 'recipes'
   AND column_name = 'id';
 
-DELETE
-FROM recipes
-WHERE id = 2;
 
 SELECT setval('recipes_id_seq', (SELECT MAX(id) FROM recipes));
 
 TRUNCATE TABLE recipes RESTART IDENTITY;
 
 -- These three queries resets the id order correctly. Remember to delete the temporary table.
-CREATE TEMP TABLE temp_recipes AS
+CREATE
+    TEMP TABLE temp_recipes AS
 SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id
 FROM recipes;
 UPDATE recipes
@@ -249,7 +363,8 @@ WHERE recipes.id = temp_recipes.id;
 SELECT setval('recipes_id_seq', (SELECT MAX(id) FROM recipes));
 DROP TABLE temp_recipes;
 
-CREATE TEMP TABLE temp_instructions AS
+CREATE
+    TEMP TABLE temp_instructions AS
 SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id
 FROM recipe_instructions;
 UPDATE recipe_instructions
@@ -273,53 +388,13 @@ ALTER TABLE recipe_instructions
     ADD CONSTRAINT fk_recipe_id
         FOREIGN KEY (id)
             REFERENCES recipes (id)
-            ON DELETE CASCADE;
+            ON DELETE
+                CASCADE;
 
 ALTER TABLE recipe_instructions
     ADD recipe_id INT;
 ALTER TABLE recipe_instructions
     ADD CONSTRAINT FK_recipe_id FOREIGN KEY (recipe_id) REFERENCES recipes (id);
-
-INSERT INTO recipe_instructions (instructions)
-VALUES ('{
-  "name": "Chocolate Chip Cookies",
-  "steps": [
-    {
-      "step_number": 1,
-      "instruction": "Preheat oven to 350°F (175°C)."
-    },
-    {
-      "step_number": 2,
-      "instruction": "In a bowl, mix flour, baking soda, and salt."
-    },
-    {
-      "step_number": 3,
-      "instruction": "In another bowl, cream together butter and sugar."
-    },
-    {
-      "step_number": 4,
-      "instruction": "Add eggs and vanilla extract to the butter mixture."
-    },
-    {
-      "step_number": 5,
-      "instruction": "Gradually add the dry ingredients and chocolate chips."
-    },
-    {
-      "step_number": 6,
-      "instruction": "Scoop dough onto a baking sheet and bake for 10-12 minutes."
-    }
-  ],
-  "notes": [
-    {
-      "note_number": 1,
-      "note": "Remember to..."
-    },
-    {
-      "note_number": 2,
-      "note": "By the way..."
-    }
-  ]
-}');
 
 SELECT id, instructions, recipe_id
 FROM recipe_instructions;
@@ -347,12 +422,7 @@ FROM recipes
 WHERE (macros).total_calories > 300
   AND (macros).total_calories < 700
 ORDER BY (macros).total_calories;
-DELETE
-FROM recipe_instructions
-WHERE recipe_id = 1;
-DELETE
-FROM recipes
-WHERE id = 1;
+
 
 SELECT *
 FROM recipe_instructions;
@@ -368,7 +438,8 @@ FROM recipe_instructions
 WHERE recipe_id IN (SELECT id FROM recipes);
 SELECT id
 FROM recipes
-WHERE name IN (SELECT instructions ->> 'name' AS recipe_name FROM recipe_instructions);
+WHERE name IN (SELECT instructions ->> 'name' AS recipe_name
+               FROM recipe_instructions);
 
 -- The good one.
 UPDATE recipe_instructions

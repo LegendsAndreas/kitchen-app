@@ -1,0 +1,16 @@
+﻿@page "/greatest"
+@rendermode InteractiveServer
+@inject DBService DbService
+
+
+@code{
+
+    List<Recipe> _goats = [];
+
+    protected override Task OnInitializedAsync()
+    {
+        // _goats = await DbService.GetGoats()
+        return Task.CompletedTask;
+    }
+
+}

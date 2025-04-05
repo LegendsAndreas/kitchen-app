@@ -3,8 +3,8 @@
 @import "superstyles/RecipeDetails.css";
 @import "superstyles/ingredients.css";
 @import "superstyles/StatusMessageToast.css";
+@import "superstyles/CommonIngredients.css";
 @import "superstyles/RandomMeal.css";
-@import "superstyles/Home.css";
 @import "superstyles/Edit.css";
 
 @media (max-width: 768px) {

@@ -1,0 +1,158 @@
+﻿@page "/common-ingredients"
+@rendermode InteractiveServer
+@using WebKitchen.Components.SharedComponents
+@inject DBService DbService;
+
+
+<PageTitle>Sought After Ingredients</PageTitle>
+
+<h1>Ingredients to be on the lookout for!</h1>
+
+
+<div class="container">
+    <div class="generel__border-layout generel__font-layout mb-2">
+        <div class="common-ingredients__bar-title p-2">
+            Add another item to the list.
+        </div>
+        <div class="common-ingredients__bar-body p-2">
+            <EditForm Model="@this" class="d-flex justify-content-between">
+                <div>
+                    <label class="me-2">Item ID--></label>
+                    <InputNumber @bind-Value="_currentId" class="w-50" style="height: 32px"/>
+                </div>
+
+                <div>
+                    <label class="me-2">Price</label>
+                    <InputNumber @bind-Value="_currentPrice" class="w-50" style="height: 32px"/>
+                </div>
+
+                <div>
+                    <label class="float-end ms-2">&lt;--Type</label>
+                    <select @bind="_selectedOption">
+                        <option value="recipes">Recipe</option>
+                        <option value="ingredients">Ingredient</option>
+                    </select>
+                </div>
+            </EditForm>
+
+            <div class="d-flex justify-content-center mt-3">
+                <button class="btn btn-primary" @onclick="HandleSubmit">
+                    Add Common Item
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    @if (_commonItems != null && _commonItems.Count == 0)
+    {
+        <Loading LoadingParameter="sought after items"/>
+    }
+    else
+    {
+        @if (_commonItems != null)
+        {
+            <div class="row-cols-1 border border-info rounded bg-body">
+                @* Logially speaking, you dont need to check for null again, since this else statement cant be accessed 
+            if _commonItems is null. But, because if Async, we need to anyway. *@
+                @foreach (var item in _commonItems)
+                {
+                    <div class="col">
+                        <img class="m-2 rounded" style="width: 100px" src="data:image/png;base64,@item.Base64Image"
+                             alt="..."/>
+                        <span class="bg-body-tertiary rounded" style="padding: 20px">@item.GetId()</span>
+                        <span class="bg-body-tertiary rounded" style="padding: 20px">@item.Name</span>
+                        <span class="bg-body-tertiary rounded" style="padding: 20px">@item.Type</span>
+                        <span class="bg-body-tertiary rounded"
+                              style="padding: 20px">@item.Cost.ToString("0.00") kr.</span>
+                        <button class="btn btn-danger p-3"  @onclick='() => DeleteItem(item.GetId(), item.Type)'>X</button>
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+<StatusMessageToast @ref="_statusMessageToaster"/>
+
+@code{
+
+    int _currentId;
+    decimal _currentPrice;
+    string _selectedOption = "";
+    List<CommonItem>? _commonItems = new();
+    StatusMessageToast _statusMessageToaster = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await DbService.GetAllCommonItems();
+            if (result.CommonItems == null)
+            {
+                await _statusMessageToaster.ShowToastAsync(result.Message);
+                _commonItems = null;
+            }
+            else
+            {
+                _commonItems = result.CommonItems;
+                await _statusMessageToaster.ShowToastAsync("Acquired common items");
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+
+            if (ex.Message.Contains("Failed to connect"))
+                await _statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
+            else
+                await _statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
+        }
+    }
+
+    private async Task DeleteItem(uint itemId, string itemType)
+    {
+        var message = await DbService.DeleteCommonItemByIdAndType(itemId, itemType);
+        await _statusMessageToaster.ShowToastAsync(message);
+    }
+
+    private async Task HandleSubmit()
+    {
+        Console.WriteLine("Handling submit...");
+
+        if (_currentId < 1)
+        {
+            Console.WriteLine("ID cannot be less than 1");
+            await _statusMessageToaster.ShowToastAsync("ID cannot be less than 1");
+            return;
+        }
+
+        if (_currentPrice <= 0)
+        {
+            Console.WriteLine("Price is not set or is minus");
+            await _statusMessageToaster.ShowToastAsync("Price is not set or is minus");
+            return;
+        }
+
+        if (_selectedOption != "recipes" && _selectedOption != "ingredients")
+        {
+            Console.WriteLine("Invalid option selected, or none at all " + _selectedOption);
+            await _statusMessageToaster.ShowToastAsync("Invalid option selected, or none at all");
+            return;
+        }
+
+        var result = await DbService.AddCommonItem(_currentId, _selectedOption, _currentPrice);
+        await _statusMessageToaster.ShowToastAsync(result);
+        ResetValues();
+    }
+
+    private void ResetValues()
+    {
+        _currentId = 0;
+        _currentPrice = 0;
+        _selectedOption = "";
+    }
+
+}

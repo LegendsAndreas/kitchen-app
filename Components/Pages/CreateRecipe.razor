@@ -150,8 +150,6 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // Console.WriteLine("Rendering Create Recipe...");
-
         if (firstRender && !GlobalRecipes.Recipes.Any())
         {
             try

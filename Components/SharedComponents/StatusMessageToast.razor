@@ -5,7 +5,7 @@
     <div id="liveToast" class="toast p-2 generel__border-layout" role="alert" aria-live="assertive" aria-atomic="true"
          data-bs-delay="5000">
         <div class="toast-body">
-            @ToastStatusMessage
+            @_toastStatusMessage
         </div>
     </div>
 </div>
@@ -20,12 +20,21 @@
 
 @code{
 
-    private string ToastStatusMessage = "";
+    private string _toastStatusMessage = "";
 
     public async Task ShowToastAsync(string message)
     {
-        ToastStatusMessage = message;
-        await JsRuntime.InvokeVoidAsync("showStatusToast");
-        StateHasChanged();
+        try
+        {
+            _toastStatusMessage = message;
+            await JsRuntime.InvokeVoidAsync("showStatusToast");
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error showing toast: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+        }
     }
+
 }

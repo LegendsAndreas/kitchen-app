@@ -112,21 +112,8 @@ public class Ingredient
 
     public async Task SetIngredientImage(IBrowserFile image, long allowedFileSize = 10)
     {
-        Console.WriteLine("Setting ingredient image...");
-        var maxFileSize = allowedFileSize * 1024 * 1024;
-
-        if (image.Size > maxFileSize)
-        {
-            Console.WriteLine("Image too large.");
-            return;
-        }
-
-        using var memoryStream = new MemoryStream();
-        await image.OpenReadStream(maxFileSize).CopyToAsync(memoryStream);
-
-        var imageBytes = memoryStream.ToArray();
-        var base64Image = Convert.ToBase64String(imageBytes);
-        Base64Image = base64Image;
+        SharedStuff helperStuff = new();
+        Base64Image = await helperStuff.SetImage(image, allowedFileSize);
     }
 
     public void ClearIngredient()
@@ -220,7 +207,7 @@ public class Recipe
         {
             Console.WriteLine("Error printing recipe: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            throw;
+            return;
         }
     }
 
@@ -236,7 +223,7 @@ public class Recipe
 
         foreach (var ingredient in recipe.Ingredients)
         {
-            var tempIngredient = ingredient.TransferIngredient(ingredient);
+            Ingredient tempIngredient = ingredient.TransferIngredient(ingredient);
             tempRecipe.Ingredients.Add(tempIngredient);
         }
 
@@ -253,21 +240,8 @@ public class Recipe
 
     public async Task SetRecipeImage(IBrowserFile image, long allowedFileSize = 10)
     {
-        Console.WriteLine("Setting recipe image...");
-        var maxFileSize = allowedFileSize * 1024 * 1024;
-
-        if (image.Size > maxFileSize)
-        {
-            Console.WriteLine("Image too large.");
-            return;
-        }
-
-        using var memoryStream = new MemoryStream();
-        await image.OpenReadStream(maxFileSize).CopyToAsync(memoryStream);
-
-        var imageBytes = memoryStream.ToArray();
-        var base64Image = Convert.ToBase64String(imageBytes);
-        Base64Image = base64Image;
+        var helperStuff = new SharedStuff();
+        Base64Image = await helperStuff.SetImage(image, allowedFileSize);
     }
 
     public void SetTotalMacros()
@@ -285,6 +259,28 @@ public class Recipe
         Base64Image = string.Empty;
         Ingredients = [];
         TotalMacros = new Macros();
+    }
+}
+
+public class SharedStuff
+{
+    public async Task<string> SetImage(IBrowserFile image, long allowedFileSize)
+    {
+        Console.WriteLine("Setting recipe image...");
+        long maxFileSize = allowedFileSize * 1024 * 1024;
+
+        if (image.Size > maxFileSize)
+        {
+            Console.WriteLine("Image too large.");
+            return "";
+        }
+
+        using var memoryStream = new MemoryStream();
+        await image.OpenReadStream(maxFileSize).CopyToAsync(memoryStream);
+
+        byte[] imageBytes = memoryStream.ToArray();
+        string base64Image = Convert.ToBase64String(imageBytes);
+        return base64Image;
     }
 }
 

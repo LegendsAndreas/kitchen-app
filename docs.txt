@@ -94,6 +94,43 @@ can access the statesRecipe.Image!
 
 }
 
+-- Running multiple queries on the same connection.
+It is VERY VITAL, that you run each connection in its own wrapped await using statement, otherwise you cant run multiple 
+connections on the same connection.
+
+            await using NpgsqlConnection conn = await GetConnection();
+            await using var selectCmd = new NpgsqlCommand(selectQuery, conn);
+            selectCmd.Parameters.AddWithValue("@id", itemId);
+            // selectCmd.Parameters.AddWithValue("@table", table);
+
+            Console.WriteLine("Select Query: " + selectQuery);
+            await using (NpgsqlDataReader selectReader = await selectCmd.ExecuteReaderAsync())
+            {
+                if (await selectReader.ReadAsync())
+                {
+                    dbItemName = selectReader.GetString(0);
+                    dbItemImage = selectReader.GetString(1);
+                }
+                else
+                {
+                    Console.WriteLine("Select Query: " + selectQuery);
+                    return "Error adding common item; item ID does not exist.";
+                }
+            }
+
+
+            // await using var insertCmd = new NpgsqlCommand(insertQuery, conn);
+            await using (var insertCmd = new NpgsqlCommand(insertQuery, conn))
+            {
+                Console.WriteLine("Insert Query: " + insertQuery);
+                insertCmd.Parameters.AddWithValue("@id", itemId);
+                insertCmd.Parameters.AddWithValue("@name", dbItemName);
+                insertCmd.Parameters.AddWithValue("@image", dbItemImage);
+                insertCmd.Parameters.AddWithValue("@type", itemTable);
+                insertCmd.Parameters.AddWithValue("@price", itemPrice);
+                await RunAsyncQuery(insertCmd);
+            }
+
 -- What the fuck man?
 I added a scoped List<Recipe> in my Program.cs file, where an uninitialized element would be inserted into it upon creation.
 Fucking, heresy, of the highest order.

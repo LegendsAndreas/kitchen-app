@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebKitchen")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b17b80dc0658c1cce116e0a663d565c0780ab51d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+122518b0c98be8cdd17fb5f997c17fe0559a864d")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebKitchen")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebKitchen")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

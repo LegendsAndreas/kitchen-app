@@ -80,7 +80,7 @@ public class DBService
     }
 
     /// Asynchronously retrieves a recipe by its unique identifier from the database.
-    /// <param name="recipeId">The unique identifier of the recipe to retrieve. Must be greater than 0.</param>
+    /// <param name="recipeId"> Must be greater than 0.</param>
     /// <returns>A tuple containing the retrieved Recipe object (or null if not found) and a status message indicating the result.</returns>
     public async Task<(Recipe? Recipe, string Message)> GetRecipeById(int recipeId)
     {
@@ -128,6 +128,83 @@ public class DBService
         }
 
         return (recipe, statusMessage);
+    }
+
+    public async Task<string> AddCommonItem(int itemId, string itemTable, decimal itemPrice)
+    {
+        Console.WriteLine("Adding common item...");
+
+        Console.WriteLine($"Item ID: {itemId} | Item Table: {itemTable} | Item Price: {itemPrice}");
+
+        string selectQuery = "";
+        if (itemTable == "recipes")
+            selectQuery = "SELECT name, image FROM recipes WHERE id = @id;";
+        else if (itemTable == "ingredients")
+        {
+            selectQuery = "SELECT name, image FROM ingredients WHERE id = @id;";
+        }
+        else
+        {
+            Console.WriteLine("Invalid item type.");
+            return "Error adding common item; invalid item type.";
+        }
+
+        if (itemId < 1)
+        {
+            Console.WriteLine("Item ID is less than 1.");
+            return "Error adding common item; item ID is less than 1.";
+        }
+
+        string statusMessage = "Common item successfully added.";
+        string dbItemName;
+        string dbItemImage;
+
+        string insertQuery =
+            "INSERT INTO sought_after_items (item_id, name, image, type, price) VALUES (@id, @name, @image, @type, @price);";
+
+        try
+        {
+            await using NpgsqlConnection conn = await GetConnection();
+            await using var selectCmd = new NpgsqlCommand(selectQuery, conn);
+            selectCmd.Parameters.AddWithValue("@id", itemId);
+            // selectCmd.Parameters.AddWithValue("@table", table);
+
+            Console.WriteLine("Select Query: " + selectQuery);
+            await using (NpgsqlDataReader selectReader = await selectCmd.ExecuteReaderAsync())
+            {
+                if (await selectReader.ReadAsync())
+                {
+                    dbItemName = selectReader.GetString(0);
+                    dbItemImage = selectReader.GetString(1);
+                }
+                else
+                {
+                    Console.WriteLine("Select Query: " + selectQuery);
+                    return "Error adding common item; item ID does not exist.";
+                }
+            }
+
+
+            // await using var insertCmd = new NpgsqlCommand(insertQuery, conn);
+            await using (var insertCmd = new NpgsqlCommand(insertQuery, conn))
+            {
+                Console.WriteLine("Insert Query: " + insertQuery);
+                insertCmd.Parameters.AddWithValue("@id", itemId);
+                insertCmd.Parameters.AddWithValue("@name", dbItemName);
+                insertCmd.Parameters.AddWithValue("@image", dbItemImage);
+                insertCmd.Parameters.AddWithValue("@type", itemTable);
+                insertCmd.Parameters.AddWithValue("@price", itemPrice);
+                await RunAsyncQuery(insertCmd);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error adding common item: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return $"Error adding common item: {ex.Message}.";
+        }
+
+        return statusMessage;
     }
 
     public async Task<(List<Recipe>? Recipes, string Message)> GetRecipesByCategory(string baseCategory,
@@ -222,15 +299,12 @@ public class DBService
     private async Task<Recipe> BuildRecipe(NpgsqlDataReader reader)
     {
         Console.WriteLine("Building recipe...");
-        var base64PlaceHolderPic = await GetPlaceHolderPic();
 
         var recipe = new Recipe
         {
             RecipeId = reader.GetInt32(0),
             Name = reader.GetString(1),
-            Base64Image = reader.GetString(2) != "PlaceHolderPic.jpg"
-                ? reader.GetString(2)
-                : base64PlaceHolderPic,
+            Base64Image = reader.GetString(2),
             MealType = reader.GetString(3),
             TotalMacros = new Macros
             {
@@ -548,6 +622,47 @@ public class DBService
         }
 
         return (ingredient, statusMessage);
+    }
+
+    public async Task<(List<CommonItem>? CommonItems, string Message)> GetAllCommonItems()
+    {
+        Console.WriteLine("Getting all common items...");
+
+        List<CommonItem> commonItems = [];
+        string statusMessage = "Ingredients successfully retrieved.";
+
+        const string query = "SELECT * FROM sought_after_items";
+
+        try
+        {
+            await using NpgsqlConnection conn = await GetConnection();
+            await using NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                CommonItem tempIngredient = new()
+                {
+                    Name = reader.GetString(1),
+                    Base64Image = reader.GetString(2),
+                    Type = reader.GetString(3),
+                    Cost = reader.GetDecimal(4),
+                };
+                var uintValue = unchecked((uint)reader.GetInt32(0));
+                tempIngredient.SetId(uintValue);
+                commonItems.Add(tempIngredient);
+            }
+
+            if (commonItems.Count == 0)
+                return (null, "No common items added.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            Console.WriteLine(ex.StackTrace);
+            return (null, $"Error getting all common items: {ex.Message}");
+        }
+
+        return (commonItems, statusMessage);
     }
 
     /// Asynchronously adds a recipe to the database by inserting its details, including meal type, name, image, macros, and ingredients.
@@ -1167,6 +1282,32 @@ public class DBService
             Console.WriteLine($"Error deleting recipe by id ({recipeId}): " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             return statusMessage;
+        }
+
+        return statusMessage;
+    }
+
+    public async Task<string> DeleteCommonItemByIdAndType(uint itemId, string itemType)
+    {
+        Console.WriteLine("Deleting common item by id and type...");
+        string statusMessage = "Common item got deleted.";
+
+        try
+        {
+            await using var conn = await GetConnection();
+            const string query = "DELETE FROM sought_after_items WHERE item_id = @id AND type = @type";
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@id", Convert.ToInt32(itemId));
+            cmd.Parameters.AddWithValue("@type", itemType);
+            int result = await RunAsyncQuery(cmd);
+            if (result < 1)
+                return "Common item was not found.";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error deleting common item by id and type: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return "Error deleting common item by id and type: " + ex.Message;
         }
 
         return statusMessage;
