@@ -2,9 +2,10 @@
 @rendermode InteractiveServer
 @using WebKitchen.Components.SharedComponents
 @inject DBService DbService;
+@inject IJSRuntime JSRuntime;
 
 
-<PageTitle>Sought After Ingredients</PageTitle>
+<PageTitle>Sought After Items</PageTitle>
 
 <h1>Ingredients to be on the lookout for!</h1>
 
@@ -65,7 +66,12 @@
                         <span class="bg-body-tertiary rounded" style="padding: 20px">@item.Type</span>
                         <span class="bg-body-tertiary rounded"
                               style="padding: 20px">@item.Cost.ToString("0.00") kr.</span>
-                        <button class="btn btn-danger p-3"  @onclick='() => DeleteItem(item.GetId(), item.Type)'>X</button>
+                        <button class="btn btn-danger p-3" @onclick='() => DeleteItem(item.GetId(), item.Type)'>X
+                        </button>
+                        @if (item != _commonItems.Last())
+                        {
+                            <hr class="mx-auto my-1" style="width: 95%; "/>
+                        }
                     </div>
                 }
             </div>
@@ -83,34 +89,46 @@
     List<CommonItem>? _commonItems = new();
     StatusMessageToast _statusMessageToaster = new();
 
-    protected override async Task OnInitializedAsync()
+    /*protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            var result = await DbService.GetAllCommonItems();
-            if (result.CommonItems == null)
-            {
-                await _statusMessageToaster.ShowToastAsync(result.Message);
-                _commonItems = null;
-            }
-            else
-            {
-                _commonItems = result.CommonItems;
-                await _statusMessageToaster.ShowToastAsync("Acquired common items");
-                StateHasChanged();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            Console.WriteLine(ex.StackTrace);
 
-            if (ex.Message.Contains("Failed to connect"))
-                await _statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
-            else
-                await _statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
+    }*/
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var result = await DbService.GetAllCommonItems();
+                if (result.CommonItems == null)
+                {
+                    await _statusMessageToaster.ShowToastAsync(result.Message);
+                    _commonItems = null;
+                }
+                else
+                {
+                    _commonItems = result.CommonItems;
+                    await _statusMessageToaster.ShowToastAsync("Acquired common items");
+                    StateHasChanged();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+
+                if (ex.Message.Contains("Failed to connect"))
+                    await _statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
+                else
+                    await _statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
+            }
+
+            // JavaScript can only be called in OnAfterRender.
+            // await JSRuntime.InvokeVoidAsync("RemoveLastLineOfCommonItems");
         }
     }
+
 
     private async Task DeleteItem(uint itemId, string itemType)
     {

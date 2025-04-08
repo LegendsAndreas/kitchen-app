@@ -32,6 +32,9 @@
         }
         catch (Exception ex)
         {
+            if (ex.Message.Contains("JavaScript interop calls cannot be issued at this time"))
+                return;
+            
             Console.WriteLine("Error showing toast: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
         }
