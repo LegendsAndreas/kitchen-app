@@ -3,6 +3,17 @@
 @using WebKitchen.Components.SharedComponents;
 @inject DBService DbService;
 
+<input @bind="_test"/>
+
+<p>@_test</p>
+
+@code {
+
+    string _test = "d";
+
+}
+
+@*
 <div class="container">
     <div class="row">
 
@@ -84,7 +95,7 @@
         return base64PlaceHolderPic;
     }
 
-}
+}*@
 
 @*<div class="card border-layout">
     <div class="card-body custom-button-margin">

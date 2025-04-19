@@ -57,6 +57,14 @@ object ingredients{
     base64_image TEXT
 }
 
+object sought_after_items{
+    * id INT
+    name TEXT
+    base64_image TEXT
+    type TEXT
+    price FLOAT
+}
+
 json Instructions{
     "name":"Amatriciana",
     "steps": [

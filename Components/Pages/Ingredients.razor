@@ -11,9 +11,9 @@
     <DataAnnotationsValidator/>
 
     <div class="container ingredients__form">
-        <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 g-1">
+        <div class="row row-cols-sm-1 row-cols-md-3 row-cols-lg-3 g-1">
             <div class="col">
-                <label class="form-label">
+                <label class="ingredients__form__label-mobile">
                     Name
                 </label>
                 <InputText @bind-Value="currentIngredient.Name"/>
@@ -21,7 +21,7 @@
             </div>
 
             <div class="col">
-                <label class="form-label">
+                <label class="ingredients__form__label-mobile">
                     <strong>Calories</strong>
                 </label>
                 <InputNumber @bind-Value="currentIngredient.CaloriesPer100g"/>
@@ -29,7 +29,7 @@
             </div>
 
             <div class="col">
-                <label class="form-label">
+                <label class="ingredients__form__label-mobile">
                     <strong>Fats</strong>
                 </label>
                 <InputNumber @bind-Value="currentIngredient.FatPer100g"/>
@@ -37,7 +37,7 @@
             </div>
 
             <div class="col">
-                <label class="form-label">
+                <label class="form-label ingredients__form__label-mobile">
                     <strong>Carbs</strong>
                 </label>
                 <InputNumber @bind-Value="currentIngredient.CarbsPer100g"/>
@@ -45,21 +45,21 @@
             </div>
 
             <div class="col">
-                <label class="form-label">
+                <label class="form-label ingredients__form__label-mobile">
                     <strong>Protein</strong>
                 </label>
                 <InputNumber @bind-Value="currentIngredient.ProteinPer100g"/>
                 <ValidationMessage For="@(() => currentIngredient.ProteinPer100g)"/>
             </div>
 
-            <div class="col">
+            <div class="col ingredients__form__image-button-mobile">
                 <label class="generel__file-label btn btn-primary" for="fileInput">Choose Image</label>
                 <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
             </div>
 
 
         </div>
-        <button type="submit" class="btn btn-primary">Add Ingredient</button>
+        <button type="submit" class="btn btn-primary mt-3">Add Ingredient</button>
     </div>
 </EditForm>
 
