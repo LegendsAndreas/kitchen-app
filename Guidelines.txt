@@ -71,4 +71,4 @@ to ensure proper updateage, we always do it by ID.
 
 __SCSS__
 First create the file, then when you have added your CSS in the file, use the command: sass .\SCSS_NAME.scss .\SCSS_NAME.css.
-Then, in your stylesheet, import the .css file.
+Then, in your stylesheet, import the newly created .css file.
