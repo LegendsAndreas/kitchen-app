@@ -207,7 +207,6 @@ public class Recipe
         {
             Console.WriteLine("Error printing recipe: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            return;
         }
     }
 
@@ -286,7 +285,7 @@ public class SharedStuff
 
 public class SharedRecipe
 {
-    public Recipe SelectedRecipe { get; set; }
+    public Recipe SelectedRecipe { get; set; } = new();
 
     public void SetSelectedRecipe(Recipe recipe) => SelectedRecipe = recipe;
 }

@@ -1,7 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @using WebKitchen.Components.SharedComponents
-@inject NavigationManager navigationManager;
+@inject NavigationManager NavigationManager;
 @inject DBService DbService;
 @inject SharedRecipe SharedDetailRecipe
 @inject SharedRecipeList GlobalRecipes
@@ -128,7 +128,7 @@
     {
         SharedDetailRecipe.SetSelectedRecipe(recipe);
         SharedDetailRecipe.SelectedRecipe.PrintRecipe();
-        navigationManager.NavigateTo("/recipe-details");
+        NavigationManager.NavigateTo("/recipe-details");
     }
 
 }

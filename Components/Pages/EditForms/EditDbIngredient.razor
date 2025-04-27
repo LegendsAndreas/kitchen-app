@@ -2,27 +2,27 @@
 @inject DBService DbService
 
 <label class="form-label fw-bold">Database Ingredient Id To Edit</label>
-<InputNumber id="name" @bind-Value="recipeId" class="form-control"/>
+<InputNumber id="name" @bind-Value="_recipeId" class="form-control"/>
 
 <button type="submit" class="btn btn-primary" @onclick="HandleGettingDbIngredient">Get Database Ingredient</button>
 
-@if (currentIngredient != null)
+@if (_currentIngredient != null)
 {
-    <EditForm Model="@currentIngredient" OnSubmit="@HandleSubmit">
+    <EditForm Model="@_currentIngredient" OnSubmit="@HandleSubmit">
         <label class="form-label fw-bold">Ingredient Name</label>
-        <InputText @bind-Value="currentIngredient.Name" class="form-control"/>
+        <InputText @bind-Value="_currentIngredient.Name" class="form-control"/>
 
         <label class="form-label fw-bold">Ingredient Calories</label>
-        <InputNumber @bind-Value="currentIngredient.CaloriesPer100g" class="form-control"/>
+        <InputNumber @bind-Value="_currentIngredient.CaloriesPer100g" class="form-control"/>
 
         <label class="form-label fw-bold">Ingredient Carbs</label>
-        <InputNumber @bind-Value="currentIngredient.CarbsPer100g" class="form-control"/>
+        <InputNumber @bind-Value="_currentIngredient.CarbsPer100g" class="form-control"/>
 
         <label class="form-label fw-bold">Ingredient Protein</label>
-        <InputNumber @bind-Value="currentIngredient.ProteinPer100g" class="form-control"/>
+        <InputNumber @bind-Value="_currentIngredient.ProteinPer100g" class="form-control"/>
 
         <label class="form-label fw-bold">Ingredient Fats</label>
-        <InputNumber @bind-Value="currentIngredient.FatPer100g" class="form-control"/>
+        <InputNumber @bind-Value="_currentIngredient.FatPer100g" class="form-control"/>
 
         <label class="generel__file-label mt-2" for="fileInput">Choose Image</label>
         <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
@@ -31,33 +31,40 @@
     </EditForm>
 
     <div>
-        <p>Database @currentIngredient.Name Image</p>
-        <img src="data:image/png;base64,@currentIngredient.Base64Image" alt="Image" class="img-fluid"/>
+        <p>Database @_currentIngredient.Name Image</p>
+        <img src="data:image/png;base64,@_currentIngredient.Base64Image" alt="Image" class="img-fluid"/>
     </div>
 }
 
-<StatusMessageToast @ref="StatusMessageToaster"/>
+<StatusMessageToast @ref="_statusMessageToaster"/>
 
 @code{
 
-    int recipeId;
-    Ingredient? currentIngredient;
-    StatusMessageToast StatusMessageToaster = null!;
+    int _recipeId;
+    Ingredient? _currentIngredient;
+    StatusMessageToast _statusMessageToaster = null!;
 
     private async Task HandleSubmit()
     {
-        currentIngredient.PrintIngredient();
-        var result = await DbService.UpdateDbIngredient(currentIngredient);
-        await StatusMessageToaster.ShowToastAsync(result);
+        if (_currentIngredient != null)
+        {
+            _currentIngredient.PrintIngredient();
+            var result = await DbService.UpdateDbIngredient(_currentIngredient);
+            await _statusMessageToaster.ShowToastAsync(result);
+        }
+        else
+        {
+            Console.WriteLine("_currentIngredient is null.");
+        }
     }
 
     private async Task HandleGettingDbIngredient()
     {
-        var result = await DbService.GetDbIngredientById(recipeId);
+        var result = await DbService.GetDbIngredientById(_recipeId);
         if (result.Ingredient == null)
-            await StatusMessageToaster.ShowToastAsync(result.Message);
+            await _statusMessageToaster.ShowToastAsync(result.Message);
         else
-            currentIngredient = result.Ingredient;
+            _currentIngredient = result.Ingredient;
     }
 
     private async Task HandleImage(InputFileChangeEventArgs imageFile)
@@ -73,7 +80,8 @@
 
             try
             {
-                await currentIngredient.SetIngredientImage(image);
+                if (_currentIngredient != null)
+                    await _currentIngredient.SetIngredientImage(image);
             }
             catch (Exception ex)
             {
