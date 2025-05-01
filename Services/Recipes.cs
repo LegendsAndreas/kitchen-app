@@ -70,6 +70,7 @@ public class Ingredient
     public float CarbsPer100g { get; set; }
     public float ProteinPer100g { get; set; }
     public float FatPer100g { get; set; }
+    private float CostPer100g { get; set; }
     private float Multiplier { get; set; }
     public string Base64Image { get; set; } = string.Empty;
 
@@ -89,6 +90,12 @@ public class Ingredient
     {
         Console.WriteLine("Getting multiplier...");
         return Multiplier;
+    }
+    
+    public float GetCostPer100g()
+    {
+        Console.WriteLine("Getting cost per 100g...");
+        return CostPer100g;
     }
 
     public string GetIngredientImage()
@@ -157,12 +164,19 @@ public class Ingredient
             CarbsPer100g = ing.CarbsPer100g,
             FatPer100g = ing.FatPer100g,
             ProteinPer100g = ing.ProteinPer100g,
-            Base64Image = ing.Base64Image
+            Base64Image = ing.Base64Image,
+            CostPer100g = ing.CostPer100g
         };
         transferIngredient.SetId(ing.GetId());
         transferIngredient.SetMultiplier();
 
         return transferIngredient;
+    }
+
+    public void SetCostPer100G(float totalProductWeight, float cost)
+    {
+        Console.WriteLine("Setting cost per 100g...");
+        CostPer100g = cost / totalProductWeight * 100;
     }
 }
 
@@ -173,7 +187,6 @@ public class Recipe
     [Required]
     [StringLength(1, ErrorMessage = "Meal type must be one character long.")]
     public string MealType { get; set; } = string.Empty;
-
     [Required] public string Name { get; set; } = string.Empty;
     [Required] public string Base64Image { get; set; } = string.Empty;
     public List<Ingredient> Ingredients { get; set; } = new();

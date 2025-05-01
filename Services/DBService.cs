@@ -807,8 +807,8 @@ public class DBService
 
         const string query =
             "INSERT INTO ingredients " +
-            "(name, cals, fats, carbs, protein, image) " +
-            "VALUES(@name, @cals, @fats, @carbs, @protein, @image)";
+            "(name, cals, fats, carbs, protein, image, cost_per_100g) " +
+            "VALUES(@name, @cals, @fats, @carbs, @protein, @image, @costper100g)";
 
         try
         {
@@ -820,6 +820,7 @@ public class DBService
             cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
             cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
             cmd.Parameters.AddWithValue("@image", ingredient.Base64Image);
+            cmd.Parameters.AddWithValue("@costper100g", ingredient.GetCostPer100g());
             await RunAsyncQuery(cmd);
         }
         catch (Exception ex)

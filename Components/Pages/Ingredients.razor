@@ -52,6 +52,20 @@
                 <ValidationMessage For="@(() => currentIngredient.ProteinPer100g)"/>
             </div>
 
+            <div class="col">
+                <label class="form-label ingredients__form__label-mobile">
+                    <strong>Weight</strong>
+                </label>
+                <InputNumber @bind-Value="_totalIngredientGrams"/>
+            </div>
+
+            <div class="col">
+                <label class="form-label ingredients__form__label-mobile">
+                    <strong>Cost</strong>
+                </label>
+                <InputNumber @bind-Value="_totalIngredientCost"/>
+            </div>
+
             <div class="col ingredients__form__image-button-mobile">
                 <label class="generel__file-label btn btn-primary" for="fileInput">Choose Image</label>
                 <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
@@ -102,6 +116,8 @@
 <StatusMessageToast @ref="StatusMessageToaster"/>
 
 @code {
+    float _totalIngredientGrams;
+    float _totalIngredientCost;
     Ingredient currentIngredient = new();
     IBrowserFile? loadedIngredientImage;
     StatusMessageToast StatusMessageToaster = null!;
@@ -176,6 +192,7 @@
         }
 
         await currentIngredient.SetIngredientImage(loadedIngredientImage);
+        currentIngredient.SetCostPer100G(_totalIngredientGrams, _totalIngredientCost);
         var tempIngredient = currentIngredient.TransferIngredient(currentIngredient);
 
         var result = await DbService.AddIngredientToDb(tempIngredient);
