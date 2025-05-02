@@ -93,7 +93,7 @@
                         </div>
 
                         <div class="col">
-                            <p>Current Recipe: @(SharedDbRecipe?.SelectedRecipe?.Name ?? "")</p>
+                            <p>Current Recipe: @SharedDbRecipe.SelectedRecipe.Name</p>
                         </div>
 
                         <button type="submit" class="btn btn-primary" @onclick="AddRecipeAsIngredient">Add Recipe As
@@ -135,7 +135,9 @@
     </div>
 </div>
 
-<AddedIngredients CurrentAddedIngredients="@currentIngredients"/>
+<div class="mb-3">
+    <AddedIngredients CurrentAddedIngredients="@currentIngredients"/>
+</div>
 <StatusMessageToast @ref="statusMessageToaster"/>
 
 @code {
@@ -337,13 +339,7 @@
             return;
         }
 
-        currentIngredient.Name = crossIngredient.Name;
-        currentIngredient.Grams = currentIngredientGrams;
-        currentIngredient.CaloriesPer100g = crossIngredient.CaloriesPer100g;
-        currentIngredient.FatPer100g = crossIngredient.FatPer100g;
-        currentIngredient.CarbsPer100g = crossIngredient.CarbsPer100g;
-        currentIngredient.ProteinPer100g = crossIngredient.ProteinPer100g;
-
+        currentIngredient = currentIngredient.TransferIngredient(crossIngredient);
         HandleIngredient();
     }
 

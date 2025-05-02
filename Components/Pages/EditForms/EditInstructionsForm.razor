@@ -13,7 +13,7 @@
     <div class="row row-cols-2">
         <div class="col">
             <h5 style="padding: 5px"><i><u>Steps</u></i></h5>
-            <div class="card" style="background-color: #272b2f">
+            <div class="card p-2" style="background-color: #272b2f">
                 @foreach (var step in _instructions.Instructions.Steps)
                 {
                     <p style="padding-left: 10px">@step.StepNumber. @step.StepText <button type="submit"
@@ -231,13 +231,12 @@
 
     private void IncrementStep(int stepNum)
     {
-        
         if (_instructions == null)
         {
             Console.WriteLine("Instructions are null.");
             return;
         }
-        
+
         if (stepNum == _instructions.Instructions.Steps.Count - 1)
         {
             Console.WriteLine("");
@@ -270,7 +269,7 @@
             Console.WriteLine("Instructions are null.");
             return;
         }
-        
+
         if (noteNum == _instructions.Instructions.Notes.Count - 1)
         {
             Console.WriteLine("");

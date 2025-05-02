@@ -2,7 +2,7 @@
 @inject DBService DbService
 
 <label class="form-label fw-bold">Database Ingredient Id To Edit</label>
-<InputNumber id="name" @bind-Value="_recipeId" class="form-control"/>
+<InputNumber id="name" @bind-Value="_ingredientId" class="form-control"/>
 
 <button type="submit" class="btn btn-primary" @onclick="HandleGettingDbIngredient">Get Database Ingredient</button>
 
@@ -24,6 +24,21 @@
         <label class="form-label fw-bold">Ingredient Fats</label>
         <InputNumber @bind-Value="_currentIngredient.FatPer100g" class="form-control"/>
 
+        <label class="form-label fw-bold">Cost per 100g</label>
+        <InputNumber disabled="true" @bind-Value="@_currentIngredient.CostPer100g" class="form-control"/>
+
+        <div class="row pt-2">
+            <div class="fw-bold">New Cost (leave at 0 for no change)</div>
+            <div class="col-6">
+                <label class="form-label fw-bold">Ingredient Total Cost</label>
+                <InputNumber @bind-Value="_costPr100g" class="form-control"/>
+            </div>
+            <div class="col-6">
+                <label class="form-label fw-bold">Ingredient Total Weight</label>
+                <InputNumber @bind-Value="_weightPr100g" class="form-control"/>
+            </div>
+        </div>
+
         <label class="generel__file-label mt-2" for="fileInput">Choose Image</label>
         <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
 
@@ -40,27 +55,33 @@
 
 @code{
 
-    int _recipeId;
+    int _ingredientId;
+    float _weightPr100g;
+    float _costPr100g;
     Ingredient? _currentIngredient;
     StatusMessageToast _statusMessageToaster = null!;
 
     private async Task HandleSubmit()
     {
-        if (_currentIngredient != null)
-        {
-            _currentIngredient.PrintIngredient();
-            var result = await DbService.UpdateDbIngredient(_currentIngredient);
-            await _statusMessageToaster.ShowToastAsync(result);
-        }
-        else
+        if (_currentIngredient == null)
         {
             Console.WriteLine("_currentIngredient is null.");
+            return;
         }
+
+        if (_weightPr100g != 0 && _costPr100g != 0)
+            _currentIngredient.SetCostPer100G(_weightPr100g, _costPr100g);
+
+        _currentIngredient.PrintIngredient();
+        var result = await DbService.UpdateDbIngredient(_currentIngredient);
+        await _statusMessageToaster.ShowToastAsync(result);
+        _weightPr100g = 0;
+        _costPr100g = 0;
     }
 
     private async Task HandleGettingDbIngredient()
     {
-        var result = await DbService.GetDbIngredientById(_recipeId);
+        var result = await DbService.GetDbIngredientById(_ingredientId);
         if (result.Ingredient == null)
             await _statusMessageToaster.ShowToastAsync(result.Message);
         else

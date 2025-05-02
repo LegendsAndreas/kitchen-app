@@ -541,7 +541,7 @@ public class DBService
         List<Ingredient> ingredients = [];
         string statusMessage = "Ingredients successfully retrieved.";
 
-        const string query = "SELECT id, name, cals, fats, carbs, protein, image FROM ingredients ORDER BY id";
+        const string query = "SELECT id, name, cals, fats, carbs, protein, image, cost_per_100g FROM ingredients ORDER BY id";
 
         try
         {
@@ -559,7 +559,9 @@ public class DBService
                     ProteinPer100g = reader.GetFloat(5),
                     Base64Image = reader.GetString(6) != "PlaceHolderPic.jpg"
                         ? reader.GetString(6)
-                        : base64PlaceHolderPic
+                        : base64PlaceHolderPic,
+                    CostPer100g = reader.GetFloat(7)
+
                 };
                 var uintValue = unchecked((uint)reader.GetInt32(0));
                 tempIngredient.SetId(uintValue);
@@ -605,6 +607,7 @@ public class DBService
                 ingredient.CarbsPer100g = reader.GetFloat(4);
                 ingredient.ProteinPer100g = reader.GetFloat(5);
                 ingredient.Base64Image = reader.GetString(6);
+                ingredient.CostPer100g = reader.GetFloat(7);
                 ingredient.SetId(uintValue);
             }
             else
@@ -1173,7 +1176,8 @@ public class DBService
                              "fats = @fats," +
                              "carbs = @carbs," +
                              "protein = @protein," +
-                             "image = @image " +
+                             "image = @image, " +
+                             "cost_per_100g = @cost "+
                              "WHERE id = @id";
 
         try
@@ -1186,6 +1190,7 @@ public class DBService
             cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
             cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
             cmd.Parameters.AddWithValue("@image", ingredient.Base64Image);
+            cmd.Parameters.AddWithValue("@cost", ingredient.CostPer100g);
             cmd.Parameters.AddWithValue("@id", ingredient.GetIntId());
 
             if (IsIngredientIdZero(ingredient))

@@ -26,6 +26,7 @@
                             <li class="dropdown-item">Protein: @ingredient.ProteinPer100g.ToString("0")</li>
                             <li class="dropdown-item">Fat: @ingredient.FatPer100g.ToString("0")</li>
                             <li class="dropdown-item">Carbs: @ingredient.CarbsPer100g.ToString("0")</li>
+                            <li class="dropdown-item">Cost: @ingredient.CostPer100g.ToString("0.0")</li>
                         </ul>
                         <button type="submit" class="btn btn-danger"
                                 @onclick="() => DeleteIngredient(CurrentAddedIngredients.IndexOf(ingredient))">

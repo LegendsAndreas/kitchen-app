@@ -70,7 +70,7 @@ public class Ingredient
     public float CarbsPer100g { get; set; }
     public float ProteinPer100g { get; set; }
     public float FatPer100g { get; set; }
-    private float CostPer100g { get; set; }
+    public float CostPer100g { get; set; }
     private float Multiplier { get; set; }
     public string Base64Image { get; set; } = string.Empty;
 
@@ -147,6 +147,7 @@ public class Ingredient
         Console.WriteLine("Carbs: " + CarbsPer100g);
         Console.WriteLine("Protein: " + ProteinPer100g);
         Console.WriteLine("Fats: " + FatPer100g);
+        Console.WriteLine("Cost per 100g: " + CostPer100g);
         Console.WriteLine("Multiplier: " + Multiplier);
     }
 
@@ -189,6 +190,7 @@ public class Recipe
     public string MealType { get; set; } = string.Empty;
     [Required] public string Name { get; set; } = string.Empty;
     [Required] public string Base64Image { get; set; } = string.Empty;
+    public float TotalCost { get; set; }
     public List<Ingredient> Ingredients { get; set; } = new();
     public Macros TotalMacros { get; set; } = new();
 
@@ -200,6 +202,7 @@ public class Recipe
             Console.WriteLine("Recipe Number: " + RecipeId);
             Console.WriteLine("MealType: " + MealType);
             Console.WriteLine("Name: " + Name);
+            Console.WriteLine("Cost: " + TotalCost);
             // Console.WriteLine("Image: " + Base64Image);
 
             if (Ingredients.Count != 0)
@@ -230,6 +233,7 @@ public class Recipe
             RecipeId = recipe.RecipeId,
             MealType = recipe.MealType,
             Name = recipe.Name,
+            TotalCost = recipe.TotalCost,
             Base64Image = recipe.Base64Image,
         };
 
@@ -268,6 +272,7 @@ public class Recipe
         RecipeId = 0;
         MealType = string.Empty;
         Name = string.Empty;
+        TotalCost = 0f;
         Base64Image = string.Empty;
         Ingredients = [];
         TotalMacros = new Macros();
