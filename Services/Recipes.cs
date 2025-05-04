@@ -137,9 +137,9 @@ public class Ingredient
         Base64Image = string.Empty;
     }
 
-    public void PrintIngredient()
+    public void PrintIngredient(string prefixMsg = "")
     {
-        Console.WriteLine("__Printing Ingredient__");
+        Console.WriteLine($"({prefixMsg}) Printing ingredient...");
         Console.WriteLine("ID: " + Id);
         Console.WriteLine("Ingredient: " + Name);
         Console.WriteLine("Grams: " + Grams);
@@ -194,9 +194,9 @@ public class Recipe
     public List<Ingredient> Ingredients { get; set; } = new();
     public Macros TotalMacros { get; set; } = new();
 
-    public void PrintRecipe()
+    public void PrintRecipe(string prefixMsg = "")
     {
-        Console.WriteLine("Printing recipe...");
+        Console.WriteLine($"({prefixMsg}) Printing recipe...");
         try
         {
             Console.WriteLine("Recipe Number: " + RecipeId);
@@ -264,6 +264,16 @@ public class Recipe
     {
         Console.WriteLine("Setting total macros...");
         TotalMacros.SetMacros(Ingredients);
+    }
+
+    public void SetTotalCost()
+    {
+        Console.WriteLine("Setting total cost...");
+        TotalCost = 0f;
+        foreach (var ingredient in Ingredients)
+        {
+            TotalCost += ingredient.GetCostPer100g() * ingredient.GetMultiplier();
+        }
     }
 
     public void ClearRecipe()

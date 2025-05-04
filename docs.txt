@@ -173,3 +173,19 @@ Inside your regular stylesheet, you want to reference the new .css file, created
 @import "SCSS_FILE_NAME.css";
 Example: sass .\testsheet.scss testsheet.css
 Example: @import "testsheet.css";
+
+-- Adding property to existing database custom type
+ALTER TYPE *name* ADD ATTRIBUTE *new_type_name* *date_type*.
+Note you cant add default value.
+
+-- Error getting recipe by id (44): 42703: column "id" does not exist
+const string query = "SELECT id, name, image, meal_type, " +
+                     "(macros).total_calories, " +
+                     "(macros).total_fats, " +
+                     "(macros).total_carbs, " +
+                     "(macros).total_protein, " +
+                     "cost" +
+                     "FROM recipes " +
+                     "WHERE id = @id";
+                     
+The problem here, is that the query looks like: ..., costFrom recipes ...

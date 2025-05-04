@@ -14,22 +14,22 @@
 
 <div class="card center-content generel__border-layout">
     <div class="card-body">
-        <EditForm Model="@currentRecipe" OnValidSubmit="HandleRecipe">
+        <EditForm Model="@_currentRecipe" OnValidSubmit="HandleRecipe">
             <DataAnnotationsValidator/>
             <div class="container text-center generel__border-layout m-2 p-4">
                 <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
                     <div class="col">
                         <label class="form-label">Meal Type:</label>
-                        <InputText id="meal-type" @bind-Value="currentRecipe.MealType"/>
+                        <InputText id="meal-type" @bind-Value="_currentRecipe.MealType"/>
                     </div>
 
                     <div class="col">
                         <label>Recipe Name:</label>
-                        <InputText id="name" @bind-Value="currentRecipe.Name"/>
+                        <InputText id="name" @bind-Value="_currentRecipe.Name"/>
                     </div>
 
                     <label class="generel__file-label"
-                           for="fileInput">@(string.IsNullOrEmpty(currentRecipe.Base64Image) ? "Choose Image" : "Image Selected")</label>
+                           for="fileInput">@(string.IsNullOrEmpty(_currentRecipe.Base64Image) ? "Choose Image" : "Image Selected")</label>
                     <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
 
                     <button type="submit" class="btn btn-primary col">Create Recipe</button>
@@ -37,38 +37,38 @@
             </div>
         </EditForm>
 
-        <EditForm Model="@currentIngredient" OnValidSubmit="HandleIngredient">
+        <EditForm Model="@_currentIngredient" OnValidSubmit="HandleIngredient">
             <DataAnnotationsValidator/>
             <div class="container text-center generel__border-layout m-2 p-4">
                 <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
                     <div class="col">
                         <label>Ingredient Name:</label>
-                        <InputText id="ingredient-name" @bind-Value="currentIngredient.Name"/>
+                        <InputText id="ingredient-name" @bind-Value="_currentIngredient.Name"/>
                     </div>
 
                     <div class="col">
                         <label>Grams:</label>
-                        <InputNumber id="kg" @bind-Value="currentIngredient.Grams"/>
+                        <InputNumber id="kg" @bind-Value="_currentIngredient.Grams"/>
                     </div>
 
                     <div class="col">
                         <label>Calories (pr. 100g):</label>
-                        <InputNumber id="calories" @bind-Value="currentIngredient.CaloriesPer100g"/>
+                        <InputNumber id="calories" @bind-Value="_currentIngredient.CaloriesPer100g"/>
                     </div>
 
                     <div class="col">
                         <label>Carbs (pr. 100g):</label>
-                        <InputNumber id="carbs" @bind-Value="currentIngredient.CarbsPer100g"/>
+                        <InputNumber id="carbs" @bind-Value="_currentIngredient.CarbsPer100g"/>
                     </div>
 
                     <div class="col">
                         <label>Fats (pr. 100g):</label>
-                        <InputNumber id="fats" @bind-Value="currentIngredient.FatPer100g"/>
+                        <InputNumber id="fats" @bind-Value="_currentIngredient.FatPer100g"/>
                     </div>
 
                     <div class="col">
                         <label>Protein (pr. 100g):</label>
-                        <InputNumber id="protein" @bind-Value="currentIngredient.ProteinPer100g"/>
+                        <InputNumber id="protein" @bind-Value="_currentIngredient.ProteinPer100g"/>
                     </div>
 
                     <button type="submit" class="btn btn-primary">Add Ingredient</button>
@@ -82,14 +82,14 @@
         }
         else
         {
-            <EditForm Model="@currentIngredientRecipe">
+            <EditForm Model="@_currentIngredientRecipe">
                 <div class="container text-center generel__border-layout m-2 p-4">
                     <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
                         <RealTimeRecipeSearchBar RecipesData="@GlobalRecipes.Recipes"/>
 
                         <div class="col">
                             <label class="form-label">Parts: 1/</label>
-                            <InputNumber @bind-Value="currentIngredientRecipeParts"/>
+                            <InputNumber @bind-Value="_currentIngredientRecipeParts"/>
                         </div>
 
                         <div class="col">
@@ -110,21 +110,21 @@
         }
         else
         {
-            <EditForm Model="@currentIngredientGrams" OnSubmit="HandleDbIngredient">
+            <EditForm Model="@_currentIngredientGrams" OnSubmit="HandleDbIngredient">
                 <DataAnnotationsValidator/>
                 <div class="container text-center generel__border-layout m-2 p-4">
                     <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
 
                         <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"
-                                                     CurrentIngredientDataHasChanged="@(value => crossIngredient = value)"/>
+                                                     CurrentIngredientDataHasChanged="@(value => _crossIngredient = value)"/>
 
                         <div class="col">
                             <label class="form-label">Grams</label>
-                            <InputNumber @bind-Value="currentIngredientGrams"/>
+                            <InputNumber @bind-Value="_currentIngredientGrams"/>
                         </div>
 
                         <div class="col">
-                            <p>Current Ingredient: @crossIngredient.Name</p>
+                            <p>Current Ingredient: @_crossIngredient.Name</p>
                         </div>
 
                         <button type="submit" class="btn btn-primary">Add Existing Database Ingredient</button>
@@ -136,19 +136,19 @@
 </div>
 
 <div class="mb-3">
-    <AddedIngredients CurrentAddedIngredients="@currentIngredients"/>
+    <AddedIngredients CurrentAddedIngredients="@_currentIngredients"/>
 </div>
-<StatusMessageToast @ref="statusMessageToaster"/>
+<StatusMessageToast @ref="_statusMessageToaster"/>
 
 @code {
-    int currentIngredientGrams;
-    int currentIngredientRecipeParts;
-    Recipe currentRecipe = new();
-    Recipe currentIngredientRecipe = new();
-    Ingredient currentIngredient = new();
-    Ingredient crossIngredient = new();
-    StatusMessageToast statusMessageToaster = null!;
-    readonly List<Ingredient> currentIngredients = new();
+    int _currentIngredientGrams;
+    int _currentIngredientRecipeParts;
+    Recipe _currentRecipe = new();
+    Recipe _currentIngredientRecipe = new();
+    Ingredient _currentIngredient = new();
+    Ingredient _crossIngredient = new();
+    StatusMessageToast _statusMessageToaster = null!;
+    readonly List<Ingredient> _currentIngredients = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -159,11 +159,11 @@
                 var result = await DbService.GetAllRecipes();
                 if (result.Recipes == null)
                 {
-                    await statusMessageToaster.ShowToastAsync(result.Message);
+                    await _statusMessageToaster.ShowToastAsync(result.Message);
                 }
                 else
                 {
-                    await statusMessageToaster.ShowToastAsync(result.Message);
+                    await _statusMessageToaster.ShowToastAsync(result.Message);
                     GlobalRecipes.Recipes = result.Recipes;
                     Console.WriteLine("Acquired Recipes.");
                     StateHasChanged();
@@ -175,9 +175,9 @@
                 Console.WriteLine("StackTrace: " + ex.StackTrace);
 
                 if (ex.Message.Contains("Failed to connect"))
-                    await statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
+                    await _statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
                 else
-                    await statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
+                    await _statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
 
                 return;
             }
@@ -189,10 +189,10 @@
             {
                 var result = await DbService.GetAllDbIngredients();
                 if (result.DbIngredients == null)
-                    await statusMessageToaster.ShowToastAsync(result.Message);
+                    await _statusMessageToaster.ShowToastAsync(result.Message);
                 else
                 {
-                    await statusMessageToaster.ShowToastAsync(result.Message);
+                    await _statusMessageToaster.ShowToastAsync(result.Message);
                     Console.WriteLine(result.Message);
                     GlobalIngredients.Ingredients = result.DbIngredients;
                     StateHasChanged();
@@ -216,33 +216,33 @@
     private async Task HandleRecipe()
     {
         Console.WriteLine("Handling recipe...");
-        if (currentIngredients.Count == 0)
+        if (_currentIngredients.Count == 0)
         {
             Console.WriteLine("There are no ingredients.");
-            await statusMessageToaster.ShowToastAsync("Recipe was not created; no ingredients added");
+            await _statusMessageToaster.ShowToastAsync("Recipe was not created; no ingredients added");
             return;
         }
 
-        if (currentRecipe.MealType is not ("B" or "L" or "D" or "S" or "K"))
+        if (_currentRecipe.MealType is not ("B" or "L" or "D" or "S" or "K"))
         {
-            Console.WriteLine($"Invalid meal type \"{currentRecipe.MealType}\"");
-            await statusMessageToaster.ShowToastAsync($"Recipe was not created; invalid meal type \"{currentRecipe.MealType}\"");
+            Console.WriteLine($"Invalid meal type \"{_currentRecipe.MealType}\"");
+            await _statusMessageToaster.ShowToastAsync($"Recipe was not created; invalid meal type \"{_currentRecipe.MealType}\"");
             return;
         }
 
-        currentRecipe.Ingredients = currentIngredients;
-        currentRecipe.SetTotalMacros();
+        _currentRecipe.Ingredients = _currentIngredients;
+        _currentRecipe.SetTotalMacros();
+        _currentRecipe.SetTotalCost();
 
-        Console.WriteLine("Print current recipe");
-        currentRecipe.PrintRecipe();
+        _currentRecipe.PrintRecipe("HandleRecipe");
 
         try
         {
-            var result = await DbService.AddRecipeToDb(currentRecipe);
+            var result = await DbService.AddRecipeToDb(_currentRecipe);
             if (!result.Status)
-                await statusMessageToaster.ShowToastAsync("Error adding recipe to database; " + result.Message);
+                await _statusMessageToaster.ShowToastAsync("Error adding recipe to database; " + result.Message);
             else
-                await statusMessageToaster.ShowToastAsync(result.Message);
+                await _statusMessageToaster.ShowToastAsync(result.Message);
         }
         catch (Exception ex)
         {
@@ -251,9 +251,9 @@
             return;
         }
 
-        currentRecipe.ClearRecipe();
-        currentIngredient.ClearIngredient();
-        currentIngredients.Clear();
+        _currentRecipe.ClearRecipe();
+        _currentIngredient.ClearIngredient();
+        _currentIngredients.Clear();
     }
 
     private async Task HandleImage(InputFileChangeEventArgs imageFile)
@@ -269,7 +269,7 @@
 
             try
             {
-                await currentRecipe.SetRecipeImage(image);
+                await _currentRecipe.SetRecipeImage(image);
             }
             catch (Exception ex)
             {
@@ -283,40 +283,41 @@
     public void HandleIngredient()
     {
         Console.WriteLine("Handling ingredient...");
-        var tempIngredient = currentIngredient.TransferIngredient(currentIngredient);
-        tempIngredient.PrintIngredient();
+        var tempIngredient = _currentIngredient.TransferIngredient(_currentIngredient);
+        tempIngredient.PrintIngredient("HandleIngredient");
 
-        currentIngredients.Add(tempIngredient);
-        currentIngredient.ClearIngredient();
+        _currentIngredients.Add(tempIngredient);
+        _currentIngredient.ClearIngredient();
     }
 
     private async Task AddRecipeAsIngredient()
     {
         Console.WriteLine("Adding recipe as ingredient...");
 
-        currentIngredientRecipe = SharedDbRecipe.SelectedRecipe;
+        _currentIngredientRecipe = SharedDbRecipe.SelectedRecipe;
 
-        if (string.IsNullOrEmpty(currentIngredientRecipe.Name))
+        if (string.IsNullOrEmpty(_currentIngredientRecipe.Name))
         {
             Console.WriteLine("Current ingredient recipe is not selected");
-            await statusMessageToaster.ShowToastAsync("Ingredient recipe is not selected");
+            await _statusMessageToaster.ShowToastAsync("Ingredient recipe is not selected");
             return;
         }
 
-        if (currentIngredientRecipeParts < 1)
+        if (_currentIngredientRecipeParts < 1)
         {
             Console.WriteLine("Parts are below 1");
-            await statusMessageToaster.ShowToastAsync("Parts cant be less than 1");
+            await _statusMessageToaster.ShowToastAsync("Parts cant be less than 1");
             return;
         }
 
-        currentIngredient.Name = currentIngredientRecipe.Name;
+        // Just leave this one alone lil bro
+        _currentIngredient.Name = _currentIngredientRecipe.Name;
         // ReSharper disable once PossibleLossOfFraction
-        currentIngredient.Grams = 100 / currentIngredientRecipeParts;
-        currentIngredient.CaloriesPer100g = currentIngredientRecipe.TotalMacros.Calories;
-        currentIngredient.FatPer100g = currentIngredientRecipe.TotalMacros.Fat;
-        currentIngredient.CarbsPer100g = currentIngredientRecipe.TotalMacros.Carbs;
-        currentIngredient.ProteinPer100g = currentIngredientRecipe.TotalMacros.Protein;
+        _currentIngredient.Grams = 100 / _currentIngredientRecipeParts;
+        _currentIngredient.CaloriesPer100g = _currentIngredientRecipe.TotalMacros.Calories;
+        _currentIngredient.FatPer100g = _currentIngredientRecipe.TotalMacros.Fat;
+        _currentIngredient.CarbsPer100g = _currentIngredientRecipe.TotalMacros.Carbs;
+        _currentIngredient.ProteinPer100g = _currentIngredientRecipe.TotalMacros.Protein;
 
         HandleIngredient();
     }
@@ -325,21 +326,22 @@
     {
         Console.WriteLine("Handling db ingredient...");
 
-        if (string.IsNullOrEmpty(crossIngredient.Name))
+        if (string.IsNullOrEmpty(_crossIngredient.Name))
         {
             Console.WriteLine("No db ingredient selected");
-            await statusMessageToaster.ShowToastAsync("No database ingredient selected");
+            await _statusMessageToaster.ShowToastAsync("No database ingredient selected");
             return;
         }
 
-        if (currentIngredientGrams == 0)
+        if (_currentIngredientGrams == 0)
         {
             Console.WriteLine("No grams specified.");
-            await statusMessageToaster.ShowToastAsync("No grams selected.");
+            await _statusMessageToaster.ShowToastAsync("No grams selected.");
             return;
         }
 
-        currentIngredient = currentIngredient.TransferIngredient(crossIngredient);
+        _currentIngredient = _crossIngredient.TransferIngredient(_crossIngredient);
+        _currentIngredient.Grams = _currentIngredientGrams;
         HandleIngredient();
     }
 
