@@ -46,8 +46,7 @@
     private void HandleIngredientItem(Ingredient ingredient)
     {
         Console.WriteLine("handling ingredient item...:");
-        // sharedDbIngredient.SelectedIngredient = ingredient.TransferIngredient(ingredient);
-        // sharedDbIngredient.SelectedIngredient.PrintIngredient();
+        // ingredient.PrintIngredient("HandleIngredientItem");
         CurrentIngredientData = ingredient.TransferIngredient(ingredient);
         CurrentIngredientDataHasChanged.InvokeAsync(CurrentIngredientData);
         StateHasChanged();

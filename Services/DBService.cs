@@ -94,11 +94,12 @@ public class DBService
         Recipe recipe;
         string statusMessage = "Recipe successfully retrieved.";
 
-        const string query = "SELECT id, name, image, meal_type," +
-                             "(macros).total_calories," +
-                             "(macros).total_fats," +
-                             "(macros).total_carbs," +
-                             "(macros).total_protein " +
+        const string query = "SELECT id, name, image, meal_type, " +
+                             "(macros).total_calories, " +
+                             "(macros).total_fats, " +
+                             "(macros).total_carbs, " +
+                             "(macros).total_protein, " +
+                             "cost " +
                              "FROM recipes " +
                              "WHERE id = @id";
         try
@@ -311,7 +312,8 @@ public class DBService
                 Fat = reader.GetFloat(5),
                 Carbs = reader.GetFloat(6),
                 Protein = reader.GetFloat(7)
-            }
+            },
+            TotalCost = reader.GetFloat(8)
         };
 
         try
@@ -457,7 +459,8 @@ public class DBService
                              "(macros).total_calories," +
                              "(macros).total_fats," +
                              "(macros).total_carbs," +
-                             "(macros).total_protein " +
+                             "(macros).total_protein, " +
+                             "cost " +
                              "FROM recipes " +
                              "ORDER BY id";
 
@@ -513,7 +516,8 @@ public class DBService
                     CaloriesPer100g = reader.GetFloat(2),
                     CarbsPer100g = reader.GetFloat(3),
                     ProteinPer100g = reader.GetFloat(4),
-                    FatPer100g = reader.GetFloat(5)
+                    FatPer100g = reader.GetFloat(5),
+                    CostPer100g = reader.IsDBNull(6) ? 0 : reader.GetFloat(6)
                 };
                 tempIngredient.SetMultiplier();
                 ingredients.Add(tempIngredient);
@@ -541,7 +545,8 @@ public class DBService
         List<Ingredient> ingredients = [];
         string statusMessage = "Ingredients successfully retrieved.";
 
-        const string query = "SELECT id, name, cals, fats, carbs, protein, image FROM ingredients ORDER BY id";
+        const string query =
+            "SELECT id, name, cals, fats, carbs, protein, image, cost_per_100g FROM ingredients ORDER BY id";
 
         try
         {
@@ -559,7 +564,8 @@ public class DBService
                     ProteinPer100g = reader.GetFloat(5),
                     Base64Image = reader.GetString(6) != "PlaceHolderPic.jpg"
                         ? reader.GetString(6)
-                        : base64PlaceHolderPic
+                        : base64PlaceHolderPic,
+                    CostPer100g = reader.GetFloat(7)
                 };
                 var uintValue = unchecked((uint)reader.GetInt32(0));
                 tempIngredient.SetId(uintValue);
@@ -605,6 +611,7 @@ public class DBService
                 ingredient.CarbsPer100g = reader.GetFloat(4);
                 ingredient.ProteinPer100g = reader.GetFloat(5);
                 ingredient.Base64Image = reader.GetString(6);
+                ingredient.CostPer100g = reader.GetFloat(7);
                 ingredient.SetId(uintValue);
             }
             else
@@ -673,7 +680,7 @@ public class DBService
 
         string statusMessage = "Recipe successfully added.";
         const string query = "INSERT INTO recipes " +
-                             "(meal_type, name, image, macros) " +
+                             "(meal_type, name, image, macros, cost) " +
                              "VALUES (" +
                              "@type," +
                              "@name," +
@@ -682,9 +689,10 @@ public class DBService
                              "@calories," +
                              "@fats," +
                              "@carbs," +
-                             "@protein)::recipe_macros)";
-
-        recipe.PrintRecipe();
+                             "@protein)::recipe_macros, " +
+                             "@cost)";
+        // Console.WriteLine("Query: " + query);
+        // recipe.PrintRecipe();
         try
         {
             await using var conn = await GetConnection();
@@ -696,6 +704,7 @@ public class DBService
             cmd.Parameters.AddWithValue("@fats", recipe.TotalMacros.Fat);
             cmd.Parameters.AddWithValue("@carbs", recipe.TotalMacros.Carbs);
             cmd.Parameters.AddWithValue("@protein", recipe.TotalMacros.Protein);
+            cmd.Parameters.AddWithValue("@cost", recipe.TotalCost);
             await RunAsyncQuery(cmd);
             var result = await AddIngredientsToRow(recipe.Ingredients);
             if (result.Status == false)
@@ -765,7 +774,8 @@ public class DBService
                              "@fats," +
                              "@carbs," +
                              "@protein," +
-                             "@multiplier" +
+                             "@multiplier, " +
+                             "@cost_per_100g" +
                              ")::ingredient) " +
                              "WHERE id IN (SELECT COUNT(*) FROM recipes)"; // Since every new recipe is actually the last
         // one in the table, we can just add all the occurrences of id into one and that will be our recipe id.
@@ -783,6 +793,7 @@ public class DBService
                 cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
                 cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
                 cmd.Parameters.AddWithValue("@multiplier", ingredient.GetMultiplier());
+                cmd.Parameters.AddWithValue("@cost_per_100g", ingredient.CostPer100g);
                 await RunAsyncQuery(cmd);
             }
         }
@@ -807,8 +818,8 @@ public class DBService
 
         const string query =
             "INSERT INTO ingredients " +
-            "(name, cals, fats, carbs, protein, image) " +
-            "VALUES(@name, @cals, @fats, @carbs, @protein, @image)";
+            "(name, cals, fats, carbs, protein, image, cost_per_100g) " +
+            "VALUES(@name, @cals, @fats, @carbs, @protein, @image, @costper100g)";
 
         try
         {
@@ -820,6 +831,7 @@ public class DBService
             cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
             cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
             cmd.Parameters.AddWithValue("@image", ingredient.Base64Image);
+            cmd.Parameters.AddWithValue("@costper100g", ingredient.GetCostPer100g());
             await RunAsyncQuery(cmd);
         }
         catch (Exception ex)
@@ -1172,7 +1184,8 @@ public class DBService
                              "fats = @fats," +
                              "carbs = @carbs," +
                              "protein = @protein," +
-                             "image = @image " +
+                             "image = @image, " +
+                             "cost_per_100g = @cost " +
                              "WHERE id = @id";
 
         try
@@ -1185,6 +1198,7 @@ public class DBService
             cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
             cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
             cmd.Parameters.AddWithValue("@image", ingredient.Base64Image);
+            cmd.Parameters.AddWithValue("@cost", ingredient.CostPer100g);
             cmd.Parameters.AddWithValue("@id", ingredient.GetIntId());
 
             if (IsIngredientIdZero(ingredient))
