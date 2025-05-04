@@ -501,7 +501,8 @@ public class DBService
                                  "ingredient.carbs_pr_hectogram," +
                                  "ingredient.protein_pr_hectogram," +
                                  "ingredient.fats_pr_hectogram," +
-                                 "ingredient.multiplier " +
+                                 "ingredient.multiplier, " +
+                                 "ingredient.cost_per_100g " +
                                  "FROM recipes, unnest(ingredients) AS ingredient WHERE id = @id";
             await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@id", id);
@@ -517,7 +518,7 @@ public class DBService
                     CarbsPer100g = reader.GetFloat(3),
                     ProteinPer100g = reader.GetFloat(4),
                     FatPer100g = reader.GetFloat(5),
-                    CostPer100g = reader.IsDBNull(6) ? 0 : reader.GetFloat(6)
+                    CostPer100g = reader.IsDBNull(7) ? 0 : reader.GetFloat(7)
                 };
                 tempIngredient.SetMultiplier();
                 ingredients.Add(tempIngredient);
@@ -623,6 +624,49 @@ public class DBService
         catch (Exception ex)
         {
             Console.WriteLine($"Error getting ingredient by id ({id}): " + ex.Message);
+            Console.WriteLine("Stacktrace: " + ex.StackTrace);
+            return (null, $"Error getting ingredient by id: {ex.Message}.");
+        }
+
+        return (ingredient, statusMessage);
+    }
+    
+    public async Task<(Ingredient? Ingredient, string Message)> GetDbIngredientByName(string name)
+    {
+        Console.WriteLine("Getting ingredient by name...");
+
+        await using var conn = await GetConnection();
+        Ingredient ingredient = new();
+        string statusMessage = "Ingredient successfully retrieved.";
+
+        const string query = "SELECT * FROM ingredients WHERE name = @name";
+        await using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@name", name);
+
+        try
+        {
+            await using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                var uintValue = unchecked((uint)reader.GetInt32(0));
+                ingredient.Name = reader.GetString(1);
+                ingredient.CaloriesPer100g = reader.GetFloat(2);
+                ingredient.FatPer100g = reader.GetFloat(3);
+                ingredient.CarbsPer100g = reader.GetFloat(4);
+                ingredient.ProteinPer100g = reader.GetFloat(5);
+                ingredient.Base64Image = reader.GetString(6);
+                ingredient.CostPer100g = reader.GetFloat(7);
+                ingredient.SetId(uintValue);
+            }
+            else
+            {
+                Console.WriteLine("Ingredient not found.");
+                return (null, "Ingredient not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting ingredient by name ({name}): " + ex.Message);
             Console.WriteLine("Stacktrace: " + ex.StackTrace);
             return (null, $"Error getting ingredient by id: {ex.Message}.");
         }
@@ -906,8 +950,10 @@ public class DBService
                              "@calories," +
                              "@fat," +
                              "@carbs," +
-                             "@protein) " +
+                             "@protein), " +
+                             "cost = @cost " + 
                              "WHERE id = @recipe_id";
+        Console.WriteLine("Cost: " + recipe.TotalCost);
 
         var statusMessage = "Recipe ingredients got updated.";
         try
@@ -918,6 +964,7 @@ public class DBService
             cmd.Parameters.AddWithValue("@fat", recipe.TotalMacros.Fat);
             cmd.Parameters.AddWithValue("@carbs", recipe.TotalMacros.Carbs);
             cmd.Parameters.AddWithValue("@protein", recipe.TotalMacros.Protein);
+            cmd.Parameters.AddWithValue("@cost", recipe.TotalCost);
             cmd.Parameters.AddWithValue("@recipe_id", recipeId);
             var result = await RunAsyncQuery(cmd);
             if (result < 1)
@@ -986,7 +1033,8 @@ public class DBService
                                      "@fats," +
                                      "@carbs," +
                                      "@protein," +
-                                     "@multiplier" +
+                                     "@multiplier, " +
+                                     "@cost_per_100g " +
                                      ")::ingredient) " +
                                      "WHERE id = @recipe_id";
                 await using var cmd = new NpgsqlCommand(query, conn);
@@ -997,6 +1045,7 @@ public class DBService
                 cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
                 cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
                 cmd.Parameters.AddWithValue("@multiplier", ingredient.GetMultiplier());
+                cmd.Parameters.AddWithValue("@cost_per_100g", ingredient.CostPer100g);
                 cmd.Parameters.AddWithValue("@recipe_id", recipeId);
                 var result = await RunAsyncQuery(cmd);
                 if (result < 1)
@@ -1394,6 +1443,55 @@ public class DBService
         }
 
         return statusMessage;
+    }
+
+    public async Task<(bool status, string message)> RecalibrateRecipes()
+    {
+        Console.WriteLine("Recalibrating recipes...");
+        var statusMessage = "Recipes got recalibrated.";
+
+        var result = await GetAllRecipes();
+        if (result.Recipes?.Count < 1 || result.Recipes == null)
+            return (false, "No recipes found.");
+        
+        List<Recipe> recipes = result.Recipes;
+        recipes = await RecalibrateRecipesCost(recipes);
+        
+        try
+        {
+            await AddRecipeToDb(recipes[0]);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error recalibrating recipes: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (false, "Error recalibrating recipes: " + ex.Message);
+        }
+        
+        return (true, statusMessage);
+    }
+    
+    
+
+    private async Task<List<Recipe>> RecalibrateRecipesCost(List<Recipe> recipes)
+    {
+        Console.WriteLine("Recalibrating recipes cost...");
+
+        foreach (var recipe in recipes)
+        {
+            foreach (var ingredient in recipe.Ingredients)
+            {
+                var result = await GetDbIngredientByName(ingredient.Name);
+                if (result.Ingredient == null)
+                    throw new Exception("Ingredient not found.");
+                
+                ingredient.CostPer100g = result.Ingredient.CostPer100g;
+            }
+            
+            recipe.SetTotalCost();
+        }
+        
+        return recipes;
     }
 
     /// Updates the recipe_id field in the recipe_instructions table by linking it to the corresponding

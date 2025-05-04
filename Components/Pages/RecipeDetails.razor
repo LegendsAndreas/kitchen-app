@@ -81,20 +81,30 @@
                                             {
                                                 totalCalories = 0;
                                             }
+                                            @if (totalCost != 0)
+                                            {
+                                                totalCost = 0;
+                                            }
                                             @foreach (var ingredient in sharedRecipe.Ingredients)
                                             {
                                                 <h5><strong>@ingredient.Name</strong></h5>
+                                                
+                                                <h6>
+                                                    Price: @ingredient.CostPer100g.ToString("0.00") * @ingredient.Grams.ToString("")g
+                                                    = @CalculateCostAndGrams(ingredient.CostPer100g, ingredient.Grams)
+                                                </h6>
                                                 <h6>
                                                     Calories: @ingredient.CaloriesPer100g * @ingredient.Grams.ToString("")g
-                                                    = @CalculateCaloriesAndGrams(ingredient.CaloriesPer100g, ingredient.Grams).ToString(".00")</h6>
+                                                    = @CalculateCaloriesAndGrams(ingredient.CaloriesPer100g, ingredient.Grams).ToString("0.00")</h6>
                                                 <h6>
                                                     Protein: @ingredient.ProteinPer100g * @ingredient.Grams.ToString("")g
-                                                    = @CalculateMacroAndGrams(ingredient.ProteinPer100g, ingredient.Grams).ToString(".00")</h6>
+                                                    = @CalculateMacroAndGrams(ingredient.ProteinPer100g, ingredient.Grams).ToString("0.00")</h6>
                                                 <h6>Fat: @ingredient.FatPer100g * @ingredient.Grams.ToString("")g
-                                                    = @CalculateMacroAndGrams(ingredient.FatPer100g, ingredient.Grams).ToString(".00")</h6>
+                                                    = @CalculateMacroAndGrams(ingredient.FatPer100g, ingredient.Grams).ToString("0.00")</h6>
                                                 <h6>Carbs: @ingredient.CarbsPer100g * @ingredient.Grams.ToString("")g
-                                                    = @CalculateMacroAndGrams(ingredient.CarbsPer100g, ingredient.Grams).ToString(".00")</h6>
-                                                <h6>Total calories: @totalCalories.ToString(".00")</h6>
+                                                    = @CalculateMacroAndGrams(ingredient.CarbsPer100g, ingredient.Grams).ToString("0.00")</h6>
+                                                <h6>Total calories: @totalCalories.ToString("0.00")</h6>
+                                                <h6>Total cost: @totalCost.ToString("0.00")</h6>
                                             }
                                         </div>
                                     </div>
@@ -177,6 +187,7 @@
 
 @code {
     float totalCalories;
+    float totalCost;
     Recipe sharedRecipe = new();
     RecipeInstructionRecord? recipeInstructionRecord;
     StatusMessageToast statusMessageToaster = null!;
@@ -204,6 +215,13 @@
         var calsAndGrams = calories * (grams / 100);
         totalCalories += calsAndGrams;
         return calsAndGrams;
+    }
+
+    private float CalculateCostAndGrams(float cost, float grams)
+    {
+        var actualCost = cost * (grams / 100);
+        totalCost += actualCost;
+        return actualCost;
     }
 
     private float CalculateMacroAndGrams(float macro, float grams)
