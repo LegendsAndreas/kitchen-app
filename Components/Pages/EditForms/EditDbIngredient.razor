@@ -1,10 +1,11 @@
 @using WebKitchen.Components.SharedComponents
 @inject DBService DbService
 
-<label class="form-label fw-bold">Database Ingredient Id To Edit</label>
-<InputNumber id="name" @bind-Value="_ingredientId" class="form-control"/>
-
-<button type="submit" class="btn btn-primary" @onclick="HandleGettingDbIngredient">Get Database Ingredient</button>
+<EditForm Model="@this">
+    <label class="form-label fw-bold">Database Ingredient Id To Edit</label>
+    <InputNumber id="name" @bind-Value="_ingredientId" class="form-control"/>
+    <button type="submit" class="btn btn-primary" @onclick="HandleGettingDbIngredient">Get Database Ingredient</button>
+</EditForm>
 
 @if (_currentIngredient != null)
 {

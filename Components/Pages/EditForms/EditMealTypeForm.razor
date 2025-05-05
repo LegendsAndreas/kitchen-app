@@ -3,10 +3,8 @@
 @inject IJSRuntime JsRuntime;
 
 <EditForm Model="@recipeId" OnSubmit="@HandleGettingRecipe">
-    <div>
-        <label class="form-label fw-bold">Recipe Id</label>
-        <InputNumber id="recipeId" @bind-Value="recipeId" class="form-control"/>
-    </div>
+    <label class="form-label fw-bold">Recipe Id</label>
+    <InputNumber id="recipeId" @bind-Value="recipeId" class="form-control"/>
     <button type="submit" class="btn btn-primary">Get Recipe</button>
 </EditForm>
 
