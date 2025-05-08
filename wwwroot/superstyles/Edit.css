@@ -1,7 +1,10 @@
-.edit__button-margin button {
+.edit__button-margin--button button {
   margin-top: 10px;
   margin-bottom: 10px;
   margin-right: 10px;
+}
+.edit__accordion-button-margin--button button {
+  margin: 0;
 }
 
 /*# sourceMappingURL=Edit.css.map */

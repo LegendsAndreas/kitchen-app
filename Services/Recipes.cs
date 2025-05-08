@@ -113,7 +113,7 @@ public class Ingredient
 
     public void SetMultiplier()
     {
-        Console.WriteLine("Setting multiplier...");
+        // Console.WriteLine("Setting multiplier...");
         Multiplier = Grams / 100;
     }
 

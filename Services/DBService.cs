@@ -15,7 +15,7 @@ public class DBService
 
     public DBService(string connectionString)
     {
-        Console.WriteLine("Connecting DBService:" + connectionString);
+        // Console.WriteLine("Connecting DBService:" + connectionString);
         _connectionString = connectionString;
     }
 
@@ -23,7 +23,7 @@ public class DBService
     /// <returns>An instance of NpgsqlConnection that is open and ready for database operations.</returns>
     private async Task<NpgsqlConnection> GetConnection()
     {
-        Console.WriteLine("Getting connection...");
+        // Console.WriteLine("Getting connection...");
         NpgsqlConnection connection = new(_connectionString);
         await connection.OpenAsync();
         return connection;
@@ -298,7 +298,7 @@ public class DBService
     /// <returns>A fully constructed Recipe object with associated data.</returns>
     private async Task<Recipe> BuildRecipe(NpgsqlDataReader reader)
     {
-        Console.WriteLine("Building recipe...");
+        // Console.WriteLine("Building recipe...");
 
         var recipe = new Recipe
         {

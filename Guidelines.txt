@@ -72,3 +72,9 @@ to ensure proper updateage, we always do it by ID.
 __SCSS__
 First create the file, then when you have added your CSS in the file, use the command: sass .\SCSS_NAME.scss .\SCSS_NAME.css.
 Then, in your stylesheet, import the newly created .css file.
+
+In case you HAVE to assign css values via. addressing the nested children of that class, add what html tag you want to do it
+to like:
+&__accordion-button-margin--button button{
+  margin: 0;
+}

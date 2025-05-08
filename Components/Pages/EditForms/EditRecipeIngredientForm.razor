@@ -40,7 +40,9 @@
             <button type="button" class="btn btn-primary" @onclick="HandleDbIngredient">Add New Ingredient To Recipe
             </button>
 
-            <AddedIngredients CurrentAddedIngredients="@currentRecipe.Ingredients"/>
+            <div class="edit__accordion-button-margin--button">
+                <AddedIngredients CurrentAddedIngredients="@currentRecipe.Ingredients"/>
+            </div>
         }
     </div>
 </div>
@@ -63,7 +65,7 @@
             await recipeStatusToaster.ShowToastAsync(result.Message);
         else
             currentRecipe = result.Recipe;
-        
+
         currentRecipe.PrintRecipe("Here");
     }
 
@@ -91,7 +93,7 @@
 
         currentRecipe = null;
     }
-    
+
     private void HandleDbIngredient()
     {
         Console.WriteLine("Handling db ingredient...");
