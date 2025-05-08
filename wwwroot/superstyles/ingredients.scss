@@ -1,5 +1,5 @@
-﻿.ingredients{
-  &__form{
+﻿.ingredients {
+  &__form {
     background-color: #272B2F;
     padding: 25px;
     border-radius: 10px;
@@ -8,5 +8,21 @@
     font-family: "Calibri Light", sans-serif;
     font-style: italic;
     font-weight: bold;
+
+    &__label-mobile {
+      @media (max-width: 768px) {
+        width: 100%;
+      }
+    }
+    
+    &__image-button-mobile {
+      @media (max-width: 768px) {
+        flex: none;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      text-align: center;
+    }
   }
 }

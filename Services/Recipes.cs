@@ -104,6 +104,12 @@ public class Ingredient
         Console.WriteLine("Getting multiplier...");
         return Multiplier;
     }
+    
+    public float GetCostPer100g()
+    {
+        Console.WriteLine("Getting cost per 100g...");
+        return CostPer100g;
+    }
 
     public string GetIngredientImage()
     {
@@ -144,9 +150,9 @@ public class Ingredient
         Base64Image = string.Empty;
     }
 
-    public void PrintIngredient()
+    public void PrintIngredient(string prefixMsg = "")
     {
-        Console.WriteLine("__Printing Ingredient__");
+        Console.WriteLine($"({prefixMsg}) Printing ingredient...");
         Console.WriteLine("ID: " + Id);
         Console.WriteLine("Ingredient: " + Name);
         Console.WriteLine("Grams: " + Grams);
@@ -154,6 +160,7 @@ public class Ingredient
         Console.WriteLine("Carbs: " + CarbsPer100g);
         Console.WriteLine("Protein: " + ProteinPer100g);
         Console.WriteLine("Fats: " + FatPer100g);
+        Console.WriteLine("Cost per 100g: " + CostPer100g);
         Console.WriteLine("Multiplier: " + Multiplier);
     }
 
@@ -171,12 +178,19 @@ public class Ingredient
             CarbsPer100g = ing.CarbsPer100g,
             FatPer100g = ing.FatPer100g,
             ProteinPer100g = ing.ProteinPer100g,
-            Base64Image = ing.Base64Image
+            Base64Image = ing.Base64Image,
+            CostPer100g = ing.CostPer100g
         };
         transferIngredient.SetId(ing.GetId());
         transferIngredient.SetMultiplier();
 
         return transferIngredient;
+    }
+
+    public void SetCostPer100G(float totalProductWeight, float cost)
+    {
+        Console.WriteLine("Setting cost per 100g...");
+        CostPer100g = cost / totalProductWeight * 100;
     }
 }
 
@@ -187,20 +201,21 @@ public class Recipe
     [Required]
     [StringLength(1, ErrorMessage = "Meal type must be one character long.")]
     public string MealType { get; set; } = string.Empty;
-
     [Required] public string Name { get; set; } = string.Empty;
     [Required] public string Base64Image { get; set; } = string.Empty;
+    public float TotalCost { get; set; }
     public List<Ingredient> Ingredients { get; set; } = new();
     public Macros TotalMacros { get; set; } = new();
 
-    public void PrintRecipe()
+    public void PrintRecipe(string prefixMsg = "")
     {
-        Console.WriteLine("Printing recipe...");
+        Console.WriteLine($"({prefixMsg}) Printing recipe...");
         try
         {
             Console.WriteLine("Recipe Number: " + RecipeId);
             Console.WriteLine("MealType: " + MealType);
             Console.WriteLine("Name: " + Name);
+            Console.WriteLine("Cost: " + TotalCost);
             // Console.WriteLine("Image: " + Base64Image);
 
             if (Ingredients.Count != 0)
@@ -221,7 +236,6 @@ public class Recipe
         {
             Console.WriteLine("Error printing recipe: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            return;
         }
     }
 
@@ -232,6 +246,7 @@ public class Recipe
             RecipeId = recipe.RecipeId,
             MealType = recipe.MealType,
             Name = recipe.Name,
+            TotalCost = recipe.TotalCost,
             Base64Image = recipe.Base64Image,
         };
 
@@ -264,12 +279,23 @@ public class Recipe
         TotalMacros.SetMacros(Ingredients);
     }
 
+    public void SetTotalCost()
+    {
+        Console.WriteLine("Setting total cost...");
+        TotalCost = 0f;
+        foreach (var ingredient in Ingredients)
+        {
+            TotalCost += ingredient.GetCostPer100g() * ingredient.GetMultiplier();
+        }
+    }
+
     public void ClearRecipe()
     {
         Console.WriteLine("Clearing recipe...");
         RecipeId = 0;
         MealType = string.Empty;
         Name = string.Empty;
+        TotalCost = 0f;
         Base64Image = string.Empty;
         Ingredients = [];
         TotalMacros = new Macros();
@@ -300,7 +326,7 @@ public class SharedStuff
 
 public class SharedRecipe
 {
-    public Recipe SelectedRecipe { get; set; }
+    public Recipe SelectedRecipe { get; set; } = new();
 
     public void SetSelectedRecipe(Recipe recipe) => SelectedRecipe = recipe;
 }

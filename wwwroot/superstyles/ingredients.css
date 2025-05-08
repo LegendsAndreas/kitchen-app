@@ -8,5 +8,20 @@
   font-style: italic;
   font-weight: bold;
 }
+@media (max-width: 768px) {
+  .ingredients__form__label-mobile {
+    width: 100%;
+  }
+}
+@media (max-width: 768px) {
+  .ingredients__form__image-button-mobile {
+    flex: none;
+  }
+}
+@media (max-width: 768px) {
+  .ingredients__form {
+    text-align: center;
+  }
+}
 
 /*# sourceMappingURL=ingredients.css.map */

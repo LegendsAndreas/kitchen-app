@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using WebKitchen.Components;
 using WebKitchen.Services;
 
@@ -31,6 +32,10 @@ public class Program
             return new DBService(connectionString);
         });
 
+        // https://www.youtube.com/watch?v=S0RSsHKiD6Y
+        /*builder.Services.AddAuthentication();
+        builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme);*/
+
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -40,6 +45,7 @@ public class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
+
 
         app.UseHttpsRedirection();
 

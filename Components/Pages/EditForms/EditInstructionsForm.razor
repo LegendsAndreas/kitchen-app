@@ -1,11 +1,12 @@
 ﻿@using WebKitchen.Components.SharedComponents;
 @inject DBService DbService
 
-<label class="form-label fw-bold">Recipe Id</label>
-<InputNumber id="name" @bind-Value="_recipeId" class="form-control"/>
-
-<button type="submit" class="btn btn-primary" @onclick="HandleGettingInstructions">Get Recipe Instructidons
-</button>
+<EditForm Model="@this">
+    <label class="form-label fw-bold">Recipe Id</label>
+    <InputNumber id="name" @bind-Value="_recipeId" class="form-control"/>
+    <button type="submit" class="btn btn-primary" @onclick="HandleGettingInstructions">Get Recipe Instructidons
+    </button>
+</EditForm>
 
 @if (_instructions != null)
 {
@@ -13,7 +14,7 @@
     <div class="row row-cols-2">
         <div class="col">
             <h5 style="padding: 5px"><i><u>Steps</u></i></h5>
-            <div class="card" style="background-color: #272b2f">
+            <div class="card p-2" style="background-color: #272b2f">
                 @foreach (var step in _instructions.Instructions.Steps)
                 {
                     <p style="padding-left: 10px">@step.StepNumber. @step.StepText <button type="submit"
@@ -192,7 +193,7 @@
         if (_instructions != null)
         {
             _instructions.Instructions.Steps.RemoveAt(index);
-            orderStepNumbers(_instructions);
+            OrderStepNumbers(_instructions);
         }
 
         StateHasChanged();
@@ -203,13 +204,13 @@
         if (_instructions != null)
         {
             _instructions.Instructions.Notes.RemoveAt(index);
-            orderNoteNumbers(_instructions);
+            OrderNoteNumbers(_instructions);
         }
 
         StateHasChanged();
     }
 
-    private void orderStepNumbers(RecipeInstructionRecord instructionRecord)
+    private void OrderStepNumbers(RecipeInstructionRecord instructionRecord)
     {
         var i = 1;
         foreach (var step in instructionRecord.Instructions.Steps)
@@ -219,7 +220,7 @@
         }
     }
 
-    private void orderNoteNumbers(RecipeInstructionRecord instructionRecord)
+    private void OrderNoteNumbers(RecipeInstructionRecord instructionRecord)
     {
         var i = 1;
         foreach (var note in instructionRecord.Instructions.Notes)
@@ -231,6 +232,12 @@
 
     private void IncrementStep(int stepNum)
     {
+        if (_instructions == null)
+        {
+            Console.WriteLine("Instructions are null.");
+            return;
+        }
+
         if (stepNum == _instructions.Instructions.Steps.Count - 1)
         {
             Console.WriteLine("");
@@ -252,11 +259,18 @@
         }
 
         // Just swapping stepNum with stepNum-1.
-        (_instructions.Instructions.Steps[stepNum].StepText, _instructions.Instructions.Steps[stepNum - 1].StepText) = (_instructions.Instructions.Steps[stepNum - 1].StepText, _instructions.Instructions.Steps[stepNum].StepText);
+        if (_instructions != null)
+            (_instructions.Instructions.Steps[stepNum].StepText, _instructions.Instructions.Steps[stepNum - 1].StepText) = (_instructions.Instructions.Steps[stepNum - 1].StepText, _instructions.Instructions.Steps[stepNum].StepText);
     }
 
     private void IncrementNote(int noteNum)
     {
+        if (_instructions == null)
+        {
+            Console.WriteLine("Instructions are null.");
+            return;
+        }
+
         if (noteNum == _instructions.Instructions.Notes.Count - 1)
         {
             Console.WriteLine("");
@@ -270,6 +284,12 @@
 
     private void DecrementNote(int noteNum)
     {
+        if (_instructions == null)
+        {
+            Console.WriteLine("Instructions are null.");
+            return;
+        }
+
         if (noteNum == 0)
         {
             Console.WriteLine("");

@@ -2,6 +2,7 @@
 
   &__recipe-image {
     transition: all 0.3s;
+    cursor: pointer;
 
     &:hover {
       filter: brightness(80%);

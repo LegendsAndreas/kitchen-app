@@ -35,7 +35,8 @@ CREATE TABLE ingredients (
     fats FLOAT,
     carbs FLOAT,
     protein FLOAT,
-    image TEXT
+    image TEXT,
+    cost_per_100g FLOAT
 );
 
 CREATE TABLE sought_after_items

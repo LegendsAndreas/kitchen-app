@@ -63,6 +63,8 @@
             await recipeStatusToaster.ShowToastAsync(result.Message);
         else
             currentRecipe = result.Recipe;
+        
+        currentRecipe.PrintRecipe("Here");
     }
 
     private void DeleteIngredient(int index)
@@ -82,13 +84,14 @@
         }
 
         currentRecipe.SetTotalMacros();
+        currentRecipe.SetTotalCost();
 
         var result = await DbService.UpdateRecipeMacrosAndIngredientsById(currentRecipe, currentRecipe.RecipeId);
         await recipeStatusToaster.ShowToastAsync(result);
 
         currentRecipe = null;
     }
-
+    
     private void HandleDbIngredient()
     {
         Console.WriteLine("Handling db ingredient...");
@@ -122,5 +125,39 @@
             currentRecipe.Ingredients.Add(tempIngredient);
         currentCrossIngredient.ClearIngredient();
     }
+
+    /*private void HandleDbIngredient()
+    {
+        Console.WriteLine("Handling db ingredient...");
+
+        if (currentIngredientGrams == 0)
+        {
+            Console.WriteLine("No grams specified.");
+            return;
+        }
+
+        if (currentIngredientGrams < 0)
+        {
+            Console.WriteLine("Grams cant be negative");
+            return;
+        }
+
+        Console.WriteLine("SharedDbIngredient:");
+        currentCrossIngredient.Grams = currentIngredientGrams;
+        currentCrossIngredient.PrintIngredient();
+
+        HandleIngredient();
+    }
+
+    private void HandleIngredient()
+    {
+        Console.WriteLine("Handling ingredient...");
+        var tempIngredient = currentCrossIngredient.TransferIngredient(currentCrossIngredient);
+        tempIngredient.PrintIngredient();
+
+        if (currentRecipe != null)
+            currentRecipe.Ingredients.Add(tempIngredient);
+        currentCrossIngredient.ClearIngredient();
+    }*/
 
 }

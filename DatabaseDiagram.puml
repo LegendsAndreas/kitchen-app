@@ -17,6 +17,7 @@ object recipe {
     recipe_name TEXT
     base64_image TEXT
     ingredients ingredient[]
+    total_cost FLOAT
     macros recipe_macros
 }
 
@@ -27,6 +28,7 @@ class ingredient <<(C,plum)>>{
     fats FLOAT
     carbohydrates FLOAT
     protein FLOAT
+    cost_per_100g FLOAT
     multiplier FLOAT
     base64_image TEXT
 }
@@ -55,6 +57,14 @@ object ingredients{
     carbohydrates FLOAT
     protein FLOAT
     base64_image TEXT
+}
+
+object sought_after_items{
+    * id INT
+    name TEXT
+    base64_image TEXT
+    type TEXT
+    price FLOAT
 }
 
 json Instructions{

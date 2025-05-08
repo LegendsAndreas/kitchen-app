@@ -1,7 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @using WebKitchen.Components.SharedComponents
-@inject NavigationManager navigationManager;
+@inject NavigationManager NavigationManager;
 @inject DBService DbService;
 @inject SharedRecipe SharedDetailRecipe
 @inject SharedRecipeList GlobalRecipes
@@ -26,10 +26,9 @@
             {
                 <div class="col p-2 ">
                     <div class="card h-100 generel__border-layout">
-                        <a href="">
-                            <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..." class="card-img home home__recipe-image"
-                                  @onclick="() => NavigateToDetails(recipe)"/>
-                        </a>
+                        <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..."
+                             class="card-img home home__recipe-image"
+                             @onclick="() => NavigateToDetails(recipe)"/>
                         <div class="card-header">
                             <h4>@recipe.RecipeId. @recipe.Name</h4>
                         </div>
@@ -38,7 +37,8 @@
                                 - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
                                 - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
                                 - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
-                                - Protein: @recipe.TotalMacros.Protein.ToString("0")
+                                - Protein: @recipe.TotalMacros.Protein.ToString("0") <br>
+                                - Cost: @recipe.TotalCost.ToString("0.00") <br>
                             </p>
                         </div>
                     </div>
@@ -129,7 +129,7 @@
     {
         SharedDetailRecipe.SetSelectedRecipe(recipe);
         SharedDetailRecipe.SelectedRecipe.PrintRecipe();
-        navigationManager.NavigateTo("/recipe-details");
+        NavigationManager.NavigateTo("/recipe-details");
     }
 
 }
