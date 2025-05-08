@@ -72,3 +72,29 @@ to ensure proper updateage, we always do it by ID.
 __SCSS__
 First create the file, then when you have added your CSS in the file, use the command: sass .\SCSS_NAME.scss .\SCSS_NAME.css.
 Then, in your stylesheet, import the .css file.
+
+__PorstgreSQL__
+SELECT r.name,
+       json_agg(
+               json_build_object(
+                       'name', i.name,
+                       'grams', i.grams,
+                       'calories_pr_hectogram', i.calories_pr_hectogram,
+                       'fats_pr_hectogram', i.fats_pr_hectogram,
+                       'carbs_pr_hectogram', i.carbs_pr_hectogram,
+                       'protein_pr_hectogram', i.protein_pr_hectogram,
+                       'multiplier', i.multiplier
+               )
+       ) 
+FROM recipes r, unnest(r.ingredients) AS i
+GROUP BY r.id, r.name
+ORDER BY r.id;
+
+- 'json_agg' creates a JSON array.
+- 'json_build_object' a JSON object, which is then but into the JSON array.
+- 'unnest' is used to expand the array of ingredients into a set of rows.
+- 'GROUP BY' is used to group the rows into the appropriate id.
+
+By grouping on `r.id`, you specify that:
+- Rows sharing the same `id` (i.e., related to the same recipe) should be grouped together.
+- For each group of rows (one group per `r.id`), the `json_agg` function will aggregate the individual rows into a single JSON array.

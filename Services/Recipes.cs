@@ -64,12 +64,26 @@ public class Macros
 public class Ingredient
 {
     private uint Id { get; set; }
-    [Required] public string Name { get; set; } = string.Empty;
-    [Required] public float Grams { get; set; }
+    
+    [Required] 
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+    [Required] 
+    [JsonPropertyName("grams")]
+    public float Grams { get; set; }
+    
+    [JsonPropertyName("calories_pr_hectogram")]
     public float CaloriesPer100g { get; set; }
+    
+    [JsonPropertyName("carbs_pr_hectogram")]
     public float CarbsPer100g { get; set; }
+    
+    [JsonPropertyName("protein_pr_hectogram")]
     public float ProteinPer100g { get; set; }
+    
+    [JsonPropertyName("fats_pr_hectogram")]
     public float FatPer100g { get; set; }
+    public float CostPer100g { get; set; }
     private float Multiplier { get; set; }
     public string Base64Image { get; set; } = string.Empty;
 

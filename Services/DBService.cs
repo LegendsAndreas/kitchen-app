@@ -30,6 +30,31 @@ public class DBService
         return connection;
     }
 
+    public async Task<Recipe> TestAsync()
+    {
+        await using NpgsqlConnection conn = await GetConnection();
+        Recipe recipe = new();
+
+        const string query = "SELECT r.name,\n       json_agg(\n               json_build_object(\n                       'name', i.name,\n                       'grams', i.grams,\n                       'calories_pr_hectogram', i.calories_pr_hectogram,\n                       'fats_pr_hectogram', i.fats_pr_hectogram,\n                       'carbs_pr_hectogram', i.carbs_pr_hectogram,\n                       'protein_pr_hectogram', i.protein_pr_hectogram,\n                       'multiplier', i.multiplier\n               )\n       ) AS ingredients_json\nFROM recipes r, unnest(r.ingredients) AS i\nGROUP BY r.id, r.name\nORDER BY r.id;";
+        
+        await using NpgsqlCommand cmd = new(query, conn);
+        await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            string name = reader.GetString(0);
+            string ingredientsJson = reader.GetString(1);
+            List<Ingredient> ingredients = JsonSerializer.Deserialize<List<Ingredient>>(ingredientsJson);
+            
+            Console.WriteLine($"Name: {name}");
+            foreach (var ingredient in ingredients)
+            {
+                ingredient.PrintIngredient();
+            }
+        }
+        
+        return recipe;
+    }
+
     private async Task<string> GetPlaceHolderPic()
     {
         Console.WriteLine("Getting place holder pic...");
