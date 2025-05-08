@@ -64,17 +64,14 @@
             try
             {
                 var result = await DbService.GetAllRecipes();
-                if (result.Recipes == null)
+                if (result.Recipes != null)
                 {
-                    await _statusMessageToaster.ShowToastAsync(result.Message);
-                }
-                else
-                {
-                    await _statusMessageToaster.ShowToastAsync(result.Message);
                     GlobalRecipes.Recipes = result.Recipes;
                     Console.WriteLine("Acquired Recipes.");
-                    StateHasChanged();
                 }
+
+                StateHasChanged();
+                await _statusMessageToaster.ShowToastAsync(result.Message);
             }
             catch (Exception ex)
             {
@@ -85,8 +82,6 @@
                     await _statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
                 else
                     await _statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
-
-                return;
             }
 
             /*try

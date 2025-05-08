@@ -151,7 +151,7 @@ VALUES ('L',
             ROW ('Pineapple', 44, 123, 74, 95, 31, 0.4)::ingredient,
             ROW ('Grenade', 160, 6, 33, 5, 1, 0.3)::ingredient
             ],
-        (3072, 97, 33, 77): : recipe_macros);
+        (3072, 97, 33, 77):: recipe_macros);
 
 UPDATE recipes
 SET image = 'TestImage.png'
@@ -165,6 +165,7 @@ SELECT r.id,
        r.name,
        r.meal_type,
        r.image,
+       r.cost,
        (r.macros).total_calories,
        (r.macros).total_carbs,
        (r.macros).total_fats,
@@ -179,11 +180,12 @@ SELECT r.id,
                        'protein_pr_hectogram', i.protein_pr_hectogram,
                        'multiplier', i.multiplier
                )
-       )
+       ) AS ingredients
 FROM recipes r,
      unnest(r.ingredients) AS i
 GROUP BY r.id
-ORDER BY r.id;
+ORDER BY r.id
+LIMIT 1;
 
 SELECT r.name,
        (r.macros).total_calories,

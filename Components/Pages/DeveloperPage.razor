@@ -3,12 +3,16 @@
 @using WebKitchen.Components.SharedComponents;
 @inject DBService DbService;
 
-<button @onclick="Handle">Click me</button>
+@*<button @onclick="Handle">Click me</button>
 
 @code {
 
     public async Task Handle()
     {
-        await DbService.RecalibrateRecipes();
+        var recipes = await DbService.TestAsync();
+        foreach (Recipe recipe in recipes)
+        {
+            recipe.PrintRecipe();
+        }
     }
-}
+}*@

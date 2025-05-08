@@ -29,29 +29,72 @@ public class DBService
         return connection;
     }
 
-    public async Task<Recipe> TestAsync()
+    public async Task<(List<Recipe>? Recipes, string Message)> GetAllRecipes()
     {
-        await using NpgsqlConnection conn = await GetConnection();
-        Recipe recipe = new();
+        List<Recipe> recipes = [];
 
-        const string query = "SELECT r.name,\n       json_agg(\n               json_build_object(\n                       'name', i.name,\n                       'grams', i.grams,\n                       'calories_pr_hectogram', i.calories_pr_hectogram,\n                       'fats_pr_hectogram', i.fats_pr_hectogram,\n                       'carbs_pr_hectogram', i.carbs_pr_hectogram,\n                       'protein_pr_hectogram', i.protein_pr_hectogram,\n                       'multiplier', i.multiplier\n               )\n       ) AS ingredients_json\nFROM recipes r, unnest(r.ingredients) AS i\nGROUP BY r.id, r.name\nORDER BY r.id;";
-        
-        await using NpgsqlCommand cmd = new(query, conn);
-        await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
+        const string query = "SELECT r.id, " +
+                             "r.name, " +
+                             "r.meal_type, " +
+                             "r.image, " +
+                             "r.cost, " +
+                             "(r.macros).total_calories, " +
+                             "(r.macros).total_carbs, " +
+                             "(r.macros).total_fats, " +
+                             "(r.macros).total_protein, " +
+                             "json_agg(" +
+                             "    json_build_object(" +
+                             "         'name', i.name," +
+                             "         'grams', i.grams," +
+                             "         'calories_pr_hectogram', i.calories_pr_hectogram," +
+                             "         'fats_pr_hectogram', i.fats_pr_hectogram," +
+                             "         'carbs_pr_hectogram', i.carbs_pr_hectogram," +
+                             "         'protein_pr_hectogram', i.protein_pr_hectogram," +
+                             "         'multiplier', i.multiplier" +
+                             "     )" +
+                             ") AS ingredients " +
+                             "FROM recipes AS r, unnest(r.ingredients) AS i " +
+                             "GROUP BY r.id " +
+                             "ORDER BY r.id ";
+
+        try
         {
-            string name = reader.GetString(0);
-            string ingredientsJson = reader.GetString(1);
-            List<Ingredient> ingredients = JsonSerializer.Deserialize<List<Ingredient>>(ingredientsJson);
-            
-            Console.WriteLine($"Name: {name}");
-            foreach (var ingredient in ingredients)
+            await using NpgsqlConnection conn = await GetConnection();
+            await using NpgsqlCommand cmd = new(query, conn);
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
             {
-                ingredient.PrintIngredient();
+                Recipe tempRecipe = new Recipe
+                {
+                    RecipeId = reader.GetInt32(reader.GetOrdinal("id")),
+                    Name = reader.GetString(reader.GetOrdinal("name")),
+                    MealType = reader.GetString(reader.GetOrdinal("meal_type")),
+                    Base64Image = reader.GetString(reader.GetOrdinal("image")),
+                    TotalCost = reader.GetFloat(reader.GetOrdinal("cost")),
+                    TotalMacros = new Macros
+                    {
+                        Calories = reader.GetFloat(reader.GetOrdinal("total_calories")),
+                        Fat = reader.GetFloat(reader.GetOrdinal("total_fats")),
+                        Carbs = reader.GetFloat(reader.GetOrdinal("total_carbs")),
+                        Protein = reader.GetFloat(reader.GetOrdinal("total_protein"))
+                    },
+                    Ingredients =
+                        JsonSerializer.Deserialize<List<Ingredient>>(
+                            reader.GetString(reader.GetOrdinal("ingredients"))) ??
+                        []
+                };
+
+                recipes.Add(tempRecipe);
             }
         }
-        
-        return recipe;
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting all recipes: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting all recipes: {ex.Message}.");
+        }
+
+        return (recipes, "Recipes successfully retrieved");
     }
 
     private async Task<string> GetPlaceHolderPic()
@@ -469,47 +512,6 @@ public class DBService
         return (recipeInstructionsRecords, statusMessage);
     }
 
-    /// Asynchronously retrieves all recipes from the database and returns them along with a status message.
-    /// <returns>A tuple containing a list of Recipe objects (nullable) and a status message as a string. If an error
-    /// occurs, the list will be null, and the status message will indicate the error.
-    /// </returns>
-    public async Task<(List<Recipe>? Recipes, string Message)> GetAllRecipes()
-    {
-        Console.WriteLine("Getting recipes...");
-
-        List<Recipe> recipes = new();
-        string statusMessage = "Recipes successfully retrieved.";
-
-        const string query = "SELECT id, name, image, meal_type," +
-                             "(macros).total_calories," +
-                             "(macros).total_fats," +
-                             "(macros).total_carbs," +
-                             "(macros).total_protein, " +
-                             "cost " +
-                             "FROM recipes " +
-                             "ORDER BY id";
-
-        try
-        {
-            await using var conn = await GetConnection();
-            await using var cmd = new NpgsqlCommand(query, conn);
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                var tempRecipe = await BuildRecipe(reader);
-                recipes.Add(tempRecipe);
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error getting all recipes: " + ex.Message);
-            Console.WriteLine("StackTrace: " + ex.StackTrace);
-            return (null, $"Error getting all recipes: {ex.Message}.");
-        }
-
-        return (recipes, statusMessage);
-    }
-
     /// Retrieves a list of ingredients associated with a specific recipe by its unique identifier.
     /// <param name="id">The unique identifier of the recipe for which ingredients are to be fetched.</param>
     /// <returns>A task that represents the asynchronous operation, returning a list of ingredients associated with the specified recipe.</returns>
@@ -655,7 +657,7 @@ public class DBService
 
         return (ingredient, statusMessage);
     }
-    
+
     public async Task<(Ingredient? Ingredient, string Message)> GetDbIngredientByName(string name)
     {
         Console.WriteLine("Getting ingredient by name...");
@@ -976,7 +978,7 @@ public class DBService
                              "@fat," +
                              "@carbs," +
                              "@protein), " +
-                             "cost = @cost " + 
+                             "cost = @cost " +
                              "WHERE id = @recipe_id";
         Console.WriteLine("Cost: " + recipe.TotalCost);
 
@@ -1470,7 +1472,7 @@ public class DBService
         return statusMessage;
     }
 
-    public async Task<(bool status, string message)> RecalibrateRecipes()
+    /*public async Task<(bool status, string message)> RecalibrateRecipes()
     {
         Console.WriteLine("Recalibrating recipes...");
         var statusMessage = "Recipes got recalibrated.";
@@ -1478,10 +1480,10 @@ public class DBService
         var result = await GetAllRecipes();
         if (result.Recipes?.Count < 1 || result.Recipes == null)
             return (false, "No recipes found.");
-        
+
         List<Recipe> recipes = result.Recipes;
         recipes = await RecalibrateRecipesCost(recipes);
-        
+
         try
         {
             await AddRecipeToDb(recipes[0]);
@@ -1492,11 +1494,10 @@ public class DBService
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             return (false, "Error recalibrating recipes: " + ex.Message);
         }
-        
+
         return (true, statusMessage);
-    }
-    
-    
+    }*/
+
 
     private async Task<List<Recipe>> RecalibrateRecipesCost(List<Recipe> recipes)
     {
@@ -1509,13 +1510,13 @@ public class DBService
                 var result = await GetDbIngredientByName(ingredient.Name);
                 if (result.Ingredient == null)
                     throw new Exception("Ingredient not found.");
-                
+
                 ingredient.CostPer100g = result.Ingredient.CostPer100g;
             }
-            
+
             recipe.SetTotalCost();
         }
-        
+
         return recipes;
     }
 

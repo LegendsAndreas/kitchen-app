@@ -66,10 +66,9 @@ public class Ingredient
 {
     private uint Id { get; set; }
     
-    [Required] 
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
-    [Required] 
+    
     [JsonPropertyName("grams")]
     public float Grams { get; set; }
     
@@ -85,6 +84,8 @@ public class Ingredient
     [JsonPropertyName("fats_pr_hectogram")]
     public float FatPer100g { get; set; }
     public float CostPer100g { get; set; }
+    
+    [JsonPropertyName("multiplier")]
     private float Multiplier { get; set; }
     public string Base64Image { get; set; } = string.Empty;
 
@@ -202,8 +203,13 @@ public class Recipe
     [Required]
     [StringLength(1, ErrorMessage = "Meal type must be one character long.")]
     public string MealType { get; set; } = string.Empty;
-    [Required] public string Name { get; set; } = string.Empty;
-    [Required] public string Base64Image { get; set; } = string.Empty;
+    
+    [Required] 
+    public string Name { get; set; } = string.Empty;
+    
+    [Required] 
+    public string Base64Image { get; set; } = string.Empty;
+    
     public float TotalCost { get; set; }
     public List<Ingredient> Ingredients { get; set; } = new();
     public Macros TotalMacros { get; set; } = new();
