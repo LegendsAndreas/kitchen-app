@@ -161,7 +161,60 @@ SET image = 'TestImage2.jpeg'
 WHERE id = 2;
 
 /* SELECT statements */
-SELECT * FROM sought_after_items;
+SELECT r.id,
+       r.name,
+       r.meal_type,
+       r.image,
+       (r.macros).total_calories,
+       (r.macros).total_carbs,
+       (r.macros).total_fats,
+       (r.macros).total_protein,
+       json_agg(
+               json_build_object(
+                       'name', i.name,
+                       'grams', i.grams,
+                       'calories_pr_hectogram', i.calories_pr_hectogram,
+                       'fats_pr_hectogram', i.fats_pr_hectogram,
+                       'carbs_pr_hectogram', i.carbs_pr_hectogram,
+                       'protein_pr_hectogram', i.protein_pr_hectogram,
+                       'multiplier', i.multiplier
+               )
+       )
+FROM recipes r,
+     unnest(r.ingredients) AS i
+GROUP BY r.id
+ORDER BY r.id;
+
+SELECT r.name,
+       (r.macros).total_calories,
+       (r.macros).total_carbs,
+       (r.macros).total_fats,
+       (r.macros).total_protein,
+       json_agg(
+               json_build_object(
+                       'name', i.name,
+                       'grams', i.grams,
+                       'calories_pr_hectogram', i.calories_pr_hectogram,
+                       'fats_pr_hectogram', i.fats_pr_hectogram,
+                       'carbs_pr_hectogram', i.carbs_pr_hectogram,
+                       'protein_pr_hectogram', i.protein_pr_hectogram,
+                       'multiplier', i.multiplier
+               )
+       )
+FROM recipes r,
+     unnest(r.ingredients) AS i
+GROUP BY r.id
+ORDER BY r.id;
+
+SELECT name, json_agg(ingredients) AS ingredients_json
+FROM recipes
+GROUP BY id
+ORDER BY id;
+
+
+SELECT instruction.instructions -> 'name'
+FROM recipe_instructions AS instruction
+         INNER JOIN recipes ON instruction.instructions ->> 'name' = recipes.name;
 
 SELECT * FROM ingredients WHERE id = 111;
 
