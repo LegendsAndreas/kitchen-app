@@ -60,7 +60,7 @@
     private async Task HandleSubmit()
     {
         Console.WriteLine("Handling getting recipe...");
-        var result = await DbService.GetRecipeById(recipeId);
+        var result = await DbService.GetRecipeByIdAsync(recipeId);
         if (result.Recipe == null)
             await recipeStatusToaster.ShowToastAsync(result.Message);
         else
@@ -88,7 +88,7 @@
         currentRecipe.SetTotalMacros();
         currentRecipe.SetTotalCost();
 
-        var result = await DbService.UpdateRecipeMacrosAndIngredientsById(currentRecipe, currentRecipe.RecipeId);
+        var result = await DbService.UpdateRecipeMacrosAndIngredientsByRecipeIdAsync(currentRecipe, currentRecipe.RecipeId);
         await recipeStatusToaster.ShowToastAsync(result);
 
         currentRecipe = null;

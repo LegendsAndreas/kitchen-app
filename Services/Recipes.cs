@@ -83,6 +83,8 @@ public class Ingredient
     
     [JsonPropertyName("fats_pr_hectogram")]
     public float FatPer100g { get; set; }
+    
+    [JsonPropertyName("cost_per_hectogram")]
     public float CostPer100g { get; set; }
     
     [JsonPropertyName("multiplier")]

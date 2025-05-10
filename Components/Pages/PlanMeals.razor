@@ -132,7 +132,7 @@
         {
             try
             {
-                var result = await DbService.GetAllRecipes();
+                var result = await DbService.GetAllRecipesAsync();
                 if (result.Recipes == null)
                 {
                     await statusMessageToaster.ShowToastAsync(result.Message);

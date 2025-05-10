@@ -104,3 +104,6 @@ ORDER BY r.id;
 By grouping on `r.id`, you specify that:
 - Rows sharing the same `id` (i.e., related to the same recipe) should be grouped together.
 - For each group of rows (one group per `r.id`), the `json_agg` function will aggregate the individual rows into a single JSON array.
+
+Also, when you change a UDT, with another column, where you set the default value as 0, it does not actually set the
+value to 0, where you use that type, if you already have that type in use.

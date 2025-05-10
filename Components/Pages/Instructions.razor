@@ -167,7 +167,7 @@
     private async Task HandleGettingRecipe()
     {
         Console.WriteLine("Handling getting recipe...");
-        var result = await DbService.GetRecipeById(recipeId);
+        var result = await DbService.GetRecipeByIdAsync(recipeId);
         if (result.Recipe == null)
             await recipeStatusToaster.ShowToastAsync(result.Message);
         else
@@ -194,7 +194,7 @@
         recipeInstructionRecord.Instructions.Steps.Sort((x, y) => x.StepNumber.CompareTo(y.StepNumber));
         recipeInstructionRecord.Instructions.Notes.Sort((x, y) => x.NoteNumber.CompareTo(y.NoteNumber));
 
-        var result = await DbService.AddInstructionToDb(recipeInstructionRecord);
+        var result = await DbService.AddInstructionToDbAsync(recipeInstructionRecord);
         if (result.Status)
             await recipeStatusToaster.ShowToastAsync(result.Message);
         else

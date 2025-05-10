@@ -39,7 +39,7 @@
     private async Task HandleGettingRecipe()
     {
         Console.WriteLine("Handling getting recipe...");
-        var result = await DbService.GetRecipeById(recipeId);
+        var result = await DbService.GetRecipeByIdAsync(recipeId);
         if (result.Recipe == null)
             await RecipeStatusToaster.ShowToastAsync(result.Message);
         else

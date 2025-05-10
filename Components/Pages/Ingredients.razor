@@ -196,7 +196,7 @@
         currentIngredient.SetCostPer100G(_totalIngredientGrams, _totalIngredientCost);
         var tempIngredient = currentIngredient.TransferIngredient(currentIngredient);
 
-        var result = await DbService.AddIngredientToDb(tempIngredient);
+        var result = await DbService.AddIngredientToDbAsync(tempIngredient);
         await StatusMessageToaster.ShowToastAsync(result.Message);
 
         currentIngredient.ClearIngredient();

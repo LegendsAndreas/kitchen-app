@@ -192,3 +192,12 @@ The problem here, is that the query looks like: ..., costFrom recipes ...
 
 -- Getting Enter to work with forms.
 Place your button, which activates the handle function, inside an Editform. This will make the enter button work properly.
+
+-- SQL Order
+    SELECT
+    FROM
+    JOIN
+    WHERE
+    GROUP BY
+    HAVING
+    ORDER BY

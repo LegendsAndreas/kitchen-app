@@ -161,15 +161,16 @@ SET image = 'TestImage2.jpeg'
 WHERE id = 2;
 
 /* SELECT statements */
+SELECT r.id, i.name
+FROM recipes AS r, unnest(r.ingredients) AS i
+GROUP BY r.id, i.name
+LIMIT 1;
+
 SELECT r.id,
        r.name,
        r.meal_type,
        r.image,
        r.cost,
-       (r.macros).total_calories,
-       (r.macros).total_carbs,
-       (r.macros).total_fats,
-       (r.macros).total_protein,
        json_agg(
                json_build_object(
                        'name', i.name,
@@ -178,7 +179,8 @@ SELECT r.id,
                        'fats_pr_hectogram', i.fats_pr_hectogram,
                        'carbs_pr_hectogram', i.carbs_pr_hectogram,
                        'protein_pr_hectogram', i.protein_pr_hectogram,
-                       'multiplier', i.multiplier
+                       'multiplier', i.multiplier,
+                    'cost', i.cost_per_100g
                )
        ) AS ingredients
 FROM recipes r,
