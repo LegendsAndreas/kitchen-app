@@ -8,6 +8,9 @@
   font-style: italic;
   font-weight: bold;
 }
+.ingredients__form__col-margin {
+  margin: 0 !important;
+}
 @media (max-width: 768px) {
   .ingredients__form__label-mobile {
     width: 100%;

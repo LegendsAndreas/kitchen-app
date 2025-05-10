@@ -11,58 +11,59 @@
     <DataAnnotationsValidator/>
 
     <div class="container ingredients__form">
-        <div class="row row-cols-sm-1 row-cols-md-3 row-cols-lg-3 g-3">
-            <div class="col">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+            <div class="col ingredients__form__col-margin">
                 <label class="ingredients__form__label-mobile">
                     Name
                 </label>
                 <InputText @bind-Value="currentIngredient.Name" class="form-control"/>
             </div>
 
-            <div class="col">
+            <div class="col ingredients__form__col-margin">
                 <label class="ingredients__form__label-mobile">
                     <strong>Calories</strong>
                 </label>
                 <InputNumber @bind-Value="currentIngredient.CaloriesPer100g" class="form-control"/>
             </div>
 
-            <div class="col">
+            <div class="col ingredients__form__col-margin">
                 <label class="ingredients__form__label-mobile">
                     <strong>Fats</strong>
                 </label>
                 <InputNumber @bind-Value="currentIngredient.FatPer100g" class="form-control"/>
             </div>
 
-            <div class="col">
-                <label class="form-label ingredients__form__label-mobile">
+            <div class="col ingredients__form__col-margin">
+                <label class="ingredients__form__label-mobile">
                     <strong>Carbs</strong>
                 </label>
                 <InputNumber @bind-Value="currentIngredient.CarbsPer100g" class="form-control"/>
             </div>
 
-            <div class="col">
-                <label class="form-label ingredients__form__label-mobile">
+            <div class="col ingredients__form__col-margin">
+                <label class="ingredients__form__label-mobile">
                     <strong>Protein</strong>
                 </label>
                 <InputNumber @bind-Value="currentIngredient.ProteinPer100g" class="form-control"/>
                 <ValidationMessage For="@(() => currentIngredient.ProteinPer100g)"/>
             </div>
 
-            <div class="col">
-                <label class="form-label ingredients__form__label-mobile">
+            <div class="col ingredients__form__col-margin">
+                <label class="ingredients__form__label-mobile">
                     <strong>Weight</strong>
                 </label>
                 <InputNumber @bind-Value="_totalIngredientGrams" class="form-control"/>
             </div>
 
-            <div class="col">
-                <label class="form-label ingredients__form__label-mobile">
+            <div class="col ingredients__form__col-margin">
+                <label class="ingredients__form__label-mobile">
                     <strong>Cost</strong>
                 </label>
                 <InputNumber @bind-Value="_totalIngredientCost" class="form-control"/>
             </div>
 
-            <div class="col ingredients__form__image-button-mobile d-flex align-items-end">
+            <div
+                class="col ingredients__form__col-margin ingredients__form__image-button-mobile d-flex align-items-end">
                 <label class="generel__file-label btn btn-primary" for="fileInput">Choose Image</label>
                 <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
             </div>
@@ -75,6 +76,19 @@
 @* Ingredients list *@
 <div class="container">
 
+    <div class="ingredients__pagination-buttons d-flex justify-content-center my-3">
+        <button class="btn btn-primary" @onclick="PrevPage">
+            Prev
+        </button>
+        @foreach (var pageNum in Enumerable.Range(1, _maxPage))
+        {
+            <button class="btn btn-primary" @onclick="() => SetPageNumber(pageNum)">@pageNum</button>
+        }
+        <button class="btn btn-primary" @onclick="NextPage">
+            Next
+        </button>
+    </div>
+
     @if (GlobalIngredients.Ingredients.Count == 0)
     {
         <div class="p-2">
@@ -83,7 +97,7 @@
     }
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @foreach (var ingredient in GlobalIngredients.Ingredients)
+        @foreach (var ingredient in GetIngredientsForPage())
         {
             <div class="col p-2">
                 <div class="card h-100 generel__border-layout">
@@ -112,6 +126,9 @@
 <StatusMessageToast @ref="StatusMessageToaster"/>
 
 @code {
+    int _maxPage;
+    int _pageNumber = 1;
+    int _ingredientsOffset = 40;
     float _totalIngredientGrams;
     float _totalIngredientCost;
     Ingredient currentIngredient = new();
@@ -120,7 +137,6 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // Console.WriteLine("__Rendering Ingredients__");
         if (firstRender && !GlobalIngredients.Ingredients.Any())
         {
             try
@@ -133,6 +149,7 @@
                 else
                 {
                     GlobalIngredients.Ingredients = result.DbIngredients;
+                    _maxPage = (int)Math.Ceiling((double)GlobalIngredients.Ingredients.Count / _ingredientsOffset);
                     Console.WriteLine("Acquired Ingredients.");
                     StateHasChanged();
                 }
@@ -145,11 +162,53 @@
             }
         }
 
+        // Get ingredients, from a specific range. Like if the user is on "page" 1, it goes from 0-50 and if on page 2, it goes
+        // from 50-100.
+
         if (!firstRender)
             Console.WriteLine("Not first render.");
 
         if (GlobalIngredients.Ingredients.Any())
             Console.WriteLine("Ingredients are full.");
+    }
+
+    private IEnumerable<Ingredient> GetIngredientsForPage()
+    {
+        var startIndex = (_pageNumber - 1) * _ingredientsOffset;
+        var range = GlobalIngredients.Ingredients
+            .Skip(startIndex)
+            .Take(_ingredientsOffset);
+
+        return range;
+    }
+
+
+    private async Task PrevPage()
+    {
+        if (_pageNumber == 1)
+        {
+            Console.WriteLine("Cant lower page further");
+            await StatusMessageToaster.ShowToastAsync("Cant lower page further");
+            return;
+        }
+
+        _pageNumber--;
+    }
+
+    private async Task NextPage()
+    {
+        if (_pageNumber < _maxPage)
+        {
+            _pageNumber++;
+            return;
+        }
+
+        await StatusMessageToaster.ShowToastAsync("Cant increase page further");
+    }
+
+    private void SetPageNumber(int pageNumber)
+    {
+        _pageNumber = pageNumber;
     }
 
     private Task HandleImage(InputFileChangeEventArgs imageFile)
