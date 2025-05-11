@@ -8,6 +8,10 @@
     font-family: "Calibri Light", sans-serif;
     font-style: italic;
     font-weight: bold;
+    
+    &__col-margin {
+      margin: 0 !important;
+    }
 
     &__label-mobile {
       @media (max-width: 768px) {
@@ -24,5 +28,8 @@
     @media (max-width: 768px) {
       text-align: center;
     }
+  }
+  &__pagination-buttons {
+    
   }
 }
