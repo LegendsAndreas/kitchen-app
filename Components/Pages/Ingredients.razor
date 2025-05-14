@@ -119,8 +119,6 @@
             </div>
         }
     </div>
-
-
 </div>
 
 <StatusMessageToast @ref="StatusMessageToaster"/>
@@ -162,14 +160,20 @@
             }
         }
 
-        // Get ingredients, from a specific range. Like if the user is on "page" 1, it goes from 0-50 and if on page 2, it goes
-        // from 50-100.
-
         if (!firstRender)
             Console.WriteLine("Not first render.");
 
+
         if (GlobalIngredients.Ingredients.Any())
             Console.WriteLine("Ingredients are full.");
+
+        // When we go BACK to the ingredient page, '_maxPage' will reset to its original initialized value, so we have to
+        // set it again and then encapsulate it in an if statement so that we don't reload indefinably.
+        if (GlobalIngredients.Ingredients.Any() && _maxPage == 0)
+        {
+            _maxPage = (int)Math.Ceiling((double)GlobalIngredients.Ingredients.Count / _ingredientsOffset);
+            StateHasChanged();
+        }
     }
 
     private IEnumerable<Ingredient> GetIngredientsForPage()
@@ -181,10 +185,10 @@
 
         return range;
     }
-
-
+    
     private async Task PrevPage()
     {
+        Console.WriteLine("Page number" + _maxPage);
         if (_pageNumber == 1)
         {
             Console.WriteLine("Cant lower page further");
@@ -197,6 +201,7 @@
 
     private async Task NextPage()
     {
+        Console.WriteLine("Page number" + _maxPage);
         if (_pageNumber < _maxPage)
         {
             _pageNumber++;

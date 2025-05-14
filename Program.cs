@@ -32,6 +32,7 @@ public class Program
             return new DBService(connectionString);
         });
 
+        //https://www.youtube.com/watch?v=GKvEuA80FAE
         // https://www.youtube.com/watch?v=S0RSsHKiD6Y
         /*builder.Services.AddAuthentication();
         builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme);*/
