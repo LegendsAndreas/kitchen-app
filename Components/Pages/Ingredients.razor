@@ -64,7 +64,7 @@
 
             <div
                 class="col ingredients__form__col-margin ingredients__form__image-button-mobile d-flex align-items-end">
-                <label class="generel__file-label btn btn-primary" for="fileInput">Choose Image</label>
+                <label class="generel__file-label btn btn-primary" for="fileInput">@(loadedIngredientImage == null ? "Choose Image" : "Image Chosen")</label>
                 <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
             </div>
 
