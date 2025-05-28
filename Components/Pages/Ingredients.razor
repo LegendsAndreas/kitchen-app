@@ -218,7 +218,6 @@
 
     private Task HandleImage(InputFileChangeEventArgs imageFile)
     {
-        // Despite the fact that we iterate over "imageFile", there should always only be one.
         foreach (var image in imageFile.GetMultipleFiles())
         {
             if (!image.ContentType.Contains("image"))

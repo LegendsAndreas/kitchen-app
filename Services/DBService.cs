@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Identity;
 using Npgsql;
 
 // jdbc:postgresql://[HOST]/[DATABASE_NAME]?password=[PASSWORD]&sslmode=require&user=[USERNAME]
@@ -957,7 +958,7 @@ public class DBService
                              "@cost_per_100g " +
                              ")::ingredient) " +
                              "WHERE id = @recipe_id";
-        
+
         try
         {
             await using var conn = await GetConnectionAsync();
@@ -985,7 +986,7 @@ public class DBService
             throw;
         }
     }
-    
+
     public async Task<string> UpdateRecipeImageByRecipeId(string base64Image, int recipeId)
     {
         Console.WriteLine("Updating recipe image by id...");
@@ -1384,6 +1385,80 @@ public class DBService
 
         return recipes;
     }*/
+    
+    public async Task AddHashedPassword()
+    {
+        string query = "UPDATE users SET password = @pass WHERE username = 'admin'";
+        var passwordHasher = new PasswordHasher<object>();
+        var hashedPassword = passwordHasher.HashPassword(null, "Qwerty123");
+
+        try
+        {
+            await using var conn = await GetConnectionAsync();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@pass", hashedPassword);
+
+            var result = await RunAsyncQuery(cmd);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error fucking:" + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+        }
+    }
+
+    public async Task<(bool status, string message)> SignUserIn(string username, string password)
+    {
+        string query = "SELECT * " +
+                       "FROM users " +
+                       "WHERE username = @user";
+
+        UserAccount userAccount = new();
+
+        try
+        {
+            await using NpgsqlConnection conn = await GetConnectionAsync();
+            await using NpgsqlCommand cmd = new(query, conn);
+            cmd.Parameters.AddWithValue("@user", username);
+
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                // Get the hashed password from the database
+                string hashedPassword = reader.GetString(reader.GetOrdinal("password"));
+
+                // Verify the plain password against the hashed password
+                if (!VerifyHashedpassword(hashedPassword, password))
+                    return (false, "Password is incorrect.");
+
+                // Authentication passed, set up the user account
+                userAccount.Id = reader.GetInt32(reader.GetOrdinal("id"));
+                userAccount.Username = reader.GetString(reader.GetOrdinal("username"));
+                userAccount.Password = hashedPassword; // (May not be necessary to pass it back)
+                userAccount.Role = reader.GetString(reader.GetOrdinal("role"));
+
+                return (true, "User signed in successfully.");
+            }
+            else
+            {
+                return (false, "Username does not exist.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error signing the user in:" + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (false, "An error occurred during sign-in.");
+        }
+    }
+
+    private bool VerifyHashedpassword(string hashedPassword, string plainPassword)
+    {
+        var passwordHasher = new PasswordHasher<object>();
+        PasswordVerificationResult result = passwordHasher.VerifyHashedPassword(null, hashedPassword, plainPassword);
+        return result == PasswordVerificationResult.Success;
+    }
 
     /// Updates the recipe_id field in the recipe_instructions table by linking it to the corresponding
     /// entry in the recipes table based on the name field in the instructions JSON object.

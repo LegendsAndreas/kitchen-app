@@ -1,10 +1,13 @@
 @page "/create-recipe"
 @rendermode InteractiveServer
 @using WebKitchen.Components.SharedComponents
+@using Microsoft.AspNetCore.Http
 @inject DBService DbService;
 @inject SharedRecipe SharedDbRecipe;
 @inject SharedRecipeList GlobalRecipes;
 @inject SharedIngredientList GlobalIngredients;
+@inject IHttpContextAccessor HttpContextAccessor
+
 
 <PageTitle>Create Recipe</PageTitle>
 
@@ -25,7 +28,7 @@
 
                     <div class="col">
                         <label>Recipe Name:</label>
-                        <InputText id="name" @bind-Value="_currentRecipe.Name"/>
+                        <InputText id="name" @bind-Value="_currentRecipe.Name" />
                     </div>
 
                     <label class="generel__file-label"
@@ -149,6 +152,28 @@
     Ingredient _crossIngredient = new();
     StatusMessageToast _statusMessageToaster = null!;
     readonly List<Ingredient> _currentIngredients = new();
+    
+    private void OnRecipeNameChanged(string newValue)
+    {
+        // Set a cookie with the updated recipe name
+        var cookies = HttpContextAccessor.HttpContext?.Response.Cookies;
+
+        if (cookies != null)
+        {
+            // Add a cookie called "RecipeName", which stores the recipe name
+            cookies.Append("RecipeName", newValue, new CookieOptions
+            {
+                Expires = DateTimeOffset.Now.AddDays(7) // Cookie expiration can be adjusted
+            });
+
+            Console.WriteLine($"Cookie updated: RecipeName={newValue}");
+        }
+        else
+        {
+            Console.WriteLine("HttpContext is unavailable. Cannot set cookies.");
+        }
+    }
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

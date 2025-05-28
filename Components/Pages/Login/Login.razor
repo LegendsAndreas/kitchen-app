@@ -1,0 +1,56 @@
+﻿@page "/login"
+@rendermode InteractiveServer
+@using WebKitchen.Services;
+@using WebKitchen.Components.SharedComponents;
+@inject DBService DbService
+
+<h3>Login</h3>
+
+@if (_loginFailed)
+{
+    <p style="color:red;">Invalid username or password</p>
+}
+
+<div>
+    <label for="username">Username:</label>
+    <input id="username" @bind="username"/>
+</div>
+
+<div>
+    <label for="password">Password:</label>
+    <input id="password" @bind="password"/>
+</div>
+
+<button @onclick="SignIn">Sign In</button>
+<button @onclick="DoDo">DoDo</button>
+
+<StatusMessageToast @ref="_toaster"/>
+
+@code {
+    private string username = string.Empty;
+    private string password = string.Empty;
+    private bool _loginFailed = false;
+    UserAccount user = new();
+    StatusMessageToast _toaster = new();
+
+    private async Task SignIn()
+    {
+        var result = await DbService.SignUserIn(username, password);
+        if (!result.status)
+        {
+            await _toaster.ShowToastAsync("Piss... " + result.message);
+            _loginFailed = true;
+            StateHasChanged();
+        }
+        else
+        {
+            await _toaster.ShowToastAsync("YIPPIEEEEE! " + result.message);
+        }
+    }
+
+    private async Task DoDo()
+    {
+        await DbService.AddHashedPassword();
+    }
+
+}
