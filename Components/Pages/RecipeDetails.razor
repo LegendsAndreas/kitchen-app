@@ -14,14 +14,15 @@
 <PageTitle>Recipe Details</PageTitle>
 
 <script>
-    
+
 </script>
 
 <div class="container generel__border-layout recipe-details">
     @* In case we come a across a string, that is longer than the column it is in, "text-break" breaks it into smaller strings, so that it does not fuckup the layout *@
     <div class="row text-break">
         <div class="col-8">
-            <img src="data:image/png;base64,@sharedRecipe.Base64Image" class="recipe-details__recipe-image-style" alt="Recipe Image is gone..."/>
+            <img src="data:image/png;base64,@sharedRecipe.Base64Image" class="recipe-details__recipe-image-style"
+                 alt="Recipe Image is gone..."/>
             <div>
                 <h4>Ingredients</h4>
                 <ul class="recipe-details__food-list">
@@ -88,7 +89,7 @@
                                             @foreach (var ingredient in sharedRecipe.Ingredients)
                                             {
                                                 <h5><strong>@ingredient.Name</strong></h5>
-                                                
+
                                                 <h6>
                                                     Price: @ingredient.CostPer100g.ToString("0.00") * @ingredient.Grams.ToString("")g
                                                     = @CalculateCostAndGrams(ingredient.CostPer100g, ingredient.Grams)
@@ -115,7 +116,7 @@
                 </ul>
             </div>
 
-            <button type="button" class="btn btn-primary" @onclick="HandleDownloadingPdf" style="margin: 1rem">Download
+            <button type="button" class="btn btn-primary" @onclick="DownloadPdf" style="margin: 1rem">Download
                 PDF
             </button>
         </div>
@@ -230,9 +231,8 @@
     }
 
     // Use async, otherwise it won't show up in the companion app.
-    private async Task HandleDownloadingPdf()
+    private async Task DownloadPdf()
     {
-        Console.WriteLine("Handling downloading pdf...");
         try
         {
             using var pdfStream = new MemoryStream();
@@ -305,7 +305,7 @@
 
             // We reset the position of the stream, so that when we download it, it gets read from the starts.
             pdfStream.Position = 0;
-            
+
             try
             {
                 var fileName = $"{sharedRecipe.Name}.pdf";
@@ -319,14 +319,12 @@
             {
                 Console.WriteLine("Error downloading PDF: " + ex.Message);
                 _ = statusMessageToaster.ShowToastAsync("Error downloading PDF");
-                return;
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine("Error creating pdf: " + ex.Message);
             _ = statusMessageToaster.ShowToastAsync("Error creating PDF");
-            return;
         }
     }
 

@@ -10,7 +10,7 @@
         <div class="container-fluid">
             <div class="row justify-content-center">
                 <div class="col">
-                    <EditForm Model="@recipeId" OnSubmit="@HandleGettingRecipe">
+                    <EditForm Model="@recipeId" OnSubmit="@GetRecipe">
                         <label class="form-label fw-bold">Recipe ID:</label>
                         <InputNumber @bind-Value="recipeId" class="form-control"/>
 
@@ -54,7 +54,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" @onclick="HandleAddingInstructions" class="btn btn-primary mt-2">
+            <button type="button" @onclick="CreateInstructions" class="btn btn-primary mt-2">
                 Create Instructions
             </button>
         </div>
@@ -63,7 +63,7 @@
 
 <div class="card generel__border-layout mt-2">
     <div class="card-body">
-        <EditForm Model="@currentStep" OnSubmit="@HandleSteps">
+        <EditForm Model="@currentStep" OnSubmit="@AddStep">
 
             <label class="form-label fw-bold">Step number:</label>
             <InputNumber id="step-number" @bind-Value="currentStep.StepNumber" class="form-control"/>
@@ -78,7 +78,7 @@
 
 <div class="card generel__border-layout mt-2">
     <div class="card-body">
-        <EditForm Model="@currentNote" OnSubmit="@HandleNotes">
+        <EditForm Model="@currentNote" OnSubmit="@AddNote">
 
             <label class="form-label fw-bold">Note number:</label>
             <InputNumber @bind-Value="currentNote.NoteNumber" class="form-control"/>
@@ -153,7 +153,7 @@
     </div>
 </div>
 
-<StatusMessageToast @ref="recipeStatusToaster"/>
+<StatusMessageToast @ref="_toaster"/>
 
 @code {
 
@@ -161,22 +161,20 @@
     Step currentStep = new();
     Note currentNote = new();
     Recipe? currentRecipe;
-    StatusMessageToast recipeStatusToaster = null!;
+    StatusMessageToast _toaster = new();
     RecipeInstructionRecord recipeInstructionRecord = new();
 
-    private async Task HandleGettingRecipe()
+    private async Task GetRecipe()
     {
-        Console.WriteLine("Handling getting recipe...");
         var result = await DbService.GetRecipeByIdAsync(recipeId);
         if (result.Recipe == null)
-            await recipeStatusToaster.ShowToastAsync(result.Message);
+            await _toaster.ShowToastAsync(result.Message);
         else
             currentRecipe = result.Recipe;
     }
 
-    private async Task HandleAddingInstructions()
+    private async Task CreateInstructions()
     {
-        Console.WriteLine("Handling instructions...");
         if (currentRecipe == null)
         {
             Console.WriteLine("No added recipe object");
@@ -196,16 +194,15 @@
 
         var result = await DbService.AddInstructionToDbAsync(recipeInstructionRecord);
         if (result.Status)
-            await recipeStatusToaster.ShowToastAsync(result.Message);
+            await _toaster.ShowToastAsync(result.Message);
         else
-            await recipeStatusToaster.ShowToastAsync("Error adding instructions: " + result.Message);
+            await _toaster.ShowToastAsync("Error adding instructions: " + result.Message);
 
         recipeInstructionRecord.Clear();
     }
 
-    private void HandleSteps()
+    private void AddStep()
     {
-        Console.WriteLine("Handling steps...");
         if (currentStep.StepNumber <= 0)
         {
             Console.WriteLine("Invalid or no step number added");
@@ -223,9 +220,8 @@
         currentStep.Clear();
     }
 
-    private void HandleNotes()
+    private void AddNote()
     {
-        Console.WriteLine("handling notes...");
         if (currentNote.NoteNumber <= 0)
         {
             Console.WriteLine("Invalid or no note number added");
@@ -245,14 +241,12 @@
 
     private void DeleteStep(int index)
     {
-        Console.WriteLine("Deleting step...");
         recipeInstructionRecord.Instructions.Steps.RemoveAt(index);
         StateHasChanged();
     }
 
     private void DeleteNote(int index)
     {
-        Console.WriteLine("Deleting note...");
         recipeInstructionRecord.Instructions.Notes.RemoveAt(index);
         StateHasChanged();
     }

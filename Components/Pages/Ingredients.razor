@@ -7,7 +7,7 @@
 <PageTitle>Ingredients</PageTitle>
 
 @* Ingredient form *@
-<EditForm Model="@currentIngredient" OnValidSubmit="ValidIngredientAsync">
+<EditForm Model="@currentIngredient" OnValidSubmit="AddIngredients">
     <DataAnnotationsValidator/>
 
     <div class="container ingredients__form">
@@ -65,7 +65,7 @@
             <div
                 class="col ingredients__form__col-margin ingredients__form__image-button-mobile d-flex align-items-end">
                 <label class="generel__file-label btn btn-primary" for="fileInput">@(loadedIngredientImage == null ? "Choose Image" : "Image Chosen")</label>
-                <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
+                <InputFile id="fileInput" OnChange="ChooseImage" class="d-none"></InputFile>
             </div>
 
         </div>
@@ -163,7 +163,6 @@
         if (!firstRender)
             Console.WriteLine("Not first render.");
 
-
         if (GlobalIngredients.Ingredients.Any())
             Console.WriteLine("Ingredients are full.");
 
@@ -216,7 +215,7 @@
         _pageNumber = pageNumber;
     }
 
-    private Task HandleImage(InputFileChangeEventArgs imageFile)
+    private Task ChooseImage(InputFileChangeEventArgs imageFile)
     {
         foreach (var image in imageFile.GetMultipleFiles())
         {
@@ -242,7 +241,7 @@
         return Task.CompletedTask;
     }
 
-    private async Task ValidIngredientAsync()
+    private async Task AddIngredients()
     {
         if (_totalIngredientGrams == 0 || _totalIngredientCost == 0)
         {
@@ -253,6 +252,7 @@
         if (loadedIngredientImage == null)
         {
             Console.WriteLine("No image selected.");
+            await StatusMessageToaster.ShowToastAsync("No image selected");
             return;
         }
 

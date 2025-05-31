@@ -17,7 +17,7 @@
 
 <div class="card center-content generel__border-layout">
     <div class="card-body">
-        <EditForm Model="@_currentRecipe" OnValidSubmit="HandleRecipe">
+        <EditForm Model="@_currentRecipe" OnValidSubmit="CreateNewRecipe">
             <DataAnnotationsValidator/>
             <div class="container text-center generel__border-layout m-2 p-4">
                 <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
@@ -28,19 +28,19 @@
 
                     <div class="col">
                         <label>Recipe Name:</label>
-                        <InputText id="name" @bind-Value="_currentRecipe.Name" />
+                        <InputText id="name" @bind-Value="_currentRecipe.Name"/>
                     </div>
 
                     <label class="generel__file-label"
                            for="fileInput">@(string.IsNullOrEmpty(_currentRecipe.Base64Image) ? "Choose Image" : "Image Selected")</label>
-                    <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
+                    <InputFile id="fileInput" OnChange="ChooseImage" class="d-none"></InputFile>
 
                     <button type="submit" class="btn btn-primary col">Create Recipe</button>
                 </div>
             </div>
         </EditForm>
 
-        <EditForm Model="@_currentIngredient" OnValidSubmit="HandleIngredient">
+        <EditForm Model="@_currentIngredient" OnValidSubmit="AddIngredient">
             <DataAnnotationsValidator/>
             <div class="container text-center generel__border-layout m-2 p-4">
                 <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
@@ -113,7 +113,7 @@
         }
         else
         {
-            <EditForm Model="@_currentIngredientGrams" OnSubmit="HandleDbIngredient">
+            <EditForm Model="@_currentIngredientGrams" OnSubmit="AddDatabaseIngredient">
                 <DataAnnotationsValidator/>
                 <div class="container text-center generel__border-layout m-2 p-4">
                     <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
@@ -130,7 +130,7 @@
                             <p>Current Ingredient: @_crossIngredient.Name</p>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Add Existing Database Ingredient</button>
+                        <button type="submit" class="btn btn-primary">Add Database Ingredient</button>
                     </div>
                 </div>
             </EditForm>
@@ -152,7 +152,7 @@
     Ingredient _crossIngredient = new();
     StatusMessageToast _statusMessageToaster = null!;
     readonly List<Ingredient> _currentIngredients = new();
-    
+
     private void OnRecipeNameChanged(string newValue)
     {
         // Set a cookie with the updated recipe name
@@ -238,7 +238,7 @@
             Console.WriteLine("Ingredients are full.");
     }
 
-    private async Task HandleRecipe()
+    private async Task CreateNewRecipe()
     {
         Console.WriteLine("Handling recipe...");
         if (_currentIngredients.Count == 0)
@@ -281,7 +281,7 @@
         _currentIngredients.Clear();
     }
 
-    private async Task HandleImage(InputFileChangeEventArgs imageFile)
+    private async Task ChooseImage(InputFileChangeEventArgs imageFile)
     {
         foreach (var image in imageFile.GetMultipleFiles())
         {
@@ -305,7 +305,7 @@
         }
     }
 
-    public void HandleIngredient()
+    public void AddIngredient()
     {
         Console.WriteLine("Handling ingredient...");
         var tempIngredient = _currentIngredient.TransferIngredient(_currentIngredient);
@@ -317,8 +317,6 @@
 
     private async Task AddRecipeAsIngredient()
     {
-        Console.WriteLine("Adding recipe as ingredient...");
-
         _currentIngredientRecipe = SharedDbRecipe.SelectedRecipe;
 
         if (string.IsNullOrEmpty(_currentIngredientRecipe.Name))
@@ -344,13 +342,11 @@
         _currentIngredient.CarbsPer100g = _currentIngredientRecipe.TotalMacros.Carbs;
         _currentIngredient.ProteinPer100g = _currentIngredientRecipe.TotalMacros.Protein;
 
-        HandleIngredient();
+        AddIngredient();
     }
 
-    public async Task HandleDbIngredient()
+    public async Task AddDatabaseIngredient()
     {
-        Console.WriteLine("Handling db ingredient...");
-
         if (string.IsNullOrEmpty(_crossIngredient.Name))
         {
             Console.WriteLine("No db ingredient selected");
@@ -367,7 +363,7 @@
 
         _currentIngredient = _crossIngredient.TransferIngredient(_crossIngredient);
         _currentIngredient.Grams = _currentIngredientGrams;
-        HandleIngredient();
+        AddIngredient();
     }
 
 }

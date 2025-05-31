@@ -4,12 +4,12 @@
 <EditForm Model="@this">
     <label class="form-label fw-bold">Database Ingredient Id To Edit</label>
     <InputNumber id="name" @bind-Value="_ingredientId" class="form-control"/>
-    <button type="submit" class="btn btn-primary" @onclick="HandleGettingDbIngredient">Get Database Ingredient</button>
+    <button type="submit" class="btn btn-primary" @onclick="GetDatabaseIngredient">Get Database Ingredient</button>
 </EditForm>
 
 @if (_currentIngredient != null)
 {
-    <EditForm Model="@_currentIngredient" OnSubmit="@HandleSubmit">
+    <EditForm Model="@_currentIngredient" OnSubmit="@UpdateDatabaseIngredient">
         <label class="form-label fw-bold">Ingredient Name</label>
         <InputText @bind-Value="_currentIngredient.Name" class="form-control"/>
 
@@ -41,7 +41,7 @@
         </div>
 
         <label class="generel__file-label mt-2" for="fileInput">Choose Image</label>
-        <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
+        <InputFile id="fileInput" OnChange="ChooseImage" class="d-none"></InputFile>
 
         <button type="submit" class="btn btn-primary">Update Database ingredient</button>
     </EditForm>
@@ -62,7 +62,7 @@
     Ingredient? _currentIngredient;
     StatusMessageToast _statusMessageToaster = null!;
 
-    private async Task HandleSubmit()
+    private async Task UpdateDatabaseIngredient()
     {
         if (_currentIngredient == null)
         {
@@ -80,7 +80,7 @@
         _costPr100g = 0;
     }
 
-    private async Task HandleGettingDbIngredient()
+    private async Task GetDatabaseIngredient()
     {
         var result = await DbService.GetDbIngredientById(_ingredientId);
         if (result.Ingredient == null)
@@ -89,7 +89,7 @@
             _currentIngredient = result.Ingredient;
     }
 
-    private async Task HandleImage(InputFileChangeEventArgs imageFile)
+    private async Task ChooseImage(InputFileChangeEventArgs imageFile)
     {
         foreach (var image in imageFile.GetMultipleFiles())
         {

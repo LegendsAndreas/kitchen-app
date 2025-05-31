@@ -49,16 +49,14 @@
 
 </div>
 
-<StatusMessageToast @ref="_statusMessageToaster"/>
+<StatusMessageToast @ref="_toaster"/>
 
 @code{
 
-    StatusMessageToast _statusMessageToaster = new();
+    StatusMessageToast _toaster = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // Console.WriteLine("__Rendering Home__");
-
         if (firstRender && !GlobalRecipes.Recipes.Any())
         {
             try
@@ -71,7 +69,7 @@
                 }
 
                 StateHasChanged();
-                await _statusMessageToaster.ShowToastAsync(result.Message);
+                await _toaster.ShowToastAsync(result.Message);
             }
             catch (Exception ex)
             {
@@ -79,9 +77,9 @@
                 Console.WriteLine("StackTrace: " + ex.StackTrace);
 
                 if (ex.Message.Contains("Failed to connect"))
-                    await _statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
+                    await _toaster.ShowToastAsync("Failed to connect to database, please reload the page.");
                 else
-                    await _statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
+                    await _toaster.ShowToastAsync("Connection failure: " + ex.Message);
             }
 
             /*try

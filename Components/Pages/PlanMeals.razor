@@ -17,7 +17,7 @@
         </div>
 
         <div class="col d-flex justify-content-center">
-            <button type="submit" class="btn btn-primary" @onclick="AddRecipeToWeek">Add Recipe</button>
+            <button type="submit" class="btn btn-primary" @onclick="AddRecipe">Add Recipe</button>
         </div>
     </div>
 
@@ -118,16 +118,12 @@
 
     protected override void OnInitialized()
     {
-        // Console.WriteLine("__Initializing plan meals__");
-
         if (SharedSelectedRecipe.SelectedRecipe != null)
             SharedSelectedRecipe.SelectedRecipe = null!;
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // Console.WriteLine("__Rendering Plan Meals__");
-
         if (firstRender && !GlobalRecipes.Recipes.Any())
         {
             try
@@ -160,11 +156,9 @@
             Console.WriteLine("Recipes are full.");
     }
 
-    private void AddRecipeToWeek()
+    private void AddRecipe()
     {
-        Console.WriteLine("Adding recipe to week...");
         mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay(SharedSelectedRecipe.SelectedRecipe, currentTotalMacrosDay);
-
         StateHasChanged();
     }
 

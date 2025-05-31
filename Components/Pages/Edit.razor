@@ -12,25 +12,25 @@
 
     <ul class="dropdown-menu">
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("mealType"))">Recipe Meal
+            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("mealType"))">Recipe Meal
                 Type
             </button>
         </li>
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("name"))">Recipe Name
+            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("name"))">Recipe Name
             </button>
         </li>
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("ingredient"))">Recipe
+            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("ingredient"))">Recipe
                 Ingredient
             </button>
         </li>
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("image"))">Recipe Image
+            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("image"))">Recipe Image
             </button>
         </li>
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("delete-recipe"))">Delete
+            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("delete-recipe"))">Delete
                 Recipe
             </button>
         </li>
@@ -38,12 +38,12 @@
             <hr class="dropdown-divider"/>
         </li>
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("database-ingredient"))">
+            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("database-ingredient"))">
                 Database Ingredient
             </button>
         </li>
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("delete-ingredient"))">
+            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("delete-ingredient"))">
                 Delete
                 Database Ingredient
             </button>
@@ -52,7 +52,7 @@
             <hr class="dropdown-divider"/>
         </li>
         <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => HandleOptionChange("instructions"))">
+            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("instructions"))">
                 Instructions
             </button>
         </li>
@@ -113,7 +113,7 @@
 
     private string selectedOption = string.Empty;
 
-    private void HandleOptionChange(string option)
+    private void ChangeOption(string option)
     {
         selectedOption = option;
         StateHasChanged();

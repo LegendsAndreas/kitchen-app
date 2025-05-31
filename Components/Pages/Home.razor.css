@@ -1,6 +1,7 @@
 .home__recipe-image {
   transition: all 0.3s;
   cursor: pointer;
+  border-radius: 3px 3px 0 0;
 }
 .home__recipe-image:hover {
   filter: brightness(80%);
