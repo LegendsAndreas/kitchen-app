@@ -201,3 +201,11 @@ Place your button, which activates the handle function, inside an Editform. This
     GROUP BY
     HAVING
     ORDER BY
+
+-- SQL tomfuckery
+This SQL: SELECT nextval('recipes_id_seq');
+Returns the next value to be used AND increments it by 1.
+
+The below value HAS to be public, otherwise it can not be assigned with the JsonPropertyName.
+[JsonPropertyName("multiplier")]
+public float Multiplier { get; set; }

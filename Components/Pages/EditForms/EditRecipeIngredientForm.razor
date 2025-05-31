@@ -9,7 +9,7 @@
             <label class="form-label fw-bold">Recipe Id</label>
             <InputNumber @bind-Value="recipeId" class="form-control"/>
 
-            <button type="submit" class="btn btn-primary" @onclick="HandleSubmit">Get Recipe</button>
+            <button type="submit" class="btn btn-primary" @onclick="GetRecipe">Get Recipe</button>
         </EditForm>
         @if (currentRecipe != null)
         {
@@ -37,7 +37,7 @@
                     <p>Current ingredient: @currentCrossIngredient.Name</p>
                 </div>
             </div>
-            <button type="button" class="btn btn-primary" @onclick="HandleDbIngredient">Add New Ingredient To Recipe
+            <button type="button" class="btn btn-primary" @onclick="AddNewIngredientToRecipe">Add New Ingredient To Recipe
             </button>
 
             <div class="edit__accordion-button-margin--button">
@@ -57,24 +57,16 @@
     Ingredient currentCrossIngredient = new();
     StatusMessageToast recipeStatusToaster = null!;
 
-    private async Task HandleSubmit()
+    private async Task GetRecipe()
     {
         Console.WriteLine("Handling getting recipe...");
         var result = await DbService.GetRecipeByIdAsync(recipeId);
         if (result.Recipe == null)
             await recipeStatusToaster.ShowToastAsync(result.Message);
         else
+        {
             currentRecipe = result.Recipe;
-
-        currentRecipe.PrintRecipe("Here");
-    }
-
-    private void DeleteIngredient(int index)
-    {
-        if (currentRecipe != null)
-            currentRecipe.Ingredients.RemoveAt(index);
-
-        StateHasChanged();
+        }
     }
 
     private async Task UpdateIngredients()
@@ -87,14 +79,14 @@
 
         currentRecipe.SetTotalMacros();
         currentRecipe.SetTotalCost();
-
+        
         var result = await DbService.UpdateRecipeMacrosAndIngredientsByRecipeIdAsync(currentRecipe, currentRecipe.RecipeId);
         await recipeStatusToaster.ShowToastAsync(result);
 
         currentRecipe = null;
     }
 
-    private void HandleDbIngredient()
+    private void AddNewIngredientToRecipe()
     {
         Console.WriteLine("Handling db ingredient...");
 
@@ -127,39 +119,5 @@
             currentRecipe.Ingredients.Add(tempIngredient);
         currentCrossIngredient.ClearIngredient();
     }
-
-    /*private void HandleDbIngredient()
-    {
-        Console.WriteLine("Handling db ingredient...");
-
-        if (currentIngredientGrams == 0)
-        {
-            Console.WriteLine("No grams specified.");
-            return;
-        }
-
-        if (currentIngredientGrams < 0)
-        {
-            Console.WriteLine("Grams cant be negative");
-            return;
-        }
-
-        Console.WriteLine("SharedDbIngredient:");
-        currentCrossIngredient.Grams = currentIngredientGrams;
-        currentCrossIngredient.PrintIngredient();
-
-        HandleIngredient();
-    }
-
-    private void HandleIngredient()
-    {
-        Console.WriteLine("Handling ingredient...");
-        var tempIngredient = currentCrossIngredient.TransferIngredient(currentCrossIngredient);
-        tempIngredient.PrintIngredient();
-
-        if (currentRecipe != null)
-            currentRecipe.Ingredients.Add(tempIngredient);
-        currentCrossIngredient.ClearIngredient();
-    }*/
 
 }

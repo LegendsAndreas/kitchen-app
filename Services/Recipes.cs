@@ -88,7 +88,7 @@ public class Ingredient
     public float CostPer100g { get; set; }
     
     [JsonPropertyName("multiplier")]
-    private float Multiplier { get; set; }
+    public float Multiplier { get; set; }
     public string Base64Image { get; set; } = string.Empty;
 
     public uint GetId()
@@ -126,8 +126,7 @@ public class Ingredient
         Console.WriteLine("Setting ID...");
         Id = id;
     }
-
-
+    
     public void SetMultiplier()
     {
         // Console.WriteLine("Setting multiplier...");

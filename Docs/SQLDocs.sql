@@ -534,3 +534,12 @@ FROM recipes
 WHERE (macros).total_protein >= 20
   AND (macros).total_protein <= 40
 ORDER BY (macros).total_protein DESC;
+
+SELECT nextval('recipes_id_seq'); -- Ensures the session initializes the sequence
+SELECT currval('recipes_id_seq');
+SELECT setval('recipes_id_seq', MAX(id))
+FROM recipes;
+
+SELECT COUNT(*) FROM recipes;
+
+SELECT * FROM recipes WHERE id = 47;

@@ -244,6 +244,12 @@
 
     private async Task ValidIngredientAsync()
     {
+        if (_totalIngredientGrams == 0 || _totalIngredientCost == 0)
+        {
+            await StatusMessageToaster.ShowToastAsync("Grams or cost cannot be 0");
+            return;
+        }
+        
         if (loadedIngredientImage == null)
         {
             Console.WriteLine("No image selected.");
