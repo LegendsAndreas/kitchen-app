@@ -76,19 +76,6 @@
 @* Ingredients list *@
 <div class="container">
 
-    <div class="ingredients__pagination-buttons d-flex justify-content-center my-3">
-        <button class="btn btn-primary" @onclick="PrevPage">
-            Prev
-        </button>
-        @foreach (var pageNum in Enumerable.Range(1, _maxPage))
-        {
-            <button class="btn btn-primary" @onclick="() => SetPageNumber(pageNum)">@pageNum</button>
-        }
-        <button class="btn btn-primary" @onclick="NextPage">
-            Next
-        </button>
-    </div>
-
     @if (GlobalIngredients.Ingredients.Count == 0)
     {
         <div class="p-2">
@@ -97,7 +84,7 @@
     }
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @foreach (var ingredient in GetIngredientsForPage())
+        @foreach (var ingredient in GlobalIngredients.Ingredients)
         {
             <div class="col p-2">
                 <div class="card h-100 generel__border-layout">
@@ -147,7 +134,6 @@
                 else
                 {
                     GlobalIngredients.Ingredients = result.DbIngredients;
-                    _maxPage = (int)Math.Ceiling((double)GlobalIngredients.Ingredients.Count / _ingredientsOffset);
                     Console.WriteLine("Acquired Ingredients.");
                     StateHasChanged();
                 }
@@ -165,54 +151,6 @@
 
         if (GlobalIngredients.Ingredients.Any())
             Console.WriteLine("Ingredients are full.");
-
-        // When we go BACK to the ingredient page, '_maxPage' will reset to its original initialized value, so we have to
-        // set it again and then encapsulate it in an if statement so that we don't reload indefinably.
-        if (GlobalIngredients.Ingredients.Any() && _maxPage == 0)
-        {
-            _maxPage = (int)Math.Ceiling((double)GlobalIngredients.Ingredients.Count / _ingredientsOffset);
-            StateHasChanged();
-        }
-    }
-
-    private IEnumerable<Ingredient> GetIngredientsForPage()
-    {
-        var startIndex = (_pageNumber - 1) * _ingredientsOffset;
-        var range = GlobalIngredients.Ingredients
-            .Skip(startIndex)
-            .Take(_ingredientsOffset);
-
-        return range;
-    }
-    
-    private async Task PrevPage()
-    {
-        Console.WriteLine("Page number" + _maxPage);
-        if (_pageNumber == 1)
-        {
-            Console.WriteLine("Cant lower page further");
-            await StatusMessageToaster.ShowToastAsync("Cant lower page further");
-            return;
-        }
-
-        _pageNumber--;
-    }
-
-    private async Task NextPage()
-    {
-        Console.WriteLine("Page number" + _maxPage);
-        if (_pageNumber < _maxPage)
-        {
-            _pageNumber++;
-            return;
-        }
-
-        await StatusMessageToaster.ShowToastAsync("Cant increase page further");
-    }
-
-    private void SetPageNumber(int pageNumber)
-    {
-        _pageNumber = pageNumber;
     }
 
     private Task ChooseImage(InputFileChangeEventArgs imageFile)
