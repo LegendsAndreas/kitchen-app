@@ -64,8 +64,13 @@
 
             <div
                 class="col ingredients__form__col-margin ingredients__form__image-button-mobile d-flex align-items-end">
-                <label class="generel__file-label btn btn-primary" for="fileInput">@(loadedIngredientImage == null ? "Choose Image" : "Image Chosen")</label>
+                <label class="generel__file-label btn btn-primary"
+                       for="fileInput">@(string.IsNullOrEmpty(currentIngredient.Base64Image) ? "Choose Image" : "Image Chosen")</label>
                 <InputFile id="fileInput" OnChange="ChooseImage" class="d-none"></InputFile>
+                <label for="use-placeholder-pic">
+                    Placeholder?
+                    <input type="checkbox" id="use-placeholder-pic" @bind="_usePlaceholderPic" @onclick="UsePlaceholderPic"/>
+                </label>
             </div>
 
         </div>
@@ -119,6 +124,7 @@
     Ingredient currentIngredient = new();
     IBrowserFile? loadedIngredientImage;
     StatusMessageToast StatusMessageToaster = null!;
+    bool _usePlaceholderPic;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -153,7 +159,36 @@
             Console.WriteLine("Ingredients are full.");
     }
 
-    private Task ChooseImage(InputFileChangeEventArgs imageFile)
+    private async Task UsePlaceholderPic()
+    {
+        _usePlaceholderPic = !_usePlaceholderPic;
+
+        try
+        {
+            if (_usePlaceholderPic)
+            {
+                string placeholderPath = "wwwroot/pics/PlaceHolderPic.jpg";
+                byte[] imageBytes = await File.ReadAllBytesAsync(placeholderPath);
+                string base64Image = Convert.ToBase64String(imageBytes);
+
+                currentIngredient.Base64Image = base64Image;
+            }
+            else
+            {
+                currentIngredient.Base64Image = "";
+            }
+        }
+        catch (FileNotFoundException)
+        {
+            Console.WriteLine("PlaceHolderPic.jpg was not found");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error setting image: " + ex.Message);
+        }
+    }
+
+    private async Task ChooseImage(InputFileChangeEventArgs imageFile)
     {
         foreach (var image in imageFile.GetMultipleFiles())
         {
@@ -161,22 +196,21 @@
             {
                 Console.WriteLine($"\"{image.ContentType}\" is not allowed");
                 // Popup message saying so.
-                return Task.CompletedTask;
+                return;
             }
 
             try
             {
-                loadedIngredientImage = image;
+                await currentIngredient.SetIngredientImage(image);
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error getting file: " + ex.Message);
-                // Perhaps, display error message.
-                return Task.CompletedTask;
+                return;
             }
         }
 
-        return Task.CompletedTask;
+        _usePlaceholderPic = false;
     }
 
     private async Task AddIngredients()
@@ -186,15 +220,7 @@
             await StatusMessageToaster.ShowToastAsync("Grams or cost cannot be 0");
             return;
         }
-        
-        if (loadedIngredientImage == null)
-        {
-            Console.WriteLine("No image selected.");
-            await StatusMessageToaster.ShowToastAsync("No image selected");
-            return;
-        }
 
-        await currentIngredient.SetIngredientImage(loadedIngredientImage);
         currentIngredient.SetCostPer100G(_totalIngredientGrams, _totalIngredientCost);
         var tempIngredient = currentIngredient.TransferIngredient(currentIngredient);
 

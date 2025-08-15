@@ -14,21 +14,6 @@ public class Program
 
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
-        
-        //https://www.youtube.com/watch?v=GKvEuA80FAE
-        /*builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).
-            AddCookie(options =>
-            {
-                options.Cookie.Name = "auth_token";
-                options.LoginPath = "/login";
-                options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
-                options.AccessDeniedPath = "/access-denied";
-            });
-        
-        builder.Services.AddAuthorization();
-        builder.Services.AddCascadingAuthenticationState();
-        builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));*/
 
         builder.Services.AddScoped<Recipe>();
         builder.Services.AddScoped<Ingredient>();

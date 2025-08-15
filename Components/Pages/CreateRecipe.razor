@@ -31,11 +31,21 @@
                         <InputText id="name" @bind-Value="_currentRecipe.Name"/>
                     </div>
 
-                    <label class="generel__file-label"
-                           for="fileInput">@(string.IsNullOrEmpty(_currentRecipe.Base64Image) ? "Choose Image" : "Image Selected")</label>
-                    <InputFile id="fileInput" OnChange="ChooseImage" class="d-none"></InputFile>
+                    <div class="col">
+                        <label class="generel__file-label"
+                               for="fileInput">@(string.IsNullOrEmpty(_currentRecipe.Base64Image) ? "Choose Image" : "Image Selected")</label>
+                        <InputFile id="fileInput" OnChange="ChooseImage" class="d-none"></InputFile>
+
+                        @* Putting the label around the input, achives the same effect as putting it just under it, but
+                        now it can be activated by clicking on it *@
+                        <label for="use-placeholder-pic">
+                            Placeholder?
+                            <input type="checkbox" id="use-placeholder-pic" @bind="_usePlaceholderPic" @onclick="UsePlaceholderPic"/>
+                        </label>
+                    </div>
 
                     <button type="submit" class="btn btn-primary col">Create Recipe</button>
+
                 </div>
             </div>
         </EditForm>
@@ -152,28 +162,7 @@
     Ingredient _crossIngredient = new();
     StatusMessageToast _statusMessageToaster = null!;
     readonly List<Ingredient> _currentIngredients = new();
-
-    private void OnRecipeNameChanged(string newValue)
-    {
-        // Set a cookie with the updated recipe name
-        var cookies = HttpContextAccessor.HttpContext?.Response.Cookies;
-
-        if (cookies != null)
-        {
-            // Add a cookie called "RecipeName", which stores the recipe name
-            cookies.Append("RecipeName", newValue, new CookieOptions
-            {
-                Expires = DateTimeOffset.Now.AddDays(7) // Cookie expiration can be adjusted
-            });
-
-            Console.WriteLine($"Cookie updated: RecipeName={newValue}");
-        }
-        else
-        {
-            Console.WriteLine("HttpContext is unavailable. Cannot set cookies.");
-        }
-    }
-
+    bool _usePlaceholderPic;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -238,6 +227,36 @@
             Console.WriteLine("Ingredients are full.");
     }
 
+    private async Task UsePlaceholderPic()
+    {
+        _usePlaceholderPic = !_usePlaceholderPic;
+
+        try
+        {
+            if (_usePlaceholderPic)
+            {
+                string placeholderPath = "wwwroot/pics/PlaceHolderPic.jpg";
+                byte[] imageBytes = await File.ReadAllBytesAsync(placeholderPath);
+                string base64Image = Convert.ToBase64String(imageBytes);
+
+                _currentRecipe.Base64Image = base64Image;
+            }
+            else
+            {
+                _currentRecipe.Base64Image = "";
+            }
+        }
+        catch (FileNotFoundException)
+        {
+            Console.WriteLine("PlaceHolderPic.jpg was not found");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error setting image: " + ex.Message);
+        }
+    }
+
+
     private async Task CreateNewRecipe()
     {
         Console.WriteLine("Handling recipe...");
@@ -252,6 +271,13 @@
         {
             Console.WriteLine($"Invalid meal type \"{_currentRecipe.MealType}\"");
             await _statusMessageToaster.ShowToastAsync($"Recipe was not created; invalid meal type \"{_currentRecipe.MealType}\"");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(_currentRecipe.Base64Image))
+        {
+            Console.WriteLine("Image is not set");
+            await _statusMessageToaster.ShowToastAsync("Image is not set");
             return;
         }
 
@@ -303,6 +329,7 @@
                 return;
             }
         }
+        _usePlaceholderPic = false;
     }
 
     public void AddIngredient()
