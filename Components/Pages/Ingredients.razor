@@ -228,6 +228,7 @@
         await StatusMessageToaster.ShowToastAsync(result.Message);
 
         currentIngredient.ClearIngredient();
+        _usePlaceholderPic = false;
         StateHasChanged();
     }
 

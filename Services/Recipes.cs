@@ -111,7 +111,7 @@ public class Ingredient
     
     public float GetCostPer100g()
     {
-        Console.WriteLine("Getting cost per 100g...");
+        // Console.WriteLine("Getting cost per 100g...");
         return CostPer100g;
     }
 
