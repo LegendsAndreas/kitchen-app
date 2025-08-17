@@ -1181,6 +1181,65 @@ public class DBService
         return statusMessage;
     }
 
+    public async Task<(List<Recipe>? Recipes, string Message)> GetRecipesPaginationAsync(int paginationPage)
+    {
+        List<Recipe> recipes = [];
+
+        if (paginationPage < 1)
+        {
+            return (null, "Pagination page is less than 1.");
+        }
+
+        int lowest = 0 + 50 * (paginationPage - 1);
+        int highest = 50 + 50 * (paginationPage - 1);
+
+        string query = "SELECT r.id, " +
+                       "r.name, " +
+                       "r.meal_type, " +
+                       "r.image, " +
+                       "r.cost, " +
+                       "(r.macros).total_calories, " +
+                       "(r.macros).total_carbs, " +
+                       "(r.macros).total_fats, " +
+                       "(r.macros).total_protein, " +
+                       "json_agg(" +
+                       "    json_build_object(" +
+                       "         'name', i.name," +
+                       "         'grams', i.grams," +
+                       "         'calories_pr_hectogram', i.calories_pr_hectogram," +
+                       "         'fats_pr_hectogram', i.fats_pr_hectogram," +
+                       "         'carbs_pr_hectogram', i.carbs_pr_hectogram," +
+                       "         'protein_pr_hectogram', i.protein_pr_hectogram," +
+                       "         'cost_per_hectogram', COALESCE(i.cost_per_100g, 0)," +
+                       "         'multiplier', i.multiplier" +
+                       "     )" +
+                       ") AS ingredients " +
+                       "FROM recipes AS r, unnest(r.ingredients) AS i " +
+                       $"WHERE r.id BETWEEN {lowest} AND {highest} " +
+                       "GROUP BY r.id " +
+                       "ORDER BY r.id ";
+
+        try
+        {
+            await using NpgsqlConnection conn = await GetConnectionAsync();
+            await using NpgsqlCommand cmd = new(query, conn);
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                Recipe tempRecipe = MakeRecipe(reader);
+                recipes.Add(tempRecipe);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error getting recipes: " + e.Message);
+            return (null, "Error getting recipes");
+            ;
+        }
+
+        return (recipes, "Recipes found");
+    }
+
     public async Task<string> DeleteDbIngredientById(int id)
     {
         Console.WriteLine("Deleting database ingredient by name...");
@@ -1385,7 +1444,7 @@ public class DBService
 
         return recipes;
     }*/
-    
+
     public async Task AddHashedPassword()
     {
         string query = "UPDATE users SET password = @pass WHERE username = 'admin'";
