@@ -1,6 +1,6 @@
 ﻿@page "/"
 @rendermode InteractiveServer
-@using WebKitchen.Components.SharedComponents
+@using WebKitchen.Components.SharedComponents;
 @inject NavigationManager NavigationManager;
 @inject DBService DbService;
 @inject SharedRecipe SharedDetailRecipe
@@ -14,9 +14,14 @@
     @*<button class="btn btn-primary" onclick="@(() => navigationManager.NavigateTo("/developer"))">Go To developer
     </button>*@
 
-    @if (GlobalRecipes.Recipes.Count == 0)
+    @if (_loading)
     {
         <Loading LoadingParameter="recipes"/>
+    }
+
+    @if (!_loading)
+    {
+        <PaginatorPage CurrentPage="_currentRecipesPage" CurrentPageChanged="OnRecipesPageChanged"/>
     }
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
@@ -47,68 +52,27 @@
         }
     </div>
 
+    @if (!_loading)
+    {
+        <PaginatorPage CurrentPage="_currentRecipesPage" CurrentPageChanged="OnRecipesPageChanged"/>
+    }
+
 </div>
 
 <StatusMessageToast @ref="_toaster"/>
 
 @code{
 
+    int _currentRecipesPage = 1;
+    bool _loading = true;
     StatusMessageToast _toaster = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && !GlobalRecipes.Recipes.Any())
         {
-            try
-            {
-                var result = await DbService.GetAllRecipesAsync();
-                if (result.Recipes != null)
-                {
-                    GlobalRecipes.Recipes = result.Recipes;
-                    Console.WriteLine("Acquired Recipes.");
-                }
-
-                StateHasChanged();
-                await _toaster.ShowToastAsync(result.Message);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error getting recipes: " + ex.Message);
-                Console.WriteLine("StackTrace: " + ex.StackTrace);
-
-                if (ex.Message.Contains("Failed to connect"))
-                    await _toaster.ShowToastAsync("Failed to connect to database, please reload the page.");
-                else
-                    await _toaster.ShowToastAsync("Connection failure: " + ex.Message);
-            }
-
-            /*try
-            {
-                var result = await DbService.GetAllDbIngredients();
-                if (result.DbIngredients == null)
-                {
-                    await _statusMessageToaster.ShowToastAsync(result.Message);
-                }
-                else
-                {
-                    await _statusMessageToaster.ShowToastAsync(result.Message);
-                    Console.WriteLine(result.Message);
-                    GlobalIngredients.Ingredients = result.DbIngredients;
-                    StateHasChanged();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error getting ingredients list: " + ex.Message);
-                Console.WriteLine("StackTrace: " + ex.StackTrace);
-
-                if (ex.Message.Contains("Failed to connect"))
-                    await _statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
-                else
-                    await _statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
-
-                return;
-            }*/
+            await DbService.SetTotalVariables();
+            await GetRecipes();
         }
 
         if (!firstRender)
@@ -116,6 +80,43 @@
 
         if (GlobalRecipes.Recipes.Any())
             Console.WriteLine("Recipes are full.");
+    }
+    
+    private async Task OnRecipesPageChanged(int newPage)
+    {
+        _currentRecipesPage = newPage;
+        await GetRecipes();
+    }
+
+    private async Task GetRecipes()
+    {
+        _loading = true;
+        try
+        {
+            var result = await DbService.GetRecipesPaginationAsync(_currentRecipesPage);
+            if (result.Recipes != null)
+            {
+                GlobalRecipes.Recipes = result.Recipes;
+            }
+            else
+            {
+                await _toaster.ShowToastAsync("No recipes found");
+            }
+
+            _loading = false;
+            StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting recipes: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+
+            if (ex.Message.Contains("Failed to connect"))
+                await _toaster.ShowToastAsync("Failed to connect to database, please reload the page.");
+            else
+                await _toaster.ShowToastAsync("Connection failure: " + ex.Message);
+            _loading = false;
+        }
     }
 
     private void NavigateToDetails(Recipe recipe)

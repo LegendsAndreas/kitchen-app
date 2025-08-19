@@ -18,6 +18,17 @@ CREATE TYPE recipe_macros AS
     total_protein  FLOAT
 );
 
+CREATE TABLE db_variables (id SERIAL PRIMARY KEY, name TEXT, value TEXT);
+
+INSERT INTO db_variables (name, value)
+VALUES ('recipes_count', (SELECT COUNT(*)::text FROM recipes));
+INSERT INTO db_variables (name, value)
+VALUES ('ingredients_count', (SELECT COUNT(*)::text FROM ingredients));
+
+UPDATE db_variables
+SET value = (SELECT COUNT(*)::text FROM recipes)
+WHERE id = 1;
+
 CREATE TABLE recipes
 (
     id          SERIAL PRIMARY KEY,

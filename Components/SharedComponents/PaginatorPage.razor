@@ -1,0 +1,53 @@
+﻿@inject DBService DbService;
+<div class="d-flex justify-content-center">
+    <button class="btn btn-primary" @onclick="DecrementPage">
+        Prev page
+    </button>
+    @for (int i = 0; i < DbService._maxRecipesPages; ++i)
+    {
+        var i1 = i;
+        <button class="btn btn-primary" @onclick="()=> SetPage(i1 +1)">@(i1 + 1)</button>
+    }
+    <button class="btn btn-primary" @onclick="IncrementPage">
+        Next page
+    </button>
+</div>
+
+<StatusMessageToast @ref="_toaster"></StatusMessageToast>
+
+@code {
+    StatusMessageToast _toaster = new();
+    [Parameter] public int CurrentPage { get; set; }
+    [Parameter] public EventCallback<int> CurrentPageChanged { get; set; }
+
+    private async Task SetPage(int page)
+    {
+        if (CurrentPage != page)
+        {
+            CurrentPage = page;
+            await CurrentPageChanged.InvokeAsync(CurrentPage);
+        }
+    }
+
+    private async Task IncrementPage()
+    {
+        if (CurrentPage + 1 > DbService._maxRecipesPages)
+        {
+            await _toaster.ShowToastAsync($"Current page ({CurrentPage}) cant be higher than the max recipes pages ({DbService._maxRecipesPages})");
+            return;
+        }
+        CurrentPage++;
+        await CurrentPageChanged.InvokeAsync(CurrentPage); // <-- Notify parent
+    }
+    
+    private async Task DecrementPage()
+    {
+        if (CurrentPage - 1 < 1)
+        {
+            await _toaster.ShowToastAsync("Page cant be lower than 1");
+            return;
+        }
+        CurrentPage--;
+        await CurrentPageChanged.InvokeAsync(CurrentPage); // <-- Notify parent
+    }
+}

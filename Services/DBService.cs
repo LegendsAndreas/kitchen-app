@@ -12,12 +12,81 @@ namespace WebKitchen.Services;
 
 public class DBService
 {
+    public int _totalRecipes;
+    public int _maxRecipesPages;
+    private int _totalIngredients;
+    private int _maxIngredientsPages;
     private readonly string _connectionString;
+    const int ITEMS_PER_PAGE = 24;
 
     public DBService(string connectionString)
     {
-        // Console.WriteLine("Connecting DBService:" + connectionString);
         _connectionString = connectionString;
+    }
+
+    public async Task SetTotalVariables()
+    {
+        _totalRecipes = await GetTotalRecipes();
+        _totalIngredients = await GetTotalIngredients();
+        Console.WriteLine($"Total Recipes: {_totalRecipes}");
+        Console.WriteLine($"Total Ingredients: {_totalIngredients}");
+        _maxRecipesPages = (int) Math.Ceiling((double) _totalRecipes / ITEMS_PER_PAGE);
+        _maxIngredientsPages = (int) Math.Ceiling((double) _totalIngredients / ITEMS_PER_PAGE);
+        Console.WriteLine($"Max Recipes Pages: {_maxRecipesPages}");
+        Console.WriteLine($"Max Ingredients Pages: {_maxIngredientsPages}");
+    }
+
+    private async Task<int> GetTotalRecipes()
+    {
+        int totalRecipes = 0;
+        const string query = "SELECT COUNT(*) FROM recipes";
+        try
+        {
+            await using NpgsqlConnection conn = await GetConnectionAsync();
+            await using NpgsqlCommand cmd = new(query, conn);
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                totalRecipes = reader.GetInt32(0);
+            }
+            else
+            {
+                Console.WriteLine("Error getting total recipes.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw;
+        }
+        
+        return totalRecipes;
+    }
+    private async Task<int> GetTotalIngredients()
+    {
+        int totalIngredients = 0;
+        const string query = "SELECT COUNT(*) FROM neondb.public.ingredients";
+        try
+        {
+            await using NpgsqlConnection conn = await GetConnectionAsync();
+            await using NpgsqlCommand cmd = new(query, conn);
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                totalIngredients = reader.GetInt32(0);
+            }
+            else
+            {
+                Console.WriteLine("Error getting total recipes.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+            throw;
+        }
+        
+        return totalIngredients;
     }
 
     /// Asynchronously creates and returns an open database connection using the configured connection string.
@@ -1190,8 +1259,8 @@ public class DBService
             return (null, "Pagination page is less than 1.");
         }
 
-        int lowest = 0 + 50 * (paginationPage - 1);
-        int highest = 50 + 50 * (paginationPage - 1);
+        int lowest = 0 + ITEMS_PER_PAGE * (paginationPage - 1);
+        int highest = ITEMS_PER_PAGE + ITEMS_PER_PAGE * (paginationPage - 1);
 
         string query = "SELECT r.id, " +
                        "r.name, " +
@@ -1233,8 +1302,7 @@ public class DBService
         catch (Exception e)
         {
             Console.WriteLine("Error getting recipes: " + e.Message);
-            return (null, "Error getting recipes");
-            ;
+            return (null, "Error getting recipes: " + e.Message);
         }
 
         return (recipes, "Recipes found");
