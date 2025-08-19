@@ -2,7 +2,6 @@
 @rendermode InteractiveServer
 @using WebKitchen.Components.SharedComponents
 @inject DBService DbService;
-@inject SharedIngredientList GlobalIngredients;
 
 <PageTitle>Ingredients</PageTitle>
 
@@ -69,7 +68,8 @@
                 <InputFile id="fileInput" OnChange="ChooseImage" class="d-none"></InputFile>
                 <label for="use-placeholder-pic">
                     Placeholder?
-                    <input type="checkbox" id="use-placeholder-pic" @bind="_usePlaceholderPic" @onclick="UsePlaceholderPic"/>
+                    <input type="checkbox" id="use-placeholder-pic" @bind="_usePlaceholderPic"
+                           @onclick="UsePlaceholderPic"/>
                 </label>
             </div>
 
@@ -81,15 +81,24 @@
 @* Ingredients list *@
 <div class="container">
 
-    @if (GlobalIngredients.Ingredients.Count == 0)
+    @if (_loading)
     {
         <div class="p-2">
             <Loading LoadingParameter="ingredients"/>
         </div>
     }
 
+    @if (!_loading)
+    {
+        <PaginatorPage
+            CurrentPage="_currentIngredientPage"
+            CurrentPageChanged="OnIngredientChange"
+            MaxPages="DbService._maxIngredientsPages"
+        />
+    }
+
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @foreach (var ingredient in GlobalIngredients.Ingredients)
+        @foreach (var ingredient in _ingredients)
         {
             <div class="col p-2">
                 <div class="card h-100 generel__border-layout">
@@ -116,47 +125,61 @@
 <StatusMessageToast @ref="StatusMessageToaster"/>
 
 @code {
-    int _maxPage;
-    int _pageNumber = 1;
-    int _ingredientsOffset = 40;
+    int _currentIngredientPage = 1;
     float _totalIngredientGrams;
     float _totalIngredientCost;
-    Ingredient currentIngredient = new();
-    IBrowserFile? loadedIngredientImage;
-    StatusMessageToast StatusMessageToaster = null!;
     bool _usePlaceholderPic;
+    bool _loading = true;
+    Ingredient currentIngredient = new();
+    IBrowserFile? _loadedIngredientImage;
+    StatusMessageToast StatusMessageToaster = null!;
+    List<Ingredient> _ingredients = [];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && !GlobalIngredients.Ingredients.Any())
+        if (firstRender && !_ingredients.Any())
         {
-            try
-            {
-                var result = await DbService.GetAllDbIngredients();
-                if (result.DbIngredients == null)
-                {
-                    await StatusMessageToaster.ShowToastAsync(result.Message);
-                }
-                else
-                {
-                    GlobalIngredients.Ingredients = result.DbIngredients;
-                    Console.WriteLine("Acquired Ingredients.");
-                    StateHasChanged();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error getting Ingredients: " + ex.Message);
-                Console.WriteLine("StackTrace: " + ex.StackTrace);
-                return;
-            }
+            await GetIngredients();
         }
 
         if (!firstRender)
             Console.WriteLine("Not first render.");
 
-        if (GlobalIngredients.Ingredients.Any())
+        if (_ingredients.Any())
             Console.WriteLine("Ingredients are full.");
+    }
+
+    private async Task GetIngredients()
+    {
+        _loading = true;
+        try
+        {
+            var result = await DbService.GetIngredientsPaginationAsync(_currentIngredientPage);
+            if (result.Ingredients == null)
+            {
+                await StatusMessageToaster.ShowToastAsync(result.Message);
+            }
+            else
+            {
+                _ingredients = result.Ingredients;
+                Console.WriteLine("Acquired Ingredients.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting Ingredients: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+        }
+
+        _loading = false;
+        StateHasChanged();
+    }
+
+
+    private async Task OnIngredientChange(int newPage)
+    {
+        _currentIngredientPage = newPage;
+        await GetIngredients();
     }
 
     private async Task UsePlaceholderPic()

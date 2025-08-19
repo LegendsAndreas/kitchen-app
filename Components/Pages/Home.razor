@@ -5,7 +5,6 @@
 @inject DBService DbService;
 @inject SharedRecipe SharedDetailRecipe
 @inject SharedRecipeList GlobalRecipes
-@inject SharedIngredientList GlobalIngredients
 
 <PageTitle>Recipes</PageTitle>
 
@@ -21,7 +20,10 @@
 
     @if (!_loading)
     {
-        <PaginatorPage CurrentPage="_currentRecipesPage" CurrentPageChanged="OnRecipesPageChanged"/>
+        <PaginatorPage
+            CurrentPage="_currentRecipesPage"
+            CurrentPageChanged="OnRecipesPageChanged"
+            MaxPages="DbService._maxRecipesPages"/>
     }
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
@@ -54,7 +56,10 @@
 
     @if (!_loading)
     {
-        <PaginatorPage CurrentPage="_currentRecipesPage" CurrentPageChanged="OnRecipesPageChanged"/>
+        <PaginatorPage
+            CurrentPage="_currentRecipesPage"
+            CurrentPageChanged="OnRecipesPageChanged"
+            MaxPages="DbService._maxRecipesPages"/>
     }
 
 </div>
@@ -81,7 +86,7 @@
         if (GlobalRecipes.Recipes.Any())
             Console.WriteLine("Recipes are full.");
     }
-    
+
     private async Task OnRecipesPageChanged(int newPage)
     {
         _currentRecipesPage = newPage;

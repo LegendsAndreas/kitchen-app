@@ -12,10 +12,10 @@ namespace WebKitchen.Services;
 
 public class DBService
 {
-    public int _totalRecipes;
+    private int _totalRecipes;
     public int _maxRecipesPages;
     private int _totalIngredients;
-    private int _maxIngredientsPages;
+    public int _maxIngredientsPages;
     private readonly string _connectionString;
     const int ITEMS_PER_PAGE = 24;
 
@@ -65,7 +65,7 @@ public class DBService
     private async Task<int> GetTotalIngredients()
     {
         int totalIngredients = 0;
-        const string query = "SELECT COUNT(*) FROM neondb.public.ingredients";
+        const string query = "SELECT COUNT(*) FROM ingredients";
         try
         {
             await using NpgsqlConnection conn = await GetConnectionAsync();
@@ -1248,6 +1248,48 @@ public class DBService
         }
 
         return statusMessage;
+    }
+
+    public async Task<(List<Ingredient>? Ingredients, string Message)> GetIngredientsPaginationAsync(int paginationPage)
+    {
+        List<Ingredient> ingredients = [];
+        
+        int lowest = 0 + ITEMS_PER_PAGE * (paginationPage - 1);
+        int highest = ITEMS_PER_PAGE + ITEMS_PER_PAGE * (paginationPage - 1);
+        
+        string query =
+            "SELECT " +
+            "id," +
+            "name," +
+            "cals," +
+            "fats," +
+            "carbs," +
+            "protein," +
+            "image," +
+            "cost_per_100g " +
+            "FROM ingredients " +
+            $"WHERE ingredients.id BETWEEN {lowest} AND {highest} " +
+            "ORDER BY id";
+        
+        try
+        {
+            await using var conn = await GetConnectionAsync();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                Ingredient tempIngredient = MakeIngredient(reader);
+                ingredients.Add(tempIngredient);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting paginated database ingredients: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting paginated database ingredients: {ex.Message}.");
+        }
+
+        return (ingredients, "No ingredients found.");
     }
 
     public async Task<(List<Recipe>? Recipes, string Message)> GetRecipesPaginationAsync(int paginationPage)
