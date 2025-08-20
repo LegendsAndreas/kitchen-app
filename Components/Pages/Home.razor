@@ -27,30 +27,27 @@
     }
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @if (GlobalRecipes.Recipes.Count != 0)
+        @foreach (var recipe in _recipes)
         {
-            @foreach (var recipe in GlobalRecipes.Recipes)
-            {
-                <div class="col p-2 ">
-                    <div class="card h-100 generel__border-layout">
-                        <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..."
-                             class="card-img home home__recipe-image"
-                             @onclick="() => NavigateToDetails(recipe)"/>
-                        <div class="card-header">
-                            <h4>@recipe.RecipeId. @recipe.Name</h4>
-                        </div>
-                        <div class="card-body border-primary">
-                            <p class="card-text ">
-                                - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
-                                - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
-                                - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
-                                - Protein: @recipe.TotalMacros.Protein.ToString("0") <br>
-                                - Cost: @recipe.TotalCost.ToString("0.00") <br>
-                            </p>
-                        </div>
+            <div class="col p-2 ">
+                <div class="card h-100 generel__border-layout">
+                    <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..."
+                         class="card-img home home__recipe-image"
+                         @onclick="() => NavigateToDetails(recipe)"/>
+                    <div class="card-header">
+                        <h4>@recipe.RecipeId. @recipe.Name</h4>
+                    </div>
+                    <div class="card-body border-primary">
+                        <p class="card-text ">
+                            - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
+                            - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
+                            - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
+                            - Protein: @recipe.TotalMacros.Protein.ToString("0") <br>
+                            - Cost: @recipe.TotalCost.ToString("0.00") <br>
+                        </p>
                     </div>
                 </div>
-            }
+            </div>
         }
     </div>
 
@@ -70,6 +67,7 @@
 
     int _currentRecipesPage = 1;
     bool _loading = true;
+    List<Recipe> _recipes = [];
     StatusMessageToast _toaster = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -101,7 +99,7 @@
             var result = await DbService.GetRecipesPaginationAsync(_currentRecipesPage);
             if (result.Recipes != null)
             {
-                GlobalRecipes.Recipes = result.Recipes;
+                _recipes = result.Recipes;
             }
             else
             {
