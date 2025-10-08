@@ -728,6 +728,27 @@ public class DBService
 
         return (commonItems, statusMessage);
     }
+    
+    public async Task<(bool Status, string Message)> EditFullRecipe(Recipe updatedRecipe)
+    {
+        try
+        {
+            await UpdateRecipeNameByRecipeId(updatedRecipe.Name, updatedRecipe.RecipeId);
+            await UpdateRecipeMealTypeRecipeIdAsync(updatedRecipe.MealType, updatedRecipe.RecipeId);
+            await UpdateRecipeMacrosAndIngredientsByRecipeIdAsync(updatedRecipe, updatedRecipe.RecipeId);
+            await UpdateRecipeImageByRecipeId(updatedRecipe.Base64Image, updatedRecipe.RecipeId);
+
+            await EmptyRecipeIngredientsByRecipeId(updatedRecipe.RecipeId);
+            if (updatedRecipe.Ingredients != null && updatedRecipe.Ingredients.Count > 0)
+                await AddIngredientsToRowAsync(updatedRecipe.Ingredients);
+
+            return (true, "Recipe updated successfully.");
+        }
+        catch (Exception ex)
+        {
+            return (false, $"Error editing recipe: {ex.Message}");
+        }
+    }
 
     /// Fucked
     public async Task<(bool Status, string Message)> AddRecipeToDb(Recipe recipe)

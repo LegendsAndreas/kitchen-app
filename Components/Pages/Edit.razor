@@ -12,6 +12,11 @@
 
     <ul class="dropdown-menu">
         <li>
+            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("edit-recipe"))">
+                Recipe
+            </button>
+        </li>
+        @*<li>
             <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("mealType"))">Recipe Meal
                 Type
             </button>
@@ -28,7 +33,7 @@
         <li>
             <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("image"))">Recipe Image
             </button>
-        </li>
+        </li>*@
         <li>
             <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("delete-recipe"))">Delete
                 Recipe
@@ -101,6 +106,11 @@
                 case "instructions":
                     <div>
                         <EditInstructionsForm/>
+                    </div>
+                    break;
+                case "edit-recipe":
+                    <div>
+                        <EditRecipe/>
                     </div>
                     break;
             }

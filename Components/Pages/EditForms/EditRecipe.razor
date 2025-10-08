@@ -1,0 +1,186 @@
+﻿@using WebKitchen.Components.SharedComponents;
+@inject DBService DbService;
+@inject SharedIngredientList GlobalIngredients
+
+<EditForm Model="@_recipeId" OnValidSubmit="GetRecipe">
+    <label class="form-label fw-bold">Recipe Id</label>
+    <InputNumber @bind-Value="_recipeId" class="form-control"/>
+    <button type="submit" class="btn btn-primary">Get Recipe</button>
+</EditForm>
+
+@if (_currentRecipe != null)
+{
+    <div class="row row-gap-3">
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+            <div class="second-layer">
+                <label>Name</label>
+                <InputText @bind-Value="_currentRecipe.Name" class="form-control"/>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+            <div class="second-layer">
+                <label>Meal Type</label>
+                <InputText @bind-Value="_currentRecipe.MealType" class="form-control"/>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="second-layer">
+                <label class="generel__file-label" for="fileInput">Choose Image</label>
+                <InputFile id="fileInput" OnChange="HandleImage" class="d-none"></InputFile>
+
+                @if (_newImage != "")
+                {
+                    <p>Preview image</p>
+                    <img src="data:image/png;base64,@_newImage" alt="Recipe Image" style="width: 25%;"/>
+                }
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="second-layer">
+                <div class="pt-3">Ingredients</div>
+                <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
+                    <div class="col">
+                        <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"
+                                                     CurrentIngredientDataHasChanged="@(ing => currentCrossIngredient = ing)"/>
+                    </div>
+
+                    <div class="col">
+                        <InputNumber id="name" @bind-Value="_currentIngredientGrams" class="form-control"/>
+                    </div>
+
+                    <div class="col">
+                        <p>Current ingredient: @currentCrossIngredient.Name</p>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" @onclick="AddNewIngredientToRecipe">Add New Ingredient To
+                    Recipe
+                </button>
+
+                <div class="edit__accordion-button-margin--button">
+                    <AddedIngredients CurrentAddedIngredients="@_currentRecipe.Ingredients"/>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+            <PreviewRecipe CurrentPreviewRecipe="@_currentRecipe"/>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
+            <button class="btn btn-primary" @onclick="UpdateRecipe">Update entire recipe</button>
+        </div>
+    </div>
+}
+
+<StatusMessageToast @ref="_recipeStatusToaster"/>
+
+<style>
+    .second-layer {
+        background-color: #272C30;
+        padding: 10px;
+        border-radius: 10px;
+    }
+</style>
+
+@code {
+
+    int _recipeId;
+    int _currentIngredientGrams;
+    string _newImage = "";
+    Recipe? _currentRecipe;
+    StatusMessageToast _recipeStatusToaster = null!;
+    Ingredient currentCrossIngredient = new();
+
+    private async Task GetRecipe()
+    {
+        var result = await DbService.GetRecipeByIdAsync(_recipeId);
+        if (result.Recipe == null)
+            await _recipeStatusToaster.ShowToastAsync(result.Message);
+        else
+            _currentRecipe = result.Recipe;
+    }
+
+    private async Task UpdateRecipe()
+    {
+        if (_currentRecipe == null)
+        {
+            Console.WriteLine("Recipe is not selected.");
+            return;
+        }
+
+        if (_currentRecipe.MealType is not "D" or "B" or "S" or "L" or "K")
+        {
+            await _recipeStatusToaster.ShowToastAsync("Meal type is not valid");
+            return;
+        }
+
+        _currentRecipe.SetTotalMacros();
+        _currentRecipe.SetTotalCost();
+
+        var (status, msg) = await DbService.EditFullRecipe(_currentRecipe);
+        if (!status)
+        {
+            await _recipeStatusToaster.ShowToastAsync("Error: " + msg);
+        }
+
+        _currentRecipe = null;
+    }
+
+    private void AddNewIngredientToRecipe()
+    {
+        Console.WriteLine("Handling db ingredient...");
+
+        if (_currentIngredientGrams == 0)
+        {
+            Console.WriteLine("No grams specified.");
+            return;
+        }
+
+        if (_currentIngredientGrams < 0)
+        {
+            Console.WriteLine("Grams cant be negative");
+            return;
+        }
+
+        Console.WriteLine("SharedDbIngredient:");
+        currentCrossIngredient.Grams = _currentIngredientGrams;
+        currentCrossIngredient.PrintIngredient();
+
+        HandleIngredient();
+    }
+
+    private void HandleIngredient()
+    {
+        Console.WriteLine("Handling ingredient...");
+        var tempIngredient = currentCrossIngredient.TransferIngredient(currentCrossIngredient);
+        tempIngredient.PrintIngredient();
+
+        if (_currentRecipe != null)
+            _currentRecipe.Ingredients.Add(tempIngredient);
+        currentCrossIngredient.ClearIngredient();
+    }
+
+    private async Task HandleImage(InputFileChangeEventArgs imageFile)
+    {
+        foreach (var image in imageFile.GetMultipleFiles())
+        {
+            if (!image.ContentType.Contains("image"))
+            {
+                Console.WriteLine($"\"{image.ContentType}\" is not allowed");
+                // Popup message saying so.
+                return;
+            }
+
+            try
+            {
+                var tempRecipe = new Recipe();
+                await tempRecipe.SetRecipeImage(image);
+                _newImage = tempRecipe.Base64Image;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error setting image: " + ex.Message);
+                Console.WriteLine(ex.StackTrace);
+            }
+        }
+    }
+
+}
