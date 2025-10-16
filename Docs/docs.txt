@@ -209,3 +209,34 @@ Returns the next value to be used AND increments it by 1.
 The below value HAS to be public, otherwise it can not be assigned with the JsonPropertyName.
 [JsonPropertyName("multiplier")]
 public float Multiplier { get; set; }
+
+16/10:
+SELECT r.id,
+       r.name,
+       r.meal_type,
+       r.image,
+       r.cost,
+       (r.macros).total_calories,
+       (r.macros).total_carbs,
+       (r.macros).total_fats,
+       (r.macros).total_protein,
+       json_agg(
+               json_build_object(
+                       'name', i.name,
+                       'grams', i.grams,
+                       'calories_pr_hectogram', i.calories_pr_hectogram,
+                       'fats_pr_hectogram', i.fats_pr_hectogram,
+                       'carbs_pr_hectogram', i.carbs_pr_hectogram,
+                       'protein_pr_hectogram', i.protein_pr_hectogram,
+                       'cost_per_hectogram', COALESCE(i.cost_per_100g, 0),
+                       'multiplier', i.multiplier
+               )
+       ) AS ingredients
+FROM recipes AS r,
+     unnest(r.ingredients) AS i
+WHERE r.id = @id
+GROUP BY r.id
+ORDER BY r.id;
+
+The above SQL statement will return nothing, if ingredients is empty. Ingredients became empty when i tried to edit an 
+entire recipe.

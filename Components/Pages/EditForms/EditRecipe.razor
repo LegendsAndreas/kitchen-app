@@ -106,7 +106,11 @@
             return;
         }
 
-        if (_currentRecipe.MealType is not "D" or "B" or "S" or "L" or "K")
+        if (_currentRecipe.MealType != "D" &&
+            _currentRecipe.MealType != "S" &&
+            _currentRecipe.MealType != "L" &&
+            _currentRecipe.MealType != "B" &&
+            _currentRecipe.MealType != "K")
         {
             await _recipeStatusToaster.ShowToastAsync("Meal type is not valid");
             return;
@@ -114,6 +118,7 @@
 
         _currentRecipe.SetTotalMacros();
         _currentRecipe.SetTotalCost();
+        if (!string.IsNullOrEmpty(_newImage)) _currentRecipe.Base64Image = _newImage;
 
         var (status, msg) = await DbService.EditFullRecipe(_currentRecipe);
         if (!status)

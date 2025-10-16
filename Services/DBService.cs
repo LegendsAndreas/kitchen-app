@@ -99,7 +99,7 @@ public class DBService
         return connection;
     }
 
-    public async Task<(List<Recipe>? Recipes, string Message)> GetAllRecipesAsync()
+    public async Task<(List<Recipe>? Recipes, string Message)> GetAllRecipesAsync(CancellationToken ct = new())
     {
         List<Recipe> recipes = [];
 
@@ -132,8 +132,8 @@ public class DBService
         {
             await using NpgsqlConnection conn = await GetConnectionAsync();
             await using NpgsqlCommand cmd = new(query, conn);
-            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync(ct);
+            while (await reader.ReadAsync(ct))
             {
                 Recipe tempRecipe = MakeRecipe(reader);
                 recipes.Add(tempRecipe);
@@ -560,7 +560,7 @@ public class DBService
         return (recipeInstructionsRecords, statusMessage);
     }*/
 
-    public async Task<(List<Ingredient>? DbIngredients, string Message)> GetAllDbIngredients()
+    public async Task<(List<Ingredient>? DbIngredients, string Message)> GetAllDbIngredients(CancellationToken ct = new())
     {
         Console.WriteLine("Getting all database ingredients...");
 
@@ -574,8 +574,8 @@ public class DBService
         {
             await using var conn = await GetConnectionAsync();
             await using var cmd = new NpgsqlCommand(query, conn);
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            await using var reader = await cmd.ExecuteReaderAsync(ct);
+            while (await reader.ReadAsync(ct))
             {
                 Ingredient tempIngredient = MakeIngredient(reader);
                 ingredients.Add(tempIngredient);
