@@ -17,7 +17,7 @@ public class DBService
     private int _totalIngredients;
     public int _maxIngredientsPages;
     private readonly string _connectionString;
-    const int ITEMS_PER_PAGE = 24;
+    const int ITEMS_PER_PAGE = 20;
 
     public DBService(string connectionString)
     {
@@ -30,8 +30,8 @@ public class DBService
         _totalIngredients = await GetTotalIngredients();
         Console.WriteLine($"Total Recipes: {_totalRecipes}");
         Console.WriteLine($"Total Ingredients: {_totalIngredients}");
-        _maxRecipesPages = (int) Math.Ceiling((double) _totalRecipes / ITEMS_PER_PAGE);
-        _maxIngredientsPages = (int) Math.Ceiling((double) _totalIngredients / ITEMS_PER_PAGE);
+        _maxRecipesPages = (int)Math.Ceiling((double)_totalRecipes / ITEMS_PER_PAGE);
+        _maxIngredientsPages = (int)Math.Ceiling((double)_totalIngredients / ITEMS_PER_PAGE);
         Console.WriteLine($"Max Recipes Pages: {_maxRecipesPages}");
         Console.WriteLine($"Max Ingredients Pages: {_maxIngredientsPages}");
     }
@@ -59,9 +59,10 @@ public class DBService
             Console.WriteLine(e.Message);
             throw;
         }
-        
+
         return totalRecipes;
     }
+
     private async Task<int> GetTotalIngredients()
     {
         int totalIngredients = 0;
@@ -85,7 +86,7 @@ public class DBService
             Console.WriteLine(e.Message);
             throw;
         }
-        
+
         return totalIngredients;
     }
 
@@ -560,7 +561,8 @@ public class DBService
         return (recipeInstructionsRecords, statusMessage);
     }*/
 
-    public async Task<(List<Ingredient>? DbIngredients, string Message)> GetAllDbIngredients(CancellationToken ct = new())
+    public async Task<(List<Ingredient>? DbIngredients, string Message)> GetAllDbIngredients(
+        CancellationToken ct = new())
     {
         Console.WriteLine("Getting all database ingredients...");
 
@@ -728,7 +730,7 @@ public class DBService
 
         return (commonItems, statusMessage);
     }
-    
+
     public async Task<(bool Status, string Message)> EditFullRecipe(Recipe updatedRecipe)
     {
         try
@@ -1274,10 +1276,10 @@ public class DBService
     public async Task<(List<Ingredient>? Ingredients, string Message)> GetIngredientsPaginationAsync(int paginationPage)
     {
         List<Ingredient> ingredients = [];
-        
+
         int lowest = 0 + ITEMS_PER_PAGE * (paginationPage - 1);
         int highest = ITEMS_PER_PAGE + ITEMS_PER_PAGE * (paginationPage - 1);
-        
+
         string query =
             "SELECT " +
             "id," +
@@ -1291,7 +1293,7 @@ public class DBService
             "FROM ingredients " +
             $"WHERE ingredients.id BETWEEN {lowest} AND {highest} " +
             "ORDER BY id";
-        
+
         try
         {
             await using var conn = await GetConnectionAsync();
@@ -1322,8 +1324,7 @@ public class DBService
             return (null, "Pagination page is less than 1.");
         }
 
-        int lowest = 0 + ITEMS_PER_PAGE * (paginationPage - 1);
-        int highest = ITEMS_PER_PAGE + ITEMS_PER_PAGE * (paginationPage - 1);
+        int offset = ITEMS_PER_PAGE * (paginationPage - 1);
 
         string query = "SELECT r.id, " +
                        "r.name, " +
@@ -1347,9 +1348,9 @@ public class DBService
                        "     )" +
                        ") AS ingredients " +
                        "FROM recipes AS r, unnest(r.ingredients) AS i " +
-                       $"WHERE r.id BETWEEN {lowest} AND {highest} " +
                        "GROUP BY r.id " +
-                       "ORDER BY r.id ";
+                       "ORDER BY r.id " +
+                       $"LIMIT 20 OFFSET {offset} ";
 
         try
         {
