@@ -1273,12 +1273,9 @@ public class DBService
         return statusMessage;
     }
 
-    public async Task<(List<Ingredient>? Ingredients, string Message)> GetIngredientsPaginationAsync(int paginationPage)
+    public async Task<(List<Ingredient>? Ingredients, string Message)> GetSearchIngredients(string searchParameter)
     {
         List<Ingredient> ingredients = [];
-
-        int lowest = 0 + ITEMS_PER_PAGE * (paginationPage - 1);
-        int highest = ITEMS_PER_PAGE + ITEMS_PER_PAGE * (paginationPage - 1);
 
         string query =
             "SELECT " +
@@ -1291,8 +1288,51 @@ public class DBService
             "image," +
             "cost_per_100g " +
             "FROM ingredients " +
-            $"WHERE ingredients.id BETWEEN {lowest} AND {highest} " +
-            "ORDER BY id";
+            "WHERE name ILIKE @searchParam " +
+            "ORDER BY name LIKE '%sm%' ";
+
+
+        try
+        {
+            await using var conn = await GetConnectionAsync();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@searchParam", $"%{searchParameter}%");
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                Ingredient tempIngredient = MakeIngredient(reader);
+                ingredients.Add(tempIngredient);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting search ingredients: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting search ingredients: {ex.Message}.");
+        }
+
+        return (ingredients, "Ok");
+    }
+
+    public async Task<(List<Ingredient>? Ingredients, string Message)> GetIngredientsPaginationAsync(int paginationPage)
+    {
+        List<Ingredient> ingredients = [];
+
+        int offset = ITEMS_PER_PAGE * (paginationPage - 1);
+
+        string query =
+            "SELECT " +
+            "id," +
+            "name," +
+            "cals," +
+            "fats," +
+            "carbs," +
+            "protein," +
+            "image," +
+            "cost_per_100g " +
+            "FROM ingredients " +
+            "ORDER BY id " +
+            $"LIMIT 20 OFFSET {offset} ";
 
         try
         {

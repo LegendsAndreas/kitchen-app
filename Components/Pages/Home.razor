@@ -71,11 +71,9 @@
     
     protected override async Task OnInitializedAsync()
     {
-        // Extract query parameter
         var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
-        // Fetch specific query parameter (e.g., "page")
         if (query["page"] != null && int.TryParse(query["page"], out var page))
         {
             _currentRecipesPage = page;

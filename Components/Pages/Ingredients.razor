@@ -86,39 +86,78 @@
             <Loading LoadingParameter="ingredients"/>
         </div>
     }
-
-    @if (!_loading)
+    else
     {
-        <PaginatorPage
-            CurrentPage="_currentIngredientPage"
-            CurrentPageChanged="OnIngredientChange"
-            MaxPages="DbService._maxIngredientsPages"
-        />
+        <EditForm Model="@_ingredientSearch" OnValidSubmit="SearchIngredients">
+            <div class="ingredients__form my-2">
+                <label>Search ingredient</label>
+                <InputText @bind-Value="_ingredientSearch" class="form-control"/>
+                <button type="submit" class="btn btn-primary mt-2">Search</button>
+            </div>
+        </EditForm>
     }
 
-    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @foreach (var ingredient in _ingredients)
-        {
-            <div class="col p-2">
-                <div class="card h-100 generel__border-layout">
-                    <img src="data:image/png;base64,@ingredient.Base64Image" alt="ops..."
-                         class="card-img"/> @* card-img helps the look of the cards. *@
-                    <div class="card-header">
-                        <h4>@ingredient.GetId(). @ingredient.Name</h4>
-                    </div>
-                    <div class="card-body border-primary">
-                        <p class="card-text">
-                            - Calories: @ingredient.CaloriesPer100g.ToString("0") <br>
-                            - Carbs: @ingredient.CarbsPer100g.ToString("0.0") <br>
-                            - Fats: @ingredient.FatPer100g.ToString("0.0") <br>
-                            - Protein: @ingredient.ProteinPer100g.ToString("0.0") <br>
-                            - Cost: @ingredient.GetCostPer100g().ToString("0.0")
-                        </p>
+    @if (_ingredientSearch != "")
+    {
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
+            @foreach (var ingredient in _searchIngredients)
+            {
+                <div class="col p-2">
+                    <div class="card h-100 generel__border-layout">
+                        <img src="data:image/png;base64,@ingredient.Base64Image" alt="ops..."
+                             class="card-img"/> @* card-img helps the look of the cards. *@
+                        <div class="card-header">
+                            <h4>@ingredient.GetId(). @ingredient.Name</h4>
+                        </div>
+                        <div class="card-body border-primary">
+                            <p class="card-text">
+                                - Calories: @ingredient.CaloriesPer100g.ToString("0") <br>
+                                - Carbs: @ingredient.CarbsPer100g.ToString("0.0") <br>
+                                - Fats: @ingredient.FatPer100g.ToString("0.0") <br>
+                                - Protein: @ingredient.ProteinPer100g.ToString("0.0") <br>
+                                - Cost: @ingredient.GetCostPer100g().ToString("0.0")
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
+        </div>
+    }
+    else
+    {
+        
+        @if (!_loading)
+        {
+            <PaginatorPage
+                CurrentPage="_currentIngredientPage"
+                CurrentPageChanged="OnIngredientChange"
+                MaxPages="DbService._maxIngredientsPages"
+            />
         }
-    </div>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
+            @foreach (var ingredient in _ingredients)
+            {
+                <div class="col p-2">
+                    <div class="card h-100 generel__border-layout">
+                        <img src="data:image/png;base64,@ingredient.Base64Image" alt="ops..."
+                             class="card-img"/> @* card-img helps the look of the cards. *@
+                        <div class="card-header">
+                            <h4>@ingredient.GetId(). @ingredient.Name</h4>
+                        </div>
+                        <div class="card-body border-primary">
+                            <p class="card-text">
+                                - Calories: @ingredient.CaloriesPer100g.ToString("0") <br>
+                                - Carbs: @ingredient.CarbsPer100g.ToString("0.0") <br>
+                                - Fats: @ingredient.FatPer100g.ToString("0.0") <br>
+                                - Protein: @ingredient.ProteinPer100g.ToString("0.0") <br>
+                                - Cost: @ingredient.GetCostPer100g().ToString("0.0")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
 </div>
 
 <StatusMessageToast @ref="StatusMessageToaster"/>
@@ -129,10 +168,11 @@
     float _totalIngredientCost;
     bool _usePlaceholderPic;
     bool _loading = true;
+    string _ingredientSearch = "";
     Ingredient currentIngredient = new();
-    IBrowserFile? _loadedIngredientImage;
-    StatusMessageToast StatusMessageToaster = null!;
+    StatusMessageToast StatusMessageToaster = new();
     List<Ingredient> _ingredients = [];
+    List<Ingredient> _searchIngredients = [];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -251,6 +291,38 @@
 
         currentIngredient.ClearIngredient();
         _usePlaceholderPic = false;
+        StateHasChanged();
+    }
+
+    private async Task SearchIngredients()
+    {
+        if (_ingredientSearch == "")
+        {
+            await StatusMessageToaster.ShowToastAsync("Showing pagination");
+            return;
+        }
+        
+        _loading = true;
+        try
+        {
+            var result = await DbService.GetSearchIngredients(_ingredientSearch);
+            if (result.Ingredients == null)
+            {
+                await StatusMessageToaster.ShowToastAsync(result.Message);
+            }
+            else
+            {
+                _searchIngredients = result.Ingredients;
+                // await StatusMessageToaster.ShowToastAsync(result.Message);
+                Console.WriteLine("Acquired Ingredients.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting Ingredients: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+        }
+        _loading = false;
         StateHasChanged();
     }
 
