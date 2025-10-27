@@ -1,0 +1,21 @@
+﻿<h3>Selected Ingredient</h3>
+<div class="col p-2">
+    <div class="card h-100 generel__border-layout">
+        <img src="data:image/png;base64,@PreviewIngredient.Base64Image" alt="ops..." class="card-img"/>
+        <div class="card-header">
+            <h4>@PreviewIngredient.GetId(). @PreviewIngredient.Name</h4>
+        </div>
+        <div class="card-body border-primary">
+            <p class="card-text">
+                - Calories: @PreviewIngredient.CaloriesPer100g.ToString("0") <br>
+                - Carbs: @PreviewIngredient.CarbsPer100g.ToString("0") <br>
+                - Fats: @PreviewIngredient.FatPer100g.ToString("0") <br>
+                - Protein: @PreviewIngredient.ProteinPer100g.ToString("0")
+            </p>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Ingredient PreviewIngredient { get; set; } = new();
+}

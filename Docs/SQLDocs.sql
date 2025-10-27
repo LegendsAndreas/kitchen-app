@@ -1,3 +1,8 @@
+/* Test */
+SELECT name FROM recipes WHERE name ILIKE '%Am%';
+SELECT * FROM ingredients WHERE name ILIKE '%Am%';
+
+
 /* Create */
 CREATE TYPE ingredient AS
 (
@@ -554,3 +559,18 @@ FROM recipes;
 SELECT COUNT(*) FROM recipes;
 
 SELECT * FROM recipes WHERE id = 47;
+
+SELECT id,
+       name,
+       cals,
+       fats,
+       carbs,
+       protein,
+       image,
+       cost_per_100g
+FROM ingredients
+WHERE name ILIKE '%Sm%'
+ORDER BY
+    name ILIKE 'Sm%' DESC,  -- Exact matches at the beginning
+    name ILIKE '%Sm%' DESC, -- Partial matches
+    name;                   -- Finally, alphabetic order

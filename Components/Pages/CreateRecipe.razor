@@ -4,7 +4,6 @@
 @inject DBService DbService;
 @inject SharedRecipe SharedDbRecipe;
 @inject SharedRecipeList GlobalRecipes;
-@inject SharedIngredientList GlobalIngredients;
 @inject IHttpContextAccessor HttpContextAccessor
 
 
@@ -39,7 +38,8 @@
                         now it can be activated by clicking on it *@
                         <label for="use-placeholder-pic">
                             Placeholder?
-                            <input type="checkbox" id="use-placeholder-pic" @bind="_usePlaceholderPic" @onclick="UsePlaceholderPic"/>
+                            <input type="checkbox" id="use-placeholder-pic" @bind="_usePlaceholderPic"
+                                   @onclick="UsePlaceholderPic"/>
                         </label>
                     </div>
 
@@ -116,34 +116,27 @@
             </EditForm>
         }
 
-        @if (GlobalIngredients.Ingredients.Count == 0)
-        {
-            <Loading LoadingParameter="ingredients"/>
-        }
-        else
-        {
-            <EditForm Model="@_currentIngredientGrams" OnSubmit="AddDatabaseIngredient">
-                <DataAnnotationsValidator/>
-                <div class="container text-center generel__border-layout m-2 p-4">
-                    <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
+        <EditForm Model="@_currentIngredientGrams" OnSubmit="AddDatabaseIngredient">
+            <DataAnnotationsValidator/>
+            <div class="container text-center generel__border-layout m-2 p-4">
+                <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
 
-                        <RealTimeIngredientSearchBar IngredientsData="@GlobalIngredients.Ingredients"
-                                                     CurrentIngredientDataHasChanged="@(value => _crossIngredient = value)"/>
+                    <BetterRealTimeIngredientsSearch
+                        CurrentIngredientDataHasChanged="@(value => _crossIngredient = value)"></BetterRealTimeIngredientsSearch>
 
-                        <div class="col">
-                            <label class="form-label">Grams</label>
-                            <InputNumber @bind-Value="_currentIngredientGrams"/>
-                        </div>
-
-                        <div class="col">
-                            <p>Current Ingredient: @_crossIngredient.Name</p>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">Add Database Ingredient</button>
+                    <div class="col">
+                        <label class="form-label">Grams</label>
+                        <InputNumber @bind-Value="_currentIngredientGrams"/>
                     </div>
+
+                    <div class="col">
+                        <p>Current Ingredient: @_crossIngredient.Name</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Add Database Ingredient</button>
                 </div>
-            </EditForm>
-        }
+            </div>
+        </EditForm>
     </div>
 </div>
 
@@ -196,34 +189,8 @@
             }
         }
 
-        if (firstRender && !GlobalIngredients.Ingredients.Any())
-        {
-            try
-            {
-                var result = await DbService.GetAllDbIngredients();
-                if (result.DbIngredients == null)
-                    await _statusMessageToaster.ShowToastAsync(result.Message);
-                else
-                {
-                    await _statusMessageToaster.ShowToastAsync(result.Message);
-                    Console.WriteLine(result.Message);
-                    GlobalIngredients.Ingredients = result.DbIngredients;
-                    StateHasChanged();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error getting ingredients list: " + ex.Message);
-                Console.WriteLine("StackTrace: " + ex.StackTrace);
-                return;
-            }
-        }
-
         if (!firstRender)
             Console.WriteLine("Not first render.");
-
-        if (GlobalIngredients.Ingredients.Any())
-            Console.WriteLine("Ingredients are full.");
     }
 
     private async Task UsePlaceholderPic()
@@ -329,6 +296,7 @@
                 return;
             }
         }
+
         _usePlaceholderPic = false;
     }
 

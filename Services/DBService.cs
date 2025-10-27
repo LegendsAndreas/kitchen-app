@@ -610,6 +610,31 @@ public class DBService
 
         return tempIngredient;
     }
+    private Ingredient MakeIngredientNoImage(NpgsqlDataReader reader)
+    {
+        Ingredient tempIngredient = new()
+        {
+            Name = reader.GetString(1),
+            CaloriesPer100g = reader.GetFloat(2),
+            FatPer100g = reader.GetFloat(3),
+            CarbsPer100g = reader.GetFloat(4),
+            ProteinPer100g = reader.GetFloat(5),
+            CostPer100g = reader.GetFloat(6)
+        };
+        var uintValue = unchecked((uint)reader.GetInt32(0));
+        tempIngredient.SetId(uintValue);
+
+        return tempIngredient;
+    }
+    private Ingredient MakeIngredientOnlyName(NpgsqlDataReader reader)
+    {
+        Ingredient tempIngredient = new()
+        {
+            Name = reader.GetString(0),
+        };
+
+        return tempIngredient;
+    }
 
     public async Task<(Ingredient? Ingredient, string Message)> GetDbIngredientById(int id)
     {
@@ -1273,6 +1298,86 @@ public class DBService
         return statusMessage;
     }
 
+    public async Task<(Ingredient? ingredient, string message)> GetIngredientByName(string name)
+    {
+        Ingredient? ingredient;
+
+        string query =
+            "SELECT " +
+            "id," +
+            "name," +
+            "cals," +
+            "fats," +
+            "carbs," +
+            "protein," +
+            "image," +
+            "cost_per_100g " +
+            "FROM ingredients " +
+            "WHERE name = @ingredientName";
+
+        try
+        {
+            await using var conn = await GetConnectionAsync();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@ingredientName", name);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                Ingredient tempIngredient = MakeIngredient(reader);
+                ingredient = tempIngredient;
+            }
+            else
+            {
+                return (null, "Ingredient not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting search ingredients: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting search ingredients: {ex.Message}.");
+        }
+
+        return (ingredient, "Ok");
+
+    }
+
+    public async Task<(List<string>? Ingredients, string Message)> GetIngredientsByName(string ingredientName, CancellationToken ct = default)
+    {
+        List<string> ingredientsName = [];
+
+        string query =
+            "SELECT " +
+            "name " +
+            "FROM ingredients " +
+            "WHERE name ILIKE @searchParam " +
+            "ORDER BY name ILIKE @searchParamPiority DESC, " +
+            "name ILIKE @searchParam DESC, " +
+            "name";
+
+        try
+        {
+            await using var conn = await GetConnectionAsync();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@searchParam", $"%{ingredientName}%");
+            cmd.Parameters.AddWithValue("@searchParamPiority", $"{ingredientName}%");
+            await using var reader = await cmd.ExecuteReaderAsync(ct);
+            while (await reader.ReadAsync())
+            {
+                string tempIngredientName = reader.GetString(0);
+                ingredientsName.Add(tempIngredientName);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting search ingredients: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting search ingredients: {ex.Message}.");
+        }
+
+        return (ingredientsName, "Ok");
+    }
+
     public async Task<(List<Ingredient>? Ingredients, string Message)> GetSearchIngredients(string searchParameter)
     {
         List<Ingredient> ingredients = [];
@@ -1289,14 +1394,16 @@ public class DBService
             "cost_per_100g " +
             "FROM ingredients " +
             "WHERE name ILIKE @searchParam " +
-            "ORDER BY name LIKE '%sm%' ";
-
+            "ORDER BY name ILIKE @searchParamPiority DESC, " +
+            "name ILIKE @searchParam DESC, " +
+            "name";
 
         try
         {
             await using var conn = await GetConnectionAsync();
             await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@searchParam", $"%{searchParameter}%");
+            cmd.Parameters.AddWithValue("@searchParamPiority", $"{searchParameter}%");
             await using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
