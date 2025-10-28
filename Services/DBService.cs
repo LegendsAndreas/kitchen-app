@@ -1298,7 +1298,7 @@ public class DBService
         return statusMessage;
     }
 
-    public async Task<(Ingredient? ingredient, string message)> GetIngredientByName(string name)
+    public async Task<(Ingredient? ingredient, string message)> GetIngredientByNameSearch(string name)
     {
         Ingredient? ingredient;
 
@@ -1341,8 +1341,106 @@ public class DBService
         return (ingredient, "Ok");
 
     }
+    
+    public async Task<(List<string>? recipeNames, string message)> GetRecipesByNameSearch(string name)
+    {
+        List<string> recipeNames = [];
 
-    public async Task<(List<string>? Ingredients, string Message)> GetIngredientsByName(string ingredientName, CancellationToken ct = default)
+        string query =
+            "SELECT " +
+            "name " +
+            "FROM recipes " +
+            "WHERE name ILIKE @searchParam " +
+            "ORDER BY name ILIKE @searchParamPiority DESC, " +
+            "name ILIKE @searchParam DESC, " +
+            "name";
+
+        try
+        {
+            await using var conn = await GetConnectionAsync();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@searchParam", $"%{name}%");
+            cmd.Parameters.AddWithValue("@searchParamPiority", $"{name}%");
+            await using var reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                string tempRecipe = reader.GetString(0);
+                recipeNames.Add(tempRecipe);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting search recipes: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting search recipes: {ex.Message}.");
+        }
+
+        return (recipeNames, "Ok");
+
+    }
+    
+        public async Task<(Recipe? Recipe, string Message)> GetRecipeByName(string recipeName)
+    {
+        Console.WriteLine("Getting recipe by name...");
+
+        Recipe recipe;
+
+        // In case cost_per_hectogram is null, we need to use COALESCE to replace it with 0.
+        // Adding a column for the value type, with default 0 on the type did not go as planned.
+        const string query = "SELECT r.id, " +
+                             "r.name, " +
+                             "r.meal_type, " +
+                             "r.image, " +
+                             "r.cost, " +
+                             "(r.macros).total_calories, " +
+                             "(r.macros).total_carbs, " +
+                             "(r.macros).total_fats, " +
+                             "(r.macros).total_protein, " +
+                             "json_agg(" +
+                             "    json_build_object(" +
+                             "         'name', i.name," +
+                             "         'grams', i.grams," +
+                             "         'calories_pr_hectogram', i.calories_pr_hectogram," +
+                             "         'fats_pr_hectogram', i.fats_pr_hectogram," +
+                             "         'carbs_pr_hectogram', i.carbs_pr_hectogram," +
+                             "         'protein_pr_hectogram', i.protein_pr_hectogram," +
+                             "         'cost_per_hectogram', COALESCE(i.cost_per_100g, 0)," +
+                             "         'multiplier', i.multiplier" +
+                             "     )" +
+                             ") AS ingredients " +
+                             "FROM recipes AS r, unnest(r.ingredients) AS i " +
+                             "WHERE r.name = @recipeName " +
+                             "GROUP BY r.id " +
+                             "ORDER BY r.id ";
+        try
+        {
+            await using NpgsqlConnection conn = await GetConnectionAsync();
+            await using NpgsqlCommand cmd = new(query, conn);
+            cmd.Parameters.AddWithValue("@recipeName", recipeName);
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+
+            if (await reader.ReadAsync())
+            {
+                recipe = MakeRecipe(reader);
+            }
+            else
+            {
+                Console.WriteLine("Recipe not found.");
+                return (null, "Recipe not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting recipe by name ({recipeName}): " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting recipe by name ({recipeName}): {ex.Message}.");
+        }
+
+        return (recipe, "Recipe successfully retrieved");
+    }
+
+
+    public async Task<(List<string>? Ingredients, string Message)> GetIngredientsByNameSearch(string ingredientName, CancellationToken ct = default)
     {
         List<string> ingredientsName = [];
 

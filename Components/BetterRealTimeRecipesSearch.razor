@@ -18,9 +18,9 @@
                 }
                 else
                 {
-                    @if (_ingredientNames.Count != 0)
+                    @if (_recipeNames.Count != 0)
                     {
-                        @foreach (var ingredient in _ingredientNames)
+                        @foreach (var ingredient in _recipeNames)
                         {
                             <li>
                                 <a class="dropdown-item"
@@ -39,32 +39,32 @@
         </div>
     }
 </div>
-@*@if (CurrentIngredientData != null)
+@*@if (CurrentRecipeData != null)
 {
-    <IngredientPreview PreviewIngredient="CurrentIngredientData"/>
+    <PreviewRecipe CurrentPreviewRecipe="CurrentRecipeData"/>
 }*@
-<StatusMessageToast @ref="StatusMessageToaster"/>
+<StatusMessageToast @ref="_statusMessageToaster"/>
 
 @code{
     private string _searchBarInput = string.Empty;
     private bool _isSearchBarActive = false;
     private bool _isLoading;
-    private List<string> _ingredientNames { get; set; } = [];
-    [Parameter] public required Ingredient CurrentIngredientData { get; set; }
-    [Parameter] public EventCallback<Ingredient> CurrentIngredientDataHasChanged { get; set; }
-    StatusMessageToast StatusMessageToaster = new();
+    private List<string> _recipeNames { get; set; } = [];
+    [Parameter] public required Recipe CurrentRecipeData { get; set; }
+    [Parameter] public EventCallback<Recipe> CurrentRecipeDataHasChanged { get; set; }
+    StatusMessageToast _statusMessageToaster = new();
 
     private async Task HandleIngredientItem(string name)
     {
-        var result = await DbService.GetIngredientByNameSearch(name);
-        if (result.ingredient == null)
+        var result = await DbService.GetRecipeByName(name);
+        if (result.Recipe == null)
         {
-            await StatusMessageToaster.ShowToastAsync(result.message);
+            await _statusMessageToaster.ShowToastAsync(result.Message);
         }
         else
         {
-            CurrentIngredientData = result.ingredient;
-            await CurrentIngredientDataHasChanged.InvokeAsync(CurrentIngredientData);
+            CurrentRecipeData = result.Recipe;
+            await CurrentRecipeDataHasChanged.InvokeAsync(CurrentRecipeData);
             StateHasChanged();
         }
     }
@@ -77,15 +77,15 @@
         {
             _isLoading = true;
             StateHasChanged();
-            var result = await DbService.GetIngredientsByNameSearch(_searchBarInput);
-            if (result.Ingredients != null)
+            var result = await DbService.GetRecipesByNameSearch(_searchBarInput);
+            if (result.recipeNames != null)
             {
-                _ingredientNames = result.Ingredients;
-                await StatusMessageToaster.ShowToastAsync(result.Message);
+                _recipeNames = result.recipeNames;
+                await _statusMessageToaster.ShowToastAsync(result.message);
             }
             else
             {
-                await StatusMessageToaster.ShowToastAsync(result.Message);
+                await _statusMessageToaster.ShowToastAsync(result.message);
             }
         }
 

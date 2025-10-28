@@ -88,33 +88,27 @@
             </div>
         </EditForm>
 
-        @if (GlobalRecipes.Recipes.Count == 0)
-        {
-            <Loading LoadingParameter="recipes"/>
-        }
-        else
-        {
-            <EditForm Model="@_currentIngredientRecipe">
-                <div class="container text-center generel__border-layout m-2 p-4">
-                    <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
-                        <RealTimeRecipeSearchBar RecipesData="@GlobalRecipes.Recipes"/>
+        <EditForm Model="@_currentIngredientRecipe">
+            <div class="container text-center generel__border-layout m-2 p-4">
+                <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
+                    <BetterRealTimeRecipesSearch
+                        CurrentRecipeDataHasChanged="@(value => _currentIngredientRecipe = value)"/>
 
-                        <div class="col">
-                            <label class="form-label">Parts: 1/</label>
-                            <InputNumber @bind-Value="_currentIngredientRecipeParts"/>
-                        </div>
-
-                        <div class="col">
-                            <p>Current Recipe: @SharedDbRecipe.SelectedRecipe.Name</p>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary" @onclick="AddRecipeAsIngredient">Add Recipe As
-                            Ingredient
-                        </button>
+                    <div class="col">
+                        <label class="form-label">Parts: 1/</label>
+                        <InputNumber @bind-Value="_currentIngredientRecipeParts"/>
                     </div>
+
+                    <div class="col">
+                        <p>Current Recipe: @_currentIngredientRecipe.Name</p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" @onclick="AddRecipeAsIngredient">Add Recipe As
+                        Ingredient
+                    </button>
                 </div>
-            </EditForm>
-        }
+            </div>
+        </EditForm>
 
         <EditForm Model="@_currentIngredientGrams" OnSubmit="AddDatabaseIngredient">
             <DataAnnotationsValidator/>
@@ -122,7 +116,7 @@
                 <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
 
                     <BetterRealTimeIngredientsSearch
-                        CurrentIngredientDataHasChanged="@(value => _crossIngredient = value)"></BetterRealTimeIngredientsSearch>
+                        CurrentIngredientDataHasChanged="@(value => _crossIngredient = value)"/>
 
                     <div class="col">
                         <label class="form-label">Grams</label>
@@ -158,37 +152,6 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender && !GlobalRecipes.Recipes.Any())
-        {
-            try
-            {
-                var result = await DbService.GetAllRecipesAsync();
-                if (result.Recipes == null)
-                {
-                    await _statusMessageToaster.ShowToastAsync(result.Message);
-                }
-                else
-                {
-                    await _statusMessageToaster.ShowToastAsync(result.Message);
-                    GlobalRecipes.Recipes = result.Recipes;
-                    Console.WriteLine("Acquired Recipes.");
-                    StateHasChanged();
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error getting recipes: " + ex.Message);
-                Console.WriteLine("StackTrace: " + ex.StackTrace);
-
-                if (ex.Message.Contains("Failed to connect"))
-                    await _statusMessageToaster.ShowToastAsync("Failed to connect to database, please reload the page.");
-                else
-                    await _statusMessageToaster.ShowToastAsync("Connection failure: " + ex.Message);
-
-                return;
-            }
-        }
-
         if (!firstRender)
             Console.WriteLine("Not first render.");
     }
@@ -221,7 +184,6 @@
             Console.WriteLine("Error setting image: " + ex.Message);
         }
     }
-
 
     private async Task CreateNewRecipe()
     {
