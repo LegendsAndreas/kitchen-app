@@ -88,7 +88,7 @@
             </div>
         </EditForm>
 
-        <EditForm Model="@_currentIngredientRecipe">
+        <EditForm Model="@_currentIngredientRecipe" OnSubmit="AddRecipeAsIngredient">
             <div class="container text-center generel__border-layout m-2 p-4">
                 <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
                     <BetterRealTimeRecipesSearch
@@ -103,7 +103,7 @@
                         <p>Current Recipe: @_currentIngredientRecipe.Name</p>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" @onclick="AddRecipeAsIngredient">Add Recipe As
+                    <button type="submit" class="btn btn-primary">Add Recipe As
                         Ingredient
                     </button>
                 </div>
@@ -154,6 +154,7 @@
     {
         if (!firstRender)
             Console.WriteLine("Not first render.");
+        _currentIngredientRecipe.PrintRecipe();
     }
 
     private async Task UsePlaceholderPic()
@@ -274,8 +275,6 @@
 
     private async Task AddRecipeAsIngredient()
     {
-        _currentIngredientRecipe = SharedDbRecipe.SelectedRecipe;
-
         if (string.IsNullOrEmpty(_currentIngredientRecipe.Name))
         {
             Console.WriteLine("Current ingredient recipe is not selected");
