@@ -1,6 +1,10 @@
 /* Test */
-SELECT name FROM recipes WHERE name ILIKE '%Am%';
-SELECT * FROM ingredients WHERE name ILIKE '%Am%';
+SELECT name
+FROM recipes
+WHERE name ILIKE '%Am%';
+SELECT *
+FROM ingredients
+WHERE name ILIKE '%Am%';
 
 
 /* Create */
@@ -23,7 +27,12 @@ CREATE TYPE recipe_macros AS
     total_protein  FLOAT
 );
 
-CREATE TABLE db_variables (id SERIAL PRIMARY KEY, name TEXT, value TEXT);
+CREATE TABLE db_variables
+(
+    id    SERIAL PRIMARY KEY,
+    name  TEXT,
+    value TEXT
+);
 
 INSERT INTO db_variables (name, value)
 VALUES ('recipes_count', (SELECT COUNT(*)::text FROM recipes));
@@ -44,29 +53,34 @@ CREATE TABLE recipes
     macros      recipe_macros
 );
 
-CREATE TABLE ingredients (
-    id SERIAL PRIMARY KEY,
-    name TEXT,
-    cals FLOAT,
-    fats FLOAT,
-    carbs FLOAT,
-    protein FLOAT,
-    image TEXT,
+CREATE TABLE ingredients
+(
+    id            SERIAL PRIMARY KEY,
+    name          TEXT,
+    cals          FLOAT,
+    fats          FLOAT,
+    carbs         FLOAT,
+    protein       FLOAT,
+    image         TEXT,
     cost_per_100g FLOAT
 );
 
 CREATE TABLE sought_after_items
 (
-    item_id    INTEGER,
-    name  VARCHAR(256),
-    image TEXT,
-    type VARCHAR(256),
-    price DECIMAL
+    item_id INTEGER,
+    name    VARCHAR(256),
+    image   TEXT,
+    type    VARCHAR(256),
+    price   DECIMAL
 );
 
-SELECT * FROM ingredients WHERE id = 1;
+SELECT *
+FROM ingredients
+WHERE id = 1;
 
-SELECT * FROM recipes WHERE id = 1;
+SELECT *
+FROM recipes
+WHERE id = 1;
 
 INSERT INTO sought_after_items
 
@@ -84,11 +98,15 @@ DROP TABLE sought_after_items;
 );*/
 
 /* Insert */
-INSERT INTO sought_after_items (id, name, image, price) VALUES (1, 'test', 'image', 25);
-INSERT INTO sought_after_items (id, name, image, price) VALUES (111, 'test', 'image', 25);
-INSERT INTO sought_after_items (id, name, image, price) VALUES (112, 'test', 'image', 25);
+INSERT INTO sought_after_items (id, name, image, price)
+VALUES (1, 'test', 'image', 25);
+INSERT INTO sought_after_items (id, name, image, price)
+VALUES (111, 'test', 'image', 25);
+INSERT INTO sought_after_items (id, name, image, price)
+VALUES (112, 'test', 'image', 25);
 
-INSERT INTO ingredients (name) VALUES ('test_ing');
+INSERT INTO ingredients (name)
+VALUES ('test_ing');
 
 INSERT INTO recipe_instructions (instructions)
 VALUES ('{
@@ -178,7 +196,8 @@ WHERE id = 2;
 
 /* SELECT statements */
 SELECT r.id, i.name
-FROM recipes AS r, unnest(r.ingredients) AS i
+FROM recipes AS r,
+     unnest(r.ingredients) AS i
 GROUP BY r.id, i.name
 LIMIT 1;
 
@@ -196,7 +215,7 @@ SELECT r.id,
                        'carbs_pr_hectogram', i.carbs_pr_hectogram,
                        'protein_pr_hectogram', i.protein_pr_hectogram,
                        'multiplier', i.multiplier,
-                    'cost', i.cost_per_100g
+                       'cost', i.cost_per_100g
                )
        ) AS ingredients
 FROM recipes r,
@@ -236,7 +255,9 @@ SELECT instruction.instructions -> 'name'
 FROM recipe_instructions AS instruction
          INNER JOIN recipes ON instruction.instructions ->> 'name' = recipes.name;
 
-SELECT * FROM ingredients WHERE id = 111;
+SELECT *
+FROM ingredients
+WHERE id = 111;
 
 SELECT *
 FROM ingredients
@@ -374,7 +395,9 @@ $$
     LANGUAGE plpgsql;
 
 /* Delete/Drop */
-DELETE FROM ingredients WHERE id = 111;
+DELETE
+FROM ingredients
+WHERE id = 111;
 
 DELETE
 FROM recipes;
@@ -556,9 +579,12 @@ SELECT currval('recipes_id_seq');
 SELECT setval('recipes_id_seq', MAX(id))
 FROM recipes;
 
-SELECT COUNT(*) FROM recipes;
+SELECT COUNT(*)
+FROM recipes;
 
-SELECT * FROM recipes WHERE id = 47;
+SELECT *
+FROM recipes
+WHERE id = 47;
 
 SELECT id,
        name,
@@ -570,7 +596,40 @@ SELECT id,
        cost_per_100g
 FROM ingredients
 WHERE name ILIKE '%Sm%'
-ORDER BY
-    name ILIKE 'Sm%' DESC,  -- Exact matches at the beginning
-    name ILIKE '%Sm%' DESC, -- Partial matches
-    name;                   -- Finally, alphabetic order
+ORDER BY name ILIKE 'Sm%' DESC,  -- Exact matches at the beginning
+         name ILIKE '%Sm%' DESC, -- Partial matches
+         name; -- Finally, alphabetic order
+
+SELECt *
+FROM recipes
+WHERE id = 11;
+
+SELECT r.id,
+       r.name,
+       r.meal_type,
+       r.image,
+       r.cost,
+       (r.macros).total_calories,
+       (r.macros).total_carbs,
+       (r.macros).total_fats,
+       (r.macros).total_protein,
+       COALESCE(
+                       json_agg(
+                       json_build_object(
+                               'name', i.name,
+                               'grams', i.grams,
+                               'calories_pr_hectogram', i.calories_pr_hectogram,
+                               'fats_pr_hectogram', i.fats_pr_hectogram,
+                               'carbs_pr_hectogram', i.carbs_pr_hectogram,
+                               'protein_pr_hectogram', i.protein_pr_hectogram,
+                               'cost_per_hectogram', COALESCE(i.cost_per_100g, 0),
+                               'multiplier', i.multiplier
+                       )
+                               ) FILTER (WHERE i.name IS NOT NULL),
+                       '[]' -- Default to an empty array if there are no ingredients
+       ) AS ingredients
+FROM recipes AS r
+         LEFT JOIN LATERAL unnest(r.ingredients) AS i ON true
+WHERE r.id = @id
+GROUP BY r.id
+ORDER BY r.id;

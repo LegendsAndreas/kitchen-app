@@ -197,7 +197,7 @@ public class DBService
         return (recipes, "Recipes successfully retrieved");
     }
 
-    public async Task<(Recipe? Recipe, string Message)> GetRecipeByIdAsync(int recipeId)
+    public async Task<(Recipe? Recipe, string Message)> GetRecipeByIdAsync(int recipeId, CancellationToken ct = new())
     {
         Console.WriteLine("Getting recipe by id...");
 
@@ -220,6 +220,7 @@ public class DBService
                              "(r.macros).total_carbs, " +
                              "(r.macros).total_fats, " +
                              "(r.macros).total_protein, " +
+                             "COALESCE(" +
                              "json_agg(" +
                              "    json_build_object(" +
                              "         'name', i.name," +
@@ -231,8 +232,10 @@ public class DBService
                              "         'cost_per_hectogram', COALESCE(i.cost_per_100g, 0)," +
                              "         'multiplier', i.multiplier" +
                              "     )" +
+                             ") FILTER (WHERE i.name IS NOT NULL)," +
+                             "'[]'" +
                              ") AS ingredients " +
-                             "FROM recipes AS r, unnest(r.ingredients) AS i " +
+                             "FROM recipes AS r LEFT JOIN LATERAL unnest(r.ingredients) AS i ON true " +
                              "WHERE r.id = @id " +
                              "GROUP BY r.id " +
                              "ORDER BY r.id ";
@@ -241,9 +244,9 @@ public class DBService
             await using NpgsqlConnection conn = await GetConnectionAsync();
             await using NpgsqlCommand cmd = new(query, conn);
             cmd.Parameters.AddWithValue("@id", recipeId);
-            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync(ct);
 
-            if (await reader.ReadAsync())
+            if (await reader.ReadAsync(ct))
             {
                 recipe = MakeRecipe(reader);
             }
@@ -610,6 +613,7 @@ public class DBService
 
         return tempIngredient;
     }
+
     private Ingredient MakeIngredientNoImage(NpgsqlDataReader reader)
     {
         Ingredient tempIngredient = new()
@@ -626,6 +630,7 @@ public class DBService
 
         return tempIngredient;
     }
+
     private Ingredient MakeIngredientOnlyName(NpgsqlDataReader reader)
     {
         Ingredient tempIngredient = new()
@@ -1339,9 +1344,8 @@ public class DBService
         }
 
         return (ingredient, "Ok");
-
     }
-    
+
     public async Task<(List<string>? recipeNames, string message)> GetRecipesByNameSearch(string name)
     {
         List<string> recipeNames = [];
@@ -1376,10 +1380,9 @@ public class DBService
         }
 
         return (recipeNames, "Ok");
-
     }
-    
-        public async Task<(Recipe? Recipe, string Message)> GetRecipeByName(string recipeName)
+
+    public async Task<(Recipe? Recipe, string Message)> GetRecipeByName(string recipeName)
     {
         Console.WriteLine("Getting recipe by name...");
 
@@ -1440,7 +1443,8 @@ public class DBService
     }
 
 
-    public async Task<(List<string>? Ingredients, string Message)> GetIngredientsByNameSearch(string ingredientName, CancellationToken ct = default)
+    public async Task<(List<string>? Ingredients, string Message)> GetIngredientsByNameSearch(string ingredientName,
+        CancellationToken ct = default)
     {
         List<string> ingredientsName = [];
 

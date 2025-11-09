@@ -48,3 +48,20 @@ class Macros <<(C,plum)>>{
 Ingredient --|{ Recipe::Ingredients
 Macros --> Recipe::Macros
 @enduml
+
+@startuml
+skinparam class{
+    BackgroundColor LightGreen
+}
+
+class DailyMeals<<(C,plum)>> {
+    Recipes[] dailyMeals
+    Macros totalDailyMacros
+}
+
+class MealPlan<<(C,plum)>> {
+    DailyMeals[7] dailyMeals
+    Macros TotalWeeklyMacros
+}
+
+@enduml

@@ -16,6 +16,10 @@
         <div class="col d-flex justify-content-center">
             <button type="submit" class="btn btn-primary" @onclick="AddRecipe">Add Recipe</button>
         </div>
+        
+        <div class="col d-flex justify-content-center">
+            <button type="submit" class="btn btn-primary" @onclick="FinalizeMeals">Finalize Meal plan</button>
+        </div>
     </div>
 
 
@@ -63,6 +67,7 @@
                             - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
                             - Protein: @recipe.TotalMacros.Protein.ToString("0")
                         </p>
+                        <button class="btn btn-danger" @onclick="() => RemoveRecipe(recipe, currentTotalMacrosDay)">X</button>
                     </div>
                 </div>
             </div>
@@ -118,12 +123,17 @@
     {
         if (!firstRender)
             Console.WriteLine("Not first render.");
-
     }
 
     private void AddRecipe()
     {
         mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay(_currentRecipe, currentTotalMacrosDay);
+        StateHasChanged();
+    }
+
+    private void RemoveRecipe(Recipe recipe, int day)
+    {
+        mealPlanMacrosAndRecipes.RemoveMacrosAndRecipeToDay(recipe, day);
         StateHasChanged();
     }
 
@@ -145,6 +155,47 @@
             JsRuntime.InvokeVoidAsync("showInvalidPreviousDayToast");
 
         StateHasChanged();
+    }
+
+    private void FinalizeMeals()
+    {
+        string filePath = "C:\\Users\\andreas\\Desktop\\mealplan.txt"; // Change this to your desired directory and file name.
+
+        // Example strings to write into the file
+        List<string> mealDetails = new List<string> {};
+
+        int counter = 1;
+        foreach (DailyMeal dailyMeal in mealPlanMacrosAndRecipes.DailyMealsList)
+        {
+            mealDetails.Add($"!---Dag {counter}---!");
+            mealDetails.Add($"Total macros \n" +
+                            $"  - {dailyMeal.TotalDailyMacros.Calories} \n" +
+                            $"  - {dailyMeal.TotalDailyMacros.Carbs} \n" +
+                            $"  - {dailyMeal.TotalDailyMacros.Fat} \n" +
+                            $"  - {dailyMeal.TotalDailyMacros.Protein} \n");
+            foreach (Recipe recipe in dailyMeal.DailyMeals)
+            {
+                mealDetails.Add($"  - {recipe.Name} \n" +
+                                $"    - {recipe.TotalMacros.Calories} \n" +
+                                $"    - {recipe.TotalMacros.Carbs} \n" +
+                                $"    - {recipe.TotalMacros.Fat} \n" +
+                                $"    - {recipe.TotalMacros.Protein} \n" +
+                                $"\n");
+            }
+
+            counter++;
+        }
+
+        // Write all strings to the file
+        File.WriteAllLines(filePath, mealDetails);
+
+        // Informative log for debugging
+        Console.WriteLine($"File created at: {filePath}");
+    }
+
+    private void ResolveDate(int number)
+    {
+        
     }
 
 }
