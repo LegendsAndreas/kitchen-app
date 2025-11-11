@@ -2,7 +2,7 @@
 
 @* toaster *@
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="liveToast" class="toast p-2 generel__border-layout" role="alert" aria-live="assertive" aria-atomic="true"
+    <div id="@_toastId" class="toast p-2 generel__border-layout" role="alert" aria-live="assertive" aria-atomic="true"
          data-bs-delay="5000">
         <div class="toast-body">
             @_toastStatusMessage
@@ -10,31 +10,21 @@
     </div>
 </div>
 
-<script>
-    function showStatusToast() {
-        const toastLiveExample = document.getElementById('liveToast');
-        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-        toastBootstrap.show();
-    }
-</script>
-
 @code{
 
     private string _toastStatusMessage = "";
+    private string _toastId = $"toast-{Guid.NewGuid():N}";
 
     public async Task ShowToastAsync(string message)
     {
         try
         {
             _toastStatusMessage = message;
-            await JsRuntime.InvokeVoidAsync("showStatusToast");
+            await JsRuntime.InvokeVoidAsync("showStatusToast", _toastId);
             StateHasChanged();
         }
         catch (Exception ex)
         {
-            if (ex.Message.Contains("JavaScript interop calls cannot be issued at this time"))
-                return;
-            
             Console.WriteLine("Error showing toast: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
         }

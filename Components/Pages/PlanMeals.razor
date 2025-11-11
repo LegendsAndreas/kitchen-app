@@ -33,15 +33,15 @@
         </button>
 
         <div class="row g-1">
-            <div class="col d-flex justify-content-center">Day @(currentTotalMacrosDay + 1)</div>
+            <div class="col d-flex justify-content-center">Day @(_currentTotalMacrosDay + 1)</div>
             <div class="col d-flex justify-content-center">Total
-                Calories: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Calories.ToString("0")</div>
+                Calories: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.Calories.ToString("0")</div>
             <div class="col d-flex justify-content-center">Total
-                Fat: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Fat.ToString("0")</div>
+                Fat: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.Fat.ToString("0")</div>
             <div class="col d-flex justify-content-center">Total
-                Carbs: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Carbs.ToString("0")</div>
+                Carbs: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.Carbs.ToString("0")</div>
             <div class="col d-flex justify-content-center">Total
-                Protein: @mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].TotalDailyMacros.Protein.ToString("0")</div>
+                Protein: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.Protein.ToString("0")</div>
         </div>
     </div>
 
@@ -51,7 +51,7 @@
 <div class="container">
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
-        @foreach (var recipe in mealPlanMacrosAndRecipes.DailyMealsList[currentTotalMacrosDay].DailyMeals)
+        @foreach (var recipe in _mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].DailyMeals)
         {
             <div class="col p-2">
                 <div class="card h-100 generel__border-layout">
@@ -67,7 +67,7 @@
                             - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
                             - Protein: @recipe.TotalMacros.Protein.ToString("0")
                         </p>
-                        <button class="btn btn-danger" @onclick="() => RemoveRecipe(recipe, currentTotalMacrosDay)">X</button>
+                        <button class="btn btn-danger" @onclick="() => RemoveRecipe(recipe, _currentTotalMacrosDay)">X</button>
                     </div>
                 </div>
             </div>
@@ -97,75 +97,87 @@
 </div>
 
 <script>
-    function showInvalidPreviousDayToast() {
-        const toastLiveExample = document.getElementById('lower-toast');
-        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-        toastBootstrap.show();
-    }
+    function downloadFile(filename, base64Content) {
+        // Convert base64 to blob
+        const byteCharacters = atob(base64Content);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'text/plain' });
 
-    function showInvalidNextDayToast() {
-        const toastLiveExample = document.getElementById('higher-toast');
-        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-        toastBootstrap.show();
+        // Create download link
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+
+        // Cleanup
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
     }
 </script>
 
-<StatusMessageToast @ref="statusMessageToaster"/>
+<StatusMessageToast @ref="_toast"/>
 
 @code{
 
-    int currentTotalMacrosDay;
+    int _currentTotalMacrosDay;
     Recipe _currentRecipe = new();
-    MealPlan mealPlanMacrosAndRecipes = new();
-    StatusMessageToast statusMessageToaster = null!;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-            Console.WriteLine("Not first render.");
-    }
+    MealPlan _mealPlanMacrosAndRecipes = new();
+    StatusMessageToast _toast;
 
     private void AddRecipe()
     {
-        mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay(_currentRecipe, currentTotalMacrosDay);
+        _mealPlanMacrosAndRecipes.AddMacrosAndRecipeToDay(_currentRecipe, _currentTotalMacrosDay);
         StateHasChanged();
     }
 
     private void RemoveRecipe(Recipe recipe, int day)
     {
-        mealPlanMacrosAndRecipes.RemoveMacrosAndRecipeToDay(recipe, day);
+        _mealPlanMacrosAndRecipes.RemoveMacrosAndRecipeToDay(recipe, day);
         StateHasChanged();
     }
 
-    private void NextDay()
+    private async Task NextDay()
     {
-        if (currentTotalMacrosDay < 6)
-            currentTotalMacrosDay++;
+        if (_currentTotalMacrosDay < 6)
+        {
+            _currentTotalMacrosDay++;
+            StateHasChanged();
+        }
         else
-            JsRuntime.InvokeVoidAsync("showInvalidNextDayToast");
-
-        StateHasChanged();
+        {
+            await _toast.ShowToastAsync("Cant go higher than 7");
+        }
     }
 
-    private void PreviousDay()
+    private async Task PreviousDay()
     {
-        if (currentTotalMacrosDay > 0)
-            currentTotalMacrosDay--;
+        if (_currentTotalMacrosDay > 0)
+        {
+            _currentTotalMacrosDay--;
+            StateHasChanged();
+        }
         else
-            JsRuntime.InvokeVoidAsync("showInvalidPreviousDayToast");
-
-        StateHasChanged();
+        {
+            await _toast.ShowToastAsync("Cant go lower than 1");
+        }
     }
 
-    private void FinalizeMeals()
-    {
-        string filePath = "C:\\Users\\andreas\\Desktop\\mealplan.txt"; // Change this to your desired directory and file name.
 
+    private async Task FinalizeMeals()
+    {
         // Example strings to write into the file
         List<string> mealDetails = new List<string> {};
 
         int counter = 1;
-        foreach (DailyMeal dailyMeal in mealPlanMacrosAndRecipes.DailyMealsList)
+        foreach (DailyMeal dailyMeal in _mealPlanMacrosAndRecipes.DailyMealsList)
         {
             mealDetails.Add($"!---Dag {counter}---!");
             mealDetails.Add($"Total macros \n" +
@@ -186,16 +198,16 @@
             counter++;
         }
 
-        // Write all strings to the file
-        File.WriteAllLines(filePath, mealDetails);
-
-        // Informative log for debugging
-        Console.WriteLine($"File created at: {filePath}");
+        // Convert to string content
+        string fileContent = string.Join(Environment.NewLine, mealDetails);
+    
+        // Convert to bytes
+        byte[] fileBytes = System.Text.Encoding.UTF8.GetBytes(fileContent);
+    
+        // Convert to base64 for JavaScript
+        string base64 = Convert.ToBase64String(fileBytes);
+    
+        // Trigger download via JavaScript
+        await JsRuntime.InvokeVoidAsync("downloadFile", "mealplan.txt", base64);
     }
-
-    private void ResolveDate(int number)
-    {
-        
-    }
-
 }
