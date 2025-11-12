@@ -1,4 +1,6 @@
+@using System.Collections.Specialized
 @inject DBService DbService
+@inject NavigationManager NavigationManager
 
 <EditForm Model="@this">
     <label class="form-label fw-bold">Database Ingredient Id To Edit</label>
@@ -60,6 +62,18 @@
     float _costPr100g;
     Ingredient? _currentIngredient;
     StatusMessageToast _statusMessageToaster = null!;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        Uri uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        NameValueCollection query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        if (query["ingredientId"] != null && int.TryParse(query["ingredientId"], out int ingredientId))
+        {
+            _ingredientId = ingredientId;
+            await GetDatabaseIngredient();
+        }
+    }
 
     private async Task UpdateDatabaseIngredient()
     {

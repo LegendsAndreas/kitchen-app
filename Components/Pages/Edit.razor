@@ -1,6 +1,7 @@
 @page "/edit"
 @rendermode InteractiveServer
 @using WebKitchen.Components.Pages.EditForms;
+@inject NavigationManager NavigationManager
 
 <PageTitle>Edit</PageTitle>
 
@@ -16,24 +17,6 @@
                 Recipe
             </button>
         </li>
-        @*<li>
-            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("mealType"))">Recipe Meal
-                Type
-            </button>
-        </li>
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("name"))">Recipe Name
-            </button>
-        </li>
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("ingredient"))">Recipe
-                Ingredient
-            </button>
-        </li>
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("image"))">Recipe Image
-            </button>
-        </li>*@
         <li>
             <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("delete-recipe"))">Delete
                 Recipe
@@ -64,30 +47,12 @@
     </ul>
 </div>
 
-@if (selectedOption != "")
+@if (_selectedOption != "")
 {
     <div class="card generel__border-layout">
         <div class="card-body edit__button-margin--button">
-            @switch (selectedOption)
+            @switch (_selectedOption)
             {
-                case "mealType":
-                    <div class="edit-recipes-form">
-                        <EditMealTypeForm/>
-                    </div>
-                    break;
-                case "name":
-                    <div class="edit-recipes-form">
-                        <EditRecipeNameForm/>
-                    </div>
-                    break;
-                case "ingredient":
-                    <EditRecipeIngredientForm/>
-                    break;
-                case "image":
-                    <div class="edit-recipes-form">
-                        <EditRecipeImageForm/>
-                    </div>
-                    break;
                 case "delete-recipe":
                     <div class="edit-recipes-form">
                         <DeleteRecipeForm/>
@@ -113,6 +78,9 @@
                         <EditRecipe/>
                     </div>
                     break;
+                default:
+                    _selectedOption = "";
+                    break;
             }
         </div>
 
@@ -121,11 +89,25 @@
 
 @code {
 
-    private string selectedOption = string.Empty;
+    private string _selectedOption = string.Empty;
+
+    protected override Task OnInitializedAsync()
+    {
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        string? option = query["option"];
+        if (!string.IsNullOrEmpty(option))
+        {
+            ChangeOption(option);
+        }
+
+        return Task.CompletedTask;
+    }
 
     private void ChangeOption(string option)
     {
-        selectedOption = option;
+        _selectedOption = option;
         StateHasChanged();
     }
 

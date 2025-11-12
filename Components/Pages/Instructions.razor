@@ -1,6 +1,8 @@
 @page "/instructions"
+@using System.Collections.Specialized
 @inject DBService DbService
 @rendermode InteractiveServer
+@inject NavigationManager NavigationManager
 
 <PageTitle>Instructions</PageTitle>
 
@@ -9,9 +11,9 @@
         <div class="container-fluid">
             <div class="row justify-content-center">
                 <div class="col">
-                    <EditForm Model="@recipeId" OnSubmit="@GetRecipe">
+                    <EditForm Model="@_recipeId" OnSubmit="@GetRecipe">
                         <label class="form-label fw-bold">Recipe ID:</label>
-                        <InputNumber @bind-Value="recipeId" class="form-control"/>
+                        <InputNumber @bind-Value="_recipeId" class="form-control"/>
 
                         <button type="submit" class="btn btn-primary mt-2">Get Recipe</button>
                     </EditForm>
@@ -156,16 +158,28 @@
 
 @code {
 
-    int recipeId;
+    int _recipeId;
     Step currentStep = new();
     Note currentNote = new();
     Recipe? currentRecipe;
     StatusMessageToast _toaster = new();
     RecipeInstructionRecord recipeInstructionRecord = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        Uri uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        NameValueCollection query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        if (query["recipeId"] != null && int.TryParse(query["recipeId"], out int recipeId))
+        {
+            _recipeId = recipeId;
+            await GetRecipe();
+        }
+    }
+
     private async Task GetRecipe()
     {
-        var result = await DbService.GetRecipeByIdAsync(recipeId);
+        var result = await DbService.GetRecipeByIdAsync(_recipeId);
         if (result.Recipe == null)
             await _toaster.ShowToastAsync(result.Message);
         else

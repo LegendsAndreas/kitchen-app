@@ -7,6 +7,7 @@
 @using QuestPDF.Infrastructure;
 @rendermode InteractiveServer
 @inject DBService DbService
+@inject NavigationManager NavigationManager
 @inject SharedRecipe SharedDetailedRecipe
 @inject IJSRuntime JS
 
@@ -16,12 +17,12 @@
     @* In case we come a across a string, that is longer than the column it is in, "text-break" breaks it into smaller strings, so that it does not fuckup the layout *@
     <div class="row text-break">
         <div class="col-8">
-            <img src="data:image/png;base64,@sharedRecipe.Base64Image" class="recipe-details__recipe-image-style"
+            <img src="data:image/png;base64,@_recipe.Base64Image" class="recipe-details__recipe-image-style"
                  alt="Recipe Image is gone..."/>
             <div>
                 <h4>Ingredients</h4>
                 <ul class="recipe-details__food-list">
-                    @foreach (var ingredient in sharedRecipe.Ingredients)
+                    @foreach (var ingredient in _recipe.Ingredients)
                     {
                         <li>
                             <span class="label">@ingredient.Name&nbsp;</span>
@@ -38,27 +39,27 @@
                     <li>
                         <span class="label">Calories&nbsp;</span>
                         <span class="recipe-details__dots"></span>
-                        <span class="value">&nbsp;@sharedRecipe.TotalMacros.Calories.ToString(".00")</span>
+                        <span class="value">&nbsp;@_recipe.TotalMacros.Calories.ToString(".00")</span>
                     </li>
                     <li>
                         <span class="label">Protein&nbsp;</span>
                         <span class="recipe-details__dots"></span>
-                        <span class="value">&nbsp;@sharedRecipe.TotalMacros.Protein.ToString(".00")g</span>
+                        <span class="value">&nbsp;@_recipe.TotalMacros.Protein.ToString(".00")g</span>
                     </li>
                     <li>
                         <span class="label">Fat&nbsp;</span>
                         <span class="recipe-details__dots"></span>
-                        <span class="value">&nbsp;@sharedRecipe.TotalMacros.Fat.ToString(".00")g</span>
+                        <span class="value">&nbsp;@_recipe.TotalMacros.Fat.ToString(".00")g</span>
                     </li>
                     <li>
                         <span class="label">Carbs&nbsp;</span>
                         <span class="recipe-details__dots"></span>
-                        <span class="value">&nbsp;@sharedRecipe.TotalMacros.Carbs.ToString(".00")g</span>
+                        <span class="value">&nbsp;@_recipe.TotalMacros.Carbs.ToString(".00")g</span>
                     </li>
                     <li>
                         <span class="label">Cost&nbsp;</span>
                         <span class="recipe-details__dots"></span>
-                        <span class="value">&nbsp;@sharedRecipe.TotalCost.ToString(".00kr")</span>
+                        <span class="value">&nbsp;@_recipe.TotalCost.ToString(".00kr")</span>
                     </li>
                     <li>
                         <div>
@@ -86,7 +87,7 @@
                                             {
                                                 totalCost = 0;
                                             }
-                                            @foreach (var ingredient in sharedRecipe.Ingredients)
+                                            @foreach (var ingredient in _recipe.Ingredients)
                                             {
                                                 <h5><strong>@ingredient.Name</strong></h5>
 
@@ -122,7 +123,7 @@
         </div>
 
         <div class="col">
-            <h1>@sharedRecipe.Name</h1>
+            <h1>@_recipe.Name</h1>
             <div>
                 <ol>
                     @if (recipeInstructionRecord != null)
@@ -169,7 +170,7 @@
     </div>
 </div>
 
-<StatusMessageToast @ref="statusMessageToaster"/>
+<StatusMessageToast @ref="_statusMessageToaster"/>
 
 @* The download function from https://learn.microsoft.com/en-us/aspnet/core/blazor/file-downloads?view=aspnetcore-9.0 *@
 <script>
@@ -189,28 +190,61 @@
 @code {
     float totalCalories;
     float totalCost;
-    Recipe sharedRecipe = new();
+    string _pendingMessage = "";
+    Recipe _recipe = new();
     RecipeInstructionRecord? recipeInstructionRecord;
-    StatusMessageToast statusMessageToaster = null!;
+    StatusMessageToast _statusMessageToaster = null!;
 
     protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("Initializing recipe details...");
-        if (SharedDetailedRecipe?.SelectedRecipe != null)
-        {
-            sharedRecipe = SharedDetailedRecipe.SelectedRecipe;
+        var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
 
-            if (sharedRecipe.RecipeId > 0)
+        if (query["recipeId"] != null && int.TryParse(query["recipeId"], out var id))
+        {
+            Console.WriteLine("Id found: " + id);
+            if (SharedDetailedRecipe?.SelectedRecipe != null && SharedDetailedRecipe.SelectedRecipe.RecipeId == id)
             {
-                var result = await DbService.GetRecipeInstructionsByRecipeId(sharedRecipe.RecipeId);
-                if (result.instructions == null)
-                    await statusMessageToaster.ShowToastAsync(result.message);
+                Console.WriteLine("Recipe already selected.");
+                _recipe = SharedDetailedRecipe.SelectedRecipe;
+            }
+            else
+            {
+                var (recipe, msg) = await DbService.GetRecipeByIdAsync(id);
+                if (recipe == null)
+                {
+                    _pendingMessage = msg;
+                }
                 else
-                    recipeInstructionRecord = result.instructions;
+                {
+                    _recipe = recipe;
+                    var result = await DbService.GetRecipeInstructionsByRecipeId(_recipe.RecipeId);
+                    if (result.instructions == null)
+                        _pendingMessage = msg;
+                    else
+                        recipeInstructionRecord = result.instructions;
+                }
             }
         }
+        else if (SharedDetailedRecipe?.SelectedRecipe != null)
+        {
+            _recipe = SharedDetailedRecipe.SelectedRecipe;
+            var (instructions, msg) = await DbService.GetRecipeInstructionsByRecipeId(_recipe.RecipeId);
+            if (instructions == null)
+                _pendingMessage = msg;
+            else
+                recipeInstructionRecord = instructions;
+        }
     }
-    
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!string.IsNullOrEmpty(_pendingMessage))
+        {
+            await _statusMessageToaster.ShowToastAsync(_pendingMessage);
+        }
+    }
+
     private float CalculateCaloriesAndGrams(float calories, float grams)
     {
         var calsAndGrams = calories * (grams / 100);
@@ -247,7 +281,7 @@
                     page.PageColor(Colors.White);
                     page.DefaultTextStyle(x => x.FontSize(20));
 
-                    page.Header().PaddingBottom(5).Text($"{sharedRecipe.Name}").SemiBold().FontSize(36).FontColor(Colors.Blue.Medium);
+                    page.Header().PaddingBottom(5).Text($"{_recipe.Name}").SemiBold().FontSize(36).FontColor(Colors.Blue.Medium);
 
                     page.Content().Column(column =>
                     {
@@ -257,14 +291,14 @@
                             row.RelativeItem().Column(ingredients =>
                             {
                                 ingredients.Item().Text("Ingredients").Bold().FontSize(20);
-                                foreach (var ingredient in sharedRecipe.Ingredients)
+                                foreach (var ingredient in _recipe.Ingredients)
                                 {
                                     ingredients.Item().Text($"{ingredient.Name} - {ingredient.Grams:F2}g").FontSize(14);
                                 }
                             });
                             row.RelativeItem().Column(image =>
                             {
-                                var recipeImage = Convert.FromBase64String(sharedRecipe.Base64Image);
+                                var recipeImage = Convert.FromBase64String(_recipe.Base64Image);
                                 image.Item().Image(recipeImage); // .ScaleToFit()
                             });
                         });
@@ -308,7 +342,7 @@
 
             try
             {
-                var fileName = $"{sharedRecipe.Name}.pdf";
+                var fileName = $"{_recipe.Name}.pdf";
                 using var streamRef = new DotNetStreamReference(stream: pdfStream);
 
                 // We cant simply pass pdfStream as the stream, because the type is too complex for JavaScript.
@@ -318,13 +352,13 @@
             catch (Exception ex)
             {
                 Console.WriteLine("Error downloading PDF: " + ex.Message);
-                _ = statusMessageToaster.ShowToastAsync("Error downloading PDF");
+                await _statusMessageToaster.ShowToastAsync("Error downloading PDF");
             }
         }
         catch (Exception ex)
         {
             Console.WriteLine("Error creating pdf: " + ex.Message);
-            _ = statusMessageToaster.ShowToastAsync("Error creating PDF");
+            await _statusMessageToaster.ShowToastAsync("Error creating PDF");
         }
     }
 

@@ -1,0 +1,289 @@
+﻿@page "/dashboard"
+@inject DBService DbService
+
+<div class="stats">
+
+    @if (_loadingStats)
+    {
+        <Loading LoadingParameter="Stats..."/>
+    }
+
+    @if (_stats != null)
+    {
+        <div class="stats-background generel__border-layout">
+            <div class="row row-cols-4 g-2">
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h4>Total Everything</h4>
+                        </div>
+                        <div class="card-body border-primary">
+                        <span class="card-text">
+                            Total recipes: @_stats.TotalRecipes
+                            <hr class="stats-hr-line"/>
+                            Total Ingredients: @_stats.TotalIngredients
+                            <hr class="stats-hr-line"/>
+                            Total Instructions: @_stats.TotalInstructions
+                            <hr class="stats-hr-line"/>
+                            Total Breakfasts: @_stats.TotalBreakfasts
+                            <hr class="stats-hr-line"/>
+                            Total Lunches: @_stats.TotalLunches
+                            <hr class="stats-hr-line"/>
+                            Total Dinners: @_stats.TotalDinners
+                            <hr class="stats-hr-line"/>
+                            Total Sides: @_stats.TotalSides
+                            <hr class="stats-hr-line"/>
+                            Total Snackes: @_stats.TotalSnacks
+                        </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h4>Missing</h4>
+                        </div>
+                        <div class="card-body border-primary">
+                            @if (_loadingInstructions)
+                            {
+                                <Loading LoadingParameter="Instructions..."/>
+                            }
+                            else
+                            {
+                                <span class="card-text">
+                                Total recipe instructions: @_stats.RecipesMissingInstructions.Count
+                                    <hr class="stats-hr-line"/>
+                                    Total recipes missing instructions: @_stats.TotalRecipesMissingInstructions
+                                    <hr class="stats-hr-line"/>
+                            </span>
+                            }
+
+                            @if (_loadingMissingImages)
+                            {
+                                <Loading LoadingParameter="Placeholders..."/>
+                            }
+                            else
+                            {
+                                <span class="card-text">
+                                Total recipes using own image: @(_stats.TotalRecipes - _stats.RecipeImagePlaceHolders.Count)
+                                    <hr class="stats-hr-line"/>
+                                    Total recipes using placeholder: @_stats.RecipeImagePlaceHolders.Count
+                                    <hr class="stats-hr-line"/>
+                                    Total ingredients using own image: @(_stats.TotalIngredients - _stats.IngredientImagePlaceHolders.Count)
+                                    <hr class="stats-hr-line"/>
+                                    Total ingredients using placeholder: @_stats.IngredientImagePlaceHolders.Count
+                            </span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-cols-2 py-3">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Recipes Missing Images</h4>
+                        </div>
+                        <div class="card-body">
+                            @if (_loadingMissingImages)
+                            {
+                                <Loading LoadingParameter="Placeholders..."/>
+                            }
+                            else
+                            {
+                                if (_stats.RecipeImagePlaceHolders.Count == 0)
+                                {
+                                    <div>No placeholders in use here!</div>
+                                }
+                                else
+                                {
+                                    foreach (var recipe in _stats.RecipeImagePlaceHolders)
+                                    {
+                                        <div>
+                                            @recipe.Key - @recipe.Value
+                                            <a href="/recipe-details?recipeId=@recipe.Key">
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+
+                                            <a href="/edit?option=edit-recipe&recipeId=@recipe.Key">
+                                                <i class="bi bi-wrench"></i>
+                                            </a>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Ingredients Missing Images</h4>
+                        </div>
+                        <div class="card-body">
+                            @if (_loadingMissingImages)
+                            {
+                                <Loading LoadingParameter="Placeholders..."/>
+                            }
+                            else
+                            {
+                                if (_stats.IngredientImagePlaceHolders.Count == 0)
+                                {
+                                    <div>No placeholders in use here!</div>
+                                }
+                                else
+                                {
+                                    foreach (var ingredient in _stats.IngredientImagePlaceHolders)
+                                    {
+                                        <div>
+                                            @ingredient.Key - @ingredient.Value
+                                            @*<a href="#">
+                                            <i class="bi bi-arrow-right"></i>
+                                        </a>*@
+                                            <a href="/edit?option=database-ingredient&ingredientId=@ingredient.Key">
+                                                <i class="bi bi-wrench"></i>
+                                            </a>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4>Recipes with missing instructions</h4>
+                        </div>
+                        <div class="card-body">
+                            @if (_loadingInstructions)
+                            {
+                                <Loading LoadingParameter="Instructions..."/>
+                            }
+                            else
+                            {
+                                if (_stats.RecipesMissingInstructions.Count == 0)
+                                {
+                                    <div>No placeholders in use here!</div>
+                                }
+                                else
+                                {
+                                    foreach (var instruction in _stats.RecipesMissingInstructions)
+                                    {
+                                        <div>
+                                            @instruction.Key - @instruction.Value
+                                            <a href="/instructions?recipeId=@instruction.Key">
+                                                <i class="bi bi-wrench"></i>
+                                            </a>
+                                        </div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<StatusMessageToast @ref="_toaster"/>
+
+<style>
+    .stats-hr-line {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .stats-background {
+        background-color: var(--bs-body-bg);
+        padding: 10px;
+    }
+
+    .stats {
+        font-family: 'FiraRegular', Helvetica, Arial, sans-serif !important;
+    }
+</style>
+
+@code {
+
+    private Stats _stats = new();
+    private bool _loadingStats = true;
+    private bool _loadingInstructions = true;
+    private bool _loadingMissingImages = true;
+    private StatusMessageToast _toaster = new();
+    string _base64Image = Convert.ToBase64String(File.ReadAllBytes("wwwroot/pics/PlaceHolderPic.jpg"));
+
+    protected override async Task OnInitializedAsync()
+    {
+        Task baseStats = BaseStats();
+        Task instructionsStats = InstructionsStats();
+        Task missingRecipesStats = MissingRecipePlaceHolderStats();
+        Task missingIngredientsStats = MissingIngredientsPlaceHolderStats();
+
+        await Task.WhenAll(baseStats, instructionsStats, missingIngredientsStats, missingRecipesStats);
+
+        _loadingMissingImages = false;
+        StateHasChanged();
+    }
+
+    private async Task BaseStats()
+    {
+        var result = await DbService.GetBaseStats();
+        if (result.stats == null)
+        {
+            await _toaster.ShowToastAsync(result.msg);
+        }
+        else
+        {
+            _stats = result.stats;
+        }
+
+        _loadingStats = false;
+        StateHasChanged();
+    }
+
+    private async Task InstructionsStats()
+    {
+        var (stats, msg) = await DbService.GetInstructionsStats();
+        if (stats == null)
+        {
+            await _toaster.ShowToastAsync(msg);
+        }
+        else
+        {
+            _stats.RecipesMissingInstructions = stats;
+            _stats.TotalRecipesMissingInstructions = _stats.TotalRecipes - _stats.RecipesMissingInstructions.Count;
+        }
+
+        _loadingInstructions = false;
+        StateHasChanged();
+    }
+
+    private async Task MissingRecipePlaceHolderStats()
+    {
+        var (stats, msg) = await DbService.GetPlaceholderStats(_base64Image, true);
+        if (stats == null)
+        {
+            await _toaster.ShowToastAsync(msg);
+        }
+        else
+        {
+            _stats.RecipeImagePlaceHolders = stats;
+        }
+    }
+
+    private async Task MissingIngredientsPlaceHolderStats()
+    {
+        var (stats, msg) = await DbService.GetPlaceholderStats(_base64Image, false);
+        if (stats == null)
+        {
+            await _toaster.ShowToastAsync(msg);
+        }
+        else
+        {
+            _stats.IngredientImagePlaceHolders = stats;
+        }
+    }
+
+}

@@ -1,5 +1,7 @@
-﻿@inject DBService DbService;
+﻿@using System.Collections.Specialized
+@inject DBService DbService;
 @inject SharedIngredientList GlobalIngredients
+@inject NavigationManager NavigationManager
 
 <EditForm Model="@_recipeId" OnValidSubmit="GetRecipe">
     <label class="form-label fw-bold">Recipe Id</label>
@@ -40,7 +42,7 @@
                 <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
                     <div class="col">
                         <BetterRealTimeIngredientsSearch
-                            CurrentIngredientDataHasChanged="@(ing => currentCrossIngredient = ing)"/>
+                            CurrentIngredientDataHasChanged="@(ing => _currentCrossIngredient = ing)"/>
                     </div>
 
                     <div class="col">
@@ -48,7 +50,7 @@
                     </div>
 
                     <div class="col">
-                        <p>Current ingredient: @currentCrossIngredient.Name</p>
+                        <p>Current ingredient: @_currentCrossIngredient.Name</p>
                     </div>
                 </div>
                 <button type="button" class="btn btn-primary" @onclick="AddNewIngredientToRecipe">Add New Ingredient To
@@ -86,7 +88,19 @@
     string _newImage = "";
     Recipe? _currentRecipe;
     StatusMessageToast _recipeStatusToaster = null!;
-    Ingredient currentCrossIngredient = new();
+    Ingredient _currentCrossIngredient = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Uri uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+        NameValueCollection query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+        if (query["recipeId"] != null && int.TryParse(query["recipeId"], out int recipeId))
+        {
+            _recipeId = recipeId;
+            await GetRecipe();
+        }
+    }
 
     private async Task GetRecipe()
     {
@@ -145,8 +159,8 @@
         }
 
         Console.WriteLine("SharedDbIngredient:");
-        currentCrossIngredient.Grams = _currentIngredientGrams;
-        currentCrossIngredient.PrintIngredient();
+        _currentCrossIngredient.Grams = _currentIngredientGrams;
+        _currentCrossIngredient.PrintIngredient();
 
         HandleIngredient();
     }
@@ -154,12 +168,12 @@
     private void HandleIngredient()
     {
         Console.WriteLine("Handling ingredient...");
-        var tempIngredient = currentCrossIngredient.TransferIngredient(currentCrossIngredient);
+        var tempIngredient = _currentCrossIngredient.TransferIngredient(_currentCrossIngredient);
         tempIngredient.PrintIngredient();
 
         if (_currentRecipe != null)
             _currentRecipe.Ingredients.Add(tempIngredient);
-        currentCrossIngredient.ClearIngredient();
+        _currentCrossIngredient.ClearIngredient();
     }
 
     private async Task HandleImage(InputFileChangeEventArgs imageFile)

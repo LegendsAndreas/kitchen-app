@@ -634,7 +634,8 @@ WHERE r.id = @id
 GROUP BY r.id
 ORDER BY r.id;
 
-SELECT * FROM recipes
+SELECT *
+FROM recipes
 WHERE name ILIKE '%Æ%';
 ;
 
@@ -655,5 +656,23 @@ ALTER TABLE recipes
     ALTER COLUMN name
         TYPE text COLLATE "da-x-icu";
 
-SELECT 'A' ILIKE 'a';  -- true under en_US.utf8
-SELECT 'A' ILIKE 'a' COLLATE "C";  -- false
+SELECT 'A' ILIKE 'a'; -- true under en_US.utf8
+SELECT 'A' ILIKE 'a' COLLATE "C"; -- false
+
+SELECT (SELECT count(*) FROM recipes)                       AS total_recipes,
+       (SELECT count(*) FROM ingredients)                   AS total_ingreidents,
+       (SELECT count(*) FROM recipe_instructions)           AS total_instructions,
+       (SELECT count(*) FROM recipes WHERE meal_type = 'B') AS total_breakfast_recipes,
+       (SELECT count(*) FROM recipes WHERE meal_type = 'L') AS total_lunch_recipes,
+       (SELECT count(*) FROM recipes WHERE meal_type = 'D') AS total_dinner_recipes,
+       (SELECT count(*) FROM recipes WHERE meal_type = 'S') AS total_side_recipes,
+       (SELECT count(*) FROM recipes WHERE meal_type = 'K') AS total_snack_recipes,
+       (SELECT count(*) FROM recipes WHERE meal_type = 'C') AS total_recipes_missing_instructions;
+
+SELECT id, name
+FROM recipes
+WHERE id NOT IN (SELECT id FROM recipe_instructions);
+
+SELECT id, name
+FROM recipes
+WHERE image = 's';

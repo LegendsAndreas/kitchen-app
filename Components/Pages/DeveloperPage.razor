@@ -1,118 +1,18 @@
-@*
 @page "/developer"
 @rendermode InteractiveServer
-@inject DBService DbService;
 
-<div class="row mb-3">
-    <div class="col">
-        <input type="text" class="form-control" placeholder="Search ingredients..." @bind="searchBarInput"
-               @oninput="OnInputChange"
-               @onfocus="OnSearchBarFocus" @onblur="OnSearchBarBlur">
-    </div>
-    @if (isSearchBarActive && searchBarInput != string.Empty)
+<button @onclick="Test">
+    test
+</button>
+<StatusMessageToast @ref="_toaster"/>
+
+@code {
+
+    StatusMessageToast _toaster = new();
+
+    private async Task Test()
     {
-        <div class="dropdown">
-            <ul class="dropdown-menu show"> $1$ "show" is vital, since it automatically shows the items. #1#
-                @if (_isLoading)
-                {
-                    <li>
-                        <button class="dropdown-item" type="button">Loading...</button>
-                    </li>
-                }
-                else
-                {
-                    @if (IngredientNames.Count != 0)
-                    {
-                        @foreach (var ingredient in IngredientNames)
-                        {
-                            <li>
-                                <a class="dropdown-item"
-                                   onclick="@(() => HandleIngredientItem(ingredient))">@ingredient</a>
-                            </li>
-                        }
-                    }
-                    else
-                    {
-                        <li>
-                            <button class="dropdown-item" type="button">No results found</button>
-                        </li>
-                    }
-                }
-            </ul>
-        </div>
-    }
-</div>
-@if (CurrentIngredientData != null)
-{
-    <IngredientPreview PreviewIngredient="CurrentIngredientData"/>
-}
-<StatusMessageToast @ref="StatusMessageToaster"/>
-
-@code{
-    private string searchBarInput = string.Empty;
-    private bool isSearchBarActive = false;
-    private bool _isLoading;
-    public List<string> IngredientNames { get; set; } = [];
-    [Parameter] public required Ingredient CurrentIngredientData { get; set; }
-    [Parameter] public EventCallback<Ingredient> CurrentIngredientDataHasChanged { get; set; }
-    StatusMessageToast StatusMessageToaster = new();
-
-    private async Task HandleIngredientItem(string name)
-    {
-        var result = await DbService.GetIngredientByNameSearch(name);
-        if (result.ingredient == null)
-        {
-            await StatusMessageToaster.ShowToastAsync(result.message);
-        }
-        else
-        {
-            CurrentIngredientData = result.ingredient;
-            await CurrentIngredientDataHasChanged.InvokeAsync(CurrentIngredientData);
-            StateHasChanged();
-        }
-    }
-
-    private async Task OnInputChange(ChangeEventArgs e)
-    {
-        // Console.WriteLine("Input has changed...");
-        searchBarInput = e.Value?.ToString() ?? string.Empty; // "??" checks what value is not null and chooses the non-null value.
-        if (searchBarInput != "")
-        {
-            _isLoading = true;
-            StateHasChanged();
-            var result = await DbService.GetIngredientsByName(searchBarInput);
-            if (result.Ingredients != null)
-            {
-                IngredientNames = result.Ingredients;
-                await StatusMessageToaster.ShowToastAsync(result.Message);
-            }
-            else
-            {
-                await StatusMessageToaster.ShowToastAsync(result.Message);
-            }
-        }
-
-        _isLoading = false;
-        Console.WriteLine($"Input changed: {searchBarInput}");
-    }
-
-
-    private void OnSearchBarFocus()
-    {
-        // Console.WriteLine("Search bar is active...");
-        isSearchBarActive = true;
-        StateHasChanged();
-    }
-
-    private async Task OnSearchBarBlur()
-    {
-        // To make sure that we can click the elements in our dropdown items, we have to use this scuffed delay to make
-        // sure the item does not disappear, before we can actually click it.
-        await Task.Delay(200);
-        // Console.WriteLine("Search bar is no longer active...");
-        isSearchBarActive = false;
-        StateHasChanged();
+        await _toaster.ShowToastAsync("Test");
     }
 
 }
-*@
