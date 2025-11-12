@@ -240,3 +240,9 @@ ORDER BY r.id;
 
 The above SQL statement will return nothing, if ingredients is empty. Ingredients became empty when i tried to edit an 
 entire recipe.
+
+12-11-25: Postgres and danish letters.
+My previous postgres setup did not properly translate danish letters from upper to lower case and vice versa. The problem
+was that the collation of the specific column, like ingredients.name, was not set to one that supported danish letters.
+In my case, since i use Neon.tech, i had to alter the table columns collation to be "da-x-icu". Neon.tech uses the ICU
+collation for portability reasons, instead of "da_DK.UTF-8".

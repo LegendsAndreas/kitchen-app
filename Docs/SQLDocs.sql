@@ -633,3 +633,27 @@ FROM recipes AS r
 WHERE r.id = @id
 GROUP BY r.id
 ORDER BY r.id;
+
+SELECT * FROM recipes
+WHERE name ILIKE '%Æ%';
+;
+
+SELECT *
+FROM ingredients
+WHERE name COLLATE "da-x-icu" ILIKE '%æ%'
+ORDER BY name COLLATE "da-x-icu" ILIKE 'æ%' DESC;
+
+SELECT pg_collation.collname, pg_collation.collcollate
+FROM pg_collation
+WHERE collname ILIKE '%da%';
+
+ALTER TABLE ingredients
+    ALTER COLUMN name
+        TYPE text COLLATE "da-x-icu";
+
+ALTER TABLE recipes
+    ALTER COLUMN name
+        TYPE text COLLATE "da-x-icu";
+
+SELECT 'A' ILIKE 'a';  -- true under en_US.utf8
+SELECT 'A' ILIKE 'a' COLLATE "C";  -- false
