@@ -132,6 +132,10 @@
         _currentRecipe.SetTotalMacros();
         _currentRecipe.SetTotalCost();
         if (!string.IsNullOrEmpty(_newImage)) _currentRecipe.Base64Image = _newImage;
+        foreach (var ingredient in _currentRecipe.Ingredients)
+        {
+            ingredient.PrintIngredient("HERE BUDDY");
+        }
 
         var (status, msg) = await DbService.EditFullRecipe(_currentRecipe);
         if (!status)
@@ -158,7 +162,6 @@
             return;
         }
 
-        Console.WriteLine("SharedDbIngredient:");
         _currentCrossIngredient.Grams = _currentIngredientGrams;
         _currentCrossIngredient.PrintIngredient();
 

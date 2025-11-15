@@ -771,8 +771,7 @@ public class DBService
             await UpdateRecipeImageByRecipeId(updatedRecipe.Base64Image, updatedRecipe.RecipeId);
 
             await EmptyRecipeIngredientsByRecipeId(updatedRecipe.RecipeId);
-            if (updatedRecipe.Ingredients != null && updatedRecipe.Ingredients.Count > 0)
-                await AddIngredientsToRowAsync(updatedRecipe.Ingredients);
+            await AddIngredientsToRowById(updatedRecipe.Ingredients, updatedRecipe.RecipeId);
 
             return (true, "Recipe updated successfully.");
         }
@@ -780,6 +779,56 @@ public class DBService
         {
             return (false, $"Error editing recipe: {ex.Message}");
         }
+    }
+
+    public async Task<(bool status, string msg)> AddIngredientsToRowById(List<Ingredient> ingredients, int recipeId)
+    {
+        Console.WriteLine("Adding ingredients to row by id...");
+
+        string statusMessage = "Ingredients successfully added.";
+
+        const string query = "UPDATE recipes " +
+                             "SET ingredients =" +
+                             "array_append(ingredients," +
+                             "ROW(" +
+                             "@name," +
+                             "@grams," +
+                             "@cals," +
+                             "@fats," +
+                             "@carbs," +
+                             "@protein," +
+                             "@multiplier, " +
+                             "@cost_per_100g" +
+                             ")::ingredient) " +
+                             "WHERE id = @recipeId"; // Since every new recipe is actually the last
+        // one in the table, we can just add all the occurrences of id into one, and that will be our recipe id.
+
+        try
+        {
+            await using var conn = await GetConnectionAsync();
+            foreach (var ingredient in ingredients)
+            {
+                await using var cmd = new NpgsqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@recipeId", recipeId);
+                cmd.Parameters.AddWithValue("@name", ingredient.Name);
+                cmd.Parameters.AddWithValue("@grams", ingredient.Grams);
+                cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
+                cmd.Parameters.AddWithValue("@fats", ingredient.FatPer100g);
+                cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
+                cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
+                cmd.Parameters.AddWithValue("@multiplier", ingredient.GetMultiplier());
+                cmd.Parameters.AddWithValue("@cost_per_100g", ingredient.CostPer100g);
+                await RunAsyncQuery(cmd);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding ingredients ({ingredients}) to row: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (false, "Error adding ingredients to row: " + ex.Message);
+        }
+
+        return (true, statusMessage);
     }
 
     /// Fucked

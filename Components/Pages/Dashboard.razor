@@ -216,12 +216,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Task baseStats = BaseStats();
-        Task instructionsStats = InstructionsStats();
-        Task missingRecipesStats = MissingRecipePlaceHolderStats();
-        Task missingIngredientsStats = MissingIngredientsPlaceHolderStats();
-
-        await Task.WhenAll(baseStats, instructionsStats, missingIngredientsStats, missingRecipesStats);
+        await BaseStats();
+        await  InstructionsStats();
+        await  MissingRecipePlaceHolderStats();
+        await  MissingIngredientsPlaceHolderStats();
 
         _loadingMissingImages = false;
         StateHasChanged();

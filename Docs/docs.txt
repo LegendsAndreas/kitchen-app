@@ -246,3 +246,6 @@ My previous postgres setup did not properly translate danish letters from upper 
 was that the collation of the specific column, like ingredients.name, was not set to one that supported danish letters.
 In my case, since i use Neon.tech, i had to alter the table columns collation to be "da-x-icu". Neon.tech uses the ICU
 collation for portability reasons, instead of "da_DK.UTF-8".
+
+15-11-25: Task.WhenAll Dashboard.
+I kept getting null references when i used Task.WhenAll, instead of just the older way, so i just went back
