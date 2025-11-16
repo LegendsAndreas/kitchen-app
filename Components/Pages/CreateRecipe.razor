@@ -1,11 +1,6 @@
 @page "/create-recipe"
 @rendermode InteractiveServer
-@using Microsoft.AspNetCore.Http
-@inject DBService DbService;
-@inject SharedRecipe SharedDbRecipe;
-@inject SharedRecipeList GlobalRecipes;
-@inject IHttpContextAccessor HttpContextAccessor
-
+@inject DbService DbService;
 
 <PageTitle>Create Recipe</PageTitle>
 
@@ -149,12 +144,6 @@
     StatusMessageToast _statusMessageToaster = null!;
     readonly List<Ingredient> _currentIngredients = new();
     bool _usePlaceholderPic;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender)
-            Console.WriteLine("Not first render.");
-    }
 
     private async Task UsePlaceholderPic()
     {

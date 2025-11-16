@@ -1,7 +1,7 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager;
-@inject DBService DbService;
+@inject DbService DbService;
 @inject SharedRecipe SharedDetailRecipe
 @inject SharedRecipeList GlobalRecipes
 
@@ -22,7 +22,7 @@
         <PaginatorPage
             CurrentPage="_currentRecipesPage"
             CurrentPageChanged="OnRecipesPageChanged"
-            MaxPages="DbService._maxRecipesPages"/>
+            MaxPages="DbService.MaxRecipesPages"/>
     }
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
@@ -55,7 +55,7 @@
         <PaginatorPage
             CurrentPage="_currentRecipesPage"
             CurrentPageChanged="OnRecipesPageChanged"
-            MaxPages="DbService._maxRecipesPages"/>
+            MaxPages="DbService.MaxRecipesPages"/>
     }
 
 </div>

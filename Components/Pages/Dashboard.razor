@@ -1,5 +1,5 @@
 ﻿@page "/dashboard"
-@inject DBService DbService
+@inject DbService DbService
 
 <div class="stats">
 
@@ -207,7 +207,7 @@
 
 @code {
 
-    private Stats _stats = new();
+    private Stats? _stats = new();
     private bool _loadingStats = true;
     private bool _loadingInstructions = true;
     private bool _loadingMissingImages = true;
@@ -250,7 +250,7 @@
         }
         else
         {
-            _stats.RecipesMissingInstructions = stats;
+            _stats!.RecipesMissingInstructions = stats;
             _stats.TotalRecipesMissingInstructions = _stats.TotalRecipes - _stats.RecipesMissingInstructions.Count;
         }
 
@@ -267,7 +267,7 @@
         }
         else
         {
-            _stats.RecipeImagePlaceHolders = stats;
+            _stats!.RecipeImagePlaceHolders = stats;
         }
     }
 
@@ -280,7 +280,7 @@
         }
         else
         {
-            _stats.IngredientImagePlaceHolders = stats;
+            _stats!.IngredientImagePlaceHolders = stats;
         }
     }
 

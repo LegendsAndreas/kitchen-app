@@ -1,6 +1,6 @@
 @page "/plan-meals"
 @rendermode InteractiveServer
-@inject DBService DbService;
+@inject DbService DbService;
 @inject IJSRuntime JsRuntime;
 <PageTitle>Plan Meals</PageTitle>
 
@@ -130,7 +130,7 @@
     int _currentTotalMacrosDay;
     Recipe _currentRecipe = new();
     MealPlan _mealPlanMacrosAndRecipes = new();
-    StatusMessageToast _toast;
+    StatusMessageToast _toast = new();
 
     private void AddRecipe()
     {

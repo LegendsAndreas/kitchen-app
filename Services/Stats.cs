@@ -12,7 +12,7 @@ public class Stats
     public int TotalSnacks;
     public int TotalRecipesMissingInstructions;
     public int TotalRecipePlaceHolders;
-    public Dictionary<int, string> IngredientImagePlaceHolders;
-    public Dictionary<int, string> RecipeImagePlaceHolders;
-    public Dictionary<int, string> RecipesMissingInstructions;
+    public Dictionary<int, string> IngredientImagePlaceHolders = [];
+    public Dictionary<int, string> RecipeImagePlaceHolders = [];
+    public Dictionary<int, string> RecipesMissingInstructions = [];
 }

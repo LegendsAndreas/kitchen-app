@@ -32,7 +32,7 @@ public class Program
                 return null;
             }
 
-            return new DBService(connectionString);
+            return new DbService(connectionString);
         });
         
         var app = builder.Build();

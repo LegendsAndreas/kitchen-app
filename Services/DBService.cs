@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Microsoft.AspNetCore.Identity;
 using Npgsql;
 
 // jdbc:postgresql://[HOST]/[DATABASE_NAME]?password=[PASSWORD]&sslmode=require&user=[USERNAME]
@@ -10,16 +9,16 @@ using Npgsql;
 
 namespace WebKitchen.Services;
 
-public class DBService
+public class DbService
 {
     private int _totalRecipes;
-    public int _maxRecipesPages;
+    public int MaxRecipesPages;
     private int _totalIngredients;
-    public int _maxIngredientsPages;
+    public int MaxIngredientsPages;
     private readonly string _connectionString;
-    const int ITEMS_PER_PAGE = 20;
+    private const int ITEMS_PER_PAGE = 20;
 
-    public DBService(string connectionString)
+    public DbService(string connectionString)
     {
         _connectionString = connectionString;
     }
@@ -30,10 +29,10 @@ public class DBService
         _totalIngredients = await GetTotalIngredients();
         Console.WriteLine($"Total Recipes: {_totalRecipes}");
         Console.WriteLine($"Total Ingredients: {_totalIngredients}");
-        _maxRecipesPages = (int)Math.Ceiling((double)_totalRecipes / ITEMS_PER_PAGE);
-        _maxIngredientsPages = (int)Math.Ceiling((double)_totalIngredients / ITEMS_PER_PAGE);
-        Console.WriteLine($"Max Recipes Pages: {_maxRecipesPages}");
-        Console.WriteLine($"Max Ingredients Pages: {_maxIngredientsPages}");
+        MaxRecipesPages = (int)Math.Ceiling((double)_totalRecipes / ITEMS_PER_PAGE);
+        MaxIngredientsPages = (int)Math.Ceiling((double)_totalIngredients / ITEMS_PER_PAGE);
+        Console.WriteLine($"Max Recipes Pages: {MaxRecipesPages}");
+        Console.WriteLine($"Max Ingredients Pages: {MaxIngredientsPages}");
     }
 
     private async Task<int> GetTotalRecipes()
@@ -614,33 +613,6 @@ public class DBService
         return tempIngredient;
     }
 
-    private Ingredient MakeIngredientNoImage(NpgsqlDataReader reader)
-    {
-        Ingredient tempIngredient = new()
-        {
-            Name = reader.GetString(1),
-            CaloriesPer100g = reader.GetFloat(2),
-            FatPer100g = reader.GetFloat(3),
-            CarbsPer100g = reader.GetFloat(4),
-            ProteinPer100g = reader.GetFloat(5),
-            CostPer100g = reader.GetFloat(6)
-        };
-        var uintValue = unchecked((uint)reader.GetInt32(0));
-        tempIngredient.SetId(uintValue);
-
-        return tempIngredient;
-    }
-
-    private Ingredient MakeIngredientOnlyName(NpgsqlDataReader reader)
-    {
-        Ingredient tempIngredient = new()
-        {
-            Name = reader.GetString(0),
-        };
-
-        return tempIngredient;
-    }
-
     public async Task<(Ingredient? Ingredient, string Message)> GetDbIngredientById(int id)
     {
         Console.WriteLine("Getting ingredient by id...");
@@ -676,49 +648,6 @@ public class DBService
 
         return (ingredient, statusMessage);
     }
-
-    /*public async Task<(Ingredient? Ingredient, string Message)> GetDbIngredientByName(string name)
-    {
-        Console.WriteLine("Getting ingredient by name...");
-
-        await using var conn = await GetConnectionAsync();
-        Ingredient ingredient = new();
-        string statusMessage = "Ingredient successfully retrieved.";
-
-        const string query = "SELECT * FROM ingredients WHERE name = @name";
-        await using var cmd = new NpgsqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("@name", name);
-
-        try
-        {
-            await using var reader = await cmd.ExecuteReaderAsync();
-            if (await reader.ReadAsync())
-            {
-                var uintValue = unchecked((uint)reader.GetInt32(0));
-                ingredient.Name = reader.GetString(1);
-                ingredient.CaloriesPer100g = reader.GetFloat(2);
-                ingredient.FatPer100g = reader.GetFloat(3);
-                ingredient.CarbsPer100g = reader.GetFloat(4);
-                ingredient.ProteinPer100g = reader.GetFloat(5);
-                ingredient.Base64Image = reader.GetString(6);
-                ingredient.CostPer100g = reader.GetFloat(7);
-                ingredient.SetId(uintValue);
-            }
-            else
-            {
-                Console.WriteLine("Ingredient not found.");
-                return (null, "Ingredient not found.");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting ingredient by name ({name}): " + ex.Message);
-            Console.WriteLine("Stacktrace: " + ex.StackTrace);
-            return (null, $"Error getting ingredient by id: {ex.Message}.");
-        }
-
-        return (ingredient, statusMessage);
-    }*/
 
     public async Task<(List<CommonItem>? CommonItems, string Message)> GetAllCommonItems()
     {
@@ -1875,73 +1804,6 @@ public class DBService
         return recipes;
     }*/
 
-    public async Task AddHashedPassword()
-    {
-        string query = "UPDATE users SET password = @pass WHERE username = 'admin'";
-        var passwordHasher = new PasswordHasher<object>();
-        var hashedPassword = passwordHasher.HashPassword(null, "Qwerty123");
-
-        try
-        {
-            await using var conn = await GetConnectionAsync();
-            await using var cmd = new NpgsqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@pass", hashedPassword);
-
-            var result = await RunAsyncQuery(cmd);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error fucking:" + ex.Message);
-            Console.WriteLine("StackTrace: " + ex.StackTrace);
-        }
-    }
-
-    public async Task<(bool status, string message)> SignUserIn(string username, string password)
-    {
-        string query = "SELECT * " +
-                       "FROM users " +
-                       "WHERE username = @user";
-
-        UserAccount userAccount = new();
-
-        try
-        {
-            await using NpgsqlConnection conn = await GetConnectionAsync();
-            await using NpgsqlCommand cmd = new(query, conn);
-            cmd.Parameters.AddWithValue("@user", username);
-
-            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
-
-            if (await reader.ReadAsync())
-            {
-                // Get the hashed password from the database
-                string hashedPassword = reader.GetString(reader.GetOrdinal("password"));
-
-                // Verify the plain password against the hashed password
-                if (!VerifyHashedpassword(hashedPassword, password))
-                    return (false, "Password is incorrect.");
-
-                // Authentication passed, set up the user account
-                userAccount.Id = reader.GetInt32(reader.GetOrdinal("id"));
-                userAccount.Username = reader.GetString(reader.GetOrdinal("username"));
-                userAccount.Password = hashedPassword; // (May not be necessary to pass it back)
-                userAccount.Role = reader.GetString(reader.GetOrdinal("role"));
-
-                return (true, "User signed in successfully.");
-            }
-            else
-            {
-                return (false, "Username does not exist.");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error signing the user in:" + ex.Message);
-            Console.WriteLine("StackTrace: " + ex.StackTrace);
-            return (false, "An error occurred during sign-in.");
-        }
-    }
-
     public async Task<(Stats? stats, string msg)> GetBaseStats()
     {
         Stats? stats;
@@ -2059,13 +1921,6 @@ public class DBService
         }
 
         return (stats, "Ok");
-    }
-
-    private bool VerifyHashedpassword(string hashedPassword, string plainPassword)
-    {
-        var passwordHasher = new PasswordHasher<object>();
-        PasswordVerificationResult result = passwordHasher.VerifyHashedPassword(null, hashedPassword, plainPassword);
-        return result == PasswordVerificationResult.Success;
     }
 
     /// Updates the recipe_id field in the recipe_instructions table by linking it to the corresponding
