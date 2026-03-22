@@ -1,6 +1,10 @@
 @page "/developer"
+@inject ContextModelService Context
 
 @code {
-
+    protected override async Task OnInitializedAsync()
+    {
+        await Context.Test();
+    }
 
 }

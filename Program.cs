@@ -1,4 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using WebKitchen.Components;
+using WebKitchen.Data;
 using WebKitchen.Services;
 
 namespace WebKitchen;
@@ -18,7 +21,14 @@ public class Program
         builder.Services.AddScoped<SharedRecipeList>();
         builder.Services.AddScoped<SharedIngredientList>();
         builder.Services.AddHttpContextAccessor();
-
+        
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(builder.Configuration.GetConnectionString("DefaultConnection"));
+        dataSourceBuilder.MapComposite<Macros>("recipe_macros");
+        var dataSource = dataSourceBuilder.Build();
+        builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseNpgsql(dataSource));
+        
+        builder.Services.AddScoped<ContextModelService>();
         builder.Services.AddSingleton(_ =>
         {
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");

@@ -2,14 +2,23 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components.Forms;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace WebKitchen.Services;
 
+[PgName( "macros")]
 public class Macros
 {
+    [PgName("total_calories")]
     public float Calories { get; set; }
+    
+    [PgName("total_fats")]
     public float Fat { get; set; }
+    
+    [PgName("total_carbs")]
     public float Carbs { get; set; }
+    
+    [PgName("total_protein")]
     public float Protein { get; set; }
 
     public void PrintMacros()
