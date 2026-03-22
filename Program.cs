@@ -1,6 +1,3 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using WebKitchen.Components;
 using WebKitchen.Services;
 
@@ -21,7 +18,6 @@ public class Program
         builder.Services.AddScoped<SharedRecipeList>();
         builder.Services.AddScoped<SharedIngredientList>();
         builder.Services.AddHttpContextAccessor();
-
 
         builder.Services.AddSingleton(_ =>
         {
@@ -48,9 +44,6 @@ public class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseAntiforgery();
-
-        /*app.UseAuthentication();
-        app.UseAuthorization();*/
 
         app.MapRazorComponents<App>()
             .AddInteractiveServerRenderMode();

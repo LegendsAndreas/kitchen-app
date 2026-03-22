@@ -1,18 +1,6 @@
 @page "/developer"
-@rendermode InteractiveServer
-
-<button @onclick="Test">
-    test
-</button>
-<StatusMessageToast @ref="_toaster"/>
 
 @code {
 
-    StatusMessageToast _toaster = new();
-
-    private async Task Test()
-    {
-        await _toaster.ShowToastAsync("Test");
-    }
 
 }
