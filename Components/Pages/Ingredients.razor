@@ -100,9 +100,10 @@
     @if (_ingredientSearch != "")
     {
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
+            @{ double delay = 0; }
             @foreach (var ingredient in _searchIngredients)
             {
-                <div class="col p-2">
+                <div class="col p-2 generel__animation-fade-in" style="animation-delay: @(delay.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))s">
                     <div class="card h-100 generel__border-layout">
                         <img src="data:image/png;base64,@ingredient.Base64Image" alt="ops..."
                              class="card-img"/> @* card-img helps the look of the cards. *@
@@ -120,6 +121,7 @@
                         </div>
                     </div>
                 </div>
+                delay += 0.05;
             }
         </div>
     }
@@ -135,9 +137,10 @@
             />
         }
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
+            @{ double delay = 0; }
             @foreach (var ingredient in _ingredients)
             {
-                <div class="col p-2">
+                <div class="col p-2 generel__animation-fade-in" style="animation-delay: @(delay.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))s">
                     <div class="card h-100 generel__border-layout">
                         <img src="data:image/png;base64,@ingredient.Base64Image" alt="ops..."
                              class="card-img"/> @* card-img helps the look of the cards. *@
@@ -155,6 +158,7 @@
                         </div>
                     </div>
                 </div>
+                delay += 0.05;
             }
         </div>
     }

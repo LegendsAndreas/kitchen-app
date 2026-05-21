@@ -20,4 +20,22 @@
     color: white;
     cursor: pointer;
   }
+  
+  &__animation-fade-in {
+    position: relative;
+    opacity: 0;
+    top: -10px;
+    animation: fadeIn 0.3s ease-in-out forwards;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    top: -10px;
+  }
+  to {
+    opacity: 1;
+    top: 0;
+  }
 }
