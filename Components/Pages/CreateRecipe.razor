@@ -132,6 +132,11 @@
 <div class="mb-3">
     <AddedIngredients CurrentAddedIngredients="@_currentIngredients"/>
 </div>
+
+<div class="mb-3">
+    <PreviewRecipe CurrentPreviewRecipe="@_currentRecipe" ViewSideWays="true"/>
+</div>
+
 <StatusMessageToast @ref="_statusMessageToaster"/>
 
 @code {

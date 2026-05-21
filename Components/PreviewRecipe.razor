@@ -1,21 +1,47 @@
-﻿<h3>Selected Recipe</h3>
-<div class="col p-2">
-    <div class="card h-100 generel__border-layout">
-        <img src="data:image/png;base64,@CurrentPreviewRecipe.Base64Image" alt="ops..." class="card-img"/>
-        <div class="card-header">
-            <h4>@CurrentPreviewRecipe.RecipeId. @CurrentPreviewRecipe.Name</h4>
-        </div>
-        <div class="card-body border-primary">
-            <p class="card-text">
-                - Calories: @CurrentPreviewRecipe.TotalMacros.Calories.ToString("0") <br>
-                - Carbs: @CurrentPreviewRecipe.TotalMacros.Carbs.ToString("0") <br>
-                - Fats: @CurrentPreviewRecipe.TotalMacros.Fat.ToString("0") <br>
-                - Protein: @CurrentPreviewRecipe.TotalMacros.Protein.ToString("0")
-            </p>
+﻿@if (ViewSideWays)
+{
+    <div class="h-100 generel__border-layout" style="background-color: #212529">
+        <div class="row">
+            <div class="col-6">
+                <img src="data:image/png;base64,@CurrentPreviewRecipe.Base64Image" alt="ops..." class="card-img"/>
+            </div>
+            <div class="col-6">
+                <div class="card-header pt-2">
+                    <h4>@CurrentPreviewRecipe.RecipeId. @CurrentPreviewRecipe.Name</h4>
+                </div>
+                <div class="card-body border-primary">
+                    <p class="card-text">
+                        - Calories: @CurrentPreviewRecipe.TotalMacros.Calories.ToString("0") <br>
+                        - Carbs: @CurrentPreviewRecipe.TotalMacros.Carbs.ToString("0") <br>
+                        - Fats: @CurrentPreviewRecipe.TotalMacros.Fat.ToString("0") <br>
+                        - Protein: @CurrentPreviewRecipe.TotalMacros.Protein.ToString("0")
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+}
+else
+{
+    <div class="col">
+        <div class="card h-100 generel__border-layout">
+            <img src="data:image/png;base64,@CurrentPreviewRecipe.Base64Image" alt="ops..." class="card-img"/>
+            <div class="card-header">
+                <h4>@CurrentPreviewRecipe.RecipeId. @CurrentPreviewRecipe.Name</h4>
+            </div>
+            <div class="card-body border-primary">
+                <p class="card-text">
+                    - Calories: @CurrentPreviewRecipe.TotalMacros.Calories.ToString("0") <br>
+                    - Carbs: @CurrentPreviewRecipe.TotalMacros.Carbs.ToString("0") <br>
+                    - Fats: @CurrentPreviewRecipe.TotalMacros.Fat.ToString("0") <br>
+                    - Protein: @CurrentPreviewRecipe.TotalMacros.Protein.ToString("0")
+                </p>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter] public Recipe CurrentPreviewRecipe { get; set; } = new();
+    [Parameter] public bool ViewSideWays { get; set; } = false;
 }
