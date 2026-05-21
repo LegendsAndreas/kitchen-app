@@ -1519,7 +1519,7 @@ public class DbService
             "cost_per_100g " +
             "FROM ingredients " +
             "ORDER BY id " +
-            $"LIMIT 20 OFFSET {offset} ";
+            $"LIMIT {ITEMS_PER_PAGE} OFFSET {offset} ";
 
         try
         {
@@ -1577,7 +1577,7 @@ public class DbService
                        "FROM recipes AS r, unnest(r.ingredients) AS i " +
                        "GROUP BY r.id " +
                        "ORDER BY r.id " +
-                       $"LIMIT 20 OFFSET {offset} ";
+                       $"LIMIT {ITEMS_PER_PAGE} OFFSET {offset} ";
 
         try
         {
