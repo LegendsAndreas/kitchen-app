@@ -4,11 +4,11 @@
 
 <PageTitle>Create Recipe</PageTitle>
 
-<h1 class="toast-header p-2 generel__font-layout generel__border-layout d-inline-block">
+<h1 class="toast-header p-2 generel__font-layout generel__border-layout d-inline-block generel__animation-fade-in">
     Create a new recipe!
 </h1>
 
-<div class="card center-content generel__border-layout">
+<div class="card center-content generel__border-layout generel__animation-fade-in">
     <div class="card-body">
         <EditForm Model="@_currentRecipe" OnValidSubmit="CreateNewRecipe">
             <DataAnnotationsValidator/>
@@ -129,11 +129,11 @@
     </div>
 </div>
 
-<div class="mb-3">
+<div class="mb-3 generel__animation-fade-in">
     <AddedIngredients CurrentAddedIngredients="@_currentIngredients"/>
 </div>
 
-<div class="mb-3">
+<div class="mb-3 generel__animation-fade-in">
     <PreviewRecipe CurrentPreviewRecipe="@_currentRecipe" ViewSideWays="true"/>
 </div>
 

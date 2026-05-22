@@ -4,16 +4,16 @@
 @inject DbService DbService;
 <PageTitle>Random Meal</PageTitle>
 
-<h1 class="toast-header generel__border-layout generel__font-layout p-2 mx-auto random-meal__banner">
+<h1 class="toast-header generel__border-layout generel__font-layout p-2 mx-auto random-meal__banner generel__animation-fade-in">
     <strong>
         <i>Cant decide? Let Fate decide it for you!</i>
     </strong>
 </h1>
 
 <div class="container">
-    <div class="card w-50 mt-2 mx-auto @cardBorderLayoutClass">
-        @if (randomRecipe.Name != string.Empty)
-        {
+    @if (randomRecipe.Name != string.Empty)
+    {
+        <div class="card w-50 mt-2 mx-auto @cardBorderLayoutClass generel__animation-fade-in">
             <img src="data:image/png;base64,@randomRecipe.Base64Image" alt="Random Meal" class="card-img"/>
             <div class="card-header">
                 <h3>@randomRecipe.Name</h3>
@@ -26,12 +26,14 @@
                     - Protein: @randomRecipe.TotalMacros.Protein.ToString("0")
                 </p>
             </div>
-        }
-        else
-        {
+        </div>
+    }
+    else
+    {
+        <div class="card w-50 mt-2 mx-auto @cardBorderLayoutClass generel__animation-fade-in">
             <button class="btn btn-danger" @onclick="RandomRecipe">Gamble</button>
-        }
-    </div>
+        </div>
+    }
 </div>
 
 <StatusMessageToast @ref="_statusMessageToaster"/>
@@ -53,11 +55,13 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Error at Random Recipe: "+ex.Message);
-            Console.WriteLine("StackTrace: "+ex.StackTrace);
+            Console.WriteLine("Error at Random Recipe: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
             await _statusMessageToaster.ShowToastAsync("Error at \"RandomRecipe\": " + ex.Message);
             return;
         }
+
         StateHasChanged();
     }
+
 }

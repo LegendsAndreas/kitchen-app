@@ -5,7 +5,7 @@
 
 <PageTitle>Edit</PageTitle>
 
-<div class="dropdown mb-2">
+<div class="dropdown mb-2 generel__animation-fade-in z-2">
     <a class="btn btn-primary custom-layout dropdown-toggle btn-lg" href="#" role="button" data-bs-toggle="dropdown"
        aria-expanded="false">
         Choose what to edit
@@ -49,7 +49,7 @@
 
 @if (_selectedOption != "")
 {
-    <div class="card generel__border-layout">
+    <div class="card generel__border-layout z-1 generel__animation-fade-in">
         <div class="card-body edit__button-margin--button">
             @switch (_selectedOption)
             {

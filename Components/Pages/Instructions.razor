@@ -6,148 +6,151 @@
 
 <PageTitle>Instructions</PageTitle>
 
-<div class="card generel__border-layout">
-    <div class="card-body p-2">
-        <div class="container-fluid">
-            <div class="row justify-content-center">
-                <div class="col">
-                    <EditForm Model="@_recipeId" OnSubmit="@GetRecipe">
-                        <label class="form-label fw-bold">Recipe ID:</label>
-                        <InputNumber @bind-Value="_recipeId" class="form-control"/>
+<div class="generel__animation-fade-in">
 
-                        <button type="submit" class="btn btn-primary mt-2">Get Recipe</button>
-                    </EditForm>
-                </div>
-                <div class="col col-5">
-                    <div class="row row-cols-2">
-                        <div class="col">
-                            <div id="preview-text">
-                                <p>Preview:</p>
-                                @if (currentRecipe != null)
-                                {
-                                    <p>@currentRecipe.RecipeId. @currentRecipe.Name</p>
-                                    <span>Calories: @currentRecipe.TotalMacros.Calories.ToString(".00")</span>
-                                    <span>Fat: @currentRecipe.TotalMacros.Fat.ToString(".00")</span>
-                                    <span>Carbs: @currentRecipe.TotalMacros.Carbs.ToString(".00")</span>
-                                    <span>Protein: @currentRecipe.TotalMacros.Protein.ToString(".00")</span>
-                                }
-                                else
-                                {
-                                    <p>Choose recipe to get preview</p>
-                                }
+    <div class="card generel__border-layout">
+        <div class="card-body p-2">
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <div class="col">
+                        <EditForm Model="@_recipeId" OnSubmit="@GetRecipe">
+                            <label class="form-label fw-bold">Recipe ID:</label>
+                            <InputNumber @bind-Value="_recipeId" class="form-control"/> 
+
+                            <button type="submit" class="btn btn-primary mt-2">Get Recipe</button>
+                        </EditForm>
+                    </div>
+                    <div class="col col-5">
+                        <div class="row row-cols-2">
+                            <div class="col">
+                                <div id="preview-text">
+                                    <p>Preview:</p>
+                                    @if (currentRecipe != null)
+                                    {
+                                        <p>@currentRecipe.RecipeId. @currentRecipe.Name</p>
+                                        <span>Calories: @currentRecipe.TotalMacros.Calories.ToString(".00")</span>
+                                        <span>Fat: @currentRecipe.TotalMacros.Fat.ToString(".00")</span>
+                                        <span>Carbs: @currentRecipe.TotalMacros.Carbs.ToString(".00")</span>
+                                        <span>Protein: @currentRecipe.TotalMacros.Protein.ToString(".00")</span>
+                                    }
+                                    else
+                                    {
+                                        <p>Choose recipe to get preview</p>
+                                    }
+                                </div>
                             </div>
-                        </div>
-                        <div class="col">
-                            <div id="preview-img">
-                                @if (currentRecipe != null)
-                                {
-                                    <img src="data:image/png;base64,@currentRecipe.Base64Image" alt="ops..."
-                                         class="card-img w-75"
-                                    />
-                                }
-                                else
-                                {
-                                    <img src="pics/PlaceHolderPic.jpg" alt="ops..." class="card-img w-75"
-                                    />
-                                }
+                            <div class="col">
+                                <div id="preview-img">
+                                    @if (currentRecipe != null)
+                                    {
+                                        <img src="data:image/png;base64,@currentRecipe.Base64Image" alt="ops..."
+                                             class="card-img w-75"
+                                        />
+                                    }
+                                    else
+                                    {
+                                        <img src="pics/PlaceHolderPic.jpg" alt="ops..." class="card-img w-75"
+                                        />
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <button type="button" @onclick="CreateInstructions" class="btn btn-primary mt-2">
+                    Create Instructions
+                </button>
             </div>
-            <button type="button" @onclick="CreateInstructions" class="btn btn-primary mt-2">
-                Create Instructions
-            </button>
         </div>
     </div>
-</div>
 
-<div class="card generel__border-layout mt-2">
-    <div class="card-body">
-        <EditForm Model="@currentStep" OnSubmit="@AddStep">
+    <div class="card generel__border-layout mt-2">
+        <div class="card-body">
+            <EditForm Model="@currentStep" OnSubmit="@AddStep">
 
-            <label class="form-label fw-bold">Step number:</label>
-            <InputNumber id="step-number" @bind-Value="currentStep.StepNumber" class="form-control"/>
+                <label class="form-label fw-bold">Step number:</label>
+                <InputNumber id="step-number" @bind-Value="currentStep.StepNumber" class="form-control"/>
 
-            <label class="form-label fw-bold">Step text:</label>
-            <InputText id="step-text" @bind-Value="currentStep.StepText" class="form-control"/>
+                <label class="form-label fw-bold">Step text:</label>
+                <InputText id="step-text" @bind-Value="currentStep.StepText" class="form-control"/>
 
-            <button type="submit" class="btn btn-primary mt-2">Add Step</button>
-        </EditForm>
+                <button type="submit" class="btn btn-primary mt-2">Add Step</button>
+            </EditForm>
+        </div>
     </div>
-</div>
 
-<div class="card generel__border-layout mt-2">
-    <div class="card-body">
-        <EditForm Model="@currentNote" OnSubmit="@AddNote">
+    <div class="card generel__border-layout mt-2">
+        <div class="card-body">
+            <EditForm Model="@currentNote" OnSubmit="@AddNote">
 
-            <label class="form-label fw-bold">Note number:</label>
-            <InputNumber @bind-Value="currentNote.NoteNumber" class="form-control"/>
+                <label class="form-label fw-bold">Note number:</label>
+                <InputNumber @bind-Value="currentNote.NoteNumber" class="form-control"/>
 
-            <label class="form-label fw-bold">Note text:</label>
-            <InputText @bind-Value="currentNote.NoteText" class="form-control"/>
-            <button type="submit" class="btn btn-primary mt-2">Add Note</button>
-        </EditForm>
+                <label class="form-label fw-bold">Note text:</label>
+                <InputText @bind-Value="currentNote.NoteText" class="form-control"/>
+                <button type="submit" class="btn btn-primary mt-2">Add Note</button>
+            </EditForm>
+        </div>
     </div>
-</div>
 
-<div class="generel__border-layout mt-2">
-    @* Steps *@
-    <div class="accordion" id="accordion-steps">
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseOne"
-                        aria-expanded="true" aria-controls="collapseOne">
-                    Added Steps
-                </button>
-            </h2>
-            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordion-steps">
-                <div class="accordion-body">
-                    @if (recipeInstructionRecord.Instructions.Steps.Count == 0)
-                    {
-                        <p>No steps added</p>
-                    }
+    <div class="generel__border-layout mt-2">
+        @* Steps *@
+        <div class="accordion" id="accordion-steps">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne"
+                            aria-expanded="true" aria-controls="collapseOne">
+                        Added Steps
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordion-steps">
+                    <div class="accordion-body">
+                        @if (recipeInstructionRecord.Instructions.Steps.Count == 0)
+                        {
+                            <p>No steps added</p>
+                        }
 
-                    @foreach (var step in recipeInstructionRecord.Instructions.Steps)
-                    {
-                        <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
-                            <span>@step.StepNumber : @step.StepText</span>
-                            <button type="button" class="btn btn-danger"
-                                    @onclick="() => DeleteStep(recipeInstructionRecord.Instructions.Steps.IndexOf(step))">
-                                <strong>X</strong>
-                            </button>
-                        </div>
-                    }
+                        @foreach (var step in recipeInstructionRecord.Instructions.Steps)
+                        {
+                            <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
+                                <span>@step.StepNumber : @step.StepText</span>
+                                <button type="button" class="btn btn-danger"
+                                        @onclick="() => DeleteStep(recipeInstructionRecord.Instructions.Steps.IndexOf(step))">
+                                    <strong>X</strong>
+                                </button>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
 
-        @* Notes *@
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseTwo"
-                        aria-expanded="true" aria-controls="collapseTwo">
-                    Added Notes
-                </button>
-            </h2>
-            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordion-steps">
-                <div class="accordion-body">
-                    @if (recipeInstructionRecord.Instructions.Notes.Count == 0)
-                    {
-                        <p>No notes added</p>
-                    }
-                    @foreach (var note in recipeInstructionRecord.Instructions.Notes)
-                    {
-                        <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
-                            <span>@note.NoteNumber : @note.NoteText</span>
-                            <button type="button" class="btn btn-danger"
-                                    @onclick="() => DeleteNote(recipeInstructionRecord.Instructions.Notes.IndexOf(note))">
-                                <strong>X</strong>
-                            </button>
-                        </div>
-                    }
+            @* Notes *@
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTwo"
+                            aria-expanded="true" aria-controls="collapseTwo">
+                        Added Notes
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordion-steps">
+                    <div class="accordion-body">
+                        @if (recipeInstructionRecord.Instructions.Notes.Count == 0)
+                        {
+                            <p>No notes added</p>
+                        }
+                        @foreach (var note in recipeInstructionRecord.Instructions.Notes)
+                        {
+                            <div class="mb-3" style="display:inline-block; margin-right: 10px; padding: 10px;">
+                                <span>@note.NoteNumber : @note.NoteText</span>
+                                <button type="button" class="btn btn-danger"
+                                        @onclick="() => DeleteNote(recipeInstructionRecord.Instructions.Notes.IndexOf(note))">
+                                    <strong>X</strong>
+                                </button>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>

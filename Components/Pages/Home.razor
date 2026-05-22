@@ -19,17 +19,20 @@
 
     @if (!_loading)
     {
-        <PaginatorPage
-            CurrentPage="_currentRecipesPage"
-            CurrentPageChanged="OnRecipesPageChanged"
-            MaxPages="DbService.MaxRecipesPages"/>
+        <div class="generel__animation-fade-in">
+            <PaginatorPage
+                CurrentPage="_currentRecipesPage"
+                CurrentPageChanged="OnRecipesPageChanged"
+                MaxPages="DbService.MaxRecipesPages"/>
+        </div>
     }
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
         @{ double delay = 0; }
         @foreach (var recipe in _recipes)
         {
-            <div class="col p-2 generel__animation-fade-in" style="animation-delay: @(delay.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))s">
+            <div @key="recipe.RecipeId" class="col p-2 generel__animation-fade-in"
+                 style="animation-delay: @(delay.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))s">
                 <div class="card h-100 generel__border-layout">
                     <a href="/recipe-details?recipeId=@recipe.RecipeId">
                         <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..."

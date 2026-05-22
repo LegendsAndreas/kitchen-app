@@ -8,7 +8,7 @@
 <EditForm Model="@currentIngredient" OnValidSubmit="AddIngredients">
     <DataAnnotationsValidator/>
 
-    <div class="container ingredients__form">
+    <div class="container ingredients__form generel__animation-fade-in">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
             <div class="col ingredients__form__col-margin">
                 <label class="ingredients__form__label-mobile">
@@ -78,18 +78,18 @@
 </EditForm>
 
 @* Ingredients list *@
-<div class="container">
+<div class="container ">
 
     @if (_loading)
     {
-        <div class="p-2">
+        <div class="p-2 generel__animation-fade-in">
             <Loading LoadingParameter="ingredients"/>
         </div>
     }
     else
     {
         <EditForm Model="@_ingredientSearch" OnValidSubmit="SearchIngredients">
-            <div class="ingredients__form my-2">
+            <div class="ingredients__form my-2 generel__animation-fade-in">
                 <label>Search ingredient</label>
                 <InputText @bind-Value="_ingredientSearch" class="form-control"/>
                 <button type="submit" class="btn btn-primary mt-2">Search</button>
@@ -103,7 +103,8 @@
             @{ double delay = 0; }
             @foreach (var ingredient in _searchIngredients)
             {
-                <div class="col p-2 generel__animation-fade-in" style="animation-delay: @(delay.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))s">
+                <div class="col p-2 generel__animation-fade-in"
+                     style="animation-delay: @(delay.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))s">
                     <div class="card h-100 generel__border-layout">
                         <img src="data:image/png;base64,@ingredient.Base64Image" alt="ops..."
                              class="card-img"/> @* card-img helps the look of the cards. *@
@@ -127,20 +128,23 @@
     }
     else
     {
-        
         @if (!_loading)
         {
-            <PaginatorPage
-                CurrentPage="_currentIngredientPage"
-                CurrentPageChanged="OnIngredientChange"
-                MaxPages="DbService.MaxIngredientsPages"
-            />
+            <div class="generel__animation-fade-in">
+                <PaginatorPage
+                    CurrentPage="_currentIngredientPage"
+                    CurrentPageChanged="OnIngredientChange"
+                    MaxPages="DbService.MaxIngredientsPages"
+                />
+            </div>
         }
+
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
             @{ double delay = 0; }
             @foreach (var ingredient in _ingredients)
             {
-                <div class="col p-2 generel__animation-fade-in" style="animation-delay: @(delay.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))s">
+                <div class="col p-2 generel__animation-fade-in"
+                     style="animation-delay: @(delay.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))s">
                     <div class="card h-100 generel__border-layout">
                         <img src="data:image/png;base64,@ingredient.Base64Image" alt="ops..."
                              class="card-img"/> @* card-img helps the look of the cards. *@
@@ -305,7 +309,7 @@
             await StatusMessageToaster.ShowToastAsync("Showing pagination");
             return;
         }
-        
+
         _loading = true;
         try
         {
@@ -326,6 +330,7 @@
             Console.WriteLine("Error getting Ingredients: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
         }
+
         _loading = false;
         StateHasChanged();
     }

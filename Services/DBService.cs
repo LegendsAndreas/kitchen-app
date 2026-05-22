@@ -152,11 +152,11 @@ public class DbService
     /// Retrieves a list of dinner recipes from the database, including their details and nutritional information.
     /// If a recipe does not have a specific image, a placeholder image is substituted.
     /// <returns>A tuple containing a list of Recipe objects and a status message indicating the result of the operation.</returns>
-    private async Task<(List<Recipe> Recipes, string Message)> GetDinnerRecipes()
+    private async Task<(Recipe? Recipe, string Message)> GetDinnerRecipes()
     {
         Console.WriteLine("Getting dinner recipes...");
 
-        List<Recipe> recipes = [];
+        Recipe? recipe = null;
         await using var conn = await GetConnectionAsync();
 
         const string query = "SELECT r.id, " +
@@ -183,17 +183,17 @@ public class DbService
                              "FROM recipes AS r, unnest(r.ingredients) AS i " +
                              "WHERE r.meal_type = 'D' " +
                              "GROUP BY r.id " +
-                             "ORDER BY r.id ";
+                             "ORDER BY RANDOM() "+
+                             "LIMIT 1";
 
         await using var cmd = new NpgsqlCommand(query, conn);
         await using var reader = await cmd.ExecuteReaderAsync();
-        while (await reader.ReadAsync())
+        if (await reader.ReadAsync())
         {
-            Recipe recipe = MakeRecipe(reader);
-            recipes.Add(recipe);
+            recipe = MakeRecipe(reader);
         }
 
-        return (recipes, "Recipes successfully retrieved");
+        return (recipe, "Recipes successfully retrieved");
     }
 
     public async Task<(Recipe? Recipe, string Message)> GetRecipeByIdAsync(int recipeId, CancellationToken ct = new())
@@ -512,8 +512,12 @@ public class DbService
     {
         Console.WriteLine("Getting random recipe...");
         var result = await GetDinnerRecipes();
-        var randomRecipe = result.Recipes[new Random().Next(0, result.Recipes.Count - 1)];
-        return randomRecipe;
+        if (result.Recipe == null)
+        {
+            Console.WriteLine("No dinner recipes found.");
+            throw new Exception("No dinner recipes found.");
+        }
+        return result.Recipe;
     }
 
     /*public async Task<(List<RecipeInstructionRecord>? Instructions, string Message)> GetAllRecipeInstructions()
