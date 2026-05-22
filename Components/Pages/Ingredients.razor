@@ -103,7 +103,7 @@
             @{ double delay = 0; }
             @foreach (var ingredient in _searchIngredients)
             {
-                <div class="col p-2 generel__animation-fade-in"
+                <div @key="ingredient.GetId()" class="col p-2 generel__animation-fade-in"
                      style="animation-delay: @(delay.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))s">
                     <div class="card h-100 generel__border-layout">
                         <img src="data:image/png;base64,@ingredient.Base64Image" alt="ops..."
@@ -143,7 +143,7 @@
             @{ double delay = 0; }
             @foreach (var ingredient in _ingredients)
             {
-                <div class="col p-2 generel__animation-fade-in"
+                <div @key="ingredient.GetId()" class="col p-2 generel__animation-fade-in"
                      style="animation-delay: @(delay.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))s">
                     <div class="card h-100 generel__border-layout">
                         <img src="data:image/png;base64,@ingredient.Base64Image" alt="ops..."
