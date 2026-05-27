@@ -316,6 +316,12 @@ public class Recipe
         var helperStuff = new SharedStuff();
         return await helperStuff.SetThumbnailImageAndGetBase64(image, width, height);
     }
+
+    public async Task<string> SetThumbnailImageAndGetBase64(string image, int width = 305, int height = -1)
+    {
+        var helperStuff = new SharedStuff();
+        return await helperStuff.SetThumbnailImageAndGetBase64(image, width, height);
+    }
 }
 
 public class SharedStuff
@@ -379,6 +385,48 @@ public class SharedStuff
         // Convert to Base64
         return Convert.ToBase64String(ms.ToArray());
     }
+    
+    public async Task<string> SetThumbnailImageAndGetBase64(string base64Input, int width, int height)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "ffmpeg",
+            Arguments = $"-i pipe:0 -vf scale={width}:{height} -f image2pipe -vcodec mjpeg pipe:1",
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        using var process = new Process();
+        process.StartInfo = startInfo;
+        process.Start();
+
+        // Convert Base64 input into bytes
+        byte[] inputBytes = Convert.FromBase64String(base64Input);
+
+        // Write bytes to FFmpeg stdin
+        await process.StandardInput.BaseStream.WriteAsync(inputBytes, 0, inputBytes.Length);
+        process.StandardInput.Close();
+
+        // Read output (resized image)
+        using var ms = new MemoryStream();
+        await process.StandardOutput.BaseStream.CopyToAsync(ms);
+
+        // Read error output concurrently (prevents deadlocks)
+        string error = await process.StandardError.ReadToEndAsync();
+
+        await process.WaitForExitAsync();
+
+        if (process.ExitCode != 0)
+        {
+            throw new Exception($"FFmpeg error: {error}");
+        }
+
+        // Convert output to Base64
+        return Convert.ToBase64String(ms.ToArray());
+    }
 }
 
 public class SharedRecipe
@@ -386,4 +434,12 @@ public class SharedRecipe
     public Recipe SelectedRecipe { get; set; } = new();
 
     public void SetSelectedRecipe(Recipe recipe) => SelectedRecipe = recipe;
+}
+
+public class IdImageRecipe
+{
+    [JsonPropertyName("id")]
+    public int Id { get; set; }
+    [JsonPropertyName("image")]
+    public string Base64Image { get; set; } = "";
 }

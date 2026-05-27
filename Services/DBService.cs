@@ -874,6 +874,96 @@ public class DbService
         return null;
     }
 
+    public async Task<IdImageRecipe?> InitThumbnailsRecipes()
+    {
+        const string query = "SELECT id, image FROM recipes ORDER BY id OFFSET 0";
+
+        List<IdImageRecipe> idImageRecipes = new();
+        Recipe helper = new();
+
+        await using NpgsqlConnection conn = await GetConnectionAsync();
+        await using NpgsqlTransaction transaction = await conn.BeginTransactionAsync();
+
+        try
+        {
+            await using NpgsqlCommand cmd = new NpgsqlCommand(query, conn, transaction);
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                idImageRecipes.Add(new IdImageRecipe
+                {
+                    Id = reader.GetInt32(0),
+                    Base64Image = reader.GetString(1)
+                });
+            }
+
+            await reader.CloseAsync();
+
+            int counter = 1;
+            foreach (var idImageRecipe in idImageRecipes)
+            {
+                Console.WriteLine($"Adding thumbnail for recipe {counter++} out of {idImageRecipes.Count}...");
+                string thumbnail = await helper.SetThumbnailImageAndGetBase64(idImageRecipe.Base64Image);
+                await AddThumbnail(thumbnail, "recipe", idImageRecipe.Id, conn, transaction);
+            }
+
+            await transaction.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            Console.WriteLine(ex);
+            throw;
+        }
+
+        return null;
+    }
+
+    public async Task<IdImageRecipe?> InitThumbnailsIngredients()
+    {
+        const string query = "SELECT id, image FROM ingredients ORDER BY id";
+
+        List<IdImageRecipe> idImageRecipes = new();
+        Recipe helper = new();
+
+        await using NpgsqlConnection conn = await GetConnectionAsync();
+        await using NpgsqlTransaction transaction = await conn.BeginTransactionAsync();
+
+        try
+        {
+            await using NpgsqlCommand cmd = new NpgsqlCommand(query, conn, transaction);
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                idImageRecipes.Add(new IdImageRecipe
+                {
+                    Id = reader.GetInt32(0),
+                    Base64Image = reader.GetString(1)
+                });
+            }
+
+            await reader.CloseAsync();
+
+            int counter = 1;
+            foreach (var idImageRecipe in idImageRecipes)
+            {
+                Console.WriteLine($"Adding thumbnail for recipe {counter++} out of {idImageRecipes.Count}...");
+                string thumbnail = await helper.SetThumbnailImageAndGetBase64(idImageRecipe.Base64Image);
+                await AddThumbnail(thumbnail, "ingredient", idImageRecipe.Id, conn, transaction);
+            }
+
+            await transaction.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            await transaction.RollbackAsync();
+            Console.WriteLine(ex);
+            throw;
+        }
+
+        return null;
+    }
+
     public async Task<(bool Status, string Message)> AddInstructionToDbAsync(RecipeInstructionRecord instructions)
     {
         Console.WriteLine("Adding instructions to database...");
@@ -1653,9 +1743,8 @@ public class DbService
                 statusMessage = $"Ingredient {id} was not found.";
             else
             {
-                
             }
-                // await UpdateTableIds("ingredients");
+            // await UpdateTableIds("ingredients");
         }
         catch (Exception ex)
         {
@@ -1696,7 +1785,7 @@ public class DbService
                 // await UpdateTableIds("recipe_instructions");
                 // var instructionsResult = await UpdateInstructionsRecipeId();
                 // if (!instructionsResult.status)
-                    // return instructionsResult.message;
+                // return instructionsResult.message;
             }
 
             var deleteResults = await DeleteRecipeCleanUp(recipeId);
