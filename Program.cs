@@ -19,18 +19,11 @@ public class Program
         builder.Services.AddScoped<SharedIngredientList>();
         builder.Services.AddHttpContextAccessor();
 
-        builder.Services.AddSingleton(_ =>
-        {
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-            if (connectionString == null)
-            {
-                Console.WriteLine("No connection string found.");
-                return null;
-            }
+        builder.Services.AddSingleton(_ => new DbService(
+            builder.Configuration.GetConnectionString("DefaultConnection") ??
+            throw new InvalidOperationException("No connection string found."))
+        );
 
-            return new DbService(connectionString);
-        });
-        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -40,7 +33,7 @@ public class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             app.UseHsts();
         }
-        
+
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseAntiforgery();
