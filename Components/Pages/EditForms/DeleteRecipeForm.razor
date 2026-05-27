@@ -1,19 +1,19 @@
 @inject DbService DbService;
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 
-<EditForm Model="@recipeId" OnSubmit="@HandleGettingRecipe">
+<EditForm Model="@_recipeId" OnSubmit="@HandleGettingRecipe">
     <label class="form-label fw-bold">Recipe ID to delete</label>
-    <InputNumber id="name" @bind-Value="recipeId" class="form-control"/>
+    <InputNumber id="name" @bind-Value="_recipeId" class="form-control"/>
     <button class="btn btn-primary" type="submit">Get Recipe</button>
 </EditForm>
 
-@if (currentRecipe != null)
+@if (_currentRecipe != null)
 {
-    <PreviewRecipe CurrentPreviewRecipe="@currentRecipe"/>
+    <PreviewRecipe CurrentPreviewRecipe="@_currentRecipe"/>
     <button class="btn btn-danger" @onclick="HandleSubmit">Delete Recipe</button>
 }
 
-<StatusMessageToast @ref="RecipeStatusToaster"/>
+<StatusMessageToast @ref="_recipeStatusToaster"/>
 
 <!-- Are you sure modal -->
 <div class="modal fade" id="are-you-sure" tabindex="-1" aria-labelledby="areYouSure" aria-hidden="true">
@@ -55,18 +55,18 @@
 
 @code {
 
-    int recipeId;
-    Recipe? currentRecipe;
-    StatusMessageToast RecipeStatusToaster = null!;
+    int _recipeId;
+    Recipe? _currentRecipe;
+    StatusMessageToast _recipeStatusToaster = null!;
 
     private async Task HandleGettingRecipe()
     {
         Console.WriteLine("Handling getting recipe...");
-        var result = await DbService.GetRecipeByIdAsync(recipeId);
+        var result = await DbService.GetRecipeByIdAsync(_recipeId);
         if (result.Recipe == null)
-            await RecipeStatusToaster.ShowToastAsync(result.Message);
+            await _recipeStatusToaster.ShowToastAsync(result.Message);
         else
-            currentRecipe = result.Recipe;
+            _currentRecipe = result.Recipe;
     }
 
     private async Task HandleSubmit()
@@ -75,8 +75,9 @@
 
         if (await AreYouSure())
         {
-            var statusMessage = await DbService.DeleteRecipeById(recipeId);
-            await RecipeStatusToaster.ShowToastAsync(statusMessage);
+            var statusMessage = await DbService.DeleteRecipeById(_recipeId);
+            await _recipeStatusToaster.ShowToastAsync(statusMessage);
+            _currentRecipe = null;
 
             Console.WriteLine(statusMessage);
         }
@@ -86,9 +87,9 @@
 
     private async Task<bool> AreYouSure()
     {
-        await JSRuntime.InvokeVoidAsync("showAreYouSureModal");
+        await JsRuntime.InvokeVoidAsync("showAreYouSureModal");
         // Wait for the user's response (true/false)
-        return await JSRuntime.InvokeAsync<bool>("waitForUserConfirmation");
+        return await JsRuntime.InvokeAsync<bool>("waitForUserConfirmation");
     }
 
 }
