@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Components.Forms;
 using Npgsql;
@@ -65,30 +66,27 @@ public class Macros
 public class Ingredient
 {
     private uint Id { get; set; }
-    
-    [JsonPropertyName("name")]
-    public string Name { get; set; } = string.Empty;
-    
-    [JsonPropertyName("grams")]
-    public float Grams { get; set; }
-    
+
+    [JsonPropertyName("name")] public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("grams")] public float Grams { get; set; }
+
     [JsonPropertyName("calories_pr_hectogram")]
     public float CaloriesPer100g { get; set; }
-    
+
     [JsonPropertyName("carbs_pr_hectogram")]
     public float CarbsPer100g { get; set; }
-    
+
     [JsonPropertyName("protein_pr_hectogram")]
     public float ProteinPer100g { get; set; }
-    
+
     [JsonPropertyName("fats_pr_hectogram")]
     public float FatPer100g { get; set; }
-    
+
     [JsonPropertyName("cost_per_hectogram")]
     public float CostPer100g { get; set; }
-    
-    [JsonPropertyName("multiplier")]
-    public float Multiplier { get; set; }
+
+    [JsonPropertyName("multiplier")] public float Multiplier { get; set; }
     public string Base64Image { get; set; } = string.Empty;
 
     public uint GetId()
@@ -108,7 +106,7 @@ public class Ingredient
         Console.WriteLine("Getting multiplier...");
         return Multiplier;
     }
-    
+
     public float GetCostPer100g()
     {
         // Console.WriteLine("Getting cost per 100g...");
@@ -126,7 +124,7 @@ public class Ingredient
         Console.WriteLine("Setting ID...");
         Id = id;
     }
-    
+
     public void SetMultiplier()
     {
         // Console.WriteLine("Setting multiplier...");
@@ -204,13 +202,11 @@ public class Recipe
     [Required]
     [StringLength(1, ErrorMessage = "Meal type must be one character long.")]
     public string MealType { get; set; } = string.Empty;
-    
-    [Required] 
-    public string Name { get; set; } = string.Empty;
-    
-    [Required] 
-    public string Base64Image { get; set; } = string.Empty;
-    
+
+    [Required] public string Name { get; set; } = string.Empty;
+
+    [Required] public string Base64Image { get; set; } = string.Empty;
+
     public float TotalCost { get; set; }
     public List<Ingredient> Ingredients { get; set; } = new();
     public Macros TotalMacros { get; set; } = new();
@@ -308,6 +304,18 @@ public class Recipe
         Ingredients = [];
         TotalMacros = new Macros();
     }
+
+    public async Task<string> SetThumbnailImageAndGetBase64(IBrowserFile image, int width = 305, int height = -1)
+    {
+        var helperStuff = new SharedStuff();
+        return await helperStuff.SetThumbnailImageAndGetBase64(image.OpenReadStream(1024 * 1024), width, height);
+    }
+
+    public async Task<string> SetThumbnailImageAndGetBase64(Stream image, int width = 305, int height = -1)
+    {
+        var helperStuff = new SharedStuff();
+        return await helperStuff.SetThumbnailImageAndGetBase64(image, width, height);
+    }
 }
 
 public class SharedStuff
@@ -329,6 +337,47 @@ public class SharedStuff
         byte[] imageBytes = memoryStream.ToArray();
         string base64Image = Convert.ToBase64String(imageBytes);
         return base64Image;
+    }
+
+
+    public async Task<string> SetThumbnailImageAndGetBase64(Stream inputStream, int width, int height)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = "ffmpeg",
+            Arguments = $"-i pipe:0 -vf scale={width}:{height} -f image2pipe -vcodec mjpeg pipe:1",
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        using var process = new Process();
+        process.StartInfo = startInfo;
+        process.Start();
+
+        // This is a good idea, but it crashes the program silently.
+        /*string error = await process.StandardError.ReadToEndAsync();
+
+        if (process.ExitCode != 0)
+        {
+            Console.WriteLine("FFmpeg error:");
+            Console.WriteLine(error);
+        }*/
+
+        // Copy input image into FFmpeg
+        await inputStream.CopyToAsync(process.StandardInput.BaseStream);
+        process.StandardInput.Close();
+
+        // Read resized image output
+        using var ms = new MemoryStream();
+        await process.StandardOutput.BaseStream.CopyToAsync(ms);
+
+        await process.WaitForExitAsync();
+
+        // Convert to Base64
+        return Convert.ToBase64String(ms.ToArray());
     }
 }
 

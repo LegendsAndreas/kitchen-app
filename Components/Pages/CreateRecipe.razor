@@ -142,6 +142,7 @@
 @code {
     int _currentIngredientGrams;
     int _currentIngredientRecipeParts;
+    string _base64Thumbnail = "";
     Recipe _currentRecipe = new();
     Recipe _currentIngredientRecipe = new();
     Ingredient _currentIngredient = new();
@@ -163,6 +164,10 @@
                 string base64Image = Convert.ToBase64String(imageBytes);
 
                 _currentRecipe.Base64Image = base64Image;
+                
+                using var imageStream = new MemoryStream(imageBytes);
+                _base64Thumbnail = await _currentRecipe.SetThumbnailImageAndGetBase64(imageStream);
+                // await File.WriteAllTextAsync("wwwroot/pics/Thumbnails/" + _currentRecipe.RecipeId + ".txt", _base64Thumbnail);
             }
             else
             {
@@ -211,11 +216,11 @@
 
         try
         {
-            var result = await DbService.AddRecipeToDb(_currentRecipe);
-            if (!result.Status)
-                await _statusMessageToaster.ShowToastAsync("Error adding recipe to database; " + result.Message);
+            string? msg = await DbService.AddRecipeToDb(_currentRecipe, _base64Thumbnail);
+            if (!string.IsNullOrEmpty(msg))
+                await _statusMessageToaster.ShowToastAsync("Error adding recipe to database; " + msg);
             else
-                await _statusMessageToaster.ShowToastAsync(result.Message);
+                await _statusMessageToaster.ShowToastAsync("Recipe successfully added!");
         }
         catch (Exception ex)
         {
@@ -237,13 +242,16 @@
             if (!image.ContentType.Contains("image"))
             {
                 Console.WriteLine($"\"{image.ContentType}\" is not allowed");
-                // Popup message saying so.
+                await _statusMessageToaster.ShowToastAsync($"\"{image.ContentType}\" is not allowed");
                 return;
             }
 
             try
             {
                 await _currentRecipe.SetRecipeImage(image);
+                _base64Thumbnail = await _currentRecipe.SetThumbnailImageAndGetBase64(image);
+                // Save string to a new file:
+                // await File.WriteAllTextAsync("wwwroot/pics/Thumbnails/" + _currentRecipe.RecipeId + ".txt", _base64Thumbnail);
             }
             catch (Exception ex)
             {
