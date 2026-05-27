@@ -26,6 +26,7 @@
     [Parameter] public int CurrentPage { get; set; }
     [Parameter] public int MaxPages { get; set; }
     [Parameter] public EventCallback<int> CurrentPageChanged { get; set; }
+    [Parameter] public EventCallback<string> OnToastMessage { get; set; }
 
     private async Task SetPage(int page)
     {
@@ -40,24 +41,23 @@
     {
         if (CurrentPage + 1 > MaxPages)
         {
-            await _toaster.ShowToastAsync($"Current page ({CurrentPage}) cant be higher than the max recipes pages ({MaxPages})");
+            await OnToastMessage.InvokeAsync($"Current page ({CurrentPage}) cant be higher than the max recipes pages ({MaxPages})");
             return;
         }
 
         CurrentPage++;
-        await CurrentPageChanged.InvokeAsync(CurrentPage); // <-- Notify parent
+        await CurrentPageChanged.InvokeAsync(CurrentPage);
     }
 
     private async Task DecrementPage()
     {
         if (CurrentPage - 1 < 1)
         {
-            await _toaster.ShowToastAsync("Page cant be lower than 1");
+            await OnToastMessage.InvokeAsync("Page cant be lower than 1");
             return;
         }
 
         CurrentPage--;
-        await CurrentPageChanged.InvokeAsync(CurrentPage); // <-- Notify parent
+        await CurrentPageChanged.InvokeAsync(CurrentPage);
     }
-
 }

@@ -23,7 +23,8 @@
             <PaginatorPage
                 CurrentPage="_currentRecipesPage"
                 CurrentPageChanged="OnRecipesPageChanged"
-                MaxPages="DbService.MaxRecipesPages"/>
+                MaxPages="DbService.MaxRecipesPages"
+                OnToastMessage="ShowToast"/>
         </div>
     }
 
@@ -59,10 +60,13 @@
 
     @if (!_loading)
     {
-        <PaginatorPage
-            CurrentPage="_currentRecipesPage"
-            CurrentPageChanged="OnRecipesPageChanged"
-            MaxPages="DbService.MaxRecipesPages"/>
+        <div class="generel__animation-fade-in">
+            <PaginatorPage
+                CurrentPage="_currentRecipesPage"
+                CurrentPageChanged="OnRecipesPageChanged"
+                MaxPages="DbService.MaxRecipesPages"
+                OnToastMessage="ShowToast"/>
+        </div>
     }
 
 </div>
@@ -102,6 +106,11 @@
 
         if (GlobalRecipes.Recipes.Any())
             Console.WriteLine("Recipes are full.");
+    }
+
+    private async Task ShowToast(string message)
+    {
+        await _toaster.ShowToastAsync(message);
     }
 
     private async Task OnRecipesPageChanged(int newPage)
