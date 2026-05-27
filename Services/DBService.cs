@@ -1266,35 +1266,6 @@ public class DbService
         return false;
     }
 
-    /// Asynchronously updates the ID sequence values for a specified database table to ensure sequential numbering.
-    /// <remarks>You HAVE to use this when you delete an element in a table, to make sure the the IDs stay correct.</remarks>
-    private async Task UpdateTableIds(string tableName)
-    {
-        Console.WriteLine("Updating table IDs...");
-
-        var query = $"CREATE TEMP TABLE temp_{tableName} AS " +
-                    "SELECT *, ROW_NUMBER() OVER (ORDER BY id) as new_id " +
-                    $"FROM {tableName};" +
-                    $"UPDATE {tableName} " +
-                    $"SET id = temp_{tableName}.new_id " +
-                    $"FROM temp_{tableName} " +
-                    $"WHERE {tableName}.id = temp_{tableName}.id;" +
-                    $"SELECT setval('{tableName}_id_seq', (SELECT MAX(id) FROM {tableName}));" +
-                    $"DROP TABLE temp_{tableName};";
-        try
-        {
-            await using var conn = await GetConnectionAsync();
-            await using var cmd = new NpgsqlCommand(query, conn);
-            await RunAsyncQuery(cmd);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error updating table ids: " + ex.Message);
-            Console.WriteLine("StackTrace: " + ex.StackTrace);
-            throw;
-        }
-    }
-
     public async Task<string> UpdateDbIngredient(Ingredient ingredient)
     {
         Console.WriteLine("Updating database ingredient...");
@@ -1681,7 +1652,10 @@ public class DbService
             if (result < 1)
                 statusMessage = $"Ingredient {id} was not found.";
             else
-                await UpdateTableIds("ingredients");
+            {
+                
+            }
+                // await UpdateTableIds("ingredients");
         }
         catch (Exception ex)
         {
@@ -1718,11 +1692,11 @@ public class DbService
                 statusMessage = $"Recipe {recipeId} was not found.";
             else
             {
-                await UpdateTableIds("recipes");
-                await UpdateTableIds("recipe_instructions");
-                var instructionsResult = await UpdateInstructionsRecipeId();
-                if (!instructionsResult.status)
-                    return instructionsResult.message;
+                // await UpdateTableIds("recipes");
+                // await UpdateTableIds("recipe_instructions");
+                // var instructionsResult = await UpdateInstructionsRecipeId();
+                // if (!instructionsResult.status)
+                    // return instructionsResult.message;
             }
 
             var deleteResults = await DeleteRecipeCleanUp(recipeId);
@@ -2019,38 +1993,6 @@ public class DbService
         }
 
         return (stats, "Ok");
-    }
-
-    /// Updates the recipe_id field in the recipe_instructions table by linking it to the corresponding
-    /// entry in the recipes table based on the name field in the instructions JSON object.
-    /// <returns>A tuple containing a boolean indicating the success status and a string message detailing the outcome.</returns>
-    private async Task<(bool status, string message)> UpdateInstructionsRecipeId()
-    {
-        Console.WriteLine("Updating instructions recipe id...");
-        var statusMessage = "Instructions got updated.";
-
-        // The "->>" operator looks in a JSON file for a specific variable name. In this case, "name".
-        string query = "UPDATE recipe_instructions " +
-                       "SET recipe_id =" +
-                       "(SELECT id FROM recipes WHERE name = instructions ->> 'name')";
-
-        try
-        {
-            await using var conn = await GetConnectionAsync();
-            await using var cmd = new NpgsqlCommand(query, conn);
-
-            var result = await RunAsyncQuery(cmd);
-            if (result < 1)
-                return (false, "Instructions did not get updated");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error updating instructions recipe IDs:" + ex.Message);
-            Console.WriteLine("StackTrace: " + ex.StackTrace);
-            return (false, "Error updating instructions recipe IDs:" + ex.Message);
-        }
-
-        return (true, statusMessage);
     }
 
     /// Determines whether the ingredient's ID is zero.
