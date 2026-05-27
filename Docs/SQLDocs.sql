@@ -6,6 +6,14 @@ SELECT *
 FROM ingredients
 WHERE name ILIKE '%Am%';
 
+/* Thumbnail */
+CREATE TABLE thumbnails
+(
+    id            SERIAL PRIMARY KEY,
+    image         TEXT,
+    relation_id   INT,
+    relation_type VARCHAR(50) CHECK (relation_type IN ('recipe', 'ingredient'))
+);
 
 /* Create */
 CREATE TYPE ingredient AS
