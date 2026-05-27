@@ -183,7 +183,7 @@ public class DbService
                              "FROM recipes AS r, unnest(r.ingredients) AS i " +
                              "WHERE r.meal_type = 'D' " +
                              "GROUP BY r.id " +
-                             "ORDER BY RANDOM() "+
+                             "ORDER BY RANDOM() " +
                              "LIMIT 1";
 
         await using var cmd = new NpgsqlCommand(query, conn);
@@ -517,6 +517,7 @@ public class DbService
             Console.WriteLine("No dinner recipes found.");
             throw new Exception("No dinner recipes found.");
         }
+
         return result.Recipe;
     }
 
