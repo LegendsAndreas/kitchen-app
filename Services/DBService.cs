@@ -1683,7 +1683,7 @@ public class DbService
         string query = "SELECT r.id, " +
                        "r.name, " +
                        "r.meal_type, " +
-                       "r.image, " +
+                       "t.image, " +
                        "r.cost, " +
                        "(r.macros).total_calories, " +
                        "(r.macros).total_carbs, " +
@@ -1701,8 +1701,10 @@ public class DbService
                        "         'multiplier', i.multiplier" +
                        "     )" +
                        ") AS ingredients " +
-                       "FROM recipes AS r, unnest(r.ingredients) AS i " +
-                       "GROUP BY r.id " +
+                       "FROM recipes AS r " +
+                       "LEFT JOIN LATERAL unnest(r.ingredients) AS i ON TRUE " +
+                       "LEFT JOIN thumbnails AS t ON t.relation_id = r.id AND t.relation_type = 'recipe' " +
+                       "GROUP BY r.id, t.image " +
                        "ORDER BY r.id " +
                        $"LIMIT {ITEMS_PER_PAGE} OFFSET {offset} ";
 
