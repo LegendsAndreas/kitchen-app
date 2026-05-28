@@ -1650,15 +1650,16 @@ public class DbService
 
         string query =
             "SELECT " +
-            "id," +
-            "name," +
-            "cals," +
-            "fats," +
-            "carbs," +
-            "protein," +
-            "image," +
-            "cost_per_100g " +
-            "FROM ingredients " +
+            "i.id," +
+            "i.name," +
+            "i.cals," +
+            "i.fats," +
+            "i.carbs," +
+            "i.protein," +
+            "t.image," +
+            "i.cost_per_100g " +
+            "FROM ingredients i " +
+            "LEFT JOIN thumbnails t ON t.relation_id = i.id AND t.relation_type = 'ingredient' " +
             "ORDER BY id " +
             $"LIMIT {ITEMS_PER_PAGE} OFFSET {offset} ";
 
