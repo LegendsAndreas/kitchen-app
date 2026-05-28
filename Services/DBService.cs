@@ -1246,6 +1246,7 @@ public class DbService
     public async Task<string> UpdateRecipeImageByRecipeId(string base64Image, int recipeId)
     {
         Console.WriteLine("Updating recipe image by id...");
+        Recipe recipeHelper = new();
 
         if (recipeId < 1)
         {
@@ -1255,6 +1256,7 @@ public class DbService
 
         var statusMessage = "Recipe image got updated.";
         const string query = "UPDATE recipes SET image = @base64_image WHERE id = @recipe_id";
+        const string thumbnailQuery = "UPDATE thumbnails SET image = @base64_image WHERE relation_id = @recipe_id AND relation_type = 'recipe'";
         try
         {
             await using var conn = await GetConnectionAsync();
@@ -1263,6 +1265,18 @@ public class DbService
             cmd.Parameters.AddWithValue("@recipe_id", recipeId);
             var result = await RunAsyncQuery(cmd);
 
+            if (result == 0)
+            {
+                Console.WriteLine("Recipe ID is not found in database.");
+                statusMessage = "Recipe image did not get updated; recipe ID was not found in database.";
+            }
+            
+            string thumbnailImage = await recipeHelper.SetThumbnailImageAndGetBase64(base64Image);
+            await using var thumbnailCmd= new NpgsqlCommand(thumbnailQuery, conn);
+            thumbnailCmd.Parameters.AddWithValue("@base64_image", thumbnailImage);
+            thumbnailCmd.Parameters.AddWithValue("@recipe_id", recipeId);
+            result = await RunAsyncQuery(thumbnailCmd);
+            
             if (result == 0)
             {
                 Console.WriteLine("Recipe ID is not found in database.");
