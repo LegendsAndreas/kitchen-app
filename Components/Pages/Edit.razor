@@ -49,27 +49,28 @@
 
 @if (_selectedOption != "")
 {
-    <div class="card generel__border-layout z-1 generel__animation-fade-in">
+    <div class="card generel__border-layout">
         <div class="card-body edit__button-margin--button">
             @switch (_selectedOption)
             {
                 case "delete-recipe":
                     <div class="edit-recipes-form">
-                        <DeleteRecipeForm/>
+                        <DeleteRecipeForm
+                            OnToastMessage="ShowToast"/>
                     </div>
                     break;
                 case "database-ingredient":
-                    <div>
+                    <div class="generel__animation-fade-in">
                         <EditDbIngredient/>
                     </div>
                     break;
                 case "delete-ingredient":
-                    <div class="edit-recipes-form">
+                    <div class="edit-recipes-form generel__animation-fade-in">
                         <DeleteDbIngredientForm/>
                     </div>
                     break;
                 case "instructions":
-                    <div>
+                    <div class="generel__animation-fade-in">
                         <EditInstructionsForm/>
                     </div>
                     break;
@@ -87,9 +88,12 @@
     </div>
 }
 
+<StatusMessageToast @ref="_recipeStatusToaster"/>
+
 @code {
 
     private string _selectedOption = string.Empty;
+    StatusMessageToast _recipeStatusToaster = null!;
 
     protected override Task OnInitializedAsync()
     {
@@ -109,6 +113,11 @@
     {
         _selectedOption = option;
         StateHasChanged();
+    }
+
+    private async Task ShowToast(string message)
+    {
+        await _recipeStatusToaster.ShowToastAsync(message);
     }
 
 }
