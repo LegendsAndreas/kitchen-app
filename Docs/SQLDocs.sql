@@ -6,6 +6,86 @@ SELECT *
 FROM ingredients
 WHERE name ILIKE '%Am%';
 
+SELECT r.name, t.image
+FROM recipes AS r
+         LEFT JOIN thumbnails t ON t.relation_id = r.id AND t.relation_type = 'recipe'
+LIMIT 5;
+SELECT r.name, t.image
+FROM recipes AS r
+         RIGHT JOIN thumbnails t ON t.relation_id = r.id AND t.relation_type = 'recipe'
+LIMIT 5;
+SELECT r.name, t.image
+FROM recipes AS r
+         INNER JOIN thumbnails t ON t.relation_id = r.id AND t.relation_type = 'recipe'
+LIMIT 5;
+
+/* Work optimization, because we use an implicit join */
+SELECT r.id,
+       r.name,
+       r.meal_type,
+       t.image,
+       r.cost,
+       (r.macros).total_calories,
+       (r.macros).total_carbs,
+       (r.macros).total_fats,
+       (r.macros).total_protein,
+       json_agg(
+               json_build_object(
+                       'name', i.name,
+                       'grams', i.grams,
+                       'calories_pr_hectogram', i.calories_pr_hectogram,
+                       'fats_pr_hectogram', i.fats_pr_hectogram,
+                       'carbs_pr_hectogram', i.carbs_pr_hectogram,
+                       'protein_pr_hectogram', i.protein_pr_hectogram,
+                       'cost_per_hectogram', COALESCE(i.cost_per_100g, 0),
+                       'multiplier', i.multiplier
+               )
+       ) AS ingredients
+FROM recipes AS r, thumbnails AS t,
+     unnest(r.ingredients) AS i
+WHERE r.id = t.relation_id AND t.relation_type = 'recipe'
+GROUP BY r.id, t.image
+ORDER BY r.id
+LIMIT 20 OFFSET 0;
+
+/* Better optimization, because we use an explicit join */
+SELECT r.id,
+       r.name,
+       r.meal_type,
+       t.image,
+       r.cost,
+       (r.macros).total_calories,
+       (r.macros).total_carbs,
+       (r.macros).total_fats,
+       (r.macros).total_protein,
+       json_agg(
+               json_build_object(
+                       'name', i.name,
+                       'grams', i.grams,
+                       'calories_pr_hectogram', i.calories_pr_hectogram,
+                       'fats_pr_hectogram', i.fats_pr_hectogram,
+                       'carbs_pr_hectogram', i.carbs_pr_hectogram,
+                       'protein_pr_hectogram', i.protein_pr_hectogram,
+                       'cost_per_hectogram', COALESCE(i.cost_per_100g, 0),
+                       'multiplier', i.multiplier
+               )
+       ) AS ingredients
+
+FROM recipes AS r
+         LEFT JOIN LATERAL unnest(r.ingredients) AS i ON TRUE /* Technically, when you unnest an array, it returns its 
+                                                                 data in the same form as a table, as rows. So, we can
+                                                                 treat it somewhat like a table and use the LATERAL keyword to
+                                                                 tell PSQL that it is not ACTUALLY a table, so that it
+                                                                 doesn't try to make any wrong assumptions about it. 
+                                                                 We still need it to match the JOIN condition, so we
+                                                                 just use the condition TRUE.*/
+         LEFT JOIN thumbnails AS t
+                   ON t.relation_id = r.id
+                       AND t.relation_type = 'recipe'
+GROUP BY r.id, t.image /* The new table has to be grouped too */
+ORDER BY r.id
+LIMIT 20 OFFSET 0;
+
 /* Thumbnail */
 CREATE TABLE thumbnails
 (
