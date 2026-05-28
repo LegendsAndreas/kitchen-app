@@ -3,11 +3,13 @@
 @inject SharedIngredientList GlobalIngredients
 @inject NavigationManager NavigationManager
 
-<EditForm Model="@_recipeId" OnValidSubmit="GetRecipe">
-    <label class="form-label fw-bold">Recipe Id</label>
-    <InputNumber @bind-Value="_recipeId" class="form-control"/>
-    <button type="submit" class="btn btn-primary">Get Recipe</button>
-</EditForm>
+<div class="generel__animation-fade-in">
+    <EditForm Model="@_recipeId" OnValidSubmit="GetRecipe">
+        <label class="form-label fw-bold">Recipe Id</label>
+        <InputNumber @bind-Value="_recipeId" class="form-control"/>
+        <button type="submit" class="btn btn-primary">Get Recipe</button>
+    </EditForm>
+</div>
 
 @if (_currentRecipe != null)
 {
