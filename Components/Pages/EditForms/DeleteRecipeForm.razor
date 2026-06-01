@@ -55,14 +55,14 @@
 
     int _recipeId;
     Recipe? _currentRecipe;
-    StatusMessageToast _recipeStatusToaster = null!;
+    [Parameter] public EventCallback<string> OnToastMessage { get; set; }
 
     private async Task HandleGettingRecipe()
     {
         Console.WriteLine("Handling getting recipe...");
         var result = await DbService.GetRecipeByIdAsync(_recipeId);
         if (result.Recipe == null)
-            await _recipeStatusToaster.ShowToastAsync(result.Message);
+            await OnToastMessage.InvokeAsync(result.Message);
         else
             _currentRecipe = result.Recipe;
     }
@@ -74,7 +74,7 @@
         if (await AreYouSure())
         {
             var statusMessage = await DbService.DeleteRecipeById(_recipeId);
-            await _recipeStatusToaster.ShowToastAsync(statusMessage);
+            await OnToastMessage.InvokeAsync(statusMessage);
             _currentRecipe = null;
 
             Console.WriteLine(statusMessage);
