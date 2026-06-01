@@ -1,0 +1,47 @@
+﻿@if (ViewSideWays)
+{
+    <div class="h-100 generel__border-layout" style="background-color: #212529">
+        <div class="row">
+            <div class="col-6">
+                <img src="data:image/png;base64,@CurrentIngredient.Base64Image" alt="ops..." class="card-img"/>
+            </div>
+            <div class="col-6">
+                <div class="card-header pt-2">
+                    <h4>@CurrentIngredient.GetId(). @CurrentIngredient.Name</h4>
+                </div>
+                <div class="card-body border-primary">
+                    <p class="card-text">
+                        - Calories: @CurrentIngredient.CaloriesPer100g.ToString("0") <br>
+                        - Carbs: @CurrentIngredient.CarbsPer100g.ToString("0") <br>
+                        - Fats: @CurrentIngredient.FatPer100g.ToString("0") <br>
+                        - Protein: @CurrentIngredient.ProteinPer100g.ToString("0")
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="col">
+        <div class="card h-100 generel__border-layout">
+            <img src="data:image/png;base64,@CurrentIngredient.Base64Image" alt="ops..." class="card-img"/>
+            <div class="card-header">
+                <h4>@CurrentIngredient.GetId(). @CurrentIngredient.Name</h4>
+            </div>
+            <div class="card-body border-primary">
+                <p class="card-text">
+                    - Calories: @CurrentIngredient.CaloriesPer100g.ToString("0") <br>
+                    - Carbs: @CurrentIngredient.CarbsPer100g.ToString("0") <br>
+                    - Fats: @CurrentIngredient.FatPer100g.ToString("0") <br>
+                    - Protein: @CurrentIngredient.ProteinPer100g.ToString("0")
+                </p>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public Ingredient CurrentIngredient { get; set; } = new();
+    [Parameter] public bool ViewSideWays { get; set; } = false;
+}

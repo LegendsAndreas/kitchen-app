@@ -3,41 +3,92 @@
 
 <EditForm Model="@this">
     <label class="form-label fw-bold">Database Ingredient ID To Delete</label>
-    <InputNumber id="name" @bind-Value="recipeId" class="form-control"/>
+    <InputNumber id="name" @bind-Value="_ingredientId" class="form-control"/>
     <button type="submit" class="btn btn-primary" @onclick="HandleGettingDbIngredient">Get Ingredient</button>
 </EditForm>
 
 
-@if (currentIngredient != null)
+@if (_currentIngredient != null)
 {
-    <div>
-        <p>@currentIngredient.Name Database Image</p>
-        <img src="data:image/png;base64,@currentIngredient.Base64Image" alt="Image" class="img-fluid"/>
-    </div>
-
     <button type="button" class="btn btn-danger" @onclick="DeleteIngredient">Delete Ingredient</button>
+    <PreviewIngredient CurrentIngredient="@_currentIngredient" ViewSideWays="true"/>
 }
 
 <StatusMessageToast @ref="_statusMessageToaster"/>
 
+<!-- Are you sure modal -->
+<div class="modal fade" id="are-you-sure" tabindex="-1" aria-labelledby="areYouSure" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="areYouSure">Confirmation</h5>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="confirmAction(true)">
+                    Yes
+                </button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal" onclick="confirmAction(false)">No
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAreYouSureModal() {
+        const modalElement = document.getElementById("are-you-sure");
+        const modalInstance = new bootstrap.Modal(modalElement);
+        modalInstance.show();
+    }
+
+    // Registering user's response (Yes or No) via JS Interop
+    let confirmationResolve;
+    window.waitForUserConfirmation = function () {
+        return new Promise((resolve) => {
+            confirmationResolve = resolve;
+        });
+    };
+
+    function confirmAction(userConfirmed) {
+        if (confirmationResolve) {
+            confirmationResolve(userConfirmed);
+        }
+    }
+</script>
+
 @code{
-    int recipeId;
-    Ingredient? currentIngredient;
+    int _ingredientId;
+    Ingredient? _currentIngredient;
     StatusMessageToast _statusMessageToaster = null!;
 
     private async Task DeleteIngredient()
     {
-        var result = await DbService.DeleteDbIngredientById(recipeId);
-        await _statusMessageToaster.ShowToastAsync(result);
+        if (!await AreYouSure()) return;
+        
+        var result = await DbService.DeleteDbIngredientById(_ingredientId);
+        if (string.IsNullOrEmpty(result))
+        {
+            await _statusMessageToaster.ShowToastAsync("Successfully deleted ingredient.");
+            _currentIngredient = null;
+        }
+        else
+        {
+            await _statusMessageToaster.ShowToastAsync(result);
+        }
+        StateHasChanged();
     }
 
     private async Task HandleGettingDbIngredient()
     {
-        var result = await DbService.GetDbIngredientById(recipeId);
+        var result = await DbService.GetDbIngredientById(_ingredientId);
         if (result.Ingredient == null)
             await _statusMessageToaster.ShowToastAsync(result.Message);
         else
-            currentIngredient = result.Ingredient;
+            _currentIngredient = result.Ingredient;
+    }
+    
+    private async Task<bool> AreYouSure()
+    {
+        await JsRuntime.InvokeVoidAsync("showAreYouSureModal");
+        return await JsRuntime.InvokeAsync<bool>("waitForUserConfirmation");
     }
 
 }
