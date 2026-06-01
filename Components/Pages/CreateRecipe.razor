@@ -131,7 +131,7 @@
     </div>
 
     <div class="mb-3">
-        <AddedIngredients CurrentAddedIngredients="@_currentIngredients"/>
+        <AddedIngredients OnIngredientDeleted="AddAllMacrosToRecipe" CurrentAddedIngredients="@_currentIngredients"/>
     </div>
 
     <div class="mb-3">
@@ -144,7 +144,6 @@
 @code {
     int _currentIngredientGrams;
     int _currentIngredientRecipeParts;
-    string _base64Thumbnail = "";
     Recipe _currentRecipe = new();
     Recipe _currentIngredientRecipe = new();
     Ingredient _currentIngredient = new();
@@ -166,10 +165,6 @@
                 string base64Image = Convert.ToBase64String(imageBytes);
 
                 _currentRecipe.Base64Image = base64Image;
-
-                using var imageStream = new MemoryStream(imageBytes);
-                _base64Thumbnail = await _currentRecipe.SetThumbnailImageAndGetBase64(imageStream);
-                // await File.WriteAllTextAsync("wwwroot/pics/Thumbnails/" + _currentRecipe.RecipeId + ".txt", _base64Thumbnail);
             }
             else
             {
@@ -218,7 +213,7 @@
 
         try
         {
-            string? msg = await DbService.AddRecipeToDb(_currentRecipe, _base64Thumbnail);
+            string? msg = await DbService.AddRecipeToDb(_currentRecipe);
             if (!string.IsNullOrEmpty(msg))
                 await _statusMessageToaster.ShowToastAsync("Error adding recipe to database; " + msg);
             else
@@ -251,9 +246,6 @@
             try
             {
                 await _currentRecipe.SetRecipeImage(image);
-                _base64Thumbnail = await _currentRecipe.SetThumbnailImageAndGetBase64(image);
-                // Save string to a new file:
-                // await File.WriteAllTextAsync("wwwroot/pics/Thumbnails/" + _currentRecipe.RecipeId + ".txt", _base64Thumbnail);
             }
             catch (Exception ex)
             {
@@ -273,6 +265,7 @@
         tempIngredient.PrintIngredient("HandleIngredient");
 
         _currentIngredients.Add(tempIngredient);
+        AddAllMacrosToRecipe();
         _currentIngredient.ClearIngredient();
     }
 
@@ -326,4 +319,21 @@
         AddIngredient();
     }
 
+    private void AddAllMacrosToRecipe()
+    {
+        _currentRecipe.TotalMacros.Calories = 0;
+        _currentRecipe.TotalMacros.Carbs = 0;
+        _currentRecipe.TotalMacros.Fat = 0;
+        _currentRecipe.TotalMacros.Protein = 0;
+        _currentRecipe.TotalCost = 0;
+        
+        foreach (var ingredient in _currentIngredients)
+        {
+            _currentRecipe.TotalMacros.Calories += ingredient.CaloriesPer100g * ingredient.GetMultiplier();
+            _currentRecipe.TotalMacros.Carbs += ingredient.CarbsPer100g * ingredient.GetMultiplier();
+            _currentRecipe.TotalMacros.Fat += ingredient.FatPer100g * ingredient.GetMultiplier();
+            _currentRecipe.TotalMacros.Protein += ingredient.ProteinPer100g * ingredient.GetMultiplier();
+            _currentRecipe.TotalCost += ingredient.GetCostPer100g() * ingredient.GetMultiplier();
+        }
+    }
 }

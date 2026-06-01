@@ -42,10 +42,12 @@
 @code{
 
     [Parameter] public List<Ingredient> CurrentAddedIngredients { get; set; } = new();
+    [Parameter] public EventCallback OnIngredientDeleted { get; set; }
     
     private void DeleteIngredient(int index)
     {
         CurrentAddedIngredients.RemoveAt(index);
+        OnIngredientDeleted.InvokeAsync();
         StateHasChanged();
     }
 }
