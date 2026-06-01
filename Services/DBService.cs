@@ -765,7 +765,7 @@ public class DbService
         return (true, statusMessage);
     }
 
-    public async Task<string?> AddRecipeToDb(Recipe recipe, string thumbnail)
+    public async Task<string?> AddRecipeToDb(Recipe recipe)
     {
         Console.WriteLine("Adding recipe to database...");
 
@@ -820,6 +820,7 @@ public class DbService
                 return "Error adding ingredients to row; " + ingredientsMsg;
             }
 
+            string thumbnail = await recipe.GetThumbnailBase64Image(recipe.Base64Image);
             string? thumbnailMsg = await AddThumbnail(thumbnail, "recipe", recipeId, conn, transaction);
             if (!string.IsNullOrEmpty(thumbnailMsg))
             {
