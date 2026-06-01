@@ -1047,7 +1047,7 @@ public class DbService
         return null;
     }
 
-    public async Task<(bool Status, string Message)> AddIngredientToDbAsync(Ingredient ingredient)
+    public async Task<string> AddIngredientToDbAsync(Ingredient ingredient)
     {
         Console.WriteLine("Adding ingredient to database...");
 
@@ -1056,12 +1056,14 @@ public class DbService
         const string query =
             "INSERT INTO ingredients " +
             "(name, cals, fats, carbs, protein, image, cost_per_100g) " +
-            "VALUES(@name, @cals, @fats, @carbs, @protein, @image, @costper100g)";
+            "VALUES(@name, @cals, @fats, @carbs, @protein, @image, @costper100g) " +
+            "RETURNING id";
 
+        await using var conn = await GetConnectionAsync();
+        await using var transaction = await conn.BeginTransactionAsync();
         try
         {
-            await using var conn = await GetConnectionAsync();
-            await using var cmd = new NpgsqlCommand(query, conn);
+            await using var cmd = new NpgsqlCommand(query, conn, transaction);
             cmd.Parameters.AddWithValue("@name", ingredient.Name);
             cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
             cmd.Parameters.AddWithValue("@fats", ingredient.FatPer100g);
@@ -1069,16 +1071,43 @@ public class DbService
             cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
             cmd.Parameters.AddWithValue("@image", ingredient.Base64Image);
             cmd.Parameters.AddWithValue("@costper100g", ingredient.GetCostPer100g());
-            await RunAsyncQuery(cmd);
+
+            var newIngredientId = await cmd.ExecuteScalarAsync();
+            if (newIngredientId == null)
+            {
+                await transaction.RollbackAsync();
+                Console.WriteLine("Error adding ingredient to database; could not get ID of new ingredient");
+                return "Error adding ingredient to database; could not get ID of new ingredient";
+            }
+
+            if (!int.TryParse(newIngredientId.ToString(), out var ingredientId))
+            {
+                await transaction.RollbackAsync();
+                Console.WriteLine("Error adding recipe to database; could not parse ID of new ingredient");
+                return "Error retrieving ingredient ID.";
+            }
+
+            Recipe thumbnailHelper = new();
+            string thumbnail = await thumbnailHelper.GetThumbnailBase64Image(ingredient.Base64Image);
+
+            string? thumbnailMsg = await AddThumbnail(thumbnail, "ingredient", ingredientId, conn, transaction);
+            if (!string.IsNullOrEmpty(thumbnailMsg))
+            {
+                await transaction.RollbackAsync();
+                return "Error adding thumbnail; " + thumbnailMsg;
+            }
+
+            await transaction.CommitAsync();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error adding ingredients ({ingredient}) to database: " + ex.Message);
+            await transaction.RollbackAsync();
+            Console.WriteLine($"Error adding ingredients to database: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
-            return (false, $"Error adding ingredients to database: {ex.Message}.");
+            return "Error adding ingredients to database: " + ex.Message;
         }
 
-        return (true, statusMessage);
+        return statusMessage;
     }
 
     public async Task<string> UpdateRecipeMealTypeRecipeIdAsync(string mealType, int recipeId)
@@ -1257,7 +1286,8 @@ public class DbService
 
         var statusMessage = "Recipe image got updated.";
         const string query = "UPDATE recipes SET image = @base64_image WHERE id = @recipe_id";
-        const string thumbnailQuery = "UPDATE thumbnails SET image = @base64_image WHERE relation_id = @recipe_id AND relation_type = 'recipe'";
+        const string thumbnailQuery =
+            "UPDATE thumbnails SET image = @base64_image WHERE relation_id = @recipe_id AND relation_type = 'recipe'";
         try
         {
             await using var conn = await GetConnectionAsync();
@@ -1271,13 +1301,13 @@ public class DbService
                 Console.WriteLine("Recipe ID is not found in database.");
                 statusMessage = "Recipe image did not get updated; recipe ID was not found in database.";
             }
-            
-            string thumbnailImage = await recipeHelper.SetThumbnailImageAndGetBase64(base64Image);
-            await using var thumbnailCmd= new NpgsqlCommand(thumbnailQuery, conn);
+
+            string thumbnailImage = await recipeHelper.GetThumbnailBase64Image(base64Image);
+            await using var thumbnailCmd = new NpgsqlCommand(thumbnailQuery, conn);
             thumbnailCmd.Parameters.AddWithValue("@base64_image", thumbnailImage);
             thumbnailCmd.Parameters.AddWithValue("@recipe_id", recipeId);
             result = await RunAsyncQuery(thumbnailCmd);
-            
+
             if (result == 0)
             {
                 Console.WriteLine("Recipe ID is not found in database.");
@@ -1661,7 +1691,7 @@ public class DbService
             "i.cost_per_100g " +
             "FROM ingredients i " +
             "LEFT JOIN thumbnails t ON t.relation_id = i.id AND t.relation_type = 'ingredient' " +
-            "ORDER BY id " +
+            "ORDER BY i.id, t.image " +
             $"LIMIT {ITEMS_PER_PAGE} OFFSET {offset} ";
 
         try
@@ -1744,34 +1774,63 @@ public class DbService
         return (recipes, "Recipes found");
     }
 
-    public async Task<string> DeleteDbIngredientById(int id)
+    public async Task<string?> DeleteDbIngredientById(int id)
     {
         Console.WriteLine("Deleting database ingredient by name...");
-        var statusMessage = $"Ingredient {id} has been deleted.";
+
+        await using var conn = await GetConnectionAsync();
+        /*Adding the "using" keyword also automatically rolls back a failed transaction, so you dont need to manually
+        use "transaction.Rollback();"*/
+        await using var transaction = await conn.BeginTransactionAsync();
 
         try
         {
-            await using var conn = await GetConnectionAsync();
             const string query = "DELETE FROM ingredients WHERE id = @id";
-            await using var cmd = new NpgsqlCommand(query, conn);
+            await using var cmd = new NpgsqlCommand(query, conn, transaction);
             cmd.Parameters.AddWithValue("@id", id);
-
+            
             int result = await RunAsyncQuery(cmd);
             if (result < 1)
-                statusMessage = $"Ingredient {id} was not found.";
-            else
             {
+                Console.WriteLine($"Ingredient ID ({id}) is not found in database.");
+                return $"Ingredient ID ({id}) is not found in database.";
             }
-            // await UpdateTableIds("ingredients");
+
+            string? deleteCleanUpResults = await DeleteIngredientCleanUp(id, conn, transaction);
+            if (!string.IsNullOrEmpty(deleteCleanUpResults))
+                return deleteCleanUpResults;
+
+            await transaction.CommitAsync();
         }
         catch (Exception ex)
         {
+            // Also not a good idea to put the Rollback inside a catch statement, because Rollback can cause an exception
+            // await transaction.RollbackAsync();
             Console.WriteLine($"Error deleting database ingredient by id ({id})" + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             return $"Error deleting database ingredient by id ({id}): " + ex.Message;
         }
 
-        return statusMessage;
+        return null;
+    }
+
+    private async Task<string?> DeleteIngredientCleanUp(int id, NpgsqlConnection conn, NpgsqlTransaction transaction)
+    {
+        // throw new Exception("Piss");
+        Console.WriteLine("Cleaning up delete database ingredient...");
+
+        const string query = "DELETE FROM thumbnails WHERE relation_id = @id AND relation_type = 'ingredient'";
+
+        await using var cmd = new NpgsqlCommand(query, conn, transaction);
+        cmd.Parameters.AddWithValue("@id", id);
+        int result = await RunAsyncQuery(cmd);
+        if (result < 1)
+        {
+            Console.WriteLine($"Error deleting database ingredient by id ({id}); could not delete thumbnails");
+            return $"Error deleting database ingredient by id ({id}); could not delete thumbnails";
+        }
+
+        return null;
     }
 
     public async Task<string> DeleteRecipeById(int recipeId)
@@ -1806,7 +1865,7 @@ public class DbService
                 // return instructionsResult.message;
             }
 
-            var deleteResults = await DeleteRecipeCleanUp(recipeId);
+            string? deleteResults = await DeleteRecipeCleanUp(recipeId);
             if (!string.IsNullOrEmpty(deleteResults))
                 return deleteResults;
         }

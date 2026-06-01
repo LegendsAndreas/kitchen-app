@@ -8,18 +8,6 @@
 @import "superstyles/Edit.css";
 @import "superstyles/EditRecipeLink.css";
 
-@media (max-width: 768px) {
-    .edit-recipes-form {
-        width: 100%;
-    }
-}
-
-@media (min-width: 769px) {
-    .edit-recipes-form {
-        width: 25%;
-    }
-}
-
 .center-content {
     display: flex;
     justify-content: center;

@@ -291,11 +291,17 @@
             return;
         }
 
+        if (string.IsNullOrEmpty(currentIngredient.Base64Image))
+        {
+            await StatusMessageToaster.ShowToastAsync("Image cannot be empty");
+            return;
+        }
+
         currentIngredient.SetCostPer100G(_totalIngredientGrams, _totalIngredientCost);
         var tempIngredient = currentIngredient.TransferIngredient(currentIngredient);
 
         var result = await DbService.AddIngredientToDbAsync(tempIngredient);
-        await StatusMessageToaster.ShowToastAsync(result.Message);
+        await StatusMessageToaster.ShowToastAsync(result);
 
         currentIngredient.ClearIngredient();
         _usePlaceholderPic = false;
