@@ -904,7 +904,7 @@ public class DbService
             foreach (var idImageRecipe in idImageRecipes)
             {
                 Console.WriteLine($"Adding thumbnail for recipe {counter++} out of {idImageRecipes.Count}...");
-                string thumbnail = await helper.SetThumbnailImageAndGetBase64(idImageRecipe.Base64Image);
+                string thumbnail = await helper.GetThumbnailBase64Image(idImageRecipe.Base64Image);
                 await AddThumbnail(thumbnail, "recipe", idImageRecipe.Id, conn, transaction);
             }
 
@@ -949,7 +949,7 @@ public class DbService
             foreach (var idImageRecipe in idImageRecipes)
             {
                 Console.WriteLine($"Adding thumbnail for recipe {counter++} out of {idImageRecipes.Count}...");
-                string thumbnail = await helper.SetThumbnailImageAndGetBase64(idImageRecipe.Base64Image);
+                string thumbnail = await helper.GetThumbnailBase64Image(idImageRecipe.Base64Image);
                 await AddThumbnail(thumbnail, "ingredient", idImageRecipe.Id, conn, transaction);
             }
 

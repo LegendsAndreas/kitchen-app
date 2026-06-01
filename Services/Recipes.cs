@@ -305,19 +305,19 @@ public class Recipe
         TotalMacros = new Macros();
     }
 
-    public async Task<string> SetThumbnailImageAndGetBase64(IBrowserFile image, int width = 305, int height = -1)
+    public async Task<string> GetThumbnailBase64Image(IBrowserFile image, int width = 305, int height = -1)
     {
         var helperStuff = new SharedStuff();
         return await helperStuff.SetThumbnailImageAndGetBase64(image.OpenReadStream(1024 * 1024), width, height);
     }
 
-    public async Task<string> SetThumbnailImageAndGetBase64(Stream image, int width = 305, int height = -1)
+    public async Task<string> GetThumbnailBase64Image(Stream image, int width = 305, int height = -1)
     {
         var helperStuff = new SharedStuff();
         return await helperStuff.SetThumbnailImageAndGetBase64(image, width, height);
     }
 
-    public async Task<string> SetThumbnailImageAndGetBase64(string image, int width = 305, int height = -1)
+    public async Task<string> GetThumbnailBase64Image(string image, int width = 305, int height = -1)
     {
         var helperStuff = new SharedStuff();
         return await helperStuff.SetThumbnailImageAndGetBase64(image, width, height);
