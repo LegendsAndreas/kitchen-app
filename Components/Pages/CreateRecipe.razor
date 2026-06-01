@@ -4,137 +4,139 @@
 
 <PageTitle>Create Recipe</PageTitle>
 
-<h1 class="toast-header p-2 generel__font-layout generel__border-layout d-inline-block generel__animation-fade-in">
-    Create a new recipe!
-</h1>
+<div class="generel__animation-fade-in">
+    <h1 class="toast-header p-2 generel__font-layout generel__border-layout d-inline-block">
+        Create a new recipe!
+    </h1>
 
-<div class="card center-content generel__border-layout generel__animation-fade-in">
-    <div class="card-body">
-        <EditForm Model="@_currentRecipe" OnValidSubmit="CreateNewRecipe">
-            <DataAnnotationsValidator/>
-            <div class="container text-center generel__border-layout m-2 p-4">
-                <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
-                    <div class="col">
-                        <label class="form-label">Meal Type:</label>
-                        <InputText id="meal-type" @bind-Value="_currentRecipe.MealType"/>
-                    </div>
+    <div class="card center-content generel__border-layout">
+        <div class="card-body">
+            <EditForm Model="@_currentRecipe" OnValidSubmit="CreateNewRecipe">
+                <DataAnnotationsValidator/>
+                <div class="container text-center generel__border-layout m-2 p-4">
+                    <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
+                        <div class="col">
+                            <label class="form-label">Meal Type:</label>
+                            <InputText id="meal-type" @bind-Value="_currentRecipe.MealType"/>
+                        </div>
 
-                    <div class="col">
-                        <label>Recipe Name:</label>
-                        <InputText id="name" @bind-Value="_currentRecipe.Name"/>
-                    </div>
+                        <div class="col">
+                            <label>Recipe Name:</label>
+                            <InputText id="name" @bind-Value="_currentRecipe.Name"/>
+                        </div>
 
-                    <div class="col">
-                        <label class="generel__file-label"
-                               for="fileInput">@(string.IsNullOrEmpty(_currentRecipe.Base64Image) ? "Choose Image" : "Image Selected")</label>
-                        <InputFile id="fileInput" OnChange="ChooseImage" class="d-none"></InputFile>
+                        <div class="col">
+                            <label class="generel__file-label"
+                                   for="fileInput">@(string.IsNullOrEmpty(_currentRecipe.Base64Image) ? "Choose Image" : "Image Selected")</label>
+                            <InputFile id="fileInput" OnChange="ChooseImage" class="d-none"></InputFile>
 
-                        @* Putting the label around the input, achives the same effect as putting it just under it, but
+                            @* Putting the label around the input, achives the same effect as putting it just under it, but
                         now it can be activated by clicking on it *@
-                        <label for="use-placeholder-pic">
-                            Placeholder?
-                            <input type="checkbox" id="use-placeholder-pic" @bind="_usePlaceholderPic"
-                                   @onclick="UsePlaceholderPic"/>
-                        </label>
+                            <label for="use-placeholder-pic">
+                                Placeholder?
+                                <input type="checkbox" id="use-placeholder-pic" @bind="_usePlaceholderPic"
+                                       @onclick="UsePlaceholderPic"/>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary col">Create Recipe</button>
+
                     </div>
-
-                    <button type="submit" class="btn btn-primary col">Create Recipe</button>
-
                 </div>
-            </div>
-        </EditForm>
+            </EditForm>
 
-        <EditForm Model="@_currentIngredient" OnValidSubmit="AddIngredient">
-            <DataAnnotationsValidator/>
-            <div class="container text-center generel__border-layout m-2 p-4">
-                <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
-                    <div class="col">
-                        <label>Ingredient Name:</label>
-                        <InputText id="ingredient-name" @bind-Value="_currentIngredient.Name"/>
+            <EditForm Model="@_currentIngredient" OnValidSubmit="AddIngredient">
+                <DataAnnotationsValidator/>
+                <div class="container text-center generel__border-layout m-2 p-4">
+                    <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
+                        <div class="col">
+                            <label>Ingredient Name:</label>
+                            <InputText id="ingredient-name" @bind-Value="_currentIngredient.Name"/>
+                        </div>
+
+                        <div class="col">
+                            <label>Grams:</label>
+                            <InputNumber id="kg" @bind-Value="_currentIngredient.Grams"/>
+                        </div>
+
+                        <div class="col">
+                            <label>Calories (pr. 100g):</label>
+                            <InputNumber id="calories" @bind-Value="_currentIngredient.CaloriesPer100g"/>
+                        </div>
+
+                        <div class="col">
+                            <label>Carbs (pr. 100g):</label>
+                            <InputNumber id="carbs" @bind-Value="_currentIngredient.CarbsPer100g"/>
+                        </div>
+
+                        <div class="col">
+                            <label>Fats (pr. 100g):</label>
+                            <InputNumber id="fats" @bind-Value="_currentIngredient.FatPer100g"/>
+                        </div>
+
+                        <div class="col">
+                            <label>Protein (pr. 100g):</label>
+                            <InputNumber id="protein" @bind-Value="_currentIngredient.ProteinPer100g"/>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Add Ingredient</button>
                     </div>
-
-                    <div class="col">
-                        <label>Grams:</label>
-                        <InputNumber id="kg" @bind-Value="_currentIngredient.Grams"/>
-                    </div>
-
-                    <div class="col">
-                        <label>Calories (pr. 100g):</label>
-                        <InputNumber id="calories" @bind-Value="_currentIngredient.CaloriesPer100g"/>
-                    </div>
-
-                    <div class="col">
-                        <label>Carbs (pr. 100g):</label>
-                        <InputNumber id="carbs" @bind-Value="_currentIngredient.CarbsPer100g"/>
-                    </div>
-
-                    <div class="col">
-                        <label>Fats (pr. 100g):</label>
-                        <InputNumber id="fats" @bind-Value="_currentIngredient.FatPer100g"/>
-                    </div>
-
-                    <div class="col">
-                        <label>Protein (pr. 100g):</label>
-                        <InputNumber id="protein" @bind-Value="_currentIngredient.ProteinPer100g"/>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Add Ingredient</button>
                 </div>
-            </div>
-        </EditForm>
+            </EditForm>
 
-        <EditForm Model="@_currentIngredientRecipe" OnSubmit="AddRecipeAsIngredient">
-            <div class="container text-center generel__border-layout m-2 p-4">
-                <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
-                    <BetterRealTimeRecipesSearch
-                        CurrentRecipeDataHasChanged="@(value => _currentIngredientRecipe = value)"/>
+            <EditForm Model="@_currentIngredientRecipe" OnSubmit="AddRecipeAsIngredient">
+                <div class="container text-center generel__border-layout m-2 p-4">
+                    <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
+                        <BetterRealTimeRecipesSearch
+                            CurrentRecipeDataHasChanged="@(value => _currentIngredientRecipe = value)"/>
 
-                    <div class="col">
-                        <label class="form-label">Parts: 1/</label>
-                        <InputNumber @bind-Value="_currentIngredientRecipeParts"/>
+                        <div class="col">
+                            <label class="form-label">Parts: 1/</label>
+                            <InputNumber @bind-Value="_currentIngredientRecipeParts"/>
+                        </div>
+
+                        <div class="col">
+                            <p>Current Recipe: @_currentIngredientRecipe.Name</p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Add Recipe As
+                            Ingredient
+                        </button>
                     </div>
-
-                    <div class="col">
-                        <p>Current Recipe: @_currentIngredientRecipe.Name</p>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Add Recipe As
-                        Ingredient
-                    </button>
                 </div>
-            </div>
-        </EditForm>
+            </EditForm>
 
-        <EditForm Model="@_currentIngredientGrams" OnSubmit="AddDatabaseIngredient">
-            <DataAnnotationsValidator/>
-            <div class="container text-center generel__border-layout m-2 p-4">
-                <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
+            <EditForm Model="@_currentIngredientGrams" OnSubmit="AddDatabaseIngredient">
+                <DataAnnotationsValidator/>
+                <div class="container text-center generel__border-layout m-2 p-4">
+                    <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
 
-                    <BetterRealTimeIngredientsSearch
-                        CurrentIngredientDataHasChanged="@(value => _crossIngredient = value)"/>
+                        <BetterRealTimeIngredientsSearch
+                            CurrentIngredientDataHasChanged="@(value => _crossIngredient = value)"/>
 
-                    <div class="col">
-                        <label class="form-label">Grams</label>
-                        <InputNumber @bind-Value="_currentIngredientGrams"/>
+                        <div class="col">
+                            <label class="form-label">Grams</label>
+                            <InputNumber @bind-Value="_currentIngredientGrams"/>
+                        </div>
+
+                        <div class="col">
+                            <p>Current Ingredient: @_crossIngredient.Name</p>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Add Database Ingredient</button>
                     </div>
-
-                    <div class="col">
-                        <p>Current Ingredient: @_crossIngredient.Name</p>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Add Database Ingredient</button>
                 </div>
-            </div>
-        </EditForm>
+            </EditForm>
+        </div>
     </div>
-</div>
 
-<div class="mb-3 generel__animation-fade-in">
-    <AddedIngredients CurrentAddedIngredients="@_currentIngredients"/>
-</div>
+    <div class="mb-3">
+        <AddedIngredients CurrentAddedIngredients="@_currentIngredients"/>
+    </div>
 
-<div class="mb-3 generel__animation-fade-in">
-    <PreviewRecipe CurrentPreviewRecipe="@_currentRecipe" ViewSideWays="true"/>
+    <div class="mb-3">
+        <PreviewRecipe CurrentPreviewRecipe="@_currentRecipe" ViewSideWays="true"/>
+    </div>
 </div>
 
 <StatusMessageToast @ref="_statusMessageToaster"/>
@@ -164,7 +166,7 @@
                 string base64Image = Convert.ToBase64String(imageBytes);
 
                 _currentRecipe.Base64Image = base64Image;
-                
+
                 using var imageStream = new MemoryStream(imageBytes);
                 _base64Thumbnail = await _currentRecipe.SetThumbnailImageAndGetBase64(imageStream);
                 // await File.WriteAllTextAsync("wwwroot/pics/Thumbnails/" + _currentRecipe.RecipeId + ".txt", _base64Thumbnail);

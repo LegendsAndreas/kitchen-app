@@ -18,21 +18,18 @@
   cursor: pointer;
 }
 .generel__animation-fade-in {
-  position: relative;
   opacity: 0;
-  z-index: 0;
-  top: -10px;
   animation: fadeIn 0.3s ease-in-out forwards;
 }
 
 @keyframes fadeIn {
   from {
     opacity: 0;
-    top: -10px;
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
-    top: 0;
+    transform: translateY(0);
   }
 }
 
