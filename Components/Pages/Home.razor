@@ -1,5 +1,6 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+@using BlazorBootstrap;
 @inject NavigationManager NavigationManager;
 @inject DbService DbService;
 @inject SharedRecipe SharedDetailRecipe
@@ -8,10 +9,6 @@
 <PageTitle>Recipes</PageTitle>
 
 <div class="container">
-    @* Uncomment to access the developer page. *@
-    @*<button class="btn btn-primary" onclick="@(() => navigationManager.NavigateTo("/developer"))">Go To developer
-    </button>*@
-
     @if (_loading)
     {
         <Loading LoadingParameter="recipes"/>
@@ -19,6 +16,15 @@
 
     @if (!_loading)
     {
+        <EditForm Model="@_recipeSearch" OnValidSubmit="SearchRecipes">
+            <div class="ingredients__form my-2 generel__animation-fade-in">
+                <div class="d-flex gap-2">
+                    <InputText @bind-Value="_recipeSearch" class="form-control"/>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </EditForm>
+
         <div class="generel__animation-fade-in">
             <PaginatorPage
                 CurrentPage="_currentRecipesPage"
@@ -77,6 +83,7 @@
 
     int _currentRecipesPage = 1;
     bool _loading = true;
+    string _recipeSearch = "";
     List<Recipe> _recipes = [];
     StatusMessageToast _toaster = new();
 
@@ -148,6 +155,13 @@
                 await _toaster.ShowToastAsync("Connection failure: " + ex.Message);
             _loading = false;
         }
+    }
+
+    private async Task SearchRecipes()
+    {
+        _loading = true;
+        _loading = false;
+        StateHasChanged();
     }
 
 }
