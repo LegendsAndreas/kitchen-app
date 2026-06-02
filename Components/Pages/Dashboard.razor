@@ -1,6 +1,8 @@
 ﻿@page "/dashboard"
 @inject DbService DbService
 
+<PageTitle>Dashboard</PageTitle>
+
 <div class="stats generel__animation-fade-in">
 
     @if (_loadingStats)
@@ -217,9 +219,9 @@
     protected override async Task OnInitializedAsync()
     {
         await BaseStats();
-        await  InstructionsStats();
-        await  MissingRecipePlaceHolderStats();
-        await  MissingIngredientsPlaceHolderStats();
+        await InstructionsStats();
+        await MissingRecipePlaceHolderStats();
+        await MissingIngredientsPlaceHolderStats();
 
         _loadingMissingImages = false;
         StateHasChanged();

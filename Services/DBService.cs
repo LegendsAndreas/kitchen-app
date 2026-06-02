@@ -2094,9 +2094,11 @@ public class DbService
     {
         Dictionary<int, string> stats = new();
 
-        string instructionsQuery = "SELECT id, name " +
-                                   "FROM recipes " +
-                                   "WHERE id IN (SELECT id FROM recipe_instructions)";
+        string instructionsQuery = "SELECT r.id, r.name " +
+                                   "FROM recipes AS r " +
+                                   "LEFT JOIN recipe_instructions ri ON r.id = ri.recipe_id " +
+                                   "WHERE ri.recipe_id IS NULL " +
+                                   "ORDER BY r.id ";
 
         try
         {

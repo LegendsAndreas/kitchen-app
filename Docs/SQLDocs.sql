@@ -19,6 +19,23 @@ FROM recipes AS r
          INNER JOIN thumbnails t ON t.relation_id = r.id AND t.relation_type = 'recipe'
 LIMIT 5;
 
+SELECT r.id, r.name
+FROM recipes AS r
+         INNER JOIN recipe_instructions ri ON r.id = ri.recipe_id
+ORDER BY r.id;
+
+SELECT r.id, r.name
+FROM recipes AS r
+WHERE r.id NOT IN (SELECT recipe_id FROM recipe_instructions)
+ORDER BY r.id;
+
+SELECT r.id, r.name
+FROM recipes AS r
+         LEFT JOIN recipe_instructions AS ri
+                   ON r.id = ri.recipe_id
+WHERE ri.recipe_id IS NULL
+ORDER BY r.id;
+
 /* Work optimization, because we use an implicit join */
 SELECT r.id,
        r.name,
