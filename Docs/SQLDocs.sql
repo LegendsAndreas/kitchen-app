@@ -41,9 +41,11 @@ SELECT r.id,
                        'multiplier', i.multiplier
                )
        ) AS ingredients
-FROM recipes AS r, thumbnails AS t,
+FROM recipes AS r,
+     thumbnails AS t,
      unnest(r.ingredients) AS i
-WHERE r.id = t.relation_id AND t.relation_type = 'recipe'
+WHERE r.id = t.relation_id
+  AND t.relation_type = 'recipe'
 GROUP BY r.id, t.image
 ORDER BY r.id
 LIMIT 20 OFFSET 0;
@@ -170,7 +172,7 @@ SELECT *
 FROM recipes
 WHERE id = 1;
 
-INSERT INTO sought_after_items
+INSERT INTO sought_after_items;
 
 DROP TABLE sought_after_items;
 
@@ -569,9 +571,12 @@ CREATE TABLE recipe_instructions
 );
 
 ALTER TABLE recipe_instructions
+    DROP CONSTRAINT fk_recipe_id;
+
+ALTER TABLE recipe_instructions
     DROP CONSTRAINT fk_recipe_id,
     ADD CONSTRAINT fk_recipe_id
-        FOREIGN KEY (id)
+        FOREIGN KEY (recipe_id)
             REFERENCES recipes (id)
             ON DELETE
                 CASCADE;
@@ -580,6 +585,10 @@ ALTER TABLE recipe_instructions
     ADD recipe_id INT;
 ALTER TABLE recipe_instructions
     ADD CONSTRAINT FK_recipe_id FOREIGN KEY (recipe_id) REFERENCES recipes (id);
+
+/* Wont work, because the table thumbnails is designed for multiple tables. */
+ALTER TABLE thumbnails
+    ADD CONSTRAINT FK_relation_id FOREIGN KEY (relation_id) REFERENCES recipes (id) ON DELETE CASCADE;
 
 SELECT id, instructions, recipe_id
 FROM recipe_instructions;
