@@ -388,6 +388,11 @@ public class SharedStuff
     
     public async Task<string> SetThumbnailImageAndGetBase64(string base64Input, int width, int height)
     {
+        // -vcodec mjpeg: Encodes the output to a motion JPEG, which is suited for piping.
+        // -f image2pipe: Just tells the program that the output will be forwarded as a pipe.
+        // UseShellExecute = false: Would run in the OS shell instead. Works in tandem with piping and RedirectStandard Input, Output and Error,
+        // so that we can influence the command in the the C# program.
+        // CreateNoWindow = true: No terminal will popup. Mostly for when it is running on the server.
         var startInfo = new ProcessStartInfo
         {
             FileName = "ffmpeg",
@@ -401,16 +406,14 @@ public class SharedStuff
 
         using var process = new Process();
         process.StartInfo = startInfo;
+        byte[] inputBytes = Convert.FromBase64String(base64Input);
         process.Start();
 
-        // Convert Base64 input into bytes
-        byte[] inputBytes = Convert.FromBase64String(base64Input);
-
-        // Write bytes to FFmpeg stdin
+        // Write bytes to FFmpeg stdin, essentially the "pipe:0" part of the command.
         await process.StandardInput.BaseStream.WriteAsync(inputBytes, 0, inputBytes.Length);
         process.StandardInput.Close();
 
-        // Read output (resized image)
+        // Read output (resized image), essentially the "pipe:1" part of the command.
         using var ms = new MemoryStream();
         await process.StandardOutput.BaseStream.CopyToAsync(ms);
 
