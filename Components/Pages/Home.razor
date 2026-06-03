@@ -1,5 +1,6 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+@using BlazorBootstrap;
 @inject NavigationManager NavigationManager;
 @inject DbService DbService;
 @inject SharedRecipe SharedDetailRecipe
@@ -8,10 +9,6 @@
 <PageTitle>Recipes</PageTitle>
 
 <div class="container">
-    @* Uncomment to access the developer page. *@
-    @*<button class="btn btn-primary" onclick="@(() => navigationManager.NavigateTo("/developer"))">Go To developer
-    </button>*@
-
     @if (_loading)
     {
         <Loading LoadingParameter="recipes"/>
@@ -19,13 +16,25 @@
 
     @if (!_loading)
     {
-        <div class="generel__animation-fade-in">
-            <PaginatorPage
-                CurrentPage="_currentRecipesPage"
-                CurrentPageChanged="OnRecipesPageChanged"
-                MaxPages="DbService.MaxRecipesPages"
-                OnToastMessage="ShowToast"/>
-        </div>
+        <EditForm Model="@_recipeSearch" OnSubmit="SearchRecipes">
+            <div class="ingredients__form my-2 generel__animation-fade-in">
+                <div class="d-flex gap-2">
+                    <InputText @bind-Value="_recipeSearch" class="form-control"/>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+        </EditForm>
+
+        if (string.IsNullOrWhiteSpace(_recipeSearch))
+        {
+            <div class="generel__animation-fade-in">
+                <PaginatorPage
+                    CurrentPage="_currentRecipesPage"
+                    CurrentPageChanged="OnRecipesPageChanged"
+                    MaxPages="DbService.MaxRecipesPages"
+                    OnToastMessage="ShowToast"/>
+            </div>
+        }
     }
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
@@ -58,7 +67,7 @@
         }
     </div>
 
-    @if (!_loading)
+    @if (!_loading && string.IsNullOrWhiteSpace(_recipeSearch))
     {
         <div class="generel__animation-fade-in">
             <PaginatorPage
@@ -77,6 +86,7 @@
 
     int _currentRecipesPage = 1;
     bool _loading = true;
+    string _recipeSearch = "";
     List<Recipe> _recipes = [];
     StatusMessageToast _toaster = new();
 
@@ -95,7 +105,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!_recipes.Any())
+        if (!_recipes.Any() && string.IsNullOrWhiteSpace(_recipeSearch))
         {
             await DbService.SetTotalVariables();
             await GetRecipes();
@@ -148,6 +158,34 @@
                 await _toaster.ShowToastAsync("Connection failure: " + ex.Message);
             _loading = false;
         }
+    }
+
+    private async Task SearchRecipes()
+    {
+        if (string.IsNullOrWhiteSpace(_recipeSearch)) return;
+
+        _loading = true;
+        try
+        {
+            var result = await DbService.SearchRecipes(_recipeSearch);
+            if (result.Recipes == null)
+            {
+                await _toaster.ShowToastAsync(result.Message);
+            }
+            else
+            {
+                _recipes = result.Recipes;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting recipes: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            _loading = false;
+        }
+
+        _loading = false;
+        StateHasChanged();
     }
 
 }

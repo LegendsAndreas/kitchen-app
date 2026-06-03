@@ -36,6 +36,10 @@ FROM recipes AS r
 WHERE ri.recipe_id IS NULL
 ORDER BY r.id;
 
+SELECT id, name, cost_per_100g FROM ingredients WHERE id = ANY(ARRAY[1, 2]);
+
+SELECT cost_per_100g FROM ingredients WHERE id = 38;
+
 /* Work optimization, because we use an implicit join */
 SELECT r.id,
        r.name,

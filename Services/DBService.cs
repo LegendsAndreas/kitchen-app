@@ -848,20 +848,20 @@ public class DbService
         return null;
     }
 
-    private async Task<string?> AddThumbnail(string base64Image, string relation, int recipeId, NpgsqlConnection conn,
+    private async Task<string?> AddThumbnail(string base64Image, string relation, int id, NpgsqlConnection conn,
         NpgsqlTransaction transaction)
     {
         Console.WriteLine("Adding thumbnail to database...");
 
         const string query =
-            "INSERT INTO thumbnails (image, relation_id, relation_type) VALUES (@image, @recipe_id,@relation)";
+            "INSERT INTO thumbnails (image, relation_id, relation_type) VALUES (@image, @relation_id,@relation_type)";
 
         try
         {
             NpgsqlCommand cmd = new(query, conn, transaction);
             cmd.Parameters.AddWithValue("@image", base64Image);
-            cmd.Parameters.AddWithValue("@recipe_id", recipeId);
-            cmd.Parameters.AddWithValue("@relation", relation);
+            cmd.Parameters.AddWithValue("@relation_id", id);
+            cmd.Parameters.AddWithValue("@relation_type", relation);
             if (await RunAsyncQuery(cmd) < 1)
                 return "Error adding thumbnail to database.";
         }
@@ -870,6 +870,33 @@ public class DbService
             Console.WriteLine($"Error adding thumbnail to database: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             return $"Error adding thumbnail to database: {ex.Message}.";
+        }
+
+        return null;
+    }
+
+    private async Task<string?> UpdateThumbnail(string base64Image, string relation, int id, NpgsqlConnection conn,
+        NpgsqlTransaction transaction)
+    {
+        Console.WriteLine("Updating thumbnail in database...");
+        
+        const string query =
+            "UPDATE thumbnails SET image = @image WHERE relation_id = @relation_id AND relation_type = @relation_type";
+
+        try
+        {
+            NpgsqlCommand cmd = new(query, conn, transaction);
+            cmd.Parameters.AddWithValue("@image", base64Image);
+            cmd.Parameters.AddWithValue("@relation_id", id);
+            cmd.Parameters.AddWithValue("@relation_type", relation);
+            if (await RunAsyncQuery(cmd) < 1)
+                return "Error updating thumbnail in database.";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error updating thumbnail in database: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return $"Error updating thumbnail in database: {ex.Message}.";
         }
 
         return null;
@@ -1090,7 +1117,7 @@ public class DbService
             Recipe thumbnailHelper = new();
             string thumbnail = await thumbnailHelper.GetThumbnailBase64Image(ingredient.Base64Image);
 
-            string? thumbnailMsg = await AddThumbnail(thumbnail, "ingredient", ingredientId, conn, transaction);
+            string? thumbnailMsg = await UpdateThumbnail(thumbnail, "ingredient", ingredientId, conn, transaction);
             if (!string.IsNullOrEmpty(thumbnailMsg))
             {
                 await transaction.RollbackAsync();
@@ -1156,6 +1183,13 @@ public class DbService
             Console.WriteLine("Recipe ID is less than 1");
             return "Recipe ingredients did not get updated; recipe ID is less than 1";
         }
+
+        foreach (var ingredient in recipe.Ingredients)
+        {
+            ingredient.CostPer100g = await GetIngredientCost(ingredient.Name);
+        }
+
+        recipe.TotalCost = recipe.Ingredients.Select(i => i.CostPer100g * i.Multiplier).Sum();
 
         const string query = "UPDATE recipes " +
                              "SET macros = ROW(" +
@@ -1270,6 +1304,23 @@ public class DbService
             Console.WriteLine("Error adding ingredients to row: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             throw;
+        }
+    }
+
+    private async Task<float> GetIngredientCost(string name)
+    {
+        const string query = "SELECT cost_per_100g FROM ingredients WHERE name = @name";
+        await using var conn = await GetConnectionAsync();
+        await using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@name", name);
+        await using var reader = await cmd.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return reader.GetFloat(0);
+        }
+        else
+        {
+            return 0;
         }
     }
 
@@ -1415,12 +1466,15 @@ public class DbService
                              "protein = @protein," +
                              "image = @image, " +
                              "cost_per_100g = @cost " +
-                             "WHERE id = @id";
+                             "WHERE id = @id " +
+                             "RETURNING id";
 
+        await using var conn = await GetConnectionAsync();
+        await using var transaction = await conn.BeginTransactionAsync();
+        await using var cmd = new NpgsqlCommand(query, conn, transaction);
+        
         try
         {
-            await using var conn = await GetConnectionAsync();
-            await using var cmd = new NpgsqlCommand(query, conn);
             cmd.Parameters.AddWithValue("@name", ingredient.Name);
             cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
             cmd.Parameters.AddWithValue("@fats", ingredient.FatPer100g);
@@ -1435,13 +1489,29 @@ public class DbService
                 Console.WriteLine("Ingredient ID is zero. Not updating.");
                 return "Ingredient ID is zero. Not updating.";
             }
-
-            var result = await RunAsyncQuery(cmd);
-            if (result == 0)
+            
+            var ingredientId = await cmd.ExecuteScalarAsync();
+            if (ingredientId == null)
             {
-                Console.WriteLine("Ingredient ID is not found in database.");
-                statusMessage = "Ingredient did not get updated; ingredient ID was not found in database.";
+                Console.WriteLine("Error adding recipe to database; could not get ID of new recipe");
+                return "Error adding recipe to database; could not get ID of new recipe";
             }
+
+            if (!int.TryParse(ingredientId.ToString(), out var recipeId))
+            {
+                Console.WriteLine("Error adding recipe to database; could not parse ID of new recipe");
+                return "Error retrieving recipe ID.";
+            }
+            
+            Recipe thumbnailHelper = new();
+            string thumbnail = await thumbnailHelper.GetThumbnailBase64Image(ingredient.Base64Image);
+            string? thumbnailMsg = await UpdateThumbnail(thumbnail, "ingredient", recipeId, conn, transaction);
+            if (!string.IsNullOrEmpty(thumbnailMsg))
+            {
+                return "Error adding thumbnail; " + thumbnailMsg;
+            }
+            
+            await transaction.CommitAsync();
         }
         catch (Exception ex)
         {
@@ -1774,6 +1844,62 @@ public class DbService
         return (recipes, "Recipes found");
     }
 
+    public async Task<(List<Recipe>? Recipes, string Message)> SearchRecipes(string search)
+    {
+        List<Recipe> recipes = [];
+
+        string query = "SELECT r.id, " +
+                       "r.name, " +
+                       "r.meal_type, " +
+                       "t.image, " +
+                       "r.cost, " +
+                       "(r.macros).total_calories, " +
+                       "(r.macros).total_carbs, " +
+                       "(r.macros).total_fats, " +
+                       "(r.macros).total_protein, " +
+                       "json_agg(" +
+                       "    json_build_object(" +
+                       "         'name', i.name," +
+                       "         'grams', i.grams," +
+                       "         'calories_pr_hectogram', i.calories_pr_hectogram," +
+                       "         'fats_pr_hectogram', i.fats_pr_hectogram," +
+                       "         'carbs_pr_hectogram', i.carbs_pr_hectogram," +
+                       "         'protein_pr_hectogram', i.protein_pr_hectogram," +
+                       "         'cost_per_hectogram', COALESCE(i.cost_per_100g, 0)," +
+                       "         'multiplier', i.multiplier" +
+                       "     )" +
+                       ") AS ingredients " +
+                       "FROM recipes AS r " +
+                       "LEFT JOIN LATERAL unnest(r.ingredients) AS i ON TRUE " +
+                       "LEFT JOIN thumbnails AS t ON t.relation_id = r.id AND t.relation_type = 'recipe' " +
+                       "WHERE r.name ILIKE @searchParam " +
+                       "GROUP BY r.id, t.image " +
+                       "ORDER BY r.name ILIKE @searchParamPiority DESC, " +
+                       "r.name ILIKE @searchParam DESC " +
+                       $"LIMIT {ITEMS_PER_PAGE}";
+
+        try
+        {
+            await using NpgsqlConnection conn = await GetConnectionAsync();
+            await using NpgsqlCommand cmd = new(query, conn);
+            cmd.Parameters.AddWithValue("@searchParam", $"%{search}%");
+            cmd.Parameters.AddWithValue("@searchParamPiority", $"{search}%");
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                Recipe tempRecipe = MakeRecipe(reader);
+                recipes.Add(tempRecipe);
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error getting recipes: " + e.Message);
+            return (null, "Error getting recipes: " + e.Message);
+        }
+
+        return (recipes, "Recipes found");
+    }
+
     public async Task<string?> DeleteDbIngredientById(int id)
     {
         Console.WriteLine("Deleting database ingredient by name...");
@@ -1788,7 +1914,7 @@ public class DbService
             const string query = "DELETE FROM ingredients WHERE id = @id";
             await using var cmd = new NpgsqlCommand(query, conn, transaction);
             cmd.Parameters.AddWithValue("@id", id);
-            
+
             int result = await RunAsyncQuery(cmd);
             if (result < 1)
             {
@@ -2176,11 +2302,11 @@ public class DbService
 
 
     /// Executes the provided SQL query asynchronously and processes the number of affected rows.
-    /// <param name="query">An instance of NpgsqlCommand representing the query to be executed.</param>
+    /// <param name="cmd">An instance of NpgsqlCommand representing the query to be executed.</param>
     /// <return>An integer representing the number of rows affected by the query.</return>
-    private async Task<int> RunAsyncQuery(NpgsqlCommand query)
+    private async Task<int> RunAsyncQuery(NpgsqlCommand cmd)
     {
-        int result = await query.ExecuteNonQueryAsync();
+        int result = await cmd.ExecuteNonQueryAsync();
         if (result <= 0)
             Console.WriteLine("No records affected.");
         else
