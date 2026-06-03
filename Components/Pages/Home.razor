@@ -16,7 +16,7 @@
 
     @if (!_loading)
     {
-        <EditForm Model="@_recipeSearch" OnValidSubmit="SearchRecipes">
+        <EditForm Model="@_recipeSearch" OnSubmit="SearchRecipes">
             <div class="ingredients__form my-2 generel__animation-fade-in">
                 <div class="d-flex gap-2">
                     <InputText @bind-Value="_recipeSearch" class="form-control"/>
@@ -25,13 +25,16 @@
             </div>
         </EditForm>
 
-        <div class="generel__animation-fade-in">
-            <PaginatorPage
-                CurrentPage="_currentRecipesPage"
-                CurrentPageChanged="OnRecipesPageChanged"
-                MaxPages="DbService.MaxRecipesPages"
-                OnToastMessage="ShowToast"/>
-        </div>
+        if (string.IsNullOrWhiteSpace(_recipeSearch))
+        {
+            <div class="generel__animation-fade-in">
+                <PaginatorPage
+                    CurrentPage="_currentRecipesPage"
+                    CurrentPageChanged="OnRecipesPageChanged"
+                    MaxPages="DbService.MaxRecipesPages"
+                    OnToastMessage="ShowToast"/>
+            </div>
+        }
     }
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-1">
@@ -64,7 +67,7 @@
         }
     </div>
 
-    @if (!_loading)
+    @if (!_loading && string.IsNullOrWhiteSpace(_recipeSearch))
     {
         <div class="generel__animation-fade-in">
             <PaginatorPage
@@ -102,7 +105,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (!_recipes.Any())
+        if (!_recipes.Any() && string.IsNullOrWhiteSpace(_recipeSearch))
         {
             await DbService.SetTotalVariables();
             await GetRecipes();
@@ -159,7 +162,28 @@
 
     private async Task SearchRecipes()
     {
+        if (string.IsNullOrWhiteSpace(_recipeSearch)) return;
+
         _loading = true;
+        try
+        {
+            var result = await DbService.SearchRecipes(_recipeSearch);
+            if (result.Recipes == null)
+            {
+                await _toaster.ShowToastAsync(result.Message);
+            }
+            else
+            {
+                _recipes = result.Recipes;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting recipes: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            _loading = false;
+        }
+
         _loading = false;
         StateHasChanged();
     }
