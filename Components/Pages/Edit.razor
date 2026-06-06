@@ -4,89 +4,90 @@
 @inject NavigationManager NavigationManager
 
 <PageTitle>Edit</PageTitle>
+<div class="generel__animation-fade-in">
+    <div class="dropdown mb-2">
+        <a class="btn btn-primary custom-layout dropdown-toggle btn-lg" href="#" role="button" data-bs-toggle="dropdown"
+           aria-expanded="false">
+            Choose what to edit
+        </a>
 
-<div class="dropdown mb-2 generel__animation-fade-in">
-    <a class="btn btn-primary custom-layout dropdown-toggle btn-lg" href="#" role="button" data-bs-toggle="dropdown"
-       aria-expanded="false">
-        Choose what to edit
-    </a>
-
-    <ul class="dropdown-menu">
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("edit-recipe"))">
-                Recipe
-            </button>
-        </li>
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("delete-recipe"))">Delete
-                Recipe
-            </button>
-        </li>
-        <li>
-            <hr class="dropdown-divider"/>
-        </li>
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("database-ingredient"))">
-                Database Ingredient
-            </button>
-        </li>
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("delete-ingredient"))">
-                Delete
-                Database Ingredient
-            </button>
-        </li>
-        <li>
-            <hr class="dropdown-divider"/>
-        </li>
-        <li>
-            <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("instructions"))">
-                Instructions
-            </button>
-        </li>
-    </ul>
-</div>
-
-@if (_selectedOption != "")
-{
-    <div class="card generel__border-layout">
-        <div class="card-body edit__button-margin--button">
-            @switch (_selectedOption)
-            {
-                case "delete-recipe":
-                    <div class="edit-recipes-form">
-                        <DeleteRecipeForm
-                            OnToastMessage="ShowToast"/>
-                    </div>
-                    break;
-                case "database-ingredient":
-                    <div class="generel__animation-fade-in">
-                        <EditDbIngredient/>
-                    </div>
-                    break;
-                case "delete-ingredient":
-                    <div class="edit-recipes-form">
-                        <DeleteDbIngredientForm/>
-                    </div>
-                    break;
-                case "instructions":
-                    <div class="generel__animation-fade-in">
-                        <EditInstructionsForm/>
-                    </div>
-                    break;
-                case "edit-recipe":
-                    <div>
-                        <EditRecipe/>
-                    </div>
-                    break;
-                default:
-                    _selectedOption = "";
-                    break;
-            }
-        </div>
-
+        <ul class="dropdown-menu">
+            <li>
+                <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("edit-recipe"))">
+                    Recipe
+                </button>
+            </li>
+            <li>
+                <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("delete-recipe"))">Delete
+                    Recipe
+                </button>
+            </li>
+            <li>
+                <hr class="dropdown-divider"/>
+            </li>
+            <li>
+                <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("database-ingredient"))">
+                    Database Ingredient
+                </button>
+            </li>
+            <li>
+                <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("delete-ingredient"))">
+                    Delete
+                    Database Ingredient
+                </button>
+            </li>
+            <li>
+                <hr class="dropdown-divider"/>
+            </li>
+            <li>
+                <button class="dropdown-item" type="submit" onclick="@(() => ChangeOption("instructions"))">
+                    Instructions
+                </button>
+            </li>
+        </ul>
     </div>
-}
+
+    @if (_selectedOption != "")
+    {
+        <div class="card generel__border-layout">
+            <div class="card-body edit__button-margin--button">
+                @switch (_selectedOption)
+                {
+                    case "delete-recipe":
+                        <div class="edit-recipes-form">
+                            <DeleteRecipeForm
+                                OnToastMessage="ShowToast"/>
+                        </div>
+                        break;
+                    case "database-ingredient":
+                        <div class="generel__animation-fade-in">
+                            <EditDbIngredient/>
+                        </div>
+                        break;
+                    case "delete-ingredient":
+                        <div class="edit-recipes-form">
+                            <DeleteDbIngredientForm/>
+                        </div>
+                        break;
+                    case "instructions":
+                        <div class="generel__animation-fade-in">
+                            <EditInstructionsForm/>
+                        </div>
+                        break;
+                    case "edit-recipe":
+                        <div>
+                            <EditRecipe/>
+                        </div>
+                        break;
+                    default:
+                        _selectedOption = "";
+                        break;
+                }
+            </div>
+
+        </div>
+    }
+</div>
 
 <StatusMessageToast @ref="_recipeStatusToaster"/>
 
