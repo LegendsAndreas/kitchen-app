@@ -1102,14 +1102,12 @@ public class DbService
             var newIngredientId = await cmd.ExecuteScalarAsync();
             if (newIngredientId == null)
             {
-                await transaction.RollbackAsync();
                 Console.WriteLine("Error adding ingredient to database; could not get ID of new ingredient");
                 return "Error adding ingredient to database; could not get ID of new ingredient";
             }
 
             if (!int.TryParse(newIngredientId.ToString(), out var ingredientId))
             {
-                await transaction.RollbackAsync();
                 Console.WriteLine("Error adding recipe to database; could not parse ID of new ingredient");
                 return "Error retrieving ingredient ID.";
             }
@@ -1117,10 +1115,9 @@ public class DbService
             Recipe thumbnailHelper = new();
             string thumbnail = await thumbnailHelper.GetThumbnailBase64Image(ingredient.Base64Image);
 
-            string? thumbnailMsg = await UpdateThumbnail(thumbnail, "ingredient", ingredientId, conn, transaction);
+            string? thumbnailMsg = await AddThumbnail(thumbnail, "ingredient", ingredientId, conn, transaction);
             if (!string.IsNullOrEmpty(thumbnailMsg))
             {
-                await transaction.RollbackAsync();
                 return "Error adding thumbnail; " + thumbnailMsg;
             }
 
@@ -1128,8 +1125,7 @@ public class DbService
         }
         catch (Exception ex)
         {
-            await transaction.RollbackAsync();
-            Console.WriteLine($"Error adding ingredients to database: " + ex.Message);
+            Console.WriteLine("Error adding ingredients to database: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             return "Error adding ingredients to database: " + ex.Message;
         }
