@@ -254,7 +254,7 @@
         _currentIngredient.FatPer100g = _currentIngredientRecipe.TotalMacros.Fat;
         _currentIngredient.CarbsPer100g = _currentIngredientRecipe.TotalMacros.Carbs;
         _currentIngredient.ProteinPer100g = _currentIngredientRecipe.TotalMacros.Protein;
-        _currentIngredient.CostPer100g = _currentIngredientRecipe.TotalCost / _currentIngredientRecipeParts;
+        _currentIngredient.CostPer100g = _currentIngredientRecipe.TotalCost;
 
         AddIngredient();
     }
