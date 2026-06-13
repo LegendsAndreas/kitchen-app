@@ -45,45 +45,6 @@
                 </div>
             </EditForm>
 
-            <EditForm Model="@_currentIngredient" OnValidSubmit="AddIngredient">
-                <DataAnnotationsValidator/>
-                <div class="container text-center generel__border-layout m-2 p-4">
-                    <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
-                        <div class="col">
-                            <label>Ingredient Name:</label>
-                            <InputText id="ingredient-name" @bind-Value="_currentIngredient.Name"/>
-                        </div>
-
-                        <div class="col">
-                            <label>Grams:</label>
-                            <InputNumber id="kg" @bind-Value="_currentIngredient.Grams"/>
-                        </div>
-
-                        <div class="col">
-                            <label>Calories (pr. 100g):</label>
-                            <InputNumber id="calories" @bind-Value="_currentIngredient.CaloriesPer100g"/>
-                        </div>
-
-                        <div class="col">
-                            <label>Carbs (pr. 100g):</label>
-                            <InputNumber id="carbs" @bind-Value="_currentIngredient.CarbsPer100g"/>
-                        </div>
-
-                        <div class="col">
-                            <label>Fats (pr. 100g):</label>
-                            <InputNumber id="fats" @bind-Value="_currentIngredient.FatPer100g"/>
-                        </div>
-
-                        <div class="col">
-                            <label>Protein (pr. 100g):</label>
-                            <InputNumber id="protein" @bind-Value="_currentIngredient.ProteinPer100g"/>
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">Add Ingredient</button>
-                    </div>
-                </div>
-            </EditForm>
-
             <EditForm Model="@_currentIngredientRecipe" OnSubmit="AddRecipeAsIngredient">
                 <div class="container text-center generel__border-layout m-2 p-4">
                     <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
@@ -258,7 +219,7 @@
         _usePlaceholderPic = false;
     }
 
-    public void AddIngredient()
+    private void AddIngredient()
     {
         Console.WriteLine("Handling ingredient...");
         var tempIngredient = _currentIngredient.TransferIngredient(_currentIngredient);
