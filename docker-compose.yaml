@@ -1,0 +1,6 @@
+﻿services:
+  kitchen:
+    container_name: Kitchen-App
+    build: .
+    ports:
+      - "8081:5001"

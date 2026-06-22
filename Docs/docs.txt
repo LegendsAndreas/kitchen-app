@@ -249,3 +249,6 @@ collation for portability reasons, instead of "da_DK.UTF-8".
 
 15-11-25: Task.WhenAll Dashboard.
 I kept getting null references when i used Task.WhenAll, instead of just the older way, so i just went back
+
+Docker:
+mcr.microsoft.com/dotnet/aspnet:9.0 has both needed libraries for getting the blazor project to work.
