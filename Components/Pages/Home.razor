@@ -21,6 +21,13 @@
                     <InputText @bind-Value="_recipeSearch" class="form-control"/>
                     <button type="submit" class="btn btn-primary">Search</button>
                 </div>
+                <div class="mt-2">
+                    <button type="button" class="home__filter-btn @(_filterBreakfast ? "active" : "")" @onclick="() => ToggleMealType('B')">Breakfast</button>
+                    <button type="button" class="home__filter-btn @(_filterLunch ? "active" : "")" @onclick="() => ToggleMealType('L')">Lunch</button>
+                    <button type="button" class="home__filter-btn @(_filterDinner ? "active" : "")" @onclick="() => ToggleMealType('D')">Dinner</button>
+                    <button type="button" class="home__filter-btn @(_filterSide ? "active" : "")" @onclick="() => ToggleMealType('S')">Side</button>
+                    <button type="button" class="home__filter-btn @(_filterSnack ? "active" : "")" @onclick="() => ToggleMealType('K')">Snack</button>
+                </div>
             </div>
         </EditForm>
 
@@ -86,6 +93,11 @@
     int _currentRecipesPage = 1;
     bool _loading = true;
     string _recipeSearch = "";
+    bool _filterBreakfast;
+    bool _filterLunch;
+    bool _filterDinner;
+    bool _filterSide;
+    bool _filterSnack;
     List<Recipe> _recipes = [];
     StatusMessageToast _toaster = new();
 
@@ -109,9 +121,6 @@
             await DbService.SetTotalVariables();
             await GetRecipes();
         }
-
-        if (!firstRender)
-            Console.WriteLine("Not first render.");
 
         if (GlobalRecipes.Recipes.Any())
             Console.WriteLine("Recipes are full.");
@@ -166,7 +175,23 @@
         _loading = true;
         try
         {
-            var result = await DbService.SearchRecipes(_recipeSearch);
+            var filterMap = new Dictionary<bool, string>
+            {
+                [_filterBreakfast] = "B",
+                [_filterLunch] = "L",
+                [_filterDinner] = "D",
+                [_filterSide] = "S",
+                [_filterSnack] = "K"
+            };
+
+            List<string> mealTypeFilters = [];
+            mealTypeFilters.AddRange(filterMap.Where(kvp => kvp.Key).Select(kvp => kvp.Value));
+            mealTypeFilters.ForEach(type =>
+            {
+                Console.WriteLine("Mealtype: " + type);
+            });
+            
+            var result = await DbService.SearchRecipes(_recipeSearch, mealTypeFilters);
             if (result.Recipes == null)
             {
                 await _toaster.ShowToastAsync(result.Message);
@@ -184,6 +209,34 @@
         }
 
         _loading = false;
+        StateHasChanged();
+    }
+
+    private void ToggleMealType(char mealType)
+    {
+        switch (mealType)
+        {
+            case 'B':
+                _filterBreakfast = !_filterBreakfast;
+                Console.WriteLine("Breakfast set to: " + _filterBreakfast);
+                break;
+            case 'L':
+                _filterLunch = !_filterLunch;
+                Console.WriteLine("Lunch set to: " + _filterLunch);
+                break;
+            case 'D':
+                _filterDinner = !_filterDinner;
+                Console.WriteLine("Dinner set to: " + _filterDinner);
+                break;
+            case 'S':
+                _filterSide = !_filterSide;
+                Console.WriteLine("Side set to: " + _filterSide);
+                break;
+            case 'K':
+                _filterSnack = !_filterSnack;
+                Console.WriteLine("Snack set to: " + _filterSnack);
+                break;
+        }
         StateHasChanged();
     }
 

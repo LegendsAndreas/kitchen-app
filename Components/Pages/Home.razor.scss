@@ -8,4 +8,19 @@
       filter: brightness(80%);
     }
   }
+  
+  &__filter-btn {
+    background-color: transparent;
+    color: gray;
+    border: gray 1px solid;
+    border-radius: 5px;
+    padding: 5px;
+    transition: all ease-in-out 0.3s;
+    
+    &.active {
+      background-color: #1b6ec2;
+      color: white;
+      border-color: transparent;
+    }
+  }
 }

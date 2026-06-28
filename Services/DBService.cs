@@ -5,7 +5,7 @@ using Npgsql;
 // jdbc:postgresql://[HOST]/[DATABASE_NAME]?password=[PASSWORD]&user=[USERNAME]
 // Remember that a connection string largely opperates on regex logic, so it does not matter too much where you put your variables.
 // So, if you don't need sslmode, you can just delete it entirely.
-// jdbc:postgresql://ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech/neondb?sslmode=require&user=neondb_owner&password=vVljNo8xGsb5
+// jdbc:postgresql://ep-steep-rice-a2ieai9c.eu-central-1.aws.neon.tech/neondb?sslmode=require&user=neondb_owner&password=<PASSTA>
 
 namespace WebKitchen.Services;
 
@@ -879,7 +879,7 @@ public class DbService
         NpgsqlTransaction transaction)
     {
         Console.WriteLine("Updating thumbnail in database...");
-        
+
         const string query =
             "UPDATE thumbnails SET image = @image WHERE relation_id = @relation_id AND relation_type = @relation_type";
 
@@ -1468,7 +1468,7 @@ public class DbService
         await using var conn = await GetConnectionAsync();
         await using var transaction = await conn.BeginTransactionAsync();
         await using var cmd = new NpgsqlCommand(query, conn, transaction);
-        
+
         try
         {
             cmd.Parameters.AddWithValue("@name", ingredient.Name);
@@ -1485,7 +1485,7 @@ public class DbService
                 Console.WriteLine("Ingredient ID is zero. Not updating.");
                 return "Ingredient ID is zero. Not updating.";
             }
-            
+
             var ingredientId = await cmd.ExecuteScalarAsync();
             if (ingredientId == null)
             {
@@ -1498,7 +1498,7 @@ public class DbService
                 Console.WriteLine("Error adding recipe to database; could not parse ID of new recipe");
                 return "Error retrieving recipe ID.";
             }
-            
+
             Recipe thumbnailHelper = new();
             string thumbnail = await thumbnailHelper.GetThumbnailBase64Image(ingredient.Base64Image);
             string? thumbnailMsg = await UpdateThumbnail(thumbnail, "ingredient", recipeId, conn, transaction);
@@ -1506,7 +1506,7 @@ public class DbService
             {
                 return "Error adding thumbnail; " + thumbnailMsg;
             }
-            
+
             await transaction.CommitAsync();
         }
         catch (Exception ex)
@@ -1840,46 +1840,70 @@ public class DbService
         return (recipes, "Recipes found");
     }
 
-    public async Task<(List<Recipe>? Recipes, string Message)> SearchRecipes(string search)
+    public async Task<(List<Recipe>? Recipes, string Message)> SearchRecipes(string search, List<string> mealTypes)
     {
         List<Recipe> recipes = [];
 
-        string query = "SELECT r.id, " +
-                       "r.name, " +
-                       "r.meal_type, " +
-                       "t.image, " +
-                       "r.cost, " +
-                       "(r.macros).total_calories, " +
-                       "(r.macros).total_carbs, " +
-                       "(r.macros).total_fats, " +
-                       "(r.macros).total_protein, " +
-                       "json_agg(" +
-                       "    json_build_object(" +
-                       "         'name', i.name," +
-                       "         'grams', i.grams," +
-                       "         'calories_pr_hectogram', i.calories_pr_hectogram," +
-                       "         'fats_pr_hectogram', i.fats_pr_hectogram," +
-                       "         'carbs_pr_hectogram', i.carbs_pr_hectogram," +
-                       "         'protein_pr_hectogram', i.protein_pr_hectogram," +
-                       "         'cost_per_hectogram', COALESCE(i.cost_per_100g, 0)," +
-                       "         'multiplier', i.multiplier" +
-                       "     )" +
-                       ") AS ingredients " +
-                       "FROM recipes AS r " +
-                       "LEFT JOIN LATERAL unnest(r.ingredients) AS i ON TRUE " +
-                       "LEFT JOIN thumbnails AS t ON t.relation_id = r.id AND t.relation_type = 'recipe' " +
-                       "WHERE r.name ILIKE @searchParam " +
-                       "GROUP BY r.id, t.image " +
-                       "ORDER BY r.name ILIKE @searchParamPiority DESC, " +
-                       "r.name ILIKE @searchParam DESC " +
-                       $"LIMIT {ITEMS_PER_PAGE}";
+        string baseQuery = "SELECT r.id, " +
+                           "r.name, " +
+                           "r.meal_type, " +
+                           "t.image, " +
+                           "r.cost, " +
+                           "(r.macros).total_calories, " +
+                           "(r.macros).total_carbs, " +
+                           "(r.macros).total_fats, " +
+                           "(r.macros).total_protein, " +
+                           "json_agg(" +
+                           "    json_build_object(" +
+                           "         'name', i.name," +
+                           "         'grams', i.grams," +
+                           "         'calories_pr_hectogram', i.calories_pr_hectogram," +
+                           "         'fats_pr_hectogram', i.fats_pr_hectogram," +
+                           "         'carbs_pr_hectogram', i.carbs_pr_hectogram," +
+                           "         'protein_pr_hectogram', i.protein_pr_hectogram," +
+                           "         'cost_per_hectogram', COALESCE(i.cost_per_100g, 0)," +
+                           "         'multiplier', i.multiplier" +
+                           "     )" +
+                           ") AS ingredients " +
+                           "FROM recipes AS r " +
+                           "LEFT JOIN LATERAL unnest(r.ingredients) AS i ON TRUE " +
+                           "LEFT JOIN thumbnails AS t ON t.relation_id = r.id AND t.relation_type = 'recipe' ";
+
+        string whereClause = "";
+        if (!string.IsNullOrEmpty(search) && mealTypes.Count > 0)
+        {
+            whereClause = "WHERE r.name ILIKE @searchParam AND r.meal_type = ANY(@mealTypesParam) ";
+        }
+        else if (!string.IsNullOrEmpty(search) && mealTypes.Count == 0)
+        {
+            whereClause = "WHERE r.name ILIKE @searchParam ";
+        }
+        else if (string.IsNullOrEmpty(search) && mealTypes.Count > 0)
+        {
+            whereClause = "WHERE r.meal_type = ANY(@mealTypesParam) ";
+        }
+
+        string orderByClause = string.IsNullOrWhiteSpace(search)
+            ? "GROUP BY r.id, t.image ORDER BY r.name "
+            : "GROUP BY r.id, t.image ORDER BY r.name ILIKE @searchParamPriority DESC, r.name ILIKE @searchParam DESC ";
+
+        string query = baseQuery + whereClause + orderByClause + $"LIMIT {ITEMS_PER_PAGE}";
 
         try
         {
             await using NpgsqlConnection conn = await GetConnectionAsync();
             await using NpgsqlCommand cmd = new(query, conn);
-            cmd.Parameters.AddWithValue("@searchParam", $"%{search}%");
-            cmd.Parameters.AddWithValue("@searchParamPiority", $"{search}%");
+            if (mealTypes.Count > 0)
+            {
+                cmd.Parameters.AddWithValue("@mealTypesParam", mealTypes.ToArray());
+            }
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                cmd.Parameters.AddWithValue("@searchParam", $"%{search}%");
+                cmd.Parameters.AddWithValue("@searchParamPriority", $"{search}%");
+            }
+
             await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {

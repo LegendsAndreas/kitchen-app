@@ -1,10 +1,22 @@
 .home__recipe-image {
   transition: all 0.3s;
   cursor: pointer;
-  border-radius: 3px 3px 0 0;
 }
 .home__recipe-image:hover {
   filter: brightness(80%);
+}
+.home__filter-btn {
+  background-color: transparent;
+  color: gray;
+  border: gray 1px solid;
+  border-radius: 5px;
+  padding: 5px;
+  transition: all ease-in-out 0.3s;
+}
+.home__filter-btn.active {
+  background-color: #1b6ec2;
+  color: white;
+  border-color: transparent;
 }
 
 /*# sourceMappingURL=Home.razor.css.map */
