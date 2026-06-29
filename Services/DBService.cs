@@ -1818,23 +1818,23 @@ public class DbService
                            "LEFT JOIN LATERAL unnest(r.ingredients) AS i ON TRUE " +
                            "LEFT JOIN thumbnails AS t ON t.relation_id = r.id AND t.relation_type = 'recipe' ";
 
-        string whereClause = "";
-        if (search != "" && mealTypes.Count > 0)
+        List<string> whereConditions = [];
+        string orderByClause = "GROUP BY r.id, t.image ORDER BY r.id ";
+        if (search != "")
         {
-            whereClause = "WHERE r.name ILIKE @searchParam AND r.meal_type = ANY(@mealTypesParam) ";
-        }
-        else if (search != "" && mealTypes.Count == 0)
-        {
-            whereClause = "WHERE r.name ILIKE @searchParam ";
-        }
-        else if (search == "" && mealTypes.Count > 0)
-        {
-            whereClause = "WHERE r.meal_type = ANY(@mealTypesParam) ";
+            whereConditions.Add("r.name ILIKE @searchParam");
+            orderByClause =
+                "GROUP BY r.id, t.image ORDER BY r.name ILIKE @searchParamPriority DESC, r.name ILIKE @searchParam DESC ";
         }
 
-        string orderByClause = search == ""
-            ? "GROUP BY r.id, t.image ORDER BY r.id "
-            : "GROUP BY r.id, t.image ORDER BY r.name ILIKE @searchParamPriority DESC, r.name ILIKE @searchParam DESC ";
+        if (mealTypes.Count != 0)
+        {
+            whereConditions.Add("r.meal_type = ANY(@mealTypesParam)");
+        }
+        
+        string whereClause = whereConditions.Any() 
+            ? $"WHERE {string.Join(" AND ", whereConditions)} " 
+            : "";
 
         string query = baseQuery + whereClause + orderByClause + $"LIMIT {ITEMS_PER_PAGE} OFFSET {offset}";
         MaxRecipesPages =
