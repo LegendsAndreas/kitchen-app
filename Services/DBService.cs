@@ -1781,7 +1781,8 @@ public class DbService
         return (ingredients, "No ingredients found.");
     }
 
-    public async Task<(List<Recipe>? Recipes, string Message)> GetRecipesPaginationAsync(int paginationPage)
+    public async Task<(List<Recipe>? Recipes, string Message)> GetRecipesPaginatedSearchAsync(string search,
+        List<string> mealTypes, int paginationPage)
     {
         List<Recipe> recipes = [];
 
@@ -1791,58 +1792,6 @@ public class DbService
         }
 
         int offset = ITEMS_PER_PAGE * (paginationPage - 1);
-
-        string query = "SELECT r.id, " +
-                       "r.name, " +
-                       "r.meal_type, " +
-                       "t.image, " +
-                       "r.cost, " +
-                       "(r.macros).total_calories, " +
-                       "(r.macros).total_carbs, " +
-                       "(r.macros).total_fats, " +
-                       "(r.macros).total_protein, " +
-                       "json_agg(" +
-                       "    json_build_object(" +
-                       "         'name', i.name," +
-                       "         'grams', i.grams," +
-                       "         'calories_pr_hectogram', i.calories_pr_hectogram," +
-                       "         'fats_pr_hectogram', i.fats_pr_hectogram," +
-                       "         'carbs_pr_hectogram', i.carbs_pr_hectogram," +
-                       "         'protein_pr_hectogram', i.protein_pr_hectogram," +
-                       "         'cost_per_hectogram', COALESCE(i.cost_per_100g, 0)," +
-                       "         'multiplier', i.multiplier" +
-                       "     )" +
-                       ") AS ingredients " +
-                       "FROM recipes AS r " +
-                       "LEFT JOIN LATERAL unnest(r.ingredients) AS i ON TRUE " +
-                       "LEFT JOIN thumbnails AS t ON t.relation_id = r.id AND t.relation_type = 'recipe' " +
-                       "GROUP BY r.id, t.image " +
-                       "ORDER BY r.id " +
-                       $"LIMIT {ITEMS_PER_PAGE} OFFSET {offset} ";
-
-        try
-        {
-            await using NpgsqlConnection conn = await GetConnectionAsync();
-            await using NpgsqlCommand cmd = new(query, conn);
-            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                Recipe tempRecipe = MakeRecipe(reader);
-                recipes.Add(tempRecipe);
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Error getting recipes: " + e.Message);
-            return (null, "Error getting recipes: " + e.Message);
-        }
-
-        return (recipes, "Recipes found");
-    }
-
-    public async Task<(List<Recipe>? Recipes, string Message)> SearchRecipes(string search, List<string> mealTypes)
-    {
-        List<Recipe> recipes = [];
 
         string baseQuery = "SELECT r.id, " +
                            "r.name, " +
@@ -1870,24 +1819,27 @@ public class DbService
                            "LEFT JOIN thumbnails AS t ON t.relation_id = r.id AND t.relation_type = 'recipe' ";
 
         string whereClause = "";
-        if (!string.IsNullOrEmpty(search) && mealTypes.Count > 0)
+        if (search != "" && mealTypes.Count > 0)
         {
             whereClause = "WHERE r.name ILIKE @searchParam AND r.meal_type = ANY(@mealTypesParam) ";
         }
-        else if (!string.IsNullOrEmpty(search) && mealTypes.Count == 0)
+        else if (search != "" && mealTypes.Count == 0)
         {
             whereClause = "WHERE r.name ILIKE @searchParam ";
         }
-        else if (string.IsNullOrEmpty(search) && mealTypes.Count > 0)
+        else if (search == "" && mealTypes.Count > 0)
         {
             whereClause = "WHERE r.meal_type = ANY(@mealTypesParam) ";
         }
 
-        string orderByClause = string.IsNullOrWhiteSpace(search)
-            ? "GROUP BY r.id, t.image ORDER BY r.name "
+        string orderByClause = search == ""
+            ? "GROUP BY r.id, t.image ORDER BY r.id "
             : "GROUP BY r.id, t.image ORDER BY r.name ILIKE @searchParamPriority DESC, r.name ILIKE @searchParam DESC ";
 
-        string query = baseQuery + whereClause + orderByClause + $"LIMIT {ITEMS_PER_PAGE}";
+        string query = baseQuery + whereClause + orderByClause + $"LIMIT {ITEMS_PER_PAGE} OFFSET {offset}";
+        MaxRecipesPages =
+            (int)Math.Ceiling((double)await GetAmountOfRowsForRecipeSearch(whereClause, search, mealTypes) / ITEMS_PER_PAGE);
+        Console.WriteLine($"Max recipes pages: {MaxRecipesPages}");
 
         try
         {
@@ -1898,7 +1850,7 @@ public class DbService
                 cmd.Parameters.AddWithValue("@mealTypesParam", mealTypes.ToArray());
             }
 
-            if (!string.IsNullOrEmpty(search))
+            if (search != "")
             {
                 cmd.Parameters.AddWithValue("@searchParam", $"%{search}%");
                 cmd.Parameters.AddWithValue("@searchParamPriority", $"{search}%");
@@ -1918,6 +1870,40 @@ public class DbService
         }
 
         return (recipes, "Recipes found");
+    }
+
+    private async Task<int> GetAmountOfRowsForRecipeSearch(string whereClause, string search, List<string> mealTypes)
+    {
+        try
+        {
+            string query = "SELECT COUNT(*) FROM recipes AS r " + whereClause;
+            await using NpgsqlConnection conn = await GetConnectionAsync();
+            await using NpgsqlCommand cmd = new(query, conn);
+            if (mealTypes.Count > 0)
+            {
+                cmd.Parameters.AddWithValue("@mealTypesParam", mealTypes.ToArray());
+            }
+
+            if (search != "")
+            {
+                cmd.Parameters.AddWithValue("@searchParam", $"%{search}%");
+                cmd.Parameters.AddWithValue("@searchParamPriority", $"{search}%");
+            }
+
+            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                Console.WriteLine("Amount of rows for search: " + reader.GetInt32(0));
+                return reader.GetInt32(0);
+            }
+
+            return 0;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public async Task<string?> DeleteDbIngredientById(int id)

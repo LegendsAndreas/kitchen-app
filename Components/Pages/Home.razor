@@ -15,23 +15,23 @@
 
     @if (!_loading)
     {
-        <EditForm Model="@_recipeSearch" OnSubmit="SearchRecipes">
+        <EditForm Model="@_recipeSearch" OnSubmit="ValidSearch">
             <div class="ingredients__form my-2 generel__animation-fade-in">
                 <div class="d-flex gap-2">
                     <InputText @bind-Value="_recipeSearch" class="form-control"/>
                     <button type="submit" class="btn btn-primary">Search</button>
                 </div>
                 <div class="mt-2">
-                    <button type="button" class="home__filter-btn @(_filterBreakfast ? "active" : "")" @onclick="() => ToggleMealType('B')">Breakfast</button>
-                    <button type="button" class="home__filter-btn @(_filterLunch ? "active" : "")" @onclick="() => ToggleMealType('L')">Lunch</button>
-                    <button type="button" class="home__filter-btn @(_filterDinner ? "active" : "")" @onclick="() => ToggleMealType('D')">Dinner</button>
-                    <button type="button" class="home__filter-btn @(_filterSide ? "active" : "")" @onclick="() => ToggleMealType('S')">Side</button>
-                    <button type="button" class="home__filter-btn @(_filterSnack ? "active" : "")" @onclick="() => ToggleMealType('K')">Snack</button>
+                    <button type="button" class="home__filter-btn @(_filterBreakfast ? "active" : "")" @onclick="() => ToggleMealType(ref _filterBreakfast)">Breakfast</button>
+                    <button type="button" class="home__filter-btn @(_filterLunch ? "active" : "")" @onclick="() => ToggleMealType(ref _filterLunch)">Lunch</button>
+                    <button type="button" class="home__filter-btn @(_filterDinner ? "active" : "")" @onclick="() => ToggleMealType(ref _filterDinner)">Dinner</button>
+                    <button type="button" class="home__filter-btn @(_filterSide ? "active" : "")" @onclick="() => ToggleMealType(ref _filterSide)">Side</button>
+                    <button type="button" class="home__filter-btn @(_filterSnack ? "active" : "")" @onclick="() => ToggleMealType(ref _filterSnack)">Snack</button>
                 </div>
             </div>
         </EditForm>
 
-        if (string.IsNullOrWhiteSpace(_recipeSearch))
+        if (!_loading && DbService.MaxRecipesPages > 1)
         {
             <div class="generel__animation-fade-in">
                 <PaginatorPage
@@ -73,7 +73,7 @@
         }
     </div>
 
-    @if (!_loading && string.IsNullOrWhiteSpace(_recipeSearch))
+    @if (!_loading && DbService.MaxRecipesPages > 1)
     {
         <div class="generel__animation-fade-in">
             <PaginatorPage
@@ -83,7 +83,6 @@
                 OnToastMessage="ShowToast"/>
         </div>
     }
-
 </div>
 
 <StatusMessageToast @ref="_toaster"/>
@@ -142,7 +141,7 @@
         _loading = true;
         try
         {
-            var result = await DbService.GetRecipesPaginationAsync(_currentRecipesPage);
+            var result = await DbService.GetRecipesPaginatedSearchAsync(_recipeSearch, GetMealTypes(), _currentRecipesPage);
             if (result.Recipes != null)
             {
                 _recipes = result.Recipes;
@@ -168,30 +167,19 @@
         }
     }
 
+    private async Task ValidSearch()
+    {
+        if (string.IsNullOrWhiteSpace(_recipeSearch) && GetMealTypes().Count == 0) return;
+        _currentRecipesPage = 1;
+        await SearchRecipes();
+    }
+
     private async Task SearchRecipes()
     {
-        if (string.IsNullOrWhiteSpace(_recipeSearch)) return;
-
         _loading = true;
         try
         {
-            var filterMap = new Dictionary<bool, string>
-            {
-                [_filterBreakfast] = "B",
-                [_filterLunch] = "L",
-                [_filterDinner] = "D",
-                [_filterSide] = "S",
-                [_filterSnack] = "K"
-            };
-
-            List<string> mealTypeFilters = [];
-            mealTypeFilters.AddRange(filterMap.Where(kvp => kvp.Key).Select(kvp => kvp.Value));
-            mealTypeFilters.ForEach(type =>
-            {
-                Console.WriteLine("Mealtype: " + type);
-            });
-            
-            var result = await DbService.SearchRecipes(_recipeSearch, mealTypeFilters);
+            var result = await DbService.GetRecipesPaginatedSearchAsync(_recipeSearch, GetMealTypes(), _currentRecipesPage);
             if (result.Recipes == null)
             {
                 await _toaster.ShowToastAsync(result.Message);
@@ -212,32 +200,24 @@
         StateHasChanged();
     }
 
-    private void ToggleMealType(char mealType)
+    private void ToggleMealType(ref bool filter)
     {
-        switch (mealType)
-        {
-            case 'B':
-                _filterBreakfast = !_filterBreakfast;
-                Console.WriteLine("Breakfast set to: " + _filterBreakfast);
-                break;
-            case 'L':
-                _filterLunch = !_filterLunch;
-                Console.WriteLine("Lunch set to: " + _filterLunch);
-                break;
-            case 'D':
-                _filterDinner = !_filterDinner;
-                Console.WriteLine("Dinner set to: " + _filterDinner);
-                break;
-            case 'S':
-                _filterSide = !_filterSide;
-                Console.WriteLine("Side set to: " + _filterSide);
-                break;
-            case 'K':
-                _filterSnack = !_filterSnack;
-                Console.WriteLine("Snack set to: " + _filterSnack);
-                break;
-        }
+        filter = !filter;
         StateHasChanged();
     }
+
+    private List<string> GetMealTypes()
+    {
+        var mealTypeFilters = new List<string>();
+
+        if (_filterBreakfast) mealTypeFilters.Add("B");
+        if (_filterLunch)     mealTypeFilters.Add("L");
+        if (_filterDinner)    mealTypeFilters.Add("D");
+        if (_filterSide)      mealTypeFilters.Add("S");
+        if (_filterSnack)     mealTypeFilters.Add("K");
+
+        return mealTypeFilters;
+    }
+
 
 }
