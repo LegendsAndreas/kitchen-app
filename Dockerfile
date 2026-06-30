@@ -1,13 +1,23 @@
-﻿FROM mcr.microsoft.com/dotnet/sdk:9.0 AS builder
+﻿FROM mcr.microsoft.com/dotnet/runtime-deps:10.0
 
 WORKDIR /app
 
-COPY WebKitchen.csproj ./
-RUN dotnet restore
+COPY bin/Debug/net10.0/linux-x64/publish ./
 
-COPY . ./
+EXPOSE 5001
 
-RUN dotnet publish -c Release -o /app/publish
-RUN cd /app/publish && chmod +x WebKitchen
+CMD ["./WebKitchen"]
 
-CMD ["./publish/WebKitchen"]
+#FROM mcr.microsoft.com/dotnet/sdk:10.0 AS builder
+
+#WORKDIR /app
+
+#COPY WebKitchen.csproj ./
+#RUN dotnet restore
+
+#COPY . ./
+
+#RUN dotnet publish -c Release -o /app/publish
+#RUN cd /app/publish && chmod +x WebKitchen
+
+#CMD ["./publish/WebKitchen"]

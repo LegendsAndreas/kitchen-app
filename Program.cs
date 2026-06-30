@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.DataProtection;
 using WebKitchen.Components;
 using WebKitchen.Services;
 
@@ -9,9 +10,13 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddDataProtection()
+            .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
+            .SetApplicationName("Kitchen-App"); // Must be the SAME across all instances
+
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
-
+        
         builder.Services.AddScoped<Recipe>();
         builder.Services.AddScoped<Ingredient>();
         builder.Services.AddScoped<SharedRecipe>();
