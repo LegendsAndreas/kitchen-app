@@ -106,7 +106,8 @@ public partial class DbService
                              "@carbs," +
                              "@protein," +
                              "@multiplier, " +
-                             "@cost_per_100g" +
+                             "@cost_per_100g," +
+                             "@is_recipe" +
                              ")::ingredient) " +
                              "WHERE id = @recipe_id"; // Since every new recipe is actually the last
         // one in the table, we can just add all the occurrences of id into one, and that will be our recipe id.
@@ -124,6 +125,7 @@ public partial class DbService
                 cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
                 cmd.Parameters.AddWithValue("@multiplier", ingredient.GetMultiplier());
                 cmd.Parameters.AddWithValue("@cost_per_100g", ingredient.CostPer100g);
+                cmd.Parameters.AddWithValue("@is_recipe", ingredient.IsRecipe);
                 cmd.Parameters.AddWithValue("@recipe_id", recipeId);
                 await RunAsyncQuery(cmd);
             }
@@ -203,7 +205,7 @@ public partial class DbService
 
         return statusMessage;
     }
-    
+
     private async Task<bool> DoesRecipeHaveInstructions(int recipeId)
     {
         Console.WriteLine("does recipe have instructions...");
@@ -234,7 +236,7 @@ public partial class DbService
 
         return false;
     }
-    
+
     private async Task<(bool status, string message)> UpdateInstructionsRecipeNameByRecipeId(int recipeId,
         string recipeName)
     {
@@ -315,7 +317,15 @@ public partial class DbService
 
         foreach (var ingredient in recipe.Ingredients)
         {
-            ingredient.CostPer100g = await GetIngredientCost(ingredient.Name);
+            if (!ingredient.IsRecipe)
+            {
+                ingredient.CostPer100g = await GetIngredientCost(ingredient.Name);
+            }
+            else
+            {
+                ingredient.CostPer100g = await GetIngredientRecipesCost(ingredient.Name);
+            }
+            ingredient.PrintIngredient();
         }
 
         recipe.TotalCost = recipe.Ingredients.Select(i => i.CostPer100g * i.Multiplier).Sum();
@@ -356,6 +366,61 @@ public partial class DbService
         }
 
         return statusMessage;
+    }
+
+    /// Updates the ingredients for a specific recipe in the database by first clearing the existing ingredients
+    /// associated with the recipe and then inserting the new list of provided ingredients.
+    /// <param name="ingredients">A list of ingredients to be added to the recipe.</param>
+    /// <param name="recipeId">The unique identifier of the recipe whose ingredients are being updated.</param>
+    private async Task UpdateIngredients(List<Ingredient> ingredients, int recipeId)
+    {
+        Console.WriteLine("Updating ingredients...");
+
+        await EmptyRecipeIngredientsByRecipeId(recipeId);
+
+        const string query = "UPDATE recipes " +
+                             "SET ingredients =" +
+                             "array_append(ingredients," +
+                             "ROW(" +
+                             "@name," +
+                             "@grams," +
+                             "@cals," +
+                             "@fats," +
+                             "@carbs," +
+                             "@protein," +
+                             "@multiplier, " +
+                             "@cost_per_100g, " +
+                             "@is_recipe" +
+                             ")::ingredient) " +
+                             "WHERE id = @recipe_id";
+
+        try
+        {
+            await using var conn = await GetConnectionAsync();
+            foreach (var ingredient in ingredients)
+            {
+                await using var cmd = new NpgsqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@name", ingredient.Name);
+                cmd.Parameters.AddWithValue("@grams", ingredient.Grams);
+                cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
+                cmd.Parameters.AddWithValue("@fats", ingredient.FatPer100g);
+                cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
+                cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
+                cmd.Parameters.AddWithValue("@multiplier", ingredient.GetMultiplier());
+                cmd.Parameters.AddWithValue("@cost_per_100g", ingredient.CostPer100g);
+                cmd.Parameters.AddWithValue("@is_recipe", ingredient.IsRecipe);
+                cmd.Parameters.AddWithValue("@recipe_id", recipeId);
+                var result = await RunAsyncQuery(cmd);
+                if (result < 1)
+                    Console.WriteLine("Recipe ID is not found in database.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error adding ingredients to row: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            throw;
+        }
     }
 
     private async Task<string> UpdateRecipeImageByRecipeId(string base64Image, int recipeId)
@@ -408,7 +473,7 @@ public partial class DbService
 
         return statusMessage;
     }
-    
+
     /// Removes all ingredients associated with the specified recipe ID by updating the recipe entry to have an empty ingredients array.
     /// <param name="recipeId">The unique identifier of the recipe whose ingredients are to be removed.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
@@ -451,7 +516,8 @@ public partial class DbService
                              "@carbs," +
                              "@protein," +
                              "@multiplier, " +
-                             "@cost_per_100g" +
+                             "@cost_per_100g," +
+                             "@is_recipe" +
                              ")::ingredient) " +
                              "WHERE id = @recipeId"; // Since every new recipe is actually the last
         // one in the table, we can just add all the occurrences of id into one, and that will be our recipe id.
@@ -471,6 +537,7 @@ public partial class DbService
                 cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
                 cmd.Parameters.AddWithValue("@multiplier", ingredient.GetMultiplier());
                 cmd.Parameters.AddWithValue("@cost_per_100g", ingredient.CostPer100g);
+                cmd.Parameters.AddWithValue("@is_recipe", ingredient.IsRecipe);
                 await RunAsyncQuery(cmd);
             }
         }
@@ -568,7 +635,6 @@ public partial class DbService
 
         return (recipes, statusMessage + query);
     }
-
 
 
     public async Task<string> UpdateDbIngredient(Ingredient ingredient)
@@ -747,7 +813,8 @@ public partial class DbService
                              "         'carbs_pr_hectogram', i.carbs_pr_hectogram," +
                              "         'protein_pr_hectogram', i.protein_pr_hectogram," +
                              "         'cost_per_hectogram', COALESCE(i.cost_per_100g, 0)," +
-                             "         'multiplier', i.multiplier" +
+                             "         'multiplier', i.multiplier," +
+                             "         'is_recipe', COALESCE(i.is_recipe, false)" +
                              "     )" +
                              ") AS ingredients " +
                              "FROM recipes AS r, unnest(r.ingredients) AS i " +
@@ -811,7 +878,8 @@ public partial class DbService
                            "         'carbs_pr_hectogram', i.carbs_pr_hectogram," +
                            "         'protein_pr_hectogram', i.protein_pr_hectogram," +
                            "         'cost_per_hectogram', COALESCE(i.cost_per_100g, 0)," +
-                           "         'multiplier', i.multiplier" +
+                           "         'multiplier', i.multiplier," +
+                           "         'is_recipe', COALESCE(i.is_recipe, false)" +
                            "     )" +
                            ") AS ingredients " +
                            "FROM recipes AS r " +
@@ -940,7 +1008,8 @@ public partial class DbService
                              "         'carbs_pr_hectogram', i.carbs_pr_hectogram," +
                              "         'protein_pr_hectogram', i.protein_pr_hectogram," +
                              "         'cost_per_hectogram', COALESCE(i.cost_per_100g, 0)," +
-                             "         'multiplier', i.multiplier" +
+                             "         'multiplier', i.multiplier," +
+                             "         'is_recipe', COALESCE(i.is_recipe, false)" +
                              "     )" +
                              ") FILTER (WHERE i.name IS NOT NULL)," +
                              "'[]'" +
@@ -1020,7 +1089,8 @@ public partial class DbService
                              "         'carbs_pr_hectogram', i.carbs_pr_hectogram," +
                              "         'protein_pr_hectogram', i.protein_pr_hectogram," +
                              "         'cost_per_hectogram', COALESCE(i.cost_per_100g, 0)," +
-                             "         'multiplier', i.multiplier" +
+                             "         'multiplier', i.multiplier," +
+                             "         'is_recipe', COALESCE(i.is_recipe, false)" +
                              "     )" +
                              ") AS ingredients " +
                              "FROM recipes AS r, unnest(r.ingredients) AS i " +
@@ -1038,7 +1108,7 @@ public partial class DbService
 
         return (recipe, "Recipes successfully retrieved");
     }
-    
+
     public async Task<string> DeleteRecipeById(int recipeId)
     {
         Console.WriteLine("Deleting recipe by name...");

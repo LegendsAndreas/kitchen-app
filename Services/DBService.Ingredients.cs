@@ -98,59 +98,6 @@ public partial class DbService
 
         return (ingredient, statusMessage);
     }
-    
-    /// Updates the ingredients for a specific recipe in the database by first clearing the existing ingredients
-    /// associated with the recipe and then inserting the new list of provided ingredients.
-    /// <param name="ingredients">A list of ingredients to be added to the recipe.</param>
-    /// <param name="recipeId">The unique identifier of the recipe whose ingredients are being updated.</param>
-    private async Task UpdateIngredients(List<Ingredient> ingredients, int recipeId)
-    {
-        Console.WriteLine("Updating ingredients...");
-
-        await EmptyRecipeIngredientsByRecipeId(recipeId);
-
-        const string query = "UPDATE recipes " +
-                             "SET ingredients =" +
-                             "array_append(ingredients," +
-                             "ROW(" +
-                             "@name," +
-                             "@grams," +
-                             "@cals," +
-                             "@fats," +
-                             "@carbs," +
-                             "@protein," +
-                             "@multiplier, " +
-                             "@cost_per_100g " +
-                             ")::ingredient) " +
-                             "WHERE id = @recipe_id";
-
-        try
-        {
-            await using var conn = await GetConnectionAsync();
-            foreach (var ingredient in ingredients)
-            {
-                await using var cmd = new NpgsqlCommand(query, conn);
-                cmd.Parameters.AddWithValue("@name", ingredient.Name);
-                cmd.Parameters.AddWithValue("@grams", ingredient.Grams);
-                cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
-                cmd.Parameters.AddWithValue("@fats", ingredient.FatPer100g);
-                cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
-                cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
-                cmd.Parameters.AddWithValue("@multiplier", ingredient.GetMultiplier());
-                cmd.Parameters.AddWithValue("@cost_per_100g", ingredient.CostPer100g);
-                cmd.Parameters.AddWithValue("@recipe_id", recipeId);
-                var result = await RunAsyncQuery(cmd);
-                if (result < 1)
-                    Console.WriteLine("Recipe ID is not found in database.");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error adding ingredients to row: " + ex.Message);
-            Console.WriteLine("StackTrace: " + ex.StackTrace);
-            throw;
-        }
-    }
 
     private async Task<float> GetIngredientCost(string name)
     {
@@ -168,6 +115,24 @@ public partial class DbService
             return 0;
         }
     }
+
+    private async Task<float> GetIngredientRecipesCost(string name)
+    {
+        const string query = "SELECT cost FROM recipes WHERE name = @name";
+        await using var conn = await GetConnectionAsync();
+        await using var cmd = new NpgsqlCommand(query, conn);
+        cmd.Parameters.AddWithValue("@name", name);
+        await using var reader = await cmd.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return reader.GetFloat(0);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    
     public async Task<(List<string>? Ingredients, string Message)> GetIngredientsByNameSearch(string ingredientName,
         CancellationToken ct = default)
     {

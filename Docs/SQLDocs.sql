@@ -36,9 +36,13 @@ FROM recipes AS r
 WHERE ri.recipe_id IS NULL
 ORDER BY r.id;
 
-SELECT id, name, cost_per_100g FROM ingredients WHERE id = ANY(ARRAY[1, 2]);
+SELECT id, name, cost_per_100g
+FROM ingredients
+WHERE id = ANY (ARRAY [1, 2]);
 
-SELECT cost_per_100g FROM ingredients WHERE id = 38;
+SELECT cost_per_100g
+FROM ingredients
+WHERE id = 38;
 
 /* Work optimization, because we use an implicit join */
 SELECT r.id,
@@ -118,6 +122,16 @@ CREATE TABLE thumbnails
     relation_type VARCHAR(50) CHECK (relation_type IN ('recipe', 'ingredient'))
 );
 
+SELECT
+    a.attname AS column_name,
+    pg_catalog.format_type(a.atttypid, a.atttypmod) AS data_type
+FROM pg_catalog.pg_attribute a
+         JOIN pg_catalog.pg_type t ON a.attrelid = t.typrelid
+WHERE t.typname = 'composite_type_name'
+  AND a.attnum > 0
+  AND NOT a.attisdropped
+ORDER BY a.attnum;
+
 /* Create */
 CREATE TYPE ingredient AS
 (
@@ -127,7 +141,8 @@ CREATE TYPE ingredient AS
     fats_pr_hectogram     INT,
     carbs_pr_hectogram    INT,
     protein_pr_hectogram  INT,
-    multiplier            FLOAT
+    multiplier            FLOAT,
+    cost_per_100g         FLOAT
 );
 
 CREATE TYPE recipe_macros AS
@@ -207,6 +222,9 @@ DROP TABLE sought_after_items;
     price INTEGER,
     CONSTRAINT FK_ingredient_id FOREIGN KEY (item_id) REFERENCES ingredients (id) ON DELETE CASCADE
 );*/
+    
+/* Alter */
+ALTER TYPE ingredient ADD ATTRIBUTE is_recipe BOOLEAN;
 
 /* Insert */
 INSERT INTO sought_after_items (id, name, image, price)
