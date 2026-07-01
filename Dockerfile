@@ -10,7 +10,7 @@ COPY . ./
 RUN dotnet publish -c Release -o /app/publish --os linux --self-contained
 
 # Runtime stage
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0
+FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-noble-chiseled-extra
 WORKDIR /app
 
 COPY --from=build /app/publish .
