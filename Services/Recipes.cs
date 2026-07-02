@@ -87,6 +87,7 @@ public class Ingredient
     public float CostPer100g { get; set; }
 
     [JsonPropertyName("multiplier")] public float Multiplier { get; set; }
+    [JsonPropertyName("is_recipe")] public bool IsRecipe { get; set; }
     public string Base64Image { get; set; } = string.Empty;
 
     public uint GetId()
@@ -163,6 +164,7 @@ public class Ingredient
         Console.WriteLine("Fats: " + FatPer100g);
         Console.WriteLine("Cost per 100g: " + CostPer100g);
         Console.WriteLine("Multiplier: " + Multiplier);
+        Console.WriteLine("Is recipe: " + IsRecipe);
     }
 
     public Ingredient TransferIngredient(Ingredient ing)
@@ -180,7 +182,8 @@ public class Ingredient
             FatPer100g = ing.FatPer100g,
             ProteinPer100g = ing.ProteinPer100g,
             Base64Image = ing.Base64Image,
-            CostPer100g = ing.CostPer100g
+            CostPer100g = ing.CostPer100g,
+            IsRecipe = ing.IsRecipe
         };
         transferIngredient.SetId(ing.GetId());
         transferIngredient.SetMultiplier();
@@ -385,7 +388,7 @@ public class SharedStuff
         // Convert to Base64
         return Convert.ToBase64String(ms.ToArray());
     }
-    
+
     public async Task<string> SetThumbnailImageAndGetBase64(string base64Input, int width, int height)
     {
         // -vcodec mjpeg: Encodes the output to a motion JPEG, which is suited for piping.
@@ -441,8 +444,6 @@ public class SharedRecipe
 
 public class IdImageRecipe
 {
-    [JsonPropertyName("id")]
-    public int Id { get; set; }
-    [JsonPropertyName("image")]
-    public string Base64Image { get; set; } = "";
+    [JsonPropertyName("id")] public int Id { get; set; }
+    [JsonPropertyName("image")] public string Base64Image { get; set; } = "";
 }
