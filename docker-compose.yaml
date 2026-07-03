@@ -6,3 +6,6 @@
     environment:
       - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
       - ASPNETCORE_URLS=${ASPNETCORE_URLS}
+    mem_limit: 256m
+    cpus: 0.5
+    pids_limit: 100
