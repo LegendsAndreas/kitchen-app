@@ -14,6 +14,8 @@ public class Program
             .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
             .SetApplicationName("Kitchen-App");*/ // Must be the SAME across all instances
 
+        builder.Configuration.AddEnvironmentVariables();
+        
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
         
