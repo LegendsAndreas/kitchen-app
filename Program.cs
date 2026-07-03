@@ -10,9 +10,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddDataProtection()
+        /*builder.Services.AddDataProtection()
             .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
-            .SetApplicationName("Kitchen-App"); // Must be the SAME across all instances
+            .SetApplicationName("Kitchen-App");*/ // Must be the SAME across all instances
 
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
