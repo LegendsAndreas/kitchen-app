@@ -16,6 +16,10 @@ public class Program
 
         builder.Configuration.AddEnvironmentVariables();
         
+        var urls = builder.Configuration["ASPNETCORE_URLS"];
+        if (string.IsNullOrEmpty(urls)) throw new InvalidOperationException("No ASPNETCORE_URLS configured.");
+        builder.WebHost.UseUrls(urls);
+        
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
         
