@@ -10,10 +10,12 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        // I dont think this is applicable to my project
         /*builder.Services.AddDataProtection()
             .PersistKeysToFileSystem(new DirectoryInfo("/keys"))
             .SetApplicationName("Kitchen-App");*/ // Must be the SAME across all instances
 
+        // If we run locally, it just uses the appsettings.json, but if we run it in a container it uses the .env
         builder.Configuration.AddEnvironmentVariables();
         
         var urls = builder.Configuration["ASPNETCORE_URLS"];
