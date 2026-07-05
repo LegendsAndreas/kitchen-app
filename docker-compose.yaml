@@ -2,7 +2,7 @@
   kitchen:
     build: .
     ports:
-      - "8081:5001"
+      - "8082:5001"
     environment:
       - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
       - ASPNETCORE_URLS=${ASPNETCORE_URLS}
