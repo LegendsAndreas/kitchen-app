@@ -58,6 +58,24 @@
                 <button type="button" class="btn btn-primary" @onclick="AddNewIngredientToRecipe">Add New Ingredient To
                     Recipe
                 </button>
+                <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
+                    <div class="col">
+                        <BetterRealTimeRecipesSearch
+                            CurrentRecipeDataHasChanged="@(recipe => _currentIngredientRecipe = recipe)"/>
+                    </div>
+
+                    <div class="col">
+                        <label class="form-label">Parts: 1/</label>
+                        <InputNumber id="name" @bind-Value="_currentIngredientRecipeParts" class="form-control"/>
+                    </div>
+
+                    <div class="col">
+                        <p>Current recipe ingredient: @_currentIngredientRecipe.Name</p>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-primary" @onclick="AddRecipeAsIngredient">Add New recipe as
+                    ingredient
+                </button>
 
                 <div class="edit__accordion-button-margin--button">
                     <AddedIngredients CurrentAddedIngredients="@_currentRecipe.Ingredients"/>
@@ -88,8 +106,10 @@
 
     int _recipeId;
     int _currentIngredientGrams;
+    int _currentIngredientRecipeParts;
     string _newImage = "";
     Recipe? _currentRecipe;
+    Recipe _currentIngredientRecipe = new();
     StatusMessageToast _recipeStatusToaster = null!;
     Ingredient _currentCrossIngredient = new();
 
@@ -176,6 +196,36 @@
         if (_currentRecipe != null)
             _currentRecipe.Ingredients.Add(tempIngredient);
         _currentCrossIngredient.ClearIngredient();
+    }
+    
+    private async Task AddRecipeAsIngredient()
+    {
+        if (string.IsNullOrEmpty(_currentIngredientRecipe.Name))
+        {
+            Console.WriteLine("Current ingredient recipe is not selected");
+            await _recipeStatusToaster.ShowToastAsync("Ingredient recipe is not selected");
+            return;
+        }
+
+        if (_currentIngredientRecipeParts < 1)
+        {
+            Console.WriteLine("Parts are below 1");
+            await _recipeStatusToaster.ShowToastAsync("Parts cant be less than 1");
+            return;
+        }
+
+        // Just leave this one alone lil bro
+        _currentCrossIngredient.Name = _currentIngredientRecipe.Name;
+        // ReSharper disable once PossibleLossOfFraction
+        _currentCrossIngredient.Grams = 100 / _currentIngredientRecipeParts;
+        _currentCrossIngredient.CaloriesPer100g = _currentIngredientRecipe.TotalMacros.Calories;
+        _currentCrossIngredient.FatPer100g = _currentIngredientRecipe.TotalMacros.Fat;
+        _currentCrossIngredient.CarbsPer100g = _currentIngredientRecipe.TotalMacros.Carbs;
+        _currentCrossIngredient.ProteinPer100g = _currentIngredientRecipe.TotalMacros.Protein;
+        _currentCrossIngredient.CostPer100g = _currentIngredientRecipe.TotalCost;
+        _currentCrossIngredient.IsRecipe = true;
+
+        HandleIngredient();
     }
 
     private async Task HandleImage(InputFileChangeEventArgs imageFile)
