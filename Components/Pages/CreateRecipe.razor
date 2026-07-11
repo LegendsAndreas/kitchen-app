@@ -16,13 +16,17 @@
                 <div class="container text-center generel__border-layout m-2 p-4">
                     <div class="row row-cols-1 row-cols-sd-2 row-cols-md-3 row-cols-lg-3 g-3">
                         <div class="col">
-                            <label class="form-label">Meal Type:</label>
-                            <InputText id="meal-type" @bind-Value="_currentRecipe.MealType"/>
+                            <div class="d-flex align-items-center">
+                                <label class="form-label mb-0 flex-shrink-0 me-1">Meal Type:</label>
+                                <InputText class="form-control" @bind-Value="_currentRecipe.MealType"/>
+                            </div>
                         </div>
 
                         <div class="col">
-                            <label>Recipe Name:</label>
-                            <InputText id="name" @bind-Value="_currentRecipe.Name"/>
+                            <div class="d-flex align-items-center">
+                                <label class="form-label mb-0 flex-shrink-0 me-1">Recipe Name:</label>
+                                <InputText class="form-control" @bind-Value="_currentRecipe.Name"/>
+                            </div>
                         </div>
 
                         <div class="col">
@@ -38,31 +42,44 @@
                                        @onclick="UsePlaceholderPic"/>
                             </label>
                         </div>
-
-                        <button type="submit" class="btn btn-primary col">Create Recipe</button>
-
+                        <div class="col">
+                            @if (!_isAddingRecipe)
+                            {
+                                <button type="submit" class="btn btn-primary col w-100">Create Recipe</button>
+                            }
+                            else
+                            {
+                                <Loading LoadingParameter="Recipe"></Loading>
+                            }
+                        </div>
                     </div>
                 </div>
             </EditForm>
 
             <EditForm Model="@_currentIngredientRecipe" OnSubmit="AddRecipeAsIngredient">
                 <div class="container text-center generel__border-layout m-2 p-4">
-                    <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
-                        <BetterRealTimeRecipesSearch
-                            CurrentRecipeDataHasChanged="@(value => _currentIngredientRecipe = value)"/>
-
+                    <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 align-items-center g-3">
                         <div class="col">
-                            <label class="form-label">Parts: 1/</label>
-                            <InputNumber @bind-Value="_currentIngredientRecipeParts"/>
+                            <BetterRealTimeRecipesSearch
+                                CurrentRecipeDataHasChanged="@(value => _currentIngredientRecipe = value)"/>
                         </div>
 
                         <div class="col">
-                            <p>Current Recipe: @_currentIngredientRecipe.Name</p>
+                            <div class="d-flex align-items-center">
+                                <label class="form-label mb-0 flex-shrink-0 me-1">Parts: 1/</label>
+                                <InputNumber class="form-control" @bind-Value="_currentIngredientRecipeParts"/>
+                            </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Add Recipe As
-                            Ingredient
-                        </button>
+                        <div class="col">
+                            <div>Current Recipe: @_currentIngredientRecipe.Name</div>
+                        </div>
+
+                        <div class="col">
+                            <button type="submit" class="btn btn-primary w-100">Add Recipe As
+                                Ingredient
+                            </button>
+                        </div>
                     </div>
                 </div>
             </EditForm>
@@ -72,19 +89,25 @@
                 <div class="container text-center generel__border-layout m-2 p-4">
                     <div class="row row-cols-1 row-cols-sd-3 row-cols-md-3 row-cols-lg-3 g-3">
 
-                        <BetterRealTimeIngredientsSearch
-                            CurrentIngredientDataHasChanged="@(value => _crossIngredient = value)"/>
+                        <div class="col">
+                            <BetterRealTimeIngredientsSearch
+                                CurrentIngredientDataHasChanged="@(value => _crossIngredient = value)"/>
+                        </div>
 
                         <div class="col">
-                            <label class="form-label">Grams</label>
-                            <InputNumber @bind-Value="_currentIngredientGrams"/>
+                            <div class="d-flex align-items-center">
+                                <label class="form-label mb-0 flex-shrink-0 me-1">Grams</label>
+                                <InputNumber class="form-control" @bind-Value="_currentIngredientGrams"/>
+                            </div>
                         </div>
 
                         <div class="col">
                             <p>Current Ingredient: @_crossIngredient.Name</p>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Add Database Ingredient</button>
+                        <div class="col">
+                            <button type="submit" class="btn btn-primary w-100">Add Database Ingredient</button>
+                        </div>
                     </div>
                 </div>
             </EditForm>
@@ -112,6 +135,7 @@
     StatusMessageToast _statusMessageToaster = null!;
     readonly List<Ingredient> _currentIngredients = new();
     bool _usePlaceholderPic;
+    bool _isAddingRecipe;
 
     private async Task UsePlaceholderPic()
     {
@@ -172,6 +196,8 @@
 
         _currentRecipe.PrintRecipe("HandleRecipe");
 
+        _isAddingRecipe = true;
+        StateHasChanged();
         try
         {
             string? msg = await DbService.AddRecipeToDb(_currentRecipe);
@@ -182,6 +208,8 @@
         }
         catch (Exception ex)
         {
+            _isAddingRecipe = false;
+            StateHasChanged();
             Console.WriteLine("Error handling recipe: " + ex.Message);
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             return;
@@ -191,6 +219,9 @@
         _currentRecipe.ClearRecipe();
         _currentIngredient.ClearIngredient();
         _currentIngredients.Clear();
+        
+        _isAddingRecipe = false;
+        StateHasChanged();
     }
 
     private async Task ChooseImage(InputFileChangeEventArgs imageFile)
@@ -288,7 +319,7 @@
         _currentRecipe.TotalMacros.Fat = 0;
         _currentRecipe.TotalMacros.Protein = 0;
         _currentRecipe.TotalCost = 0;
-        
+
         foreach (var ingredient in _currentIngredients)
         {
             _currentRecipe.TotalMacros.Calories += ingredient.CaloriesPer100g * ingredient.GetMultiplier();
@@ -298,4 +329,5 @@
             _currentRecipe.TotalCost += ingredient.GetCostPer100g() * ingredient.GetMultiplier();
         }
     }
+
 }

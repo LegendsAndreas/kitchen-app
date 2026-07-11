@@ -73,7 +73,18 @@
             </div>
 
         </div>
-        <button type="submit" class="btn btn-primary mt-3">Add Ingredient</button>
+        <div>
+            @if (!_isAddingIngredient)
+            {
+                <button type="submit" class="btn btn-primary mt-3">Add Ingredient</button>
+            }
+            else
+            {
+                <div class="spinner-border mt-2" role="status">
+                    <span class="visually-hidden">Adding ingredient</span>
+                </div>
+            }
+        </div>
     </div>
 </EditForm>
 
@@ -177,6 +188,7 @@
     bool _usePlaceholderPic;
     bool _loading = true;
     string _ingredientSearch = "";
+    bool _isAddingIngredient;
     Ingredient currentIngredient = new();
     StatusMessageToast StatusMessageToaster = new();
     List<Ingredient> _ingredients = [];
@@ -300,11 +312,14 @@
         currentIngredient.SetCostPer100G(_totalIngredientGrams, _totalIngredientCost);
         var tempIngredient = currentIngredient.TransferIngredient(currentIngredient);
 
+        _isAddingIngredient = true;
+        StateHasChanged();
         var result = await DbService.AddIngredientToDbAsync(tempIngredient);
         await StatusMessageToaster.ShowToastAsync(result);
 
         currentIngredient.ClearIngredient();
         _usePlaceholderPic = false;
+        _isAddingIngredient = false;
         StateHasChanged();
     }
 

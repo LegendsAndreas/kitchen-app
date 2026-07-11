@@ -3,14 +3,23 @@
 <EditForm Model="@this">
     <label class="form-label fw-bold">Recipe Id</label>
     <InputNumber id="name" @bind-Value="_recipeId" class="form-control"/>
-    <button type="submit" class="btn btn-primary" @onclick="HandleGettingInstructions">Get Recipe Instructidons
-    </button>
+    @if (!_isGettingRecipeInstructions)
+    {
+        <button type="submit" class="btn btn-primary" @onclick="HandleGettingInstructions">Get Recipe Instructidons
+        </button>
+    }
+    else
+    {
+        <div class="spinner-border mt-2" role="status">
+            <span class="visually-hidden">Getting recipe instructions...</span>
+        </div>
+    }
 </EditForm>
 
 @if (_instructions != null)
 {
     <h1 class="fw-bold" style="border-bottom: 3px solid #dee2e6;">@_instructions.Instructions.Name Selected</h1>
-    <div class="row row-cols-2">
+    <div class="row row-cols-1 row-cols-lg-2 flex-column-reverse flex-lg-row">
         <div class="col">
             <h5 style="padding: 5px"><i><u>Steps</u></i></h5>
             <div class="card p-2" style="background-color: #272b2f">
@@ -83,18 +92,21 @@
 
                     <button type="submit" class="btn btn-primary" @onclick="HandleNewNote">Set New Note</button>
                 </EditForm>
-
-                @*<p>New step: @_currentStep.StepText</p>
-
-                <p>New note: @_currentNote.NoteText</p>*@
             </div>
 
-            @* "d-flex" - activates the flexbox layout, fot the content inside the div. *@
-            @* "justify-content-end" - aligns the content to the right side. *@
             <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-primary" @onclick="HandleUpdatingInstructions">Update
-                    Instructions
-                </button>
+                @if (!_isUpdatingInstructions)
+                {
+                    <button type="button" class="btn btn-primary" @onclick="HandleUpdatingInstructions">Update
+                        Instructions
+                    </button>
+                }
+                else
+                {
+                    <div class="spinner-border mt-2" role="status">
+                        <span class="visually-hidden">Updating instructions...</span>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -107,6 +119,8 @@
     int _recipeId;
     string _stepText = "";
     string _noteText = "";
+    bool _isGettingRecipeInstructions;
+    bool _isUpdatingInstructions;
     Step _currentStep = new();
     Note _currentNote = new();
     StatusMessageToast _statusMessageToaster = null!;
@@ -114,12 +128,15 @@
 
     private async Task HandleGettingInstructions()
     {
-        Console.WriteLine("Handling getting instructions...");
+        _isGettingRecipeInstructions = true;
+        StateHasChanged();
         var result = await DbService.GetRecipeInstructionsByRecipeId(_recipeId);
         if (result.instructions == null)
             await _statusMessageToaster.ShowToastAsync(result.message);
         else
             _instructions = result.instructions;
+        _isGettingRecipeInstructions = false;
+        StateHasChanged();
     }
 
     private void HandleNewStep()
@@ -178,6 +195,8 @@
     {
         if (_instructions != null)
         {
+            _isUpdatingInstructions = true;
+            StateHasChanged();
             var result = await DbService.UpdateInstructionsByInstructionsId(_instructions, _instructions.GetId());
             await _statusMessageToaster.ShowToastAsync(result);
         }
@@ -185,6 +204,9 @@
         {
             Console.WriteLine("Instructions = null");
         }
+        
+        _isUpdatingInstructions = false;
+        StateHasChanged();
     }
 
     private void DeleteStep(int index)

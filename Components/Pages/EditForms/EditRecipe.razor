@@ -7,7 +7,16 @@
     <EditForm Model="@_recipeId" OnValidSubmit="GetRecipe">
         <label class="form-label fw-bold">Recipe Id</label>
         <InputNumber @bind-Value="_recipeId" class="form-control"/>
-        <button type="submit" class="btn btn-primary">Get Recipe</button>
+        @if (!_isGettingRecipe)
+        {
+            <button type="submit" class="btn btn-primary">Get Recipe</button>
+        }
+        else
+        {
+            <div class="spinner-border mt-2" role="status">
+                <span class="visually-hidden">Getting ingredient...</span>
+            </div>
+        }
     </EditForm>
 </div>
 
@@ -65,8 +74,10 @@
                     </div>
 
                     <div class="col">
-                        <label class="form-label">Parts: 1/</label>
-                        <InputNumber id="name" @bind-Value="_currentIngredientRecipeParts" class="form-control"/>
+                        <div class="d-flex align-items-center">
+                            <label class="form-label mb-0 flex-shrink-0 me-1">Parts: 1/</label>
+                            <InputNumber id="name" @bind-Value="_currentIngredientRecipeParts" class="form-control"/>
+                        </div>
                     </div>
 
                     <div class="col">
@@ -87,7 +98,16 @@
             <PreviewRecipe CurrentPreviewRecipe="@_currentRecipe"/>
         </div>
         <div class="col-sm-12 col-md-6 col-lg-6 col-xl-6">
-            <button class="btn btn-primary" @onclick="UpdateRecipe">Update entire recipe</button>
+            @if (!_isEditingRecipe)
+            {
+                <button class="btn btn-primary" @onclick="UpdateRecipe">Update entire recipe</button>
+            }
+            else
+            {
+                <div class="spinner-border mt-2" role="status">
+                    <span class="visually-hidden">Editing recipe...</span>
+                </div>
+            }
         </div>
     </div>
 }
@@ -108,6 +128,8 @@
     int _currentIngredientGrams;
     int _currentIngredientRecipeParts;
     string _newImage = "";
+    bool _isEditingRecipe;
+    bool _isGettingRecipe;
     Recipe? _currentRecipe;
     Recipe _currentIngredientRecipe = new();
     StatusMessageToast _recipeStatusToaster = null!;
@@ -127,11 +149,15 @@
 
     private async Task GetRecipe()
     {
+        _isGettingRecipe = true;
+        StateHasChanged();
         var result = await DbService.GetRecipeByIdAsync(_recipeId);
         if (result.Recipe == null)
             await _recipeStatusToaster.ShowToastAsync(result.Message);
         else
             _currentRecipe = result.Recipe;
+        _isGettingRecipe = false;
+        StateHasChanged();
     }
 
     private async Task UpdateRecipe()
@@ -156,13 +182,18 @@
         _currentRecipe.SetTotalCost();
         if (!string.IsNullOrEmpty(_newImage)) _currentRecipe.Base64Image = _newImage;
 
+        _isEditingRecipe = true;
+        StateHasChanged();
         var (status, msg) = await DbService.EditFullRecipe(_currentRecipe);
         if (!status)
         {
             await _recipeStatusToaster.ShowToastAsync("Error: " + msg);
         }
 
+
         _currentRecipe = null;
+        _isEditingRecipe = false;
+        StateHasChanged();
     }
 
     private void AddNewIngredientToRecipe()
@@ -197,7 +228,7 @@
             _currentRecipe.Ingredients.Add(tempIngredient);
         _currentCrossIngredient.ClearIngredient();
     }
-    
+
     private async Task AddRecipeAsIngredient()
     {
         if (string.IsNullOrEmpty(_currentIngredientRecipe.Name))

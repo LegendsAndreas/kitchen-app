@@ -5,29 +5,47 @@
 <EditForm Model="@this">
     <label class="form-label fw-bold">Database Ingredient Id To Edit</label>
     <InputNumber id="name" @bind-Value="_ingredientId" class="form-control"/>
+    @if (!_isGettingIngredient)
+    {
     <button type="submit" class="btn btn-primary" @onclick="GetDatabaseIngredient">Get Database Ingredient</button>
+    }
+    else
+    {
+        <div class="spinner-border mt-2" role="status">
+            <span class="visually-hidden">Getting ingredient...</span>
+        </div>
+    }
 </EditForm>
 
 @if (_currentIngredient != null)
 {
     <EditForm Model="@_currentIngredient" OnSubmit="@UpdateDatabaseIngredient">
-        <label class="form-label fw-bold">Ingredient Name</label>
-        <InputText @bind-Value="_currentIngredient.Name" class="form-control"/>
-
-        <label class="form-label fw-bold">Ingredient Calories</label>
-        <InputNumber @bind-Value="_currentIngredient.CaloriesPer100g" class="form-control"/>
-
-        <label class="form-label fw-bold">Ingredient Carbs</label>
-        <InputNumber @bind-Value="_currentIngredient.CarbsPer100g" class="form-control"/>
-
-        <label class="form-label fw-bold">Ingredient Protein</label>
-        <InputNumber @bind-Value="_currentIngredient.ProteinPer100g" class="form-control"/>
-
-        <label class="form-label fw-bold">Ingredient Fats</label>
-        <InputNumber @bind-Value="_currentIngredient.FatPer100g" class="form-control"/>
-
-        <label class="form-label fw-bold">Cost per 100g</label>
-        <InputNumber disabled="true" @bind-Value="@_currentIngredient.CostPer100g" class="form-control"/>
+        <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
+            <div class="col">
+                <label class="form-label fw-bold">Ingredient Name</label>
+                <InputText @bind-Value="_currentIngredient.Name" class="form-control"/>
+            </div>
+            <div class="col">
+                <label class="form-label fw-bold">Ingredient Calories</label>
+                <InputNumber @bind-Value="_currentIngredient.CaloriesPer100g" class="form-control"/>
+            </div>
+            <div class="col">
+                <label class="form-label fw-bold">Ingredient Carbs</label>
+                <InputNumber @bind-Value="_currentIngredient.CarbsPer100g" class="form-control"/>
+            </div>
+            <div class="col">
+                <label class="form-label fw-bold">Ingredient Protein</label>
+                <InputNumber @bind-Value="_currentIngredient.ProteinPer100g" class="form-control"/>
+            </div>
+            <div class="col">
+                <label class="form-label fw-bold">Ingredient Fats</label>
+                <InputNumber @bind-Value="_currentIngredient.FatPer100g" class="form-control"/>
+            </div>
+            <div class="col">
+                <label class="form-label fw-bold">Cost per 100g</label>
+                <InputNumber disabled="true" @bind-Value="@_currentIngredient.CostPer100g" class="form-control"/>
+            </div>
+        </div>
 
         <div class="row pt-2">
             <div class="fw-bold">New Cost (leave at 0 for no change)</div>
@@ -44,7 +62,16 @@
         <label class="generel__file-label mt-2" for="fileInput">Choose Image</label>
         <InputFile id="fileInput" OnChange="ChooseImage" class="d-none"></InputFile>
 
-        <button type="submit" class="btn btn-primary">Update Database ingredient</button>
+        @if (!_isEditingIngredient)
+        {
+            <button type="submit" class="btn btn-primary">Update Database ingredient</button>
+        }
+        else
+        {
+            <div class="spinner-border mt-2" role="status">
+                <span class="visually-hidden">Updating ingredient...</span>
+            </div>
+        }
     </EditForm>
 
     <div>
@@ -60,9 +87,11 @@
     int _ingredientId;
     float _weightPr100g;
     float _costPr100g;
+    bool _isEditingIngredient;
+    bool _isGettingIngredient;
     Ingredient? _currentIngredient;
     StatusMessageToast _statusMessageToaster = null!;
-    
+
     protected override async Task OnInitializedAsync()
     {
         Uri uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
@@ -87,19 +116,28 @@
             _currentIngredient.SetCostPer100G(_weightPr100g, _costPr100g);
 
         _currentIngredient.PrintIngredient();
+        
+        _isEditingIngredient = true;
+        StateHasChanged();
         var result = await DbService.UpdateDbIngredient(_currentIngredient);
         await _statusMessageToaster.ShowToastAsync(result);
         _weightPr100g = 0;
         _costPr100g = 0;
+        _isEditingIngredient = false;
+        StateHasChanged();
     }
 
     private async Task GetDatabaseIngredient()
     {
+        _isGettingIngredient = true;
+        StateHasChanged();
         var result = await DbService.GetDbIngredientById(_ingredientId);
         if (result.Ingredient == null)
             await _statusMessageToaster.ShowToastAsync(result.Message);
         else
             _currentIngredient = result.Ingredient;
+        _isGettingIngredient = false;
+        StateHasChanged();
     }
 
     private async Task ChooseImage(InputFileChangeEventArgs imageFile)
