@@ -2,10 +2,11 @@
   kitchen:
     build: .
     ports:
-      - "8082:5001"
+      - "8080:8081"
     environment:
       - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
       - ASPNETCORE_URLS=${ASPNETCORE_URLS}
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
     mem_limit: 256m
     cpus: 0.5
     pids_limit: 100

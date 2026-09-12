@@ -7,14 +7,14 @@ RUN dotnet restore
 
 COPY . ./
 
-RUN dotnet publish -c Release -o /app/publish --os linux --self-contained
+RUN dotnet publish -c Release -o /app/publish --os linux
 
 # Runtime stage
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0-noble-chiseled-extra
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 
 COPY --from=build /app/publish .
 
-EXPOSE 5001
+EXPOSE 8081
 
 CMD ["./WebKitchen"]
