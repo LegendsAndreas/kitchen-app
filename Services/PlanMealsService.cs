@@ -5,28 +5,31 @@ public class DailyMeal
 {
     public List<Recipe> DailyMeals { get; set; } = new();
     public Macros TotalDailyMacros { get; set; } = new();
+    public float TotalCost { get; set; }
 
-    public void AddMacrosToTotalMacros(Macros total)
+    public void AddMacrosToTotalMacros(Macros total, float cost)
     {
         TotalDailyMacros.Calories += total.Calories;
         TotalDailyMacros.Fat += total.Fat;
         TotalDailyMacros.Carbs += total.Carbs;
         TotalDailyMacros.Protein += total.Protein;
+        TotalCost += cost;
     }
 
-    public void RemoveMacrosFromTotalMacros(Macros total)
+    public void RemoveMacrosFromTotalMacros(Macros total, float cost)
     {
         TotalDailyMacros.Calories -= total.Calories;
         TotalDailyMacros.Fat -= total.Fat;
         TotalDailyMacros.Carbs -= total.Carbs;
         TotalDailyMacros.Protein -= total.Protein;
+        TotalCost -= cost;
     }
 }
-
 public class MealPlan
 {
     public List<DailyMeal> DailyMealsList { get; set; } = new();
     public Macros TotalWeeklyMacros { get; set; } = new();
+    public float TotalCost { get; set; }
 
     public MealPlan()
     {
@@ -57,8 +60,9 @@ public class MealPlan
         TotalWeeklyMacros.Fat += recipe.TotalMacros.Fat;
         TotalWeeklyMacros.Carbs += recipe.TotalMacros.Carbs;
         TotalWeeklyMacros.Protein += recipe.TotalMacros.Protein;
+        TotalCost += recipe.TotalCost;
         
-        DailyMealsList[day].AddMacrosToTotalMacros(recipe.TotalMacros);
+        DailyMealsList[day].AddMacrosToTotalMacros(recipe.TotalMacros, recipe.TotalCost);
     }
     
     public void RemoveMacrosAndRecipeToDay(Recipe recipe, int day)
@@ -69,7 +73,8 @@ public class MealPlan
         TotalWeeklyMacros.Fat -= recipe.TotalMacros.Fat;
         TotalWeeklyMacros.Carbs -= recipe.TotalMacros.Carbs;
         TotalWeeklyMacros.Protein -= recipe.TotalMacros.Protein;
+        TotalCost -= recipe.TotalCost;
         
-        DailyMealsList[day].RemoveMacrosFromTotalMacros(recipe.TotalMacros);
+        DailyMealsList[day].RemoveMacrosFromTotalMacros(recipe.TotalMacros, recipe.TotalCost);
     }
 }

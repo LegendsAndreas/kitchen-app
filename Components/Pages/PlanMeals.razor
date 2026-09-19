@@ -16,7 +16,7 @@
         <div class="col d-flex justify-content-center">
             <button type="submit" class="btn btn-primary" @onclick="AddRecipe">Add Recipe</button>
         </div>
-        
+
         <div class="col d-flex justify-content-center">
             <button type="submit" class="btn btn-primary" @onclick="FinalizeMeals">Finalize Meal plan</button>
         </div>
@@ -42,6 +42,8 @@
                 Carbs: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.Carbs.ToString("0")</div>
             <div class="col d-flex justify-content-center">Total
                 Protein: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalDailyMacros.Protein.ToString("0")</div>
+            <div class="col d-flex justify-content-center">Total
+                Cost: @_mealPlanMacrosAndRecipes.DailyMealsList[_currentTotalMacrosDay].TotalCost.ToString("0")</div>
         </div>
     </div>
 
@@ -65,9 +67,11 @@
                             - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
                             - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
                             - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
-                            - Protein: @recipe.TotalMacros.Protein.ToString("0")
+                            - Protein: @recipe.TotalMacros.Protein.ToString("0") <br/>
+                            - Cost: @recipe.TotalCost.ToString("0")
                         </p>
-                        <button class="btn btn-danger" @onclick="() => RemoveRecipe(recipe, _currentTotalMacrosDay)">X</button>
+                        <button class="btn btn-danger" @onclick="() => RemoveRecipe(recipe, _currentTotalMacrosDay)">X
+                        </button>
                     </div>
                 </div>
             </div>
@@ -105,7 +109,7 @@
             byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
         const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: 'text/plain' });
+        const blob = new Blob([byteArray], {type: 'text/plain'});
 
         // Create download link
         const url = window.URL.createObjectURL(blob);
@@ -174,7 +178,7 @@
     private async Task FinalizeMeals()
     {
         // Example strings to write into the file
-        List<string> mealDetails = new List<string> {};
+        List<string> mealDetails = new List<string> { };
 
         int counter = 1;
         foreach (DailyMeal dailyMeal in _mealPlanMacrosAndRecipes.DailyMealsList)
@@ -184,7 +188,9 @@
                             $"  - {dailyMeal.TotalDailyMacros.Calories} \n" +
                             $"  - {dailyMeal.TotalDailyMacros.Carbs} \n" +
                             $"  - {dailyMeal.TotalDailyMacros.Fat} \n" +
-                            $"  - {dailyMeal.TotalDailyMacros.Protein} \n");
+                            $"  - {dailyMeal.TotalDailyMacros.Protein} \n" +
+                            $"  - {dailyMeal.TotalCost} " +
+                            $"\n");
             foreach (Recipe recipe in dailyMeal.DailyMeals)
             {
                 mealDetails.Add($"  - {recipe.Name} \n" +
@@ -192,6 +198,7 @@
                                 $"    - {recipe.TotalMacros.Carbs} \n" +
                                 $"    - {recipe.TotalMacros.Fat} \n" +
                                 $"    - {recipe.TotalMacros.Protein} \n" +
+                                $"    - {dailyMeal.TotalCost} " +
                                 $"\n");
             }
 
@@ -200,14 +207,15 @@
 
         // Convert to string content
         string fileContent = string.Join(Environment.NewLine, mealDetails);
-    
+
         // Convert to bytes
         byte[] fileBytes = System.Text.Encoding.UTF8.GetBytes(fileContent);
-    
+
         // Convert to base64 for JavaScript
         string base64 = Convert.ToBase64String(fileBytes);
-    
+
         // Trigger download via JavaScript
         await JsRuntime.InvokeVoidAsync("downloadFile", "mealplan.txt", base64);
     }
+
 }

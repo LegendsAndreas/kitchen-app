@@ -1,0 +1,30 @@
+﻿<div @key="Recipe.RecipeId" class="col p-2 generel__animation-fade-in"
+     style="animation-delay: @(Delay.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))s">
+    <div class="card h-100 generel__border-layout">
+        <a href="/recipe-details?recipeId=@Recipe.RecipeId">
+            <img src="data:image/png;base64,@Recipe.Base64Image" alt="ops..."
+                 class="card-img home home__Recipe-image"/>
+        </a>
+        <EditRecipeLink RecipeId="@Recipe.RecipeId"/>
+        <div class="card-header">
+            <h4>@Recipe.RecipeId. @Recipe.Name</h4>
+        </div>
+        <div class="card-body border-primary">
+            <p class="card-text ">
+                - Calories: @Recipe.TotalMacros.Calories.ToString("0") <br>
+                - Carbs: @Recipe.TotalMacros.Carbs.ToString("0") <br>
+                - Fats: @Recipe.TotalMacros.Fat.ToString("0") <br>
+                - Protein: @Recipe.TotalMacros.Protein.ToString("0") <br>
+                - Cost: @Recipe.TotalCost.ToString("0.00") <br>
+            </p>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public required Recipe Recipe { get; set; }
+    [Parameter]
+    public required double Delay { get; set; }
+}

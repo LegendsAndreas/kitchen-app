@@ -47,28 +47,7 @@
         @{ double delay = 0; }
         @foreach (var recipe in _recipes)
         {
-            <div @key="recipe.RecipeId" class="col p-2 generel__animation-fade-in"
-                 style="animation-delay: @(delay.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))s">
-                <div class="card h-100 generel__border-layout">
-                    <a href="/recipe-details?recipeId=@recipe.RecipeId">
-                        <img src="data:image/png;base64,@recipe.Base64Image" alt="ops..."
-                             class="card-img home home__recipe-image"/>
-                    </a>
-                    <EditRecipeLink RecipeId="@recipe.RecipeId"/>
-                    <div class="card-header">
-                        <h4>@recipe.RecipeId. @recipe.Name</h4>
-                    </div>
-                    <div class="card-body border-primary">
-                        <p class="card-text ">
-                            - Calories: @recipe.TotalMacros.Calories.ToString("0") <br>
-                            - Carbs: @recipe.TotalMacros.Carbs.ToString("0") <br>
-                            - Fats: @recipe.TotalMacros.Fat.ToString("0") <br>
-                            - Protein: @recipe.TotalMacros.Protein.ToString("0") <br>
-                            - Cost: @recipe.TotalCost.ToString("0.00") <br>
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <RecipeCard Recipe="recipe" Delay="delay" />
             delay += 0.05;
         }
     </div>

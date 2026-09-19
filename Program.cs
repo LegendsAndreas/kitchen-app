@@ -22,6 +22,9 @@ public class Program
         if (string.IsNullOrEmpty(urls)) throw new InvalidOperationException("No ASPNETCORE_URLS configured.");
         builder.WebHost.UseUrls(urls);
         
+        var env = builder.Configuration["ASPNETCORE_ENVIRONMENT"];
+        if (string.IsNullOrEmpty(env)) throw new InvalidOperationException("No ASPNETCORE_ENVIRONMENT configured.");
+        
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
         
