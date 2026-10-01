@@ -200,7 +200,7 @@ public class Ingredient
 
 public class Recipe
 {
-    public int RecipeId;
+    public int RecipeId { get; set; }
 
     [Required]
     [StringLength(1, ErrorMessage = "Meal type must be one character long.")]
