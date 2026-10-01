@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.Extensions.Caching.Hybrid;
 using Npgsql;
 
 // jdbc:postgresql://[HOST]/[DATABASE_NAME]?password=[PASSWORD]&sslmode=require&user=[USERNAME]
@@ -16,11 +17,13 @@ public partial class DbService
     private int _totalIngredients;
     public int MaxIngredientsPages;
     private readonly string _connectionString;
+    private readonly HybridCache _cache;
     private const int ITEMS_PER_PAGE = 20;
 
-    public DbService(string connectionString)
+    public DbService(string connectionString, HybridCache cache)
     {
         _connectionString = connectionString;
+        _cache = cache;
     }
 
     public async Task SetTotalVariables()
@@ -182,7 +185,7 @@ public partial class DbService
     public async Task<(RecipeInstructionRecord? instructions, string message)> GetRecipeInstructionsByRecipeId(
         int recipeId)
     {
-        Console.WriteLine("Getting recipe instructions by id...");
+        Console.WriteLine($"Getting recipe instructions by id ({recipeId})...");
         RecipeInstructionRecord instructionsRecord;
         const string query =
             "SELECT id, instructions, recipe_id FROM recipe_instructions WHERE recipe_id = @recipe_Id;";

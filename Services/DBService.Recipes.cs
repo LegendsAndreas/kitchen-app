@@ -1,10 +1,96 @@
 ﻿using System.Text.Json;
+using Microsoft.Extensions.Caching.Hybrid;
 using Npgsql;
 
 namespace WebKitchen.Services;
 
 public partial class DbService
 {
+    private const string RecipesTag = "recipes";
+    private const string PaginatedRecipesTag = "paginated-recipes";
+
+    private static readonly HybridCacheEntryOptions RecipeCacheOptions = new()
+    {
+        Expiration = TimeSpan.FromMinutes(10),
+        LocalCacheExpiration = TimeSpan.FromMinutes(5)
+    };
+
+    public async Task<(Recipe? Recipe, string Message)> GetRecipeByName(
+        string recipeName, CancellationToken ct = default)
+    {
+        string key = $"recipe:name:{recipeName}"; // exact name: the SQL comparison is case-sensitive
+
+        try
+        {
+            Recipe? recipe = await _cache.GetOrCreateAsync(
+                key,
+                async token => await LoadRecipeByNameAsync(recipeName, token),
+                RecipeCacheOptions,
+                tags: [RecipesTag],
+                cancellationToken: ct);
+
+            if (recipe is null)
+            {
+                // Don't keep "not found" cached, or a newly created recipe
+                // would stay invisible until the entry expires.
+                await _cache.RemoveAsync(key, ct);
+                Console.WriteLine("Cache miss, returning null...");
+                return (null, "Recipe not found.");
+            }
+
+            Console.WriteLine("Cache hit, returning recipe by name...");
+            return (recipe, "Recipe successfully retrieved");
+        }
+        catch (Exception ex)
+        {
+            // Exceptions thrown inside the factory are never cached by HybridCache.
+            Console.WriteLine($"Error getting recipe by name ({recipeName}): " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting recipe by name ({recipeName}): {ex.Message}.");
+        }
+    }
+
+    private async Task<Recipe?> LoadRecipeByNameAsync(string recipeName, CancellationToken ct)
+    {
+        Console.WriteLine("Cache miss, getting recipe by name from DB...");
+
+        // In case cost_per_hectogram is null, we need to use COALESCE to replace it with 0.
+        // Adding a column for the value type, with default 0 on the type did not go as planned.
+        const string query = "SELECT r.id, " +
+                             "r.name, " +
+                             "r.meal_type, " +
+                             "r.image, " +
+                             "r.cost, " +
+                             "(r.macros).total_calories, " +
+                             "(r.macros).total_carbs, " +
+                             "(r.macros).total_fats, " +
+                             "(r.macros).total_protein, " +
+                             "json_agg(" +
+                             "    json_build_object(" +
+                             "         'name', i.name," +
+                             "         'grams', i.grams," +
+                             "         'calories_pr_hectogram', i.calories_pr_hectogram," +
+                             "         'fats_pr_hectogram', i.fats_pr_hectogram," +
+                             "         'carbs_pr_hectogram', i.carbs_pr_hectogram," +
+                             "         'protein_pr_hectogram', i.protein_pr_hectogram," +
+                             "         'cost_per_hectogram', COALESCE(i.cost_per_100g, 0)," +
+                             "         'multiplier', i.multiplier," +
+                             "         'is_recipe', COALESCE(i.is_recipe, false)" +
+                             "     )" +
+                             ") AS ingredients " +
+                             "FROM recipes AS r, unnest(r.ingredients) AS i " +
+                             "WHERE r.name = @recipeName " +
+                             "GROUP BY r.id " +
+                             "ORDER BY r.id ";
+
+        await using NpgsqlConnection conn = await GetConnectionAsync();
+        await using NpgsqlCommand cmd = new(query, conn);
+        cmd.Parameters.AddWithValue("@recipeName", recipeName);
+        await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync(ct);
+
+        return await reader.ReadAsync(ct) ? MakeRecipe(reader) : null;
+    }
+
     public async Task<string?> AddRecipeToDb(Recipe recipe)
     {
         Console.WriteLine("Adding recipe to database...");
@@ -325,6 +411,7 @@ public partial class DbService
             {
                 ingredient.CostPer100g = await GetIngredientRecipesCost(ingredient.Name);
             }
+
             ingredient.PrintIngredient();
         }
 
@@ -787,7 +874,7 @@ public partial class DbService
         return (recipeNames, "Ok");
     }
 
-    public async Task<(Recipe? Recipe, string Message)> GetRecipeByName(string recipeName)
+    /*public async Task<(Recipe? Recipe, string Message)> GetRecipeByName(string recipeName)
     {
         Console.WriteLine("Getting recipe by name...");
 
@@ -846,7 +933,7 @@ public partial class DbService
         }
 
         return (recipe, "Recipe successfully retrieved");
-    }
+    }*/
 
     public async Task<(List<Recipe>? Recipes, string Message)> GetRecipesPaginatedSearchAsync(string search,
         List<string> mealTypes, int paginationPage)
@@ -977,13 +1064,46 @@ public partial class DbService
 
     public async Task<(Recipe? Recipe, string Message)> GetRecipeByIdAsync(int recipeId, CancellationToken ct = new())
     {
-        Console.WriteLine("Getting recipe by id...");
-
         if (recipeId < 1)
         {
             Console.WriteLine("Recipe ID is less than 1.");
             return (null, "Recipe ID is less than 1.");
         }
+
+        string key = $"recipe:name:{recipeId}"; // exact name: the SQL comparison is case-sensitive
+
+        try
+        {
+            Recipe? recipe = await _cache.GetOrCreateAsync(
+                key,
+                async token => await LoadRecipeByIdAsync(recipeId, token),
+                RecipeCacheOptions,
+                tags: [RecipesTag],
+                cancellationToken: ct);
+
+            if (recipe == null)
+            {
+                // Don't keep "not found" cached, or a newly created recipe
+                // would stay invisible until the entry expires.
+                await _cache.RemoveAsync(key, ct);
+                Console.WriteLine("Cache miss, returning null...");
+                return (null, "Recipe not found.");
+            }
+
+            Console.WriteLine("Cache hit, returning recipe by name...");
+            return (recipe, "Recipe successfully retrieved");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error getting recipe by id ({recipeId}): " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting recipe by id ({recipeId}): {ex.Message}.");
+        }
+    }
+
+    private async Task<Recipe?> LoadRecipeByIdAsync(int recipeId, CancellationToken ct = new())
+    {
+        Console.WriteLine("Getting recipe by id...");
 
         Recipe recipe;
 
@@ -1018,31 +1138,22 @@ public partial class DbService
                              "WHERE r.id = @id " +
                              "GROUP BY r.id " +
                              "ORDER BY r.id ";
-        try
-        {
-            await using NpgsqlConnection conn = await GetConnectionAsync();
-            await using NpgsqlCommand cmd = new(query, conn);
-            cmd.Parameters.AddWithValue("@id", recipeId);
-            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync(ct);
+        await using NpgsqlConnection conn = await GetConnectionAsync();
+        await using NpgsqlCommand cmd = new(query, conn);
+        cmd.Parameters.AddWithValue("@id", recipeId);
+        await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync(ct);
 
-            if (await reader.ReadAsync(ct))
-            {
-                recipe = MakeRecipe(reader);
-            }
-            else
-            {
-                Console.WriteLine("Recipe not found.");
-                return (null, "Recipe not found.");
-            }
-        }
-        catch (Exception ex)
+        if (await reader.ReadAsync(ct))
         {
-            Console.WriteLine($"Error getting recipe by id ({recipeId}): " + ex.Message);
-            Console.WriteLine("StackTrace: " + ex.StackTrace);
-            return (null, $"Error getting recipe by id ({recipeId}): {ex.Message}.");
+            recipe = MakeRecipe(reader);
+        }
+        else
+        {
+            Console.WriteLine("Recipe not found.");
+            return null;
         }
 
-        return (recipe, "Recipe successfully retrieved");
+        return recipe;
     }
 
     /// Asynchronously retrieves a random recipe from the collection of dinner recipes available in the database.

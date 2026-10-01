@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.Extensions.Caching.Hybrid;
 using WebKitchen.Components;
 using WebKitchen.Services;
 
@@ -17,27 +18,36 @@ public class Program
 
         // If we run locally, it just uses the appsettings.json, but if we run it in a container it uses the .env
         builder.Configuration.AddEnvironmentVariables();
-        
+
         var urls = builder.Configuration["ASPNETCORE_URLS"];
         if (string.IsNullOrEmpty(urls)) throw new InvalidOperationException("No ASPNETCORE_URLS configured.");
         builder.WebHost.UseUrls(urls);
-        
+
         var env = builder.Configuration["ASPNETCORE_ENVIRONMENT"];
         if (string.IsNullOrEmpty(env)) throw new InvalidOperationException("No ASPNETCORE_ENVIRONMENT configured.");
-        
+
         builder.Services.AddRazorComponents()
             .AddInteractiveServerComponents();
-        
+
         builder.Services.AddScoped<Recipe>();
         builder.Services.AddScoped<Ingredient>();
         builder.Services.AddScoped<SharedRecipe>();
         builder.Services.AddScoped<SharedRecipeList>();
         builder.Services.AddScoped<SharedIngredientList>();
         builder.Services.AddHttpContextAccessor();
+        builder.Services.AddHybridCache(o =>
+        {
+            o.DefaultEntryOptions = new HybridCacheEntryOptions
+            {
+                Expiration = TimeSpan.FromMinutes(5), // L2 / overall
+                LocalCacheExpiration = TimeSpan.FromMinutes(2) // L1
+            };
+        });
 
-        builder.Services.AddSingleton(_ => new DbService(
-            builder.Configuration.GetConnectionString("DefaultConnection") ??
-            throw new InvalidOperationException("No connection string found."))
+        builder.Services.AddSingleton(sp => new DbService(
+            builder.Configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("No connection string found."),
+            sp.GetRequiredService<HybridCache>())
         );
 
         var app = builder.Build();
