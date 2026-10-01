@@ -24,7 +24,7 @@
                         {
                             <li>
                                 <a class="dropdown-item"
-                                   onclick="@(() => HandleIngredientItem(ingredient))">@ingredient</a>
+                                   onclick="@(() => HandleRecipeItem(ingredient))">@ingredient</a>
                             </li>
                         }
                     }
@@ -54,7 +54,7 @@
     [Parameter] public EventCallback<Recipe> CurrentRecipeDataHasChanged { get; set; }
     StatusMessageToast _statusMessageToaster = new();
 
-    private async Task HandleIngredientItem(string name)
+    private async Task HandleRecipeItem(string name)
     {
         var result = await DbService.GetRecipeByName(name);
         if (result.Recipe == null)
