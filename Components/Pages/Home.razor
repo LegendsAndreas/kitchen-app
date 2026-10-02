@@ -88,8 +88,6 @@
         {
             _currentRecipesPage = page;
         }
-
-        await base.OnInitializedAsync();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -148,7 +146,6 @@
 
     private async Task ValidSearch()
     {
-        if (string.IsNullOrWhiteSpace(_recipeSearch) && GetMealTypes().Count == 0) return;
         _currentRecipesPage = 1;
         await SearchRecipes();
     }

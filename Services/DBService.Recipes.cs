@@ -773,22 +773,49 @@ public partial class DbService
     public async Task<(List<Recipe>? Recipes, string Message)> GetRecipesPaginatedSearchAsync(string search,
         List<string> mealTypes, int paginationPage, CancellationToken ct = new())
     {
-        string cacheKey = $"recipes:{search}:mealTypes:{mealTypes}:page:{paginationPage}";
+        string mealTypeCacheKey = "";
+        foreach (string mealType in mealTypes)
+        {
+            mealTypeCacheKey += $"{mealType},";
+        }
+        string cacheKey = $"recipes:{search.ToLowerInvariant()}:mealTypes:{mealTypeCacheKey}:page:{paginationPage}";
+        Console.WriteLine($"Getting recipes paginated search: {cacheKey}");
 
         if (paginationPage < 1)
         {
             return (null, "Pagination page is less than 1.");
         }
+        
+        List<string> whereConditions = [];
+        string orderByClause = "GROUP BY r.id, t.image ORDER BY r.id ";
+        if (search != "")
+        {
+            whereConditions.Add("r.name ILIKE @searchParam");
+            orderByClause =
+                "GROUP BY r.id, t.image ORDER BY r.name ILIKE @searchParamPriority DESC, r.name ILIKE @searchParam DESC ";
+        }
+
+        if (mealTypes.Count != 0)
+        {
+            whereConditions.Add("r.meal_type = ANY(@mealTypesParam)");
+        }
+
+        string whereClause = whereConditions.Any()
+            ? $"WHERE {string.Join(" AND ", whereConditions)} "
+            : "";
 
         try
         {
             List<Recipe>? recipes = await _cache.GetOrCreateAsync(
                 cacheKey,
-                async token => await LoadRecipesPaginatedSearchAsync(search, mealTypes, paginationPage, token),
+                async token => await LoadRecipesPaginatedSearchAsync(search, mealTypes, paginationPage, whereClause, orderByClause, token),
                 RecipeCacheOptions,
                 [PaginatedRecipesTag],
                 ct
             );
+            MaxRecipesPages =
+                (int)Math.Ceiling((double)await GetRecipeQueryCount(whereClause, search, mealTypes) /
+                                  ITEMS_PER_PAGE);
             
             if (recipes.Count == 0)
             {
@@ -807,7 +834,7 @@ public partial class DbService
     }
 
     private async Task<List<Recipe>> LoadRecipesPaginatedSearchAsync(string search,
-        List<string> mealTypes, int paginationPage, CancellationToken ct = new())
+        List<string> mealTypes, int paginationPage, string whereClause, string orderByClause, CancellationToken ct = new())
     {
         List<Recipe> recipes = [];
 
@@ -839,28 +866,11 @@ public partial class DbService
                            "LEFT JOIN LATERAL unnest(r.ingredients) AS i ON TRUE " +
                            "LEFT JOIN thumbnails AS t ON t.relation_id = r.id AND t.relation_type = 'recipe' ";
 
-        List<string> whereConditions = [];
-        string orderByClause = "GROUP BY r.id, t.image ORDER BY r.id ";
-        if (search != "")
-        {
-            whereConditions.Add("r.name ILIKE @searchParam");
-            orderByClause =
-                "GROUP BY r.id, t.image ORDER BY r.name ILIKE @searchParamPriority DESC, r.name ILIKE @searchParam DESC ";
-        }
-
-        if (mealTypes.Count != 0)
-        {
-            whereConditions.Add("r.meal_type = ANY(@mealTypesParam)");
-        }
-
-        string whereClause = whereConditions.Any()
-            ? $"WHERE {string.Join(" AND ", whereConditions)} "
-            : "";
-
         string query = baseQuery + whereClause + orderByClause + $"LIMIT {ITEMS_PER_PAGE} OFFSET {offset}";
+        /*// TODO: The MaxRecipesPages needs to be set outside of here.
         MaxRecipesPages =
             (int)Math.Ceiling((double)await GetRecipeQueryCount(whereClause, search, mealTypes) /
-                              ITEMS_PER_PAGE);
+                              ITEMS_PER_PAGE);*/
         Console.WriteLine($"Max recipes pages: {MaxRecipesPages}");
 
         await using NpgsqlConnection conn = await GetConnectionAsync();
@@ -888,6 +898,7 @@ public partial class DbService
 
     private async Task<int> GetRecipeQueryCount(string whereClause, string search, List<string> mealTypes)
     {
+        Console.WriteLine("Where: " + whereClause);
         try
         {
             string query = "SELECT COUNT(*) FROM recipes AS r " + whereClause;
