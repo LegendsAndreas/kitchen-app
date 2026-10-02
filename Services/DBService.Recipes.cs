@@ -7,7 +7,13 @@ namespace WebKitchen.Services;
 public partial class DbService
 {
     private const string RecipesTag = "recipes";
+    private const string IngredientsTag = "ingredients";
     private const string PaginatedRecipesTag = "paginated-recipes";
+    private const string PaginatedIngredientsTag = "paginated-ingredients";
+    private string RecipeById(int id) => $"recipe:id:{id}";
+    private string RecipeByName(string name) => $"recipe:name:{name}";
+    private string IngredientByName(string name) => $"recipe:name:{name}";
+    private string IngredientById(int id) => $"recipe:id:{id}";
 
     private static readonly HybridCacheEntryOptions RecipeCacheOptions = new()
     {
@@ -155,6 +161,7 @@ public partial class DbService
             }
 
             await transaction.CommitAsync();
+            await _cache.RemoveByTagAsync(PaginatedRecipesTag);
         }
         catch (TimeoutException ex)
         {
@@ -226,7 +233,7 @@ public partial class DbService
         return null;
     }
 
-    public async Task<(bool Status, string Message)> EditFullRecipe(Recipe updatedRecipe)
+    public async Task<(bool Status, string Message)> EditFullRecipe(Recipe updatedRecipe, Recipe oldRecipe)
     {
         try
         {
@@ -237,6 +244,10 @@ public partial class DbService
 
             await EmptyRecipeIngredientsByRecipeId(updatedRecipe.RecipeId);
             await AddIngredientsToRowById(updatedRecipe.Ingredients, updatedRecipe.RecipeId);
+            await _cache.RemoveByTagAsync(PaginatedRecipesTag);
+            await _cache.RemoveAsync(RecipeById(updatedRecipe.RecipeId));
+            await _cache.RemoveAsync(RecipeByName(updatedRecipe.Name));
+            await _cache.RemoveAsync(RecipeByName(oldRecipe.Name));
 
             return (true, "Recipe updated successfully.");
         }
@@ -288,7 +299,7 @@ public partial class DbService
             Console.WriteLine("StackTrace: " + ex.StackTrace);
             return $"Error updating recipe name by recipe id ({recipeId}): " + ex.Message;
         }
-
+        
         return statusMessage;
     }
 
@@ -586,7 +597,7 @@ public partial class DbService
         }
     }
 
-    public async Task<(bool status, string msg)> AddIngredientsToRowById(List<Ingredient> ingredients, int recipeId)
+    private async Task<(bool status, string msg)> AddIngredientsToRowById(List<Ingredient> ingredients, int recipeId)
     {
         Console.WriteLine("Adding ingredients to row by id...");
 
@@ -723,121 +734,6 @@ public partial class DbService
         return (recipes, statusMessage + query);
     }
 
-
-    public async Task<string> UpdateDbIngredient(Ingredient ingredient)
-    {
-        Console.WriteLine("Updating database ingredient...");
-
-        string statusMessage = "Ingredient got updated.";
-        const string query = "UPDATE ingredients " +
-                             "SET " +
-                             "name = @name," +
-                             "cals = @cals," +
-                             "fats = @fats," +
-                             "carbs = @carbs," +
-                             "protein = @protein," +
-                             "image = @image, " +
-                             "cost_per_100g = @cost " +
-                             "WHERE id = @id " +
-                             "RETURNING id";
-
-        await using var conn = await GetConnectionAsync();
-        await using var transaction = await conn.BeginTransactionAsync();
-        await using var cmd = new NpgsqlCommand(query, conn, transaction);
-
-        try
-        {
-            cmd.Parameters.AddWithValue("@name", ingredient.Name);
-            cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
-            cmd.Parameters.AddWithValue("@fats", ingredient.FatPer100g);
-            cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
-            cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
-            cmd.Parameters.AddWithValue("@image", ingredient.Base64Image);
-            cmd.Parameters.AddWithValue("@cost", ingredient.CostPer100g);
-            cmd.Parameters.AddWithValue("@id", ingredient.GetIntId());
-
-            if (IsIngredientIdZero(ingredient))
-            {
-                Console.WriteLine("Ingredient ID is zero. Not updating.");
-                return "Ingredient ID is zero. Not updating.";
-            }
-
-            var ingredientId = await cmd.ExecuteScalarAsync();
-            if (ingredientId == null)
-            {
-                Console.WriteLine("Error adding recipe to database; could not get ID of new recipe");
-                return "Error adding recipe to database; could not get ID of new recipe";
-            }
-
-            if (!int.TryParse(ingredientId.ToString(), out var recipeId))
-            {
-                Console.WriteLine("Error adding recipe to database; could not parse ID of new recipe");
-                return "Error retrieving recipe ID.";
-            }
-
-            Recipe thumbnailHelper = new();
-            string thumbnail = await thumbnailHelper.GetThumbnailBase64Image(ingredient.Base64Image);
-            string? thumbnailMsg = await UpdateThumbnail(thumbnail, "ingredient", recipeId, conn, transaction);
-            if (!string.IsNullOrEmpty(thumbnailMsg))
-            {
-                return "Error adding thumbnail; " + thumbnailMsg;
-            }
-
-            await transaction.CommitAsync();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error updating database ingredient ({ingredient}): " + ex.Message);
-            Console.WriteLine("StackTrace: " + ex.StackTrace);
-            return $"Error updating database ingredient ({ingredient}): " + ex.Message;
-        }
-
-        return statusMessage;
-    }
-
-    public async Task<(Ingredient? ingredient, string message)> GetIngredientByNameSearch(string name)
-    {
-        Ingredient? ingredient;
-
-        string query =
-            "SELECT " +
-            "id," +
-            "name," +
-            "cals," +
-            "fats," +
-            "carbs," +
-            "protein," +
-            "image," +
-            "cost_per_100g " +
-            "FROM ingredients " +
-            "WHERE name = @ingredientName";
-
-        try
-        {
-            await using var conn = await GetConnectionAsync();
-            await using var cmd = new NpgsqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("@ingredientName", name);
-            await using var reader = await cmd.ExecuteReaderAsync();
-            if (await reader.ReadAsync())
-            {
-                Ingredient tempIngredient = MakeIngredient(reader);
-                ingredient = tempIngredient;
-            }
-            else
-            {
-                return (null, "Ingredient not found.");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine("Error getting search ingredients: " + ex.Message);
-            Console.WriteLine("StackTrace: " + ex.StackTrace);
-            return (null, $"Error getting search ingredients: {ex.Message}.");
-        }
-
-        return (ingredient, "Ok");
-    }
-
     public async Task<(List<string>? recipeNames, string message)> GetRecipesByNameSearch(string name)
     {
         List<string> recipeNames = [];
@@ -874,76 +770,46 @@ public partial class DbService
         return (recipeNames, "Ok");
     }
 
-    /*public async Task<(Recipe? Recipe, string Message)> GetRecipeByName(string recipeName)
-    {
-        Console.WriteLine("Getting recipe by name...");
-
-        Recipe recipe;
-
-        // In case cost_per_hectogram is null, we need to use COALESCE to replace it with 0.
-        // Adding a column for the value type, with default 0 on the type did not go as planned.
-        const string query = "SELECT r.id, " +
-                             "r.name, " +
-                             "r.meal_type, " +
-                             "r.image, " +
-                             "r.cost, " +
-                             "(r.macros).total_calories, " +
-                             "(r.macros).total_carbs, " +
-                             "(r.macros).total_fats, " +
-                             "(r.macros).total_protein, " +
-                             "json_agg(" +
-                             "    json_build_object(" +
-                             "         'name', i.name," +
-                             "         'grams', i.grams," +
-                             "         'calories_pr_hectogram', i.calories_pr_hectogram," +
-                             "         'fats_pr_hectogram', i.fats_pr_hectogram," +
-                             "         'carbs_pr_hectogram', i.carbs_pr_hectogram," +
-                             "         'protein_pr_hectogram', i.protein_pr_hectogram," +
-                             "         'cost_per_hectogram', COALESCE(i.cost_per_100g, 0)," +
-                             "         'multiplier', i.multiplier," +
-                             "         'is_recipe', COALESCE(i.is_recipe, false)" +
-                             "     )" +
-                             ") AS ingredients " +
-                             "FROM recipes AS r, unnest(r.ingredients) AS i " +
-                             "WHERE r.name = @recipeName " +
-                             "GROUP BY r.id " +
-                             "ORDER BY r.id ";
-        try
-        {
-            await using NpgsqlConnection conn = await GetConnectionAsync();
-            await using NpgsqlCommand cmd = new(query, conn);
-            cmd.Parameters.AddWithValue("@recipeName", recipeName);
-            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
-
-            if (await reader.ReadAsync())
-            {
-                recipe = MakeRecipe(reader);
-            }
-            else
-            {
-                Console.WriteLine("Recipe not found.");
-                return (null, "Recipe not found.");
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error getting recipe by name ({recipeName}): " + ex.Message);
-            Console.WriteLine("StackTrace: " + ex.StackTrace);
-            return (null, $"Error getting recipe by name ({recipeName}): {ex.Message}.");
-        }
-
-        return (recipe, "Recipe successfully retrieved");
-    }*/
-
     public async Task<(List<Recipe>? Recipes, string Message)> GetRecipesPaginatedSearchAsync(string search,
-        List<string> mealTypes, int paginationPage)
+        List<string> mealTypes, int paginationPage, CancellationToken ct = new())
     {
-        List<Recipe> recipes = [];
+        string cacheKey = $"recipes:{search}:mealTypes:{mealTypes}:page:{paginationPage}";
 
         if (paginationPage < 1)
         {
             return (null, "Pagination page is less than 1.");
         }
+
+        try
+        {
+            List<Recipe>? recipes = await _cache.GetOrCreateAsync(
+                cacheKey,
+                async token => await LoadRecipesPaginatedSearchAsync(search, mealTypes, paginationPage, token),
+                RecipeCacheOptions,
+                [PaginatedRecipesTag],
+                ct
+            );
+            
+            if (recipes.Count == 0)
+            {
+                await _cache.RemoveAsync(cacheKey, ct);
+                return (null, "No recipes found for the given search criteria.");
+            }
+            
+            return (recipes, "Recipes successfully retrieved");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Error getting recipes: " + e.Message);
+            Console.WriteLine("StackTrace: " + e.StackTrace);
+            return (null, "Error getting recipes: " + e.Message);
+        }
+    }
+
+    private async Task<List<Recipe>> LoadRecipesPaginatedSearchAsync(string search,
+        List<string> mealTypes, int paginationPage, CancellationToken ct = new())
+    {
+        List<Recipe> recipes = [];
 
         int offset = ITEMS_PER_PAGE * (paginationPage - 1);
 
@@ -997,35 +863,27 @@ public partial class DbService
                               ITEMS_PER_PAGE);
         Console.WriteLine($"Max recipes pages: {MaxRecipesPages}");
 
-        try
+        await using NpgsqlConnection conn = await GetConnectionAsync();
+        await using NpgsqlCommand cmd = new(query, conn);
+        if (mealTypes.Count > 0)
         {
-            await using NpgsqlConnection conn = await GetConnectionAsync();
-            await using NpgsqlCommand cmd = new(query, conn);
-            if (mealTypes.Count > 0)
-            {
-                cmd.Parameters.AddWithValue("@mealTypesParam", mealTypes.ToArray());
-            }
-
-            if (search != "")
-            {
-                cmd.Parameters.AddWithValue("@searchParam", $"%{search}%");
-                cmd.Parameters.AddWithValue("@searchParamPriority", $"{search}%");
-            }
-
-            await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                Recipe tempRecipe = MakeRecipe(reader);
-                recipes.Add(tempRecipe);
-            }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Error getting recipes: " + e.Message);
-            return (null, "Error getting recipes: " + e.Message);
+            cmd.Parameters.AddWithValue("@mealTypesParam", mealTypes.ToArray());
         }
 
-        return (recipes, "Recipes found");
+        if (search != "")
+        {
+            cmd.Parameters.AddWithValue("@searchParam", $"%{search}%");
+            cmd.Parameters.AddWithValue("@searchParamPriority", $"{search}%");
+        }
+
+        await using NpgsqlDataReader reader = await cmd.ExecuteReaderAsync(ct);
+        while (await reader.ReadAsync(ct))
+        {
+            Recipe tempRecipe = MakeRecipe(reader);
+            recipes.Add(tempRecipe);
+        }
+
+        return recipes;
     }
 
     private async Task<int> GetRecipeQueryCount(string whereClause, string search, List<string> mealTypes)
@@ -1243,14 +1101,6 @@ public partial class DbService
             var result = await RunAsyncQuery(cmd);
             if (result < 1)
                 statusMessage = $"Recipe {recipeId} was not found.";
-            else
-            {
-                // await UpdateTableIds("recipes");
-                // await UpdateTableIds("recipe_instructions");
-                // var instructionsResult = await UpdateInstructionsRecipeId();
-                // if (!instructionsResult.status)
-                // return instructionsResult.message;
-            }
 
             string? deleteResults = await DeleteRecipeCleanUp(recipeId);
             if (!string.IsNullOrEmpty(deleteResults))

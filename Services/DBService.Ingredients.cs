@@ -330,4 +330,121 @@ public partial class DbService
 
         return null;
     }
+    
+    public async Task<string> UpdateDbIngredient(Ingredient ingredient)
+    {
+        Console.WriteLine("Updating database ingredient...");
+
+        string statusMessage = "Ingredient got updated.";
+        const string query = "UPDATE ingredients " +
+                             "SET " +
+                             "name = @name," +
+                             "cals = @cals," +
+                             "fats = @fats," +
+                             "carbs = @carbs," +
+                             "protein = @protein," +
+                             "image = @image, " +
+                             "cost_per_100g = @cost " +
+                             "WHERE id = @id " +
+                             "RETURNING id";
+
+        await using var conn = await GetConnectionAsync();
+        await using var transaction = await conn.BeginTransactionAsync();
+        await using var cmd = new NpgsqlCommand(query, conn, transaction);
+
+        try
+        {
+            cmd.Parameters.AddWithValue("@name", ingredient.Name);
+            cmd.Parameters.AddWithValue("@cals", ingredient.CaloriesPer100g);
+            cmd.Parameters.AddWithValue("@fats", ingredient.FatPer100g);
+            cmd.Parameters.AddWithValue("@carbs", ingredient.CarbsPer100g);
+            cmd.Parameters.AddWithValue("@protein", ingredient.ProteinPer100g);
+            cmd.Parameters.AddWithValue("@image", ingredient.Base64Image);
+            cmd.Parameters.AddWithValue("@cost", ingredient.CostPer100g);
+            cmd.Parameters.AddWithValue("@id", ingredient.GetIntId());
+
+            if (IsIngredientIdZero(ingredient))
+            {
+                Console.WriteLine("Ingredient ID is zero. Not updating.");
+                return "Ingredient ID is zero. Not updating.";
+            }
+
+            var ingredientId = await cmd.ExecuteScalarAsync();
+            if (ingredientId == null)
+            {
+                Console.WriteLine("Error adding recipe to database; could not get ID of new recipe");
+                return "Error adding recipe to database; could not get ID of new recipe";
+            }
+
+            if (!int.TryParse(ingredientId.ToString(), out var recipeId))
+            {
+                Console.WriteLine("Error adding recipe to database; could not parse ID of new recipe");
+                return "Error retrieving recipe ID.";
+            }
+
+            Recipe thumbnailHelper = new();
+            string thumbnail = await thumbnailHelper.GetThumbnailBase64Image(ingredient.Base64Image);
+            string? thumbnailMsg = await UpdateThumbnail(thumbnail, "ingredient", recipeId, conn, transaction);
+            if (!string.IsNullOrEmpty(thumbnailMsg))
+            {
+                return "Error adding thumbnail; " + thumbnailMsg;
+            }
+
+            await transaction.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error updating database ingredient ({ingredient}): " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return $"Error updating database ingredient ({ingredient}): " + ex.Message;
+        }
+        await _cache.RemoveByTagAsync(PaginatedIngredientsTag);
+        await _cache.RemoveAsync(IngredientByName(ingredient.Name));
+        await _cache.RemoveAsync(IngredientById(ingredient.GetIntId()));
+
+        return statusMessage;
+    }
+    
+    public async Task<(Ingredient? ingredient, string message)> GetIngredientByNameSearch(string name)
+    {
+        Ingredient? ingredient;
+
+        string query =
+            "SELECT " +
+            "id," +
+            "name," +
+            "cals," +
+            "fats," +
+            "carbs," +
+            "protein," +
+            "image," +
+            "cost_per_100g " +
+            "FROM ingredients " +
+            "WHERE name = @ingredientName";
+
+        try
+        {
+            await using var conn = await GetConnectionAsync();
+            await using var cmd = new NpgsqlCommand(query, conn);
+            cmd.Parameters.AddWithValue("@ingredientName", name);
+            await using var reader = await cmd.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                Ingredient tempIngredient = MakeIngredient(reader);
+                ingredient = tempIngredient;
+            }
+            else
+            {
+                return (null, "Ingredient not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error getting search ingredients: " + ex.Message);
+            Console.WriteLine("StackTrace: " + ex.StackTrace);
+            return (null, $"Error getting search ingredients: {ex.Message}.");
+        }
+
+        return (ingredient, "Ok");
+    }
 }

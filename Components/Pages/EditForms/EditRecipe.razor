@@ -131,6 +131,7 @@
     bool _isEditingRecipe;
     bool _isGettingRecipe;
     Recipe? _currentRecipe;
+    Recipe? _oldCurrentRecipe;
     Recipe _currentIngredientRecipe = new();
     StatusMessageToast _recipeStatusToaster = null!;
     Ingredient _currentCrossIngredient = new();
@@ -155,7 +156,11 @@
         if (result.Recipe == null)
             await _recipeStatusToaster.ShowToastAsync(result.Message);
         else
+        {
             _currentRecipe = result.Recipe;
+            _oldCurrentRecipe = result.Recipe;
+        }
+
         _isGettingRecipe = false;
         StateHasChanged();
     }
@@ -184,12 +189,11 @@
 
         _isEditingRecipe = true;
         StateHasChanged();
-        var (status, msg) = await DbService.EditFullRecipe(_currentRecipe);
+        var (status, msg) = await DbService.EditFullRecipe(_currentRecipe, _oldCurrentRecipe);
         if (!status)
         {
             await _recipeStatusToaster.ShowToastAsync("Error: " + msg);
         }
-
 
         _currentRecipe = null;
         _isEditingRecipe = false;
