@@ -399,7 +399,7 @@ public class SharedStuff
         var startInfo = new ProcessStartInfo
         {
             FileName = "ffmpeg",
-            Arguments = $"-i pipe:0 -vf scale={width}:{height} -f image2pipe -vcodec mjpeg pipe:1",
+            Arguments = $"-i pipe:0 -vf scale={width}:{height} -frames:v 1 -c:v libwebp -quality 50 -f webp pipe:1",
             RedirectStandardInput = true,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
