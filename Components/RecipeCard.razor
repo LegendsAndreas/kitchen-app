@@ -2,7 +2,7 @@
      style="animation-delay: @(Delay.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))s">
     <div class="card h-100 generel__border-layout">
         <a href="/recipe-details?recipeId=@Recipe.RecipeId">
-            <img src="data:image/png;base64,@Recipe.Base64Image" alt="ops..."
+            <img src="data:image/webp;base64,@Recipe.Base64Image" alt="ops..."
                  class="card-img home home__Recipe-image"/>
         </a>
         <EditRecipeLink RecipeId="@Recipe.RecipeId"/>
